@@ -28,7 +28,7 @@
 
 @synthesize title;
 
-- (id)initWithTitle:(NSString *)t {
+- (instancetype)initWithTitle:(NSString *)t {
 	if (self = [super init]) {
 		title = [t copy];
 	}

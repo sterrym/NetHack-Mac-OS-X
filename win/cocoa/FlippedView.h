@@ -25,6 +25,6 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface FlippedView : NSView {
-}
+@interface FlippedView : NSView
+
 @end

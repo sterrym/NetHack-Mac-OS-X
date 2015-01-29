@@ -24,15 +24,13 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(int, e_direction) {
+typedef NS_ENUM(NSInteger, e_direction) {
 	kDirectionUp, kDirectionUpRight, kDirectionRight, kDirectionDownRight,
 	kDirectionDown, kDirectionDownLeft, kDirectionLeft, kDirectionUpLeft,
 	kDirectionMax
 };
 
-@interface ZDirection : NSObject {
-
-}
+@interface ZDirection : NSObject
 
 + (e_direction) directionFromEuclideanPointDelta:(CGPoint *)delta;
 

@@ -33,7 +33,7 @@
 
 @implementation MessageWindowController
 
--(id)initWithMessage:(NSString *)message
+-(instancetype)initWithMessage:(NSString *)message
 {
 	if ( self = [super initWithWindowNibName:@"MessageWindow"] ) {
 		

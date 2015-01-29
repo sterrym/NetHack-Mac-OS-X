@@ -26,9 +26,7 @@
 #import "NhWindow.h"
 
 @interface NhStatusWindow : NhWindow {
-
 	int currentY;
-	
 }
 
 @end

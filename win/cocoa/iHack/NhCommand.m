@@ -29,11 +29,11 @@
 
 @implementation NhCommand
 
-+ (id)commandWithTitle:(const char *)t keys:(const char *)c {
++ (instancetype)commandWithTitle:(const char *)t keys:(const char *)c {
 	return [[[self alloc] initWithTitle:t keys:c] autorelease];
 }
 
-+ (id)commandWithTitle:(const char *)t key:(char)c {
++ (instancetype)commandWithTitle:(const char *)t key:(char)c {
 	return [[[self alloc] initWithTitle:t key:c] autorelease];
 }
 
@@ -56,7 +56,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 
 + (NSArray *)currentCommands {
 	NSMutableArray *commands = [NSMutableArray array];
-	int inv = 0;
+	InvFlags inv = 0;
 
 	for (struct obj *otmp = invent; otmp; otmp = otmp->nobj) {
 		switch (otmp->oclass) {
@@ -205,7 +205,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 	return commands;
 }
 
-+ (NhCommand *)directionCommandWithTitle:(const char *)t key:(char)key direction:(char)d {
++ (instancetype)directionCommandWithTitle:(const char *)t key:(char)key direction:(char)d {
 	char cmd[3] = { key, d, '\0' };
 	return [NhCommand commandWithTitle:t keys:cmd];
 }
@@ -243,7 +243,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 	return commands;
 }
 
-- (id)initWithTitle:(const char *)t keys:(const char *)c {
+- (instancetype)initWithTitle:(const char *)t keys:(const char *)c {
 	if (self = [super init]) {
 		title = [@(t) copy];
 		keys = malloc(strlen(c)+1);
@@ -252,7 +252,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 	return self;
 }
 
-- (id)initWithTitle:(const char *)t key:(char)c {
+- (instancetype)initWithTitle:(const char *)t key:(char)c {
 	char cmd[] = { c, '\0' };
 	return [self initWithTitle:t keys:cmd];
 }

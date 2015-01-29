@@ -30,14 +30,14 @@
 #define kCos45 (0.707106829)
 #define kCos30 (0.866025404)
 
-CGPoint s_directionVectors[kDirectionMax] = {
-	{ 0.0f, 1.0f },
+static const CGPoint s_directionVectors[kDirectionMax] = {
+	{ 0.0, 1.0 },
 	{ kCos45, kCos45 },
-	{ 1.0f, 0.0f },
+	{ 1.0, 0.0 },
 	{ kCos45, -kCos45 },
-	{ 0.0f, -1.0f },
+	{ 0.0, -1.0 },
 	{ -kCos45, -kCos45 },
-	{ -1.0f, 0.0f },
+	{ -1.0, 0.0 },
 	{ -kCos45, kCos45 },
 };
 

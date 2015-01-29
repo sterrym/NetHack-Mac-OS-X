@@ -25,12 +25,10 @@
 #import <Foundation/Foundation.h>
 
 @interface NhEvent : NSObject {
-	
 	int key;
 	int mod;
 	int x;
 	int y;
-
 }
 
 @property (nonatomic, readonly) int key;

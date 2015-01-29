@@ -10,14 +10,6 @@
 		020CD2D71137089D00297C4C /* StatsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 020CD2D61137089D00297C4C /* StatsView.m */; };
 		020ECFF3114CD9AA00CC6076 /* EquipmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 020ECFF2114CD9AA00CC6076 /* EquipmentView.m */; };
 		025194F611588C170085F9B3 /* NSImage+FlippedDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 025194F511588C170085F9B3 /* NSImage+FlippedDrawing.m */; };
-		0259AE7C1135AD53002AEFA1 /* Arrow-E.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE741135AD53002AEFA1 /* Arrow-E.png */; };
-		0259AE7D1135AD53002AEFA1 /* Arrow-N.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE751135AD53002AEFA1 /* Arrow-N.png */; };
-		0259AE7E1135AD53002AEFA1 /* Arrow-NE.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE761135AD53002AEFA1 /* Arrow-NE.png */; };
-		0259AE7F1135AD53002AEFA1 /* Arrow-NW.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE771135AD53002AEFA1 /* Arrow-NW.png */; };
-		0259AE801135AD53002AEFA1 /* Arrow-S.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE781135AD53002AEFA1 /* Arrow-S.png */; };
-		0259AE811135AD53002AEFA1 /* Arrow-SE.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE791135AD53002AEFA1 /* Arrow-SE.png */; };
-		0259AE821135AD53002AEFA1 /* Arrow-SW.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE7A1135AD53002AEFA1 /* Arrow-SW.png */; };
-		0259AE831135AD53002AEFA1 /* Arrow-W.png in Resources */ = {isa = PBXBuildFile; fileRef = 0259AE7B1135AD53002AEFA1 /* Arrow-W.png */; };
 		0270B966112E20A8000CC97D /* DirectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0270B965112E20A8000CC97D /* DirectionWindowController.m */; };
 		0270BA62112E417E000CC97D /* YesNoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0270BA61112E417E000CC97D /* YesNoWindowController.m */; };
 		0270BB96112E6C3E000CC97D /* InputWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0270BB95112E6C3E000CC97D /* InputWindowController.m */; };
@@ -36,8 +28,6 @@
 		029A9961112BEDEC00225CC3 /* FlippedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 029A9960112BEDEC00225CC3 /* FlippedView.m */; };
 		02B9E9731160191C00F3D5DA /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 02B9E9721160191C00F3D5DA /* Credits.rtf */; };
 		02D00718113654A200F57754 /* NotesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02D00717113654A200F57754 /* NotesWindowController.m */; };
-		02E856CB112A54AB00E4ADE3 /* petmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 02E856CA112A54AB00E4ADE3 /* petmark.png */; };
-		02E859A4112B142300E4ADE3 /* nethack.icns in Resources */ = {isa = PBXBuildFile; fileRef = 02E859A3112B142300E4ADE3 /* nethack.icns */; };
 		02F303B0112C7A4800CB64E4 /* MessageWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02F303AF112C7A4800CB64E4 /* MessageWindowController.m */; };
 		02FF3F2B1131C3C90096FBC6 /* tiles10x20.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 02FF3F291131C3C90096FBC6 /* tiles10x20.bmp */; };
 		02FF3F2C1131C3C90096FBC6 /* tiles20x40.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 02FF3F2A1131C3C90096FBC6 /* tiles20x40.bmp */; };
@@ -337,6 +327,7 @@
 		43F7B0C31129554300CF5B3C /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F7AE041129554200CF5B3C /* MainWindowController.m */; };
 		43F7B0D91129554300CF5B3C /* chozo32b.png in Resources */ = {isa = PBXBuildFile; fileRef = 43F7AE301129554200CF5B3C /* chozo32b.png */; };
 		43F7B0DA1129554300CF5B3C /* wincocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F7AE321129554200CF5B3C /* wincocoa.m */; };
+		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -349,14 +340,6 @@
 		020ECFF2114CD9AA00CC6076 /* EquipmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EquipmentView.m; sourceTree = "<group>"; };
 		025194F411588C170085F9B3 /* NSImage+FlippedDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+FlippedDrawing.h"; sourceTree = "<group>"; };
 		025194F511588C170085F9B3 /* NSImage+FlippedDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+FlippedDrawing.m"; sourceTree = "<group>"; };
-		0259AE741135AD53002AEFA1 /* Arrow-E.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-E.png"; path = "images/Arrow-E.png"; sourceTree = "<group>"; };
-		0259AE751135AD53002AEFA1 /* Arrow-N.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-N.png"; path = "images/Arrow-N.png"; sourceTree = "<group>"; };
-		0259AE761135AD53002AEFA1 /* Arrow-NE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-NE.png"; path = "images/Arrow-NE.png"; sourceTree = "<group>"; };
-		0259AE771135AD53002AEFA1 /* Arrow-NW.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-NW.png"; path = "images/Arrow-NW.png"; sourceTree = "<group>"; };
-		0259AE781135AD53002AEFA1 /* Arrow-S.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-S.png"; path = "images/Arrow-S.png"; sourceTree = "<group>"; };
-		0259AE791135AD53002AEFA1 /* Arrow-SE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-SE.png"; path = "images/Arrow-SE.png"; sourceTree = "<group>"; };
-		0259AE7A1135AD53002AEFA1 /* Arrow-SW.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-SW.png"; path = "images/Arrow-SW.png"; sourceTree = "<group>"; };
-		0259AE7B1135AD53002AEFA1 /* Arrow-W.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-W.png"; path = "images/Arrow-W.png"; sourceTree = "<group>"; };
 		0270B964112E20A8000CC97D /* DirectionWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionWindowController.h; sourceTree = "<group>"; };
 		0270B965112E20A8000CC97D /* DirectionWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectionWindowController.m; sourceTree = "<group>"; };
 		0270BA60112E417E000CC97D /* YesNoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YesNoWindowController.h; sourceTree = "<group>"; };
@@ -385,8 +368,6 @@
 		02B9E9721160191C00F3D5DA /* Credits.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		02D00716113654A200F57754 /* NotesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotesWindowController.h; sourceTree = "<group>"; };
 		02D00717113654A200F57754 /* NotesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotesWindowController.m; sourceTree = "<group>"; };
-		02E856CA112A54AB00E4ADE3 /* petmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = petmark.png; path = images/petmark.png; sourceTree = "<group>"; };
-		02E859A3112B142300E4ADE3 /* nethack.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = nethack.icns; path = images/nethack.icns; sourceTree = "<group>"; };
 		02F303AE112C7A4800CB64E4 /* MessageWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageWindowController.h; sourceTree = "<group>"; };
 		02F303AF112C7A4800CB64E4 /* MessageWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageWindowController.m; sourceTree = "<group>"; };
 		02FF3F291131C3C90096FBC6 /* tiles10x20.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = tiles10x20.bmp; sourceTree = "<group>"; };
@@ -813,7 +794,7 @@
 		43F7AE301129554200CF5B3C /* chozo32b.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chozo32b.png; sourceTree = "<group>"; };
 		43F7AE311129554200CF5B3C /* wincocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wincocoa.h; sourceTree = "<group>"; };
 		43F7AE321129554200CF5B3C /* wincocoa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = wincocoa.m; sourceTree = "<group>"; };
-		552E7D9D1A79C7E300D18C9E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/AuxWindows.xib; sourceTree = "<group>"; };
+		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* NetHackCocoa-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "NetHackCocoa-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* NetHackCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetHackCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -872,16 +853,7 @@
 		029225EC1135173C00A96147 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				0259AE741135AD53002AEFA1 /* Arrow-E.png */,
-				0259AE751135AD53002AEFA1 /* Arrow-N.png */,
-				0259AE761135AD53002AEFA1 /* Arrow-NE.png */,
-				0259AE771135AD53002AEFA1 /* Arrow-NW.png */,
-				0259AE781135AD53002AEFA1 /* Arrow-S.png */,
-				0259AE791135AD53002AEFA1 /* Arrow-SE.png */,
-				0259AE7A1135AD53002AEFA1 /* Arrow-SW.png */,
-				0259AE7B1135AD53002AEFA1 /* Arrow-W.png */,
-				02E859A3112B142300E4ADE3 /* nethack.icns */,
-				02E856CA112A54AB00E4ADE3 /* petmark.png */,
+				552E7D9F1A79DCA700D18C9E /* Images.xcassets */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -954,7 +926,6 @@
 				8D1107310486CEB800E47090 /* NetHackCocoa-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
-				552E7D9C1A79C7E300D18C9E /* AuxWindows.xib */,
 				0292233311345E0D00A96147 /* MessageWindow.xib */,
 				0292248B1134F5CC00A96147 /* MenuWindow.xib */,
 				02B9E9721160191C00F3D5DA /* Credits.rtf */,
@@ -1510,6 +1481,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				43F7AEA41129554300CF5B3C /* air.lev in Resources */,
 				43F7AEA51129554300CF5B3C /* Arc-fila.lev in Resources */,
@@ -1670,8 +1642,6 @@
 				43F7AF401129554300CF5B3C /* wizhelp in Resources */,
 				43F7AF411129554300CF5B3C /* yendor.des in Resources */,
 				43F7B0D91129554300CF5B3C /* chozo32b.png in Resources */,
-				02E856CB112A54AB00E4ADE3 /* petmark.png in Resources */,
-				02E859A4112B142300E4ADE3 /* nethack.icns in Resources */,
 				029A96BF112B164900225CC3 /* tiles16.bmp in Resources */,
 				029A96C1112B178300225CC3 /* kins32.bmp in Resources */,
 				02879365112EFECE000A5F55 /* absurd32.png in Resources */,
@@ -1683,14 +1653,6 @@
 				02FF404A11323AF90096FBC6 /* nh32.png in Resources */,
 				0292233411345E0D00A96147 /* MessageWindow.xib in Resources */,
 				0292248C1134F5CC00A96147 /* MenuWindow.xib in Resources */,
-				0259AE7C1135AD53002AEFA1 /* Arrow-E.png in Resources */,
-				0259AE7D1135AD53002AEFA1 /* Arrow-N.png in Resources */,
-				0259AE7E1135AD53002AEFA1 /* Arrow-NE.png in Resources */,
-				0259AE7F1135AD53002AEFA1 /* Arrow-NW.png in Resources */,
-				0259AE801135AD53002AEFA1 /* Arrow-S.png in Resources */,
-				0259AE811135AD53002AEFA1 /* Arrow-SE.png in Resources */,
-				0259AE821135AD53002AEFA1 /* Arrow-SW.png in Resources */,
-				0259AE831135AD53002AEFA1 /* Arrow-W.png in Resources */,
 				02B9E9731160191C00F3D5DA /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1873,14 +1835,6 @@
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
-		552E7D9C1A79C7E300D18C9E /* AuxWindows.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				552E7D9D1A79C7E300D18C9E /* English */,
-			);
-			name = AuxWindows.xib;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1888,6 +1842,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1905,6 +1860,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

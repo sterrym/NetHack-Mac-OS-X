@@ -33,15 +33,15 @@
 @synthesize inventoryLetter;
 @synthesize glyph;
 
-+ (id)objectWithTitle:(NSString *)t inventoryLetter:(char)invLet {
++ (instancetype)objectWithTitle:(NSString *)t inventoryLetter:(char)invLet {
 	return [[[self alloc] initWithTitle:t inventoryLetter:invLet] autorelease];
 }
 
-+ (id)objectWithObject:(struct obj *)obj {
++ (instancetype)objectWithObject:(struct obj *)obj {
 	return [[(NhObject*)[self alloc] initWithObject:obj] autorelease];
 }
 
-- (id)initWithTitle:(NSString *)t inventoryLetter:(char)invLet {
+- (instancetype)initWithTitle:(NSString *)t inventoryLetter:(char)invLet {
 	if (self = [super init]) {
 		self.title = t;
 		inventoryLetter = invLet;
@@ -49,7 +49,7 @@
 	return self;
 }
 
-- (id)initWithObject:(struct obj *)obj {
+- (instancetype)initWithObject:(struct obj *)obj {
 	NSString *tmp = [NSString stringWithFormat:@"%s", doname(obj)];
 	NSArray *lines = [tmp splitNetHackDetails];
 	if (self = [self initWithTitle:[lines objectAtIndex:0] inventoryLetter:obj->invlet]) {

@@ -29,10 +29,8 @@
 @class FlippedTextField;
 
 @interface MessageWindowController : NSWindowController <NSWindowDelegate> {
-	
 	NSString				*	text;
 	IBOutlet NSTextField	*	textField;
-	
 }
 
 +(void)messageWindowWithText:(NSString *)text;

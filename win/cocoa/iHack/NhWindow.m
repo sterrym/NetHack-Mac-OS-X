@@ -64,7 +64,7 @@ static NhWindow *s_mapWindow = nil;
 	return type == NHW_MESSAGE;
 }
 
-- (id)initWithType:(int)t {
+- (instancetype)initWithType:(int)t {
 	if (self = [super init]) {
 		type = t;
 		lock = [[NSLock alloc] init];
@@ -205,6 +205,7 @@ static NhWindow *s_mapWindow = nil;
 	[self unlock];
 	return count;
 }
+
 - (id)messageAtRow:(NSInteger)row
 {
 	id result = nil;

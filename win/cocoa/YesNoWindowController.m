@@ -35,14 +35,6 @@
 	defaultAnswer = def;
 	onCancelChar = cancelChar;
 	
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1060
-	NSButton *closeButton = [[self window] standardWindowButton:NSWindowCloseButton];
-	if ( cancelChar ) {
-		[closeButton setEnabled:YES];
-	} else {
-		[closeButton setEnabled:NO];
-	}
-#else
 	// add/remove close button so ESC will/won't work
 	NSUInteger style = [[self window] styleMask];
 	if ( cancelChar ) {
@@ -51,7 +43,6 @@
 		style &= ~NSClosableWindowMask;
 	}
 	[[self window] setStyleMask:style];
-#endif
 	
 	// disable default button
 	[[self window] setDefaultButtonCell:nil];

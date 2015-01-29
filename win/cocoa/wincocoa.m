@@ -144,7 +144,7 @@ coord CoordMake(xchar i, xchar j) {
 + (void)expandFilename:(const char *)filename intoPath:(char *)path {
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSString *rdir = [fm stringWithFileSystemRepresentation:[self baseFilePath] length:strlen([self baseFilePath])];
-	NSString *aFile = [fm stringWithFileSystemRepresentation:filename length:strlen(filename)];
+	NSString *aFile = @(filename);
 	NSString *toRet = [rdir stringByAppendingPathComponent:aFile];
 	strcpy(path, [toRet fileSystemRepresentation]);
 	[fm release];

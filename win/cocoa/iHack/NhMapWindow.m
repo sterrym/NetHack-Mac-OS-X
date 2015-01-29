@@ -28,7 +28,7 @@
 
 @implementation NhMapWindow
 
-- (id) initWithType:(int)t {
+- (instancetype) initWithType:(int)t {
 	if (self = [super initWithType:t]) {
 		NSLog(@"map window %x", self);
 		size_t numBytes = COLNO * ROWNO * sizeof(int);

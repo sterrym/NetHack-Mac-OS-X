@@ -28,11 +28,11 @@
 
 @synthesize text;
 
-+ (id)eventWithText:(NSString *)t {
++ (instancetype)eventWithText:(NSString *)t {
 	return [[[self alloc] initWithText:t] autorelease];
 }
 
-- (id)initWithText:(NSString *)t {
+- (instancetype)initWithText:(NSString *)t {
 	if (self = [super initWithKey:-1]) {
 		text = [t copy];
 	}

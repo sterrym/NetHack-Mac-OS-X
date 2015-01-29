@@ -30,19 +30,19 @@
 
 @synthesize key, mod, x, y;
 
-+ (id) eventWithKey:(int)k mod:(int)m x:(int)i y:(int)j {
++ (instancetype) eventWithKey:(int)k mod:(int)m x:(int)i y:(int)j {
 	return [[[self alloc] initWithKey:k mod:m x:i y:j] autorelease];
 }
 
-+ (id) eventWithX:(int)i y:(int)j {
++ (instancetype) eventWithX:(int)i y:(int)j {
 	return [[[self alloc] initWithX:i y:j] autorelease];
 }
 
-+ (id) eventWithKey:(int)k {
++ (instancetype) eventWithKey:(int)k {
 	return [[(NhEvent*)[self alloc] initWithKey:k] autorelease];
 }
 
-- (id) initWithKey:(int)k mod:(int)m x:(int)i y:(int)j {
+- (instancetype) initWithKey:(int)k mod:(int)m x:(int)i y:(int)j {
 	if (self = [super init]) {
 		key = k;
 		mod = m;
@@ -52,11 +52,11 @@
 	return self;
 }
 
-- (id) initWithX:(int)i y:(int)j {
+- (instancetype) initWithX:(int)i y:(int)j {
 	return [self initWithKey:0 mod:CLICK_1 x:i y:j];
 }
 
-- (id) initWithKey:(int)k {
+- (instancetype) initWithKey:(int)k {
 	return [self initWithKey:k mod:-1 x:-1 y:-1];
 }
 

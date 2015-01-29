@@ -31,7 +31,7 @@
 @synthesize items;
 @synthesize dummy;
 
-- (id) initWithTitle:(NSString *)t dummy:(BOOL)d {
+- (instancetype) initWithTitle:(NSString *)t dummy:(BOOL)d {
 	if (self = [super init]) {
 		self.title = t;
 		dummy = d;
@@ -40,7 +40,7 @@
 	return self;
 }
 
-- (id) initWithTitle:(NSString *)t {
+- (instancetype) initWithTitle:(NSString *)t {
 	return [self initWithTitle:t dummy:NO];
 }
 

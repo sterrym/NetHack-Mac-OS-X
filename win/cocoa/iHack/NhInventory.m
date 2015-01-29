@@ -30,7 +30,7 @@
 
 @synthesize objectClasses;
 
-- (id)init {
+- (instancetype)init {
 	if (self = [super init]) {
 		objectClasses = [[NSMutableArray alloc] init];
 		classArray = [[NSMutableArray alloc] init];
