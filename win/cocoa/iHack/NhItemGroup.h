@@ -34,14 +34,13 @@
 
 }
 
-@property (nonatomic, readonly) NSString *title;
+@property (nonatomic, copy) NSString *title;
 @property (nonatomic, readonly) NSArray *items;
-@property (nonatomic, assign) BOOL dummy;
+@property (nonatomic, getter=isDummy) BOOL dummy;
 
-- (id) initWithTitle:(NSString *)t dummy:(BOOL)d;
-- (id) initWithTitle:(NSString *)t;
+- (instancetype) initWithTitle:(NSString *)t dummy:(BOOL)d;
+- (instancetype) initWithTitle:(NSString *)t;
 - (void) addItem:(NhItem *)i;
 - (void)removeItemAtIndex:(NSUInteger)row;
-- (void)setTitle:(NSString *)t;
 
 @end

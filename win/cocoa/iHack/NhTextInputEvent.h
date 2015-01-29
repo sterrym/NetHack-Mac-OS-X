@@ -31,10 +31,10 @@
 
 }
 
-@property (nonatomic, readonly) NSString *text;
+@property (nonatomic, readonly, copy) NSString *text;
 
-+ (id)eventWithText:(NSString *)t;
++ (instancetype)eventWithText:(NSString *)t;
 
-- (id)initWithText:(NSString *)t;
+- (instancetype)initWithText:(NSString *)t;
 
 @end

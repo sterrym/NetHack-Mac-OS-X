@@ -45,8 +45,8 @@
 
 @property (nonatomic, readonly) const char *keys;
 
-+ (id)commandWithTitle:(const char *)t keys:(const char *)c;
-+ (id)commandWithTitle:(const char *)t key:(char)c;
++ (instancetype)commandWithTitle:(const char *)t keys:(const char *)c;
++ (instancetype)commandWithTitle:(const char *)t key:(char)c;
 
 // all commands possible at this stage
 + (NSArray *)currentCommands;
@@ -54,7 +54,7 @@
 // all commands possible for an adjacent position
 + (NSArray *)commandsForAdjacentTile:(coord)tp;
 
-- (id)initWithTitle:(const char *)t keys:(const char *)c;
-- (id)initWithTitle:(const char *)t key:(char)c;
+- (instancetype)initWithTitle:(const char *)t keys:(const char *)c;
+- (instancetype)initWithTitle:(const char *)t key:(char)c;
 
 @end

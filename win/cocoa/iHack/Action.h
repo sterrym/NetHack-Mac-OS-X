@@ -33,7 +33,7 @@
 
 @property (nonatomic, readonly) NSString *title;
 
-- (id)initWithTitle:(NSString *)t;
+- (instancetype)initWithTitle:(NSString *)t;
 - (void)invoke:(id)sender;
 - (void)addTarget:(id)target action:(SEL)action arg:(id)arg;
 - (void)addInvocation:(NSInvocation *)inv;

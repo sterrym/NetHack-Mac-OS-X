@@ -23,11 +23,12 @@
  */
 
 #include <math.h>
+#include <tgmath.h>
 
 #import "ZDirection.h"
 
-#define kCos45 (0.707106829f)
-#define kCos30 (0.866025404f)
+#define kCos45 (0.707106829)
+#define kCos30 (0.866025404)
 
 CGPoint s_directionVectors[kDirectionMax] = {
 	{ 0.0f, 1.0f },
@@ -40,16 +41,16 @@ CGPoint s_directionVectors[kDirectionMax] = {
 	{ -kCos45, kCos45 },
 };
 
-static float vectorLength(const CGPoint *v) {
-	return sqrtf(v->x*v->x + v->y*v->y);
+static CGFloat vectorLength(const CGPoint *v) {
+	return sqrt(v->x*v->x + v->y*v->y);
 }
 
-static float dotProduct(const CGPoint *v1, const CGPoint *v2) {
+static CGFloat dotProduct(const CGPoint *v1, const CGPoint *v2) {
 	return v1->x*v2->x + v1->y*v2->y;
 }
 
 static void normalize(CGPoint *v) {
-	float l = vectorLength(v);
+	CGFloat l = vectorLength(v);
 	v->x /= l;
 	v->y /= l;
 }
@@ -59,7 +60,7 @@ static void normalize(CGPoint *v) {
 + (e_direction) directionFromEuclideanPointDelta:(CGPoint *)delta {
 	normalize(delta);
 	for (int i = 0; i < kDirectionMax; ++i) {
-		float dotP = dotProduct(delta, &s_directionVectors[i]);
+		CGFloat dotP = dotProduct(delta, &s_directionVectors[i]);
 		if (dotP >= kCos30) {
 			return i;
 		}

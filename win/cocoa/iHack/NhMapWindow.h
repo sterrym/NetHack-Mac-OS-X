@@ -38,7 +38,7 @@
 	XCHAR_P cursorY;
 }
 
-- (id) initWithType:(int)t;
+- (instancetype) initWithType:(int)t;
 - (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y;
 - (int) glyphAtX:(XCHAR_P)x y:(XCHAR_P)y;
 - (void)setCursX:(XCHAR_P)x y:(XCHAR_P)y;

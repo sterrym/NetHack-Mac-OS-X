@@ -32,10 +32,10 @@
 
 }
 
-@property (nonatomic, readonly) NSString *question;
+@property (nonatomic, readonly, copy) NSString *question;
 @property (nonatomic, readonly) const char *choices;
 @property (nonatomic, readonly) char def;
 
-- (id) initWithQuestion:(const char *)q choices:(const char *)ch default:(int)def;
+- (instancetype) initWithQuestion:(const char *)q choices:(const char *)ch default:(int)def;
 
 @end

@@ -37,10 +37,10 @@
 }
 
 @property (nonatomic, readonly) ANY_P identifier;
-@property (nonatomic, assign) int amount;
-@property (nonatomic, assign) BOOL selected;
+@property (nonatomic) int amount;
+@property (nonatomic, getter=isSelected) BOOL selected;
 @property (nonatomic, readonly) int maxAmount;
 
-- (id)initWithTitle:(NSString *)t identifier:(ANY_P)ident accelerator:(char)ch glyph:(int)g selected:(BOOL)s;
+- (instancetype)initWithTitle:(NSString *)t identifier:(ANY_P)ident accelerator:(char)ch glyph:(int)g selected:(BOOL)s;
 
 @end

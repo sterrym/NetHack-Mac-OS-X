@@ -30,11 +30,11 @@
 @interface NhInventory : NSObject {
 	
 	NSMutableArray *objectClasses;
-	NSMutableArray *classArray[MAXOCLASSES];
+	NSMutableArray *classArray;
 	
 }
 
-@property (nonatomic, readonly) NSArray *objectClasses;
+@property (nonatomic, readonly, copy) NSArray *objectClasses;
 
 - (void)update;
 - (NhObject *)objectAtIndexPath:(NSIndexPath *)indexPath;

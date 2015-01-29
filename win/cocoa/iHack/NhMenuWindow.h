@@ -42,7 +42,7 @@
 
 @property (nonatomic, readonly) NSArray *itemGroups;
 @property (nonatomic, readonly) NhItemGroup *currentItemGroup;
-@property (nonatomic, assign) int how;
+@property (nonatomic) int how;
 @property (nonatomic, readonly) NSMutableArray *selected;
 @property (nonatomic, copy) NSString *prompt;
 

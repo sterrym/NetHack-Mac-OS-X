@@ -46,7 +46,7 @@
 #import "NhTextInputEvent.h"
 
 #ifdef __APPLE__
-#include "TargetConditionals.h"
+#include <TargetConditionals.h>
 #endif
 
 // mainly for tty port implementation
@@ -125,16 +125,16 @@ coord CoordMake(xchar i, xchar j) {
 @implementation WinCocoa
 
 + (void)load {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	strcpy(s_baseFilePath, [[[NSBundle mainBundle] resourcePath] cStringUsingEncoding:NSASCIIStringEncoding]);
+	@autoreleasepool {
+	strcpy(s_baseFilePath, [[[NSBundle mainBundle] resourcePath] fileSystemRepresentation]);
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSString *netHackOptions = [defaults stringForKey:kNetHackOptions];
 	if ( netHackOptions ) {
-		setenv("NETHACKOPTIONS", [netHackOptions cStringUsingEncoding:NSASCIIStringEncoding], 1);
+		setenv("NETHACKOPTIONS", [netHackOptions UTF8String], 1);
 	}
 	
-	[pool release];
+	}
 }
 
 + (const char *)baseFilePath {
@@ -142,7 +142,12 @@ coord CoordMake(xchar i, xchar j) {
 }
 
 + (void)expandFilename:(const char *)filename intoPath:(char *)path {
-	sprintf(path, "%s/%s", [self baseFilePath], filename);
+	NSFileManager *fm = [[NSFileManager alloc] init];
+	NSString *rdir = [fm stringWithFileSystemRepresentation:[self baseFilePath] length:strlen([self baseFilePath])];
+	NSString *aFile = [fm stringWithFileSystemRepresentation:filename length:strlen(filename)];
+	NSString *toRet = [rdir stringByAppendingPathComponent:aFile];
+	strcpy(path, [toRet fileSystemRepresentation]);
+	[fm release];
 }
 
 + (int)keyWithKeyEvent:(NSEvent *)keyEvent
@@ -280,7 +285,7 @@ void cocoa_init_nhwindows(int* argc, char** argv) {
 	flags.time = TRUE;
 	flags.showexp = TRUE;
 	
-	[[MainWindowController instance] initWindows];
+	[[MainWindowController instance] prepareWindows];
 }
 
 void cocoa_askname() {
@@ -375,9 +380,11 @@ void cocoa_putstr(winid wid, int attr, const char *text) {
 
 void cocoa_display_file(const char *filename, BOOLEAN_P must_exist) {
 	char tmp[ PATH_MAX ];
+	NSFileManager *fm = [NSFileManager defaultManager];
 	[WinCocoa expandFilename:filename intoPath:tmp];
-
-	NSString * text = [NSString stringWithContentsOfFile:[NSString stringWithUTF8String:tmp] encoding:NSUTF8StringEncoding error:NULL];
+	NSString *filePath = [fm stringWithFileSystemRepresentation:tmp length:strlen(tmp)];
+	
+	NSString * text = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:NULL];
 	if ( text ) {
 		[[MainWindowController instance] displayMessageWindow:text];
 	} else {

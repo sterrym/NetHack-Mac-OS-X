@@ -36,17 +36,15 @@
 }
 
 @property (nonatomic, readonly) struct obj *object;
-@property (nonatomic, readonly) NSString *title;
+@property (copy) NSString *title;
 @property (nonatomic, readonly) NSString *detail;
-@property (nonatomic, readonly) char inventoryLetter;
+@property char inventoryLetter;
 @property (nonatomic, readonly) int glyph;
 
-+ (id)objectWithTitle:(NSString *)t inventoryLetter:(char)invLet;
-+ (id)objectWithObject:(struct obj *)obj;
++ (instancetype)objectWithTitle:(NSString *)t inventoryLetter:(char)invLet;
++ (instancetype)objectWithObject:(struct obj *)obj;
 
-- (id)initWithTitle:(NSString *)t inventoryLetter:(char)invLet;
-- (id)initWithObject:(struct obj *)obj;
-- (void)setTitle:(NSString *)title;
-- (void)setInventoryLetter:(char)ch;
+- (instancetype)initWithTitle:(NSString *)t inventoryLetter:(char)invLet;
+- (instancetype)initWithObject:(struct obj *)obj;
 
 @end

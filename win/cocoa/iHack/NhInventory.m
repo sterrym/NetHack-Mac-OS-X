@@ -33,12 +33,16 @@
 - (id)init {
 	if (self = [super init]) {
 		objectClasses = [[NSMutableArray alloc] init];
+		classArray = [[NSMutableArray alloc] init];
+		for (int i = 0; i < MAXOCLASSES; i++) {
+			[classArray addObject:[NSNull null]];
+		}
 	}
 	return self;
 }
 
 - (NSMutableArray *)arrayForClass:(char)class {
-	if (!classArray[class]) {
+	if ([classArray[class] isEqual:[NSNull null]]) {
 		classArray[class] = [NSMutableArray array];
 	}
 	return classArray[class];
@@ -46,7 +50,12 @@
 
 - (void)update {
 	[objectClasses removeAllObjects];
-	memset(classArray, (int) nil, sizeof(classArray));
+	for (NSMutableArray *arr in classArray) {
+		if ([arr isKindOfClass:[NSNull class]]) {
+			continue;
+		}
+		[arr removeAllObjects];
+	}
 	for (struct obj *otmp = invent; otmp; otmp = otmp->nobj) {
 		NSMutableArray *array = [self arrayForClass:otmp->oclass];
 		[array addObject:[NhObject objectWithObject:otmp]];

@@ -48,7 +48,17 @@
 #include "hack.h" // BUFSZ etc.
 
 static MainWindowController* instance;
-static const float popoverItemHeight = 44.0f;
+static const CGFloat popoverItemHeight = 44.0f;
+
+static inline void RunOnMainThreadSync(dispatch_block_t block)
+{
+	if ([NSThread isMainThread]) {
+		block();
+	} else {
+		dispatch_sync(dispatch_get_main_queue(), block);
+	}
+}
+
 
 @implementation MainWindowController
 
@@ -124,23 +134,30 @@ static const float popoverItemHeight = 44.0f;
 	[[self window] setAcceptsMouseMovedEvents:YES];
 }
 
-// called when user options have been read and engine wants windows to be created
--(void)initWindows
++ (void)initialize
 {
-	if ( ![NSThread isMainThread] ) {
-		[self performSelectorOnMainThread:@selector(initWindows) withObject:nil waitUntilDone:YES];
-	} else {
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		NSDictionary *dict = @{@"TileSetName": @"kins32.bmp",
+							   @"UseAscii": @NO,
+							   @"AsciiFontName": @"Helvetica",
+							   @"AsciiFontSize" : @14.0f};
+		
+		[[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+	});
+}
+
+// called when user options have been read and engine wants windows to be created
+-(void)prepareWindows
+{
+	RunOnMainThreadSync( ^{
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		// read tile set preferences
-		NSString *	tileSetName = [[NSUserDefaults standardUserDefaults] objectForKey:@"TileSetName"];
-		NSString *	asciiFontName = [[NSUserDefaults standardUserDefaults] objectForKey:@"AsciiFontName"];
-		CGFloat		asciiFontSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"AsciiFontSize"];
+		NSString *	tileSetName = [defaults objectForKey:@"TileSetName"];
+		NSString *	asciiFontName = [defaults objectForKey:@"AsciiFontName"];
+		CGFloat		asciiFontSize = [defaults floatForKey:@"AsciiFontSize"];
 		
-		iflags.wc_ascii_map = [[NSUserDefaults standardUserDefaults] boolForKey:@"UseAscii"];
-		
-		// set defaults if no user preference
-		if ( tileSetName == nil ) {
-			tileSetName = @"kins32.bmp";
-		}
+		iflags.wc_ascii_map = [defaults boolForKey:@"UseAscii"];
 		
 		NSSize size = [self tileSetSizeFromName:tileSetName];
 		[mainView setTileSet:tileSetName size:size];
@@ -159,7 +176,7 @@ static const float popoverItemHeight = 44.0f;
 		
 		// set table row spacing to zero in messages window
 		[messagesView setIntercellSpacing:NSMakeSize(0,0)];
-	}
+	});
 }
 
 -(void)windowWillClose:(NSNotification *)notification
@@ -462,7 +479,7 @@ static const float popoverItemHeight = 44.0f;
 	const char *pStr = [lets cStringUsingEncoding:NSASCIIStringEncoding];
 	enum eState { start, inv, invInterval, end } state = start;
 	char c, lastInv = 0;
-	while (c = *pStr++) {
+	while ((c = *pStr++)) {
 		switch (state) {
 			case start:
 				if (isalpha(c)) {
@@ -671,7 +688,7 @@ static const float popoverItemHeight = 44.0f;
 		static char directionKeys[] = "kulnjbhy";
 		char *pStr = directionKeys;
 		char c;
-		while (c = *pStr++) {
+		while ((c = *pStr++)) {
 			if (c == k) {
 				return YES;
 			}

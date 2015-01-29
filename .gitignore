@@ -19,3 +19,6 @@ util/lev_lex.c
 util/lev_yacc.c
 util/makedefs
 util/tilemap
+.DS_Store
+project.xcworkspace/
+xcuserdata/

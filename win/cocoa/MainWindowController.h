@@ -23,7 +23,6 @@
  */
 
 #import "ZDirection.h"
-#import "Protocols.h"
 
 @class NhYnQuestion;
 @class MainView;
@@ -70,7 +69,7 @@
 - (IBAction)enableAsciiMode:(id)sender;
 - (IBAction)addTileSet:(id)sender;
 
-- (void)initWindows;
+- (void)prepareWindows;
 - (void)preferenceUpdate:(NSString *)pref;
 - (void)setTerminatedByUser:(BOOL)byUser;
 - (void)nethackExited;

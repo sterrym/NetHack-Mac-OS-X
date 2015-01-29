@@ -38,12 +38,12 @@
 }
 
 + (id)objectWithObject:(struct obj *)obj {
-	return [[[self alloc] initWithObject:obj] autorelease];
+	return [[(NhObject*)[self alloc] initWithObject:obj] autorelease];
 }
 
 - (id)initWithTitle:(NSString *)t inventoryLetter:(char)invLet {
 	if (self = [super init]) {
-		title = [t copy];
+		self.title = t;
 		inventoryLetter = invLet;
 	}
 	return self;
@@ -61,17 +61,6 @@
 		glyph = obj_to_glyph(obj);
 	}
 	return self;
-}
-
-- (void)setTitle:(NSString *)t
-{
-	[title release];
-	title = [t copy];
-}
-
-- (void)setInventoryLetter:(char)ch
-{
-	inventoryLetter = ch;
 }
 
 - (void)dealloc {

@@ -45,7 +45,7 @@ extern int unixmain(int argc, char **argv);
 
 
 - (void) netHackMainLoop:(id)arg {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 	char *argv[] = {
 		"NetHack",
 	};
@@ -58,7 +58,7 @@ extern int unixmain(int argc, char **argv);
 		[[NSFileManager defaultManager] createDirectoryAtPath:baseDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
 	}
 	NSLog(@"baseDir %@", baseDirectory);
-	setenv("NETHACKDIR", [baseDirectory UTF8String], 1);
+	setenv("NETHACKDIR", [baseDirectory fileSystemRepresentation], 1);
 	NSString *saveDirectory = [baseDirectory stringByAppendingPathComponent:@"save"];
 	if (![[NSFileManager defaultManager] fileExistsAtPath:saveDirectory]) {
 		[[NSFileManager defaultManager] createDirectoryAtPath:saveDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
@@ -71,7 +71,7 @@ extern int unixmain(int argc, char **argv);
 	unixmain(sizeof argv/sizeof argv[0], argv);
 	
 	// clean up thread pool
-	[pool release];
+	}
 }
 
 @end

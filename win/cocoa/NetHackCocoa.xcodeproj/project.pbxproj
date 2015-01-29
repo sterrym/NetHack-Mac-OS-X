@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -347,7 +347,6 @@
 		020CD2D61137089D00297C4C /* StatsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatsView.m; sourceTree = "<group>"; };
 		020ECFF1114CD9AA00CC6076 /* EquipmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EquipmentView.h; sourceTree = "<group>"; };
 		020ECFF2114CD9AA00CC6076 /* EquipmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EquipmentView.m; sourceTree = "<group>"; };
-		0251947611587A410085F9B3 /* Protocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Protocols.h; sourceTree = "<group>"; };
 		025194F411588C170085F9B3 /* NSImage+FlippedDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+FlippedDrawing.h"; sourceTree = "<group>"; };
 		025194F511588C170085F9B3 /* NSImage+FlippedDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+FlippedDrawing.m"; sourceTree = "<group>"; };
 		0259AE741135AD53002AEFA1 /* Arrow-E.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Arrow-E.png"; path = "images/Arrow-E.png"; sourceTree = "<group>"; };
@@ -814,6 +813,7 @@
 		43F7AE301129554200CF5B3C /* chozo32b.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chozo32b.png; sourceTree = "<group>"; };
 		43F7AE311129554200CF5B3C /* wincocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wincocoa.h; sourceTree = "<group>"; };
 		43F7AE321129554200CF5B3C /* wincocoa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = wincocoa.m; sourceTree = "<group>"; };
+		552E7D9D1A79C7E300D18C9E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/AuxWindows.xib; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* NetHackCocoa-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "NetHackCocoa-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* NetHackCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetHackCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -865,7 +865,6 @@
 				0298DE23113136E800BC0614 /* TooltipWindow.m */,
 				0270BA60112E417E000CC97D /* YesNoWindowController.h */,
 				0270BA61112E417E000CC97D /* YesNoWindowController.m */,
-				0251947611587A410085F9B3 /* Protocols.h */,
 			);
 			name = Windows;
 			sourceTree = "<group>";
@@ -955,6 +954,7 @@
 				8D1107310486CEB800E47090 /* NetHackCocoa-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
+				552E7D9C1A79C7E300D18C9E /* AuxWindows.xib */,
 				0292233311345E0D00A96147 /* MessageWindow.xib */,
 				0292248B1134F5CC00A96147 /* MenuWindow.xib */,
 				02B9E9721160191C00F3D5DA /* Credits.rtf */,
@@ -1484,9 +1484,17 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "NetHackCocoa" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+				English,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* NetHackCocoa */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1865,6 +1873,14 @@
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
+		552E7D9C1A79C7E300D18C9E /* AuxWindows.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				552E7D9D1A79C7E300D18C9E /* English */,
+			);
+			name = AuxWindows.xib;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1872,10 +1888,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
@@ -1889,8 +1905,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
@@ -1908,9 +1924,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1922,8 +1938,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

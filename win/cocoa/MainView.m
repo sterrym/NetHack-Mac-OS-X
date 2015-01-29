@@ -38,6 +38,8 @@
 
 
 @implementation MainView
+@synthesize asciiFont;
+@synthesize tileSet = _tileSetName;
 
 NSStringEncoding	codepage437encoding;
 
@@ -90,26 +92,6 @@ NSStringEncoding	codepage437encoding;
 	[self setNeedsDisplay:YES];
 }
 
--(BOOL)setAsciiFont:(NSFont *)font
-{
-	if ( font != asciiFont ) {
-		[asciiFont release];
-		asciiFont = [font retain];
-	}
-	return YES;
-}
-
-- (NSFont *)asciiFont
-{
-	return asciiFont;
-}
-
-- (NSString *)tileSet
-{
-	return _tileSetName;
-}
-
-
 -(BOOL)setTileSet:(NSString *)tileSetName size:(NSSize)size
 {
 	NSImage *tilesetImage = [NSImage imageNamed:tileSetName];
@@ -131,6 +113,7 @@ NSStringEncoding	codepage437encoding;
 	
 	TileSet *tileSet = [[[TileSet alloc] initWithImage:tilesetImage tileSize:size] autorelease];
 	[TileSet setInstance:tileSet];
+	tileSize = size;
 	
 	[_tileSetName release];
 	_tileSetName = [tileSetName copy];
@@ -156,7 +139,7 @@ NSStringEncoding	codepage437encoding;
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(boundsDidChangeNotification:) 
 													 name:NSViewFrameDidChangeNotification object:self];
 		
-		asciiColors = [[NSArray arrayWithObjects:
+		asciiColors = [@[
 			/* CLR_BLACK			*/	[NSColor colorWithDeviceRed:0.333 green:0.333 blue:0.333 alpha:1.0],
 			/* CLR_RED				*/	[NSColor redColor],
 			/* CLR_GREEN			*/	[NSColor colorWithDeviceRed:0.0 green:0.5 blue:0.0 alpha:1.0],
@@ -172,8 +155,7 @@ NSStringEncoding	codepage437encoding;
 			/* CLR_BRIGHT_BLUE		*/	[NSColor colorWithDeviceRed:0.0 green:0.75 blue:1.0 alpha:1.0],
 			/* CLR_BRIGHT_MAGENTA	*/	[NSColor colorWithDeviceRed:1.0 green:0.50 blue:1.0 alpha:1.0],
 			/* CLR_BRIGHT_CYAN		*/	[NSColor colorWithDeviceRed:0.5 green:1.00 blue:1.0 alpha:1.0],
-			/* CLR_WHITE			*/	[NSColor whiteColor],
-						nil] retain];
+			/* CLR_WHITE			*/	[NSColor whiteColor]] retain];
 		asciiFont = [[NSFont boldSystemFontOfSize:24.0] retain];
 	}
 		
@@ -411,8 +393,8 @@ NSString * DescriptionForTile( int x, int y )
 		pt.y += size.height - hot.y;
 		pt.y += 20; // height of tooltip
 		
-		pt = [self convertPointToBase:pt];
-		pt = [[self window] convertBaseToScreen:pt];
+		pt = [self convertPointToBacking:pt];
+		pt = [[self window] convertRectToScreen:NSMakeRect(pt.x, pt.y, 0, 0)].origin;
 		tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
 	}
 #endif

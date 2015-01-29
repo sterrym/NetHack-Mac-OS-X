@@ -43,7 +43,7 @@
 	}
 }
 
-enum InvFlags {
+typedef NS_ENUM(unsigned int, InvFlags) {
 	fWieldedWeapon = 1,
 	fWand = 2,
 	fReadable = 4,
@@ -245,7 +245,7 @@ enum InvFlags {
 
 - (id)initWithTitle:(const char *)t keys:(const char *)c {
 	if (self = [super init]) {
-		title = [[NSString alloc] initWithCString:t encoding:NSASCIIStringEncoding];
+		title = [@(t) copy];
 		keys = malloc(strlen(c)+1);
 		strcpy(keys, c);
 	}
@@ -287,7 +287,7 @@ enum InvFlags {
 }
 
 - (NSUInteger)hash {
-	return [[NSString stringWithCString:self.keys encoding:NSASCIIStringEncoding] hash];
+	return [@(self.keys) hash];
 }
 
 @end

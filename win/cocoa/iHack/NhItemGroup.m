@@ -33,7 +33,7 @@
 
 - (id) initWithTitle:(NSString *)t dummy:(BOOL)d {
 	if (self = [super init]) {
-		title = [t copy];
+		self.title = t;
 		dummy = d;
 		items = [[NSMutableArray alloc] init];
 	}
@@ -50,12 +50,6 @@
 
 - (void)removeItemAtIndex:(NSUInteger)row {
 	[items removeObjectAtIndex:row];
-}
-
-- (void)setTitle:(NSString *)t
-{
-	[title release];
-	title = [t copy];
 }
 
 - (void) dealloc {

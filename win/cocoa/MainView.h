@@ -43,9 +43,8 @@
 
 - (void)cliparoundX:(int)x y:(int)y;
 - (BOOL)setTileSet:(NSString *)tileSetName size:(NSSize)size;
-- (NSString *)tileSet;
-- (NSFont *)asciiFont;
-- (BOOL)setAsciiFont:(NSFont *)font;
+@property (readonly, copy) NSString *tileSet;
+@property (retain) NSFont *asciiFont;
 - (void)enableAsciiMode:(BOOL)enable;
 
 @end

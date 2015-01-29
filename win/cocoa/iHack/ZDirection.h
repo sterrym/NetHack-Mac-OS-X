@@ -24,11 +24,11 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum e_direction {
+typedef NS_ENUM(int, e_direction) {
 	kDirectionUp, kDirectionUpRight, kDirectionRight, kDirectionDownRight,
 	kDirectionDown, kDirectionDownLeft, kDirectionLeft, kDirectionUpLeft,
 	kDirectionMax
-} e_direction;
+};
 
 @interface ZDirection : NSObject {
 

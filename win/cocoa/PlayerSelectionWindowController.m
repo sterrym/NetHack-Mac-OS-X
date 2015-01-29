@@ -112,8 +112,8 @@
 		[race setDelegate:self];
 		[role setDelegate:self];
 		
-		[race setNeedsDisplay];
-		[role setNeedsDisplay];
+		[race reloadData];
+		[role reloadData];
 	}
 	
 	[self setupOthers];
@@ -147,8 +147,8 @@
 		[race setDelegate:self];
 		[role setDelegate:self];
 		
-		[race setNeedsDisplay];
-		[role setNeedsDisplay];	
+		[race reloadData];
+		[role reloadData];
 	}
 	[self setupOthers];
 }

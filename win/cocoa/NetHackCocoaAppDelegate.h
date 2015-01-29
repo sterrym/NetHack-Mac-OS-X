@@ -23,7 +23,6 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import "Protocols.h"
 
 @class MainWindowController;
 
