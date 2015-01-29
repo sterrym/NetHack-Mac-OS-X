@@ -27,8 +27,8 @@
 
 @interface PlayerSelectionWindowController : NSWindowController <NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate> {
 
-	int							cntRoles;
-	int							cntRaces;
+	NSInteger					cntRoles;
+	NSInteger					cntRaces;
 		
 	BOOL					*	raceEnabled;
 	BOOL					*	roleEnabled;

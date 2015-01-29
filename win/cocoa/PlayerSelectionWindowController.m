@@ -31,8 +31,6 @@
 @implementation PlayerSelectionWindowController
 
 
-
-
 -(void)selectGender:(int)g
 {
 	flags.initgend = g;
@@ -46,10 +44,10 @@
 
 -(void)setupOthers
 {
-    int ro = [role selectedRow];
-    int ra = [race selectedRow];
-    int valid = -1;
-    int c = 0;
+    NSInteger ro = [role selectedRow];
+    NSInteger ra = [race selectedRow];
+    NSInteger valid = -1;
+    NSInteger c = 0;
     for ( int j = 0; j<ROLE_GENDERS; j++) {
 		bool v = validgend(ro,ra,j);
 		if ( [gender[j] state] )
@@ -85,15 +83,15 @@
 
 -(void)selectRace
 {
-    int ra = [race selectedRow];
-    int ro = [role selectedRow];
+    NSInteger ra = [race selectedRow];
+    NSInteger ro = [role selectedRow];
 	
     if (ra >= 0 && ro >= 0)  {
 		
 		[race setDelegate:nil];
 		[role setDelegate:nil];
 		
-		int valid = -1;
+		NSInteger valid = -1;
 		for ( int j = 0; j < cntRoles; j++) {
 			bool v = validrace(j,ra);
 			roleEnabled[j] = v;
@@ -121,15 +119,15 @@
 
 -(void)selectRole
 {
-    int ra = [race selectedRow];
-    int ro = [role selectedRow];
+    NSInteger ra = [race selectedRow];
+    NSInteger ro = [role selectedRow];
 	
     if (ra >= 0 && ro >= 0)  {
 		
 		[race setDelegate:nil];
 		[role setDelegate:nil];
 		
-		int valid = -1;
+		NSInteger valid = -1;
 		for ( int j = 0; j < cntRaces; j++) {
 			bool v = validrace(ro,j);
 			raceEnabled[j] = v;
@@ -166,7 +164,7 @@
 	alignment[2] = alignChaotic;
 	
 	if ( strncmp(plname,"player",6) && strncmp(plname,"games",5) ) {
-		[name setStringValue:[NSString stringWithUTF8String:plname]];;
+		[name setStringValue:@(plname)];
 	}
 		
 	// count roles and races
@@ -351,7 +349,7 @@
 		[self selectAlignment:2];
 	}
 	// gender might have changed:
-	[role setNeedsDisplay];
+	[role reloadData];
 }
 
 -(void)doAccept:(id)sender
@@ -370,6 +368,9 @@
 - (void)runModal
 {
 	[self selectInitialPlayer];
+	[race reloadData];
+	[role reloadData];
+
 	[[NSApplication sharedApplication] runModalForWindow:[self window]];
 }
 
