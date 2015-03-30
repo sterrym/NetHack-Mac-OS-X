@@ -62,8 +62,19 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 
 @implementation MainWindowController
 
+@synthesize useSpeech;
+
+
 + (MainWindowController *)instance {
 	return instance;
+}
+
+- (void)setFont:(NSFont *)font
+{
+	for ( NSTableColumn * column in [self->messagesView tableColumns] ) {
+		NSCell * cell = [column dataCell];
+		[cell setFont:font];
+	}
 }
 
 // Convert keyEquivs in menu items to use their shifted equivalent
@@ -128,6 +139,13 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 - (void)awakeFromNib {
 	instance = self;
 	
+#if 0
+	{
+		NSFont * font = [NSFont fontWithName:@"Lucida Bright" size:13];
+		[self setFont:font];
+	}
+#endif
+	
 	NSMenu * menu = [[NSApplication sharedApplication] mainMenu];
 	[self fixMenuKeyEquivalents:menu];
 	
@@ -157,7 +175,14 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 		NSString *	asciiFontName = [defaults objectForKey:@"AsciiFontName"];
 		CGFloat		asciiFontSize = [defaults floatForKey:@"AsciiFontSize"];
 		
+		self.useSpeech = [[NSUserDefaults standardUserDefaults] boolForKey:@"UseSpeech"];
+		
 		iflags.wc_ascii_map = [defaults boolForKey:@"UseAscii"];
+		
+		// set defaults if no user preference
+		if ( tileSetName == nil ) {
+			tileSetName = @"kins32.bmp";
+		}
 		
 		NSSize size = [self tileSetSizeFromName:tileSetName];
 		[mainView setTileSet:tileSetName size:size];
@@ -176,8 +201,16 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 		
 		// set table row spacing to zero in messages window
 		[messagesView setIntercellSpacing:NSMakeSize(0,0)];
+		
+		// initialize speech engine
+		voice = [[NSSpeechSynthesizer alloc] initWithVoice:@"com.apple.speech.synthesis.voice.Alex"];
+		float r = [voice rate];
+		[voice setRate:1.5*r];
+		[voice setDelegate:self];
+		voiceQueue = [[NSMutableArray array] retain];
 	});
 }
+
 
 -(void)windowWillClose:(NSNotification *)notification
 {
@@ -189,8 +222,14 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 	[[NSUserDefaults standardUserDefaults] setFloat:[font pointSize] forKey:@"AsciiFontSize"];
 	BOOL	useAscii = iflags.wc_ascii_map;
 	[[NSUserDefaults standardUserDefaults] setBool:useAscii forKey:@"UseAscii"];
+	[[NSUserDefaults standardUserDefaults] setBool:self.useSpeech forKey:@"UseSpeech"];
+	
 	// save user defined tile sets
-	[[NSUserDefaults standardUserDefaults] setObject:userTiles forKey:@"UserTileSets"];		
+	[[NSUserDefaults standardUserDefaults] setObject:userTiles forKey:@"UserTileSets"];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	// if window closes then application needs to terminate
+	[self terminateApplication:nil];
 }
 
 - (void)setTerminatedByUser:(BOOL)byUser
@@ -214,14 +253,6 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 
 
 #pragma mark menu actions
-
--(BOOL)windowShouldClose:(id)sender
-{
-	return NO;
-}
--(void)performClose:(id)sender
-{
-}
 
 - (void)performMenuAction:(id)sender
 {
@@ -389,7 +420,6 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 }
 
 
-
 - (IBAction)terminateApplication:(id)sender
 {
 	NetHackCocoaAppDelegate * delegate = (NetHackCocoaAppDelegate *) [[NSApplication sharedApplication] delegate];
@@ -451,7 +481,10 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 - (void)showPlayerSelection
 {
 	if (![NSThread isMainThread]) {
+		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		[appDelegate unlockNethackCore];
 		[self performSelectorOnMainThread:@selector(showPlayerSelection) withObject:nil waitUntilDone:YES];
+		[appDelegate lockNethackCore];
 	} else {
 		[showPlayerSelection runModal];
 	}	
@@ -614,7 +647,10 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 	if (![NSThread isMainThread]) {
 
 		BOOL blocking = w.blocking;
+		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		[appDelegate unlockNethackCore];
 		[self performSelectorOnMainThread:@selector(displayWindow:) withObject:w waitUntilDone:blocking];
+		[appDelegate lockNethackCore];
 
 	} else {
 		
@@ -651,8 +687,12 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 
 - (void)clipAroundX:(int)x y:(int)y {
 	if (![NSThread isMainThread]) {
+
+		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		[appDelegate unlockNethackCore];
 		[self performSelectorOnMainThread:@selector(clipAround:)
-							   withObject:[NSValue valueWithRange:NSMakeRange(x, y)] waitUntilDone:NO];
+							   withObject:[NSValue valueWithRange:NSMakeRange(x, y)] waitUntilDone:YES];
+		[appDelegate lockNethackCore];
 	} else {
 		[mainView cliparoundX:x y:y];
 	}
@@ -736,21 +776,41 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 	}
 }
 
-// probably not used in cocoa
-- (void)handleDirectionTap:(e_direction)direction {
-	int key = [self keyFromDirection:direction];
-	[[NhEventQueue instance] addKey:key];
-}
+#pragma mark misc
 
-- (void)handleDirectionDoubleTap:(e_direction)direction {
-	if (!cocoa_getpos) {
-		int key = [self keyFromDirection:direction];
-		[[NhEventQueue instance] addKey:'g'];
-		[[NhEventQueue instance] addKey:key];
+- (void)speakString:(NSString *)text
+{
+	if ( !self.useSpeech )
+		return;
+	
+	// add text to queue
+	if (![NSThread isMainThread]) {
+		[self performSelectorOnMainThread:@selector(speakString:) withObject:text waitUntilDone:NO];
+	} else {
+		if ( [voice isSpeaking] ) {
+			// don't be too redundant for messages repeated many times
+			int cnt = 0;
+			for ( NSString * s in voiceQueue ) {
+				if ( [text isEqualToString:s] )
+					if ( ++cnt >= 3 )
+						return;
+			}
+			[voiceQueue addObject:text];
+		} else {
+			[voice startSpeakingString:text];
+		}
 	}
 }
 
-#pragma mark misc
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)success
+{
+	if ( [voiceQueue count] ) {
+		NSString * text = [voiceQueue objectAtIndex:0];
+		[voiceQueue removeObjectAtIndex:0];
+		[voice startSpeakingString:text];
+	}
+}
+
 
 - (void)dealloc {
     [super dealloc];

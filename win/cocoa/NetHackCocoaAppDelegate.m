@@ -33,6 +33,11 @@ extern int unixmain(int argc, char **argv);
 
 @synthesize window;
 
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
+{
+	return YES;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	netHackThread = [[NSThread alloc] initWithTarget:self selector:@selector(netHackMainLoop:) object:nil];
 	[netHackThread start];
@@ -43,12 +48,23 @@ extern int unixmain(int argc, char **argv);
 	return netHackThread && [netHackThread isExecuting];
 }
 
+-(void)lockNethackCore
+{
+	[nethackCoreLock lock];
+}
+-(void)unlockNethackCore
+{
+	[nethackCoreLock unlock];
+}
 
 - (void) netHackMainLoop:(id)arg {
-	@autoreleasepool {
-	char *argv[] = {
-		"NetHack",
-	};
+	extern int g_argc;
+	extern char ** g_argv;
+	
+		@autoreleasepool {
+	
+	nethackCoreLock = [[NSRecursiveLock alloc] init];
+	[self lockNethackCore];
 	
 	// create necessary directories
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
@@ -68,8 +84,10 @@ extern int unixmain(int argc, char **argv);
 	[[NSUserName() capitalizedString] getCString:plname maxLength:PL_NSIZ encoding:NSASCIIStringEncoding];
 	
 	// call NetHack
-	unixmain(sizeof argv/sizeof argv[0], argv);
+	unixmain(g_argc, g_argv);
 	
+	[self unlockNethackCore];
+
 	// clean up thread pool
 	}
 }

@@ -33,13 +33,20 @@
 #import "wincocoa.h"
 #import "TooltipWindow.h"
 #import "NSImage+FlippedDrawing.h"
+#import "NetHackCocoaAppDelegate.h"
 
 #import "Inventory.h"
+#import "NSString+Z.h"
+
+#import <Carbon/Carbon.h>	// key codes
 
 
 @implementation MainView
 @synthesize asciiFont;
 @synthesize tileSet = _tileSetName;
+
+@synthesize contextMenu;// = _contextMenu;
+@synthesize contextMenuObject;// = _contextMenuObject;
 
 NSStringEncoding	codepage437encoding;
 
@@ -315,6 +322,56 @@ NSStringEncoding	codepage437encoding;
 	[[NhEventQueue instance] addEvent:e];
 }
 
+
+#pragma mark Context menu
+
+- (IBAction)showContextInfo:(id)sender
+{
+}
+
+- (NSString *)cleanTileDescription:(NSString *)text
+{
+	// remove context string
+	NSRange r = [text rangeOfString:@"["];
+	if ( r.location != NSNotFound ) {
+		text = [text substringToIndex:r.location];
+	}
+	// remove extra words
+	NSArray * a = [NSArray arrayWithObjects:@"tame", @"invisible", @"peaceful", @"a", @"an", @"the", nil];
+	for ( NSString * s in a ) {
+		r = [text rangeOfString:s withDelimiter:@" "];
+		if ( r.location != NSNotFound ) {
+			text = [text stringByReplacingCharactersInRange:r withString:@""];
+		}
+	}
+	text = [text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	return text;
+}
+- (IBAction)doWebSearch:(id)sender
+{
+	NSString * text = [contextMenuObject stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString * path = [NSString stringWithFormat:@"http://nethackwiki.com/mediawiki/index.php?search=%@",text];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:path]];
+}
+
+- (NSMenu *) menuForEvent:(NSEvent *)theEvent
+{
+	NSPoint contextMenuPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	contextMenuPoint.x = (int)(contextMenuPoint.x / tileSize.width);
+	contextMenuPoint.y = (int)(contextMenuPoint.y / tileSize.height);
+	if ( contextMenuPoint.x >= 0 && contextMenuPoint.x < COLNO && contextMenuPoint.y >= 0 && contextMenuPoint.y < ROWNO ) {
+		NSString * text = DescriptionForTile( contextMenuPoint.x, contextMenuPoint.y );
+		contextMenuObject = [self cleanTileDescription:text];
+		NSMenuItem * item = [contextMenu itemAtIndex:0];
+		NSString * title = [NSString stringWithFormat:@"Search the Nethack Wiki for '%@'", contextMenuObject];
+		[item setTitle:title];
+		return contextMenu;
+	}
+	return nil;
+}
+
+#pragma mark Tooltip
+
 - (void)cancelTooltip
 {
 	if ( tooltipTimer ) {
@@ -332,7 +389,12 @@ NSStringEncoding	codepage437encoding;
 NSString * DescriptionForTile( int x, int y )
 {
 	char    out_str[BUFSZ];
+
+	// get tile info, but don't interfere with nethack thread
+	NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+	[appDelegate lockNethackCore];
 	InventoryOfTile(x, y, out_str);
+	[appDelegate unlockNethackCore];
 
 	NSString * text = [NSString stringWithCString:out_str encoding:codepage437encoding];
 	
@@ -425,14 +487,65 @@ NSString * DescriptionForTile( int x, int y )
 }
 
 
-- (void)keyDown:(NSEvent *)theEvent 
+static NSEvent * g_pendingKeyEvent = nil;
+
+- (void)keyDown:(NSEvent *)theEvent
 {
 	if ( [theEvent type] == NSKeyDown ) {
-		
+
+		if ( g_pendingKeyEvent ) {
+			unsigned short k1 = [g_pendingKeyEvent keyCode];
+			unsigned short k2 = [theEvent keyCode];
+			unsigned int newKeyCode = 0;
+			if ( (k1 == kVK_LeftArrow && k2 == kVK_UpArrow) || (k2 == kVK_LeftArrow && k1 == kVK_UpArrow) )	{
+				newKeyCode = kVK_ANSI_Keypad7;
+			} else if ( (k1 == kVK_RightArrow && k2 == kVK_UpArrow) || (k2 == kVK_RightArrow && k1 == kVK_UpArrow) ) {
+				newKeyCode = kVK_ANSI_Keypad9;
+			} else if ( (k1 == kVK_LeftArrow && k2 == kVK_DownArrow) || (k2 == kVK_LeftArrow && k1 == kVK_DownArrow) )	{
+				newKeyCode = kVK_ANSI_Keypad1;
+			} else if ( (k1 == kVK_RightArrow && k2 == kVK_DownArrow) || (k2 == kVK_RightArrow && k1 == kVK_DownArrow) ) {
+				newKeyCode = kVK_ANSI_Keypad3;
+			} else {
+				wchar_t key = [WinCocoa keyWithKeyEvent:g_pendingKeyEvent];
+				if ( key ) {
+					[[NhEventQueue instance] addKey:key];
+				}
+			}
+			[g_pendingKeyEvent release];
+			g_pendingKeyEvent = nil;
+			if ( newKeyCode ) {
+				NSEvent * newEvent = [NSEvent keyEventWithType:NSKeyDown location:theEvent.locationInWindow modifierFlags:theEvent.modifierFlags timestamp:theEvent.timestamp windowNumber:theEvent.windowNumber context:theEvent.context characters:@"" charactersIgnoringModifiers:@"" isARepeat:theEvent.isARepeat keyCode:newKeyCode];
+				theEvent = newEvent;
+			}
+		} else {
+			switch ( [theEvent keyCode] ) {
+				case kVK_LeftArrow:
+				case kVK_RightArrow:
+				case kVK_DownArrow:
+				case kVK_UpArrow:
+					g_pendingKeyEvent = [theEvent retain];
+					return;
+			}
+		}
+
 		wchar_t key = [WinCocoa keyWithKeyEvent:theEvent];
 		if ( key ) {
-			[[NhEventQueue instance] addKey:key];			
+			[[NhEventQueue instance] addKey:key];
 		}
+	}
+}
+
+- (void)keyUp:(NSEvent *)theEvent
+{
+	if ( [theEvent type] == NSKeyUp ) {
+		if ( g_pendingKeyEvent ) {
+			wchar_t key = [WinCocoa keyWithKeyEvent:g_pendingKeyEvent];
+			if ( key ) {
+				[[NhEventQueue instance] addKey:key];
+			}
+		}
+		[g_pendingKeyEvent release];
+		g_pendingKeyEvent = nil;
 	}
 }
 

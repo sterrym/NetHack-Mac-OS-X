@@ -39,9 +39,14 @@
 @class StatsView;
 @class EquipmentView;
 
-@interface MainWindowController : NSWindowController <NSWindowDelegate,NSMenuDelegate,NSTableViewDataSource> {	
+@interface MainWindowController : NSWindowController <NSWindowDelegate,NSMenuDelegate,NSTableViewDataSource,NSSpeechSynthesizerDelegate> {	
 	BOOL										isDirectionQuestion;
 	BOOL										terminatedByUser;
+	
+	BOOL										useSpeech;
+	
+	NSSpeechSynthesizer						*	voice;
+	NSMutableArray							*	voiceQueue;
 	
 	NSMutableArray							*	userTiles;
 	
@@ -59,6 +64,9 @@
 	IBOutlet PlayerSelectionWindowController*	showPlayerSelection;
 	IBOutlet NotesWindowController			*	notesWindow;
 }
+
+@property (assign) BOOL useSpeech;
+
 
 + (MainWindowController *) instance;
 
@@ -92,7 +100,8 @@
 
 // touch handling
 - (void)handleMapTapTileX:(int)x y:(int)y forLocation:(CGPoint)p inView:(NSView *)view;
-- (void)handleDirectionTap:(e_direction)direction;
-- (void)handleDirectionDoubleTap:(e_direction)direction;
+
+// speech
+- (void)speakString:(NSString *)text;
 
 @end

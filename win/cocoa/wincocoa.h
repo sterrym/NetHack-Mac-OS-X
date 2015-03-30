@@ -68,8 +68,7 @@ void cocoa_start_screen();
 void cocoa_end_screen();
 void cocoa_outrip(winid wid, int how);
 void cocoa_preference_update(const char * pref);
-
-extern boolean cocoa_getpos;
+void cocoa_prepare_for_exit();
 
 coord CoordMake(xchar i, xchar j);
 

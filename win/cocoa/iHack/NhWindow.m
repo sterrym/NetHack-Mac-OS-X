@@ -27,6 +27,7 @@
 #import "NSString+Z.h"
 #import "NhMapWindow.h"
 #import "NhStatusWindow.h"
+#import "MainWindowController.h"
 
 
 static NhWindow *s_messageWindow = nil;
@@ -64,6 +65,76 @@ static NhWindow *s_mapWindow = nil;
 	return type == NHW_MESSAGE;
 }
 
+- (BOOL)stringIsVoiced:(NSString *)s
+{
+	if ( type != NHW_MESSAGE )
+		return NO;
+
+	if ( [s hasPrefix:@"You feel "] )
+		return YES;
+	if ( [s hasPrefix:@"You hear "] )
+		return YES;
+	if ( [s hasPrefix:@"You fall down the stairs."] )
+		return YES;
+	
+	// blinded
+	if ( [s hasPrefix:@"Everything suddenly goes dark"] )
+		return YES;
+	if ( [s hasPrefix:@"It suddenly gets dark"] )
+		return YES;
+	if ( [s containsString:@"blinds you"] )
+		return YES;
+	if ( [s containsString:@"been creamed"] )
+		return YES;
+	
+	// hunger
+	if ( [s containsString:@" feel hungry"] )
+		return YES;
+	if ( [s containsString:@" feel weak"] )
+		return YES;
+	if ( [s hasPrefix:@"You faint "] )
+		return YES;
+	if ( [s containsString:@" needs food, badly!"] )
+		return YES;
+	
+	// pet
+	if ( [s containsString:@"feeling for a moment, then it passes"] )
+		return YES;
+	
+	// confused/stunned
+	if ( [s containsString:@"confuses you"] )
+		return YES;
+	if ( [s hasPrefix:@"You stagger"] )
+		return YES;
+	if ( [s hasPrefix:@"You reel..."] )
+		return YES;
+	
+	// hallucinating
+	if ( [s containsString:@"are freaked out"] )
+		return YES;
+
+	// movement
+	if ( [s containsString:@"Movement is "] )
+		return YES;
+	if ( [s containsString:@"movements are "] )
+		return YES;
+	if ( [s containsString:@"move a handspan "] )
+		return YES;
+
+	// stoning/chocking/sliming
+	if ( [s hasPrefix:@"You are slowing down"] )
+		return YES;
+	if ( [s hasPrefix:@"You find it hard to breathe"] )
+		return YES;
+	if ( [s containsString:@" is becoming constricted"] )
+		return YES;
+	if ( [s hasPrefix:@"You are turning a little"] )
+		return YES;
+	
+	return NO;
+}
+
+
 - (instancetype)initWithType:(int)t {
 	if (self = [super init]) {
 		type = t;
@@ -90,9 +161,32 @@ static NhWindow *s_mapWindow = nil;
 	return self;
 }
 
+- (BOOL)stringReferencesHero:(NSString *)s
+{
+	NSRange r = [s rangeOfString:@"you" options:NSCaseInsensitiveSearch];
+	if ( r.location == NSNotFound )
+		return NO;
+	
+	// make sure Y is the starting letter
+	if ( r.location > 0 && isalnum([s characterAtIndex:r.location-1]) )
+		return NO;
+	
+	// treat 'your' just like 'you'
+	if ( [s characterAtIndex:r.location+r.length] == 'r' )
+		++r.length;
+	
+	// make sure no trailing letters
+	if ( r.location+r.length < [s length] && isalnum([s characterAtIndex:r.location+r.length]) ) 
+		return NO;
+	
+	return YES;
+}
+
 - (void)print:(const char *)str attr:(int)attr {
 	NSString *s = [NSString stringWithCString:str encoding:NSASCIIStringEncoding];
-	s = [s stringWithTrimmedWhitespaces];
+//	s = [s stringWithTrimmedWhitespaces];
+	
+//	s = [NSString stringWithFormat:@"%d: %@",moves,s];
 	
 	if ( [self useAttributedStrings] ) {
 
@@ -100,6 +194,19 @@ static NhWindow *s_mapWindow = nil;
 
 		switch ( attr ) {
 			case ATR_NONE:
+				{
+					BOOL highlight = [self stringReferencesHero:s];
+					if ( highlight ) {
+						dict = [NSDictionary dictionaryWithObjectsAndKeys:
+								[NSColor blueColor], NSForegroundColorAttributeName,
+								nil];
+					}
+					BOOL isVoiced = [self stringIsVoiced:s];
+					if ( isVoiced ) {
+						MainWindowController * main = [MainWindowController instance];
+						[main speakString:s];
+					}
+				}
 				break;
 			case ATR_BOLD:
 				dict = [NSDictionary dictionaryWithObject:[NSFont boldSystemFontOfSize:[NSFont systemFontSize]]
@@ -112,7 +219,8 @@ static NhWindow *s_mapWindow = nil;
 				break;
 			case ATR_BLINK:
 			case ATR_INVERSE:
-				dict = [NSDictionary dictionaryWithObjectsAndKeys:[NSColor redColor], NSForegroundColorAttributeName,
+				dict = [NSDictionary dictionaryWithObjectsAndKeys:
+						[NSColor redColor], NSForegroundColorAttributeName,
 						[NSColor blueColor], NSBackgroundColorAttributeName,
 						nil];
 				break;

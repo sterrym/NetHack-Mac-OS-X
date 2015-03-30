@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7528.3" systemVersion="14C1514" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7528.3"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MenuWindowController">
@@ -52,13 +52,13 @@ DQ
                         </connections>
                     </button>
                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                        <rect key="frame" x="0.0" y="61" width="398" height="177"/>
+                        <rect key="frame" x="0.0" y="61" width="398" height="175"/>
                         <clipView key="contentView" id="VQD-Hh-cZg">
                             <rect key="frame" x="0.0" y="0.0" width="398" height="178"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="8" customClass="FlippedView">
-                                    <rect key="frame" x="0.0" y="0.0" width="398" height="177"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="398" height="175"/>
                                 </customView>
                             </subviews>
                             <constraints>
@@ -89,19 +89,31 @@ DQ
                             <action selector="selectAll:" target="-2" id="34"/>
                         </connections>
                     </button>
+                    <button toolTip="Show items alphabetically" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g8C-KJ-7b6">
+                        <rect key="frame" x="358" y="237" width="35" height="19"/>
+                        <buttonCell key="cell" type="recessed" title="Abc" alternateTitle="Abc" bezelStyle="recessed" image="FB74052A-067F-479A-9DC6-9DADA9850074" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Uvf-e0-aa7">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" size="12" name="Helvetica-Oblique"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="sortItems:" target="-2" id="zcr-MX-lBg"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="5" firstAttribute="leading" secondItem="6" secondAttribute="trailing" constant="12" symbolic="YES" id="3dX-Cb-8DT"/>
                     <constraint firstItem="5" firstAttribute="top" secondItem="7" secondAttribute="bottom" constant="20" symbolic="YES" id="4eo-jc-3aQ"/>
-                    <constraint firstItem="7" firstAttribute="top" secondItem="4" secondAttribute="top" constant="20" symbolic="YES" id="9pF-gP-R4Q"/>
                     <constraint firstAttribute="trailing" secondItem="7" secondAttribute="trailing" id="D2V-Zw-3pK"/>
                     <constraint firstItem="30" firstAttribute="width" secondItem="6" secondAttribute="width" id="EgZ-nB-iSI"/>
                     <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="20" symbolic="YES" id="Fuz-DF-0OT"/>
                     <constraint firstItem="7" firstAttribute="leading" secondItem="4" secondAttribute="leading" id="ImF-oJ-wzb"/>
                     <constraint firstItem="6" firstAttribute="width" secondItem="5" secondAttribute="width" id="QnP-PD-dfl"/>
+                    <constraint firstAttribute="trailing" secondItem="g8C-KJ-7b6" secondAttribute="trailing" constant="5" id="U6y-9c-UIN"/>
+                    <constraint firstItem="g8C-KJ-7b6" firstAttribute="top" secondItem="4" secondAttribute="top" constant="2" id="XgZ-el-2jt"/>
                     <constraint firstItem="30" firstAttribute="baseline" secondItem="6" secondAttribute="baseline" id="lpP-Kz-sck"/>
                     <constraint firstItem="6" firstAttribute="baseline" secondItem="5" secondAttribute="baseline" id="tTr-94-DoH"/>
                     <constraint firstItem="30" firstAttribute="leading" secondItem="4" secondAttribute="leading" constant="20" symbolic="YES" id="tdc-90-Jwx"/>
+                    <constraint firstItem="7" firstAttribute="top" secondItem="g8C-KJ-7b6" secondAttribute="bottom" constant="2" id="un8-X4-FWx"/>
                     <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" constant="20" symbolic="YES" id="ygP-QJ-rzM"/>
                 </constraints>
             </view>
@@ -111,4 +123,57 @@ DQ
             </connections>
         </window>
     </objects>
+    <resources>
+        <image name="FB74052A-067F-479A-9DC6-9DADA9850074" width="1" height="1">
+            <mutableData key="keyedArchiveRepresentation">
+YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
+GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
+c1dOU0NvbG9ygAKADRIgwwAAgAOAC1Z7MSwgMX3SFQoWGFpOUy5vYmplY3RzoReABIAK0hUKGh2iGxyA
+BYAGgAkQANIgCiEiXxAUTlNUSUZGUmVwcmVzZW50YXRpb26AB4AITxEIcE1NACoAAAAKAAAADgEAAAMA
+AAABAAEAAAEBAAMAAAABAAEAAAECAAMAAAACAAgACAEDAAMAAAABAAEAAAEGAAMAAAABAAEAAAERAAQA
+AAABAAAACAESAAMAAAABAAEAAAEVAAMAAAABAAIAAAEWAAMAAAABAAEAAAEXAAQAAAABAAAAAgEcAAMA
+AAABAAEAAAFSAAMAAAABAAEAAAFTAAMAAAACAAEAAYdzAAcAAAe4AAAAuAAAAAAAAAe4YXBwbAIgAABt
+bnRyR1JBWVhZWiAH0AACAA4ADAAAAABhY3NwQVBQTAAAAABub25lAAAAAAAAAAAAAAAAAAAAAAAA9tYA
+AQAAAADTLWFwcGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVk
+ZXNjAAAAwAAAAG9kc2NtAAABMAAABixjcHJ0AAAHXAAAADh3dHB0AAAHlAAAABRrVFJDAAAHqAAAAA5k
+ZXNjAAAAAAAAABVHZW5lcmljIEdyYXkgUHJvZmlsZQAAAAAAAAAAAAAAFUdlbmVyaWMgR3JheSBQcm9m
+aWxlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbWx1YwAAAAAA
+AAAeAAAADHNrU0sAAAAqAAABeGhySFIAAAA6AAABomNhRVMAAAAsAAAB3HB0QlIAAAAqAAACCHVrVUEA
+AAAsAAACMmZyRlUAAAAqAAACXnpoVFcAAAAQAAACiGl0SVQAAAAuAAACmG5iTk8AAAAsAAACxmtvS1IA
+AAAYAAAC8mNzQ1oAAAAkAAADCmhlSUwAAAAgAAADLmRlREUAAAA6AAADTmh1SFUAAAAuAAADiHN2U0UA
+AAAuAAADtnpoQ04AAAAQAAAD5GphSlAAAAAWAAAD9HJvUk8AAAAiAAAECmVsR1IAAAAkAAAELHB0UE8A
+AAA4AAAEUG5sTkwAAAAqAAAEiGVzRVMAAAAoAAAEsnRoVEgAAAAkAAAE2nRyVFIAAAAiAAAE/mZpRkkA
+AAAsAAAFIHBsUEwAAAA2AAAFTHJ1UlUAAAAmAAAFgmFyRUcAAAAoAAAFqGVuVVMAAAAoAAAF0GRhREsA
+AAA0AAAF+ABWAWEAZQBvAGIAZQBjAG4A/QAgAHMAaQB2AP0AIABwAHIAbwBmAGkAbABHAGUAbgBlAHIA
+aQENAGsAaQAgAHAAcgBvAGYAaQBsACAAcwBpAHYAaQBoACAAdABvAG4AbwB2AGEAUABlAHIAZgBpAGwA
+IABkAGUAIABnAHIAaQBzACAAZwBlAG4A6AByAGkAYwBQAGUAcgBmAGkAbAAgAEMAaQBuAHoAYQAgAEcA
+ZQBuAOkAcgBpAGMAbwQXBDAEMwQwBDsETAQ9BDgEOQAgBD8EQAQ+BEQEMAQ5BDsAIABHAHIAYQB5AFAA
+cgBvAGYAaQBsACAAZwDpAG4A6QByAGkAcQB1AGUAIABnAHIAaQBzkBp1KHBwlo6Ccl9pY8+P8ABQAHIA
+bwBmAGkAbABvACAAZwByAGkAZwBpAG8AIABnAGUAbgBlAHIAaQBjAG8ARwBlAG4AZQByAGkAcwBrACAA
+ZwByAOUAdABvAG4AZQBwAHIAbwBmAGkAbMd8vBgAIABHAHIAYQB5ACDVBLhc0wzHfABPAGIAZQBjAG4A
+/QAgAWEAZQBkAP0AIABwAHIAbwBmAGkAbAXkBegF1QXkBdkF3AAgAEcAcgBhAHkAIAXbBdwF3AXZAEEA
+bABsAGcAZQBtAGUAaQBuAGUAcwAgAEcAcgBhAHUAcwB0AHUAZgBlAG4ALQBQAHIAbwBmAGkAbADBAGwA
+dABhAGwA4QBuAG8AcwAgAHMAegD8AHIAawBlACAAcAByAG8AZgBpAGwARwBlAG4AZQByAGkAcwBrACAA
+ZwByAOUAcwBrAGEAbABlAHAAcgBvAGYAaQBsZm6QGnBwXqZjz4/wZYdO9k4AgiwwsDDsMKQw1zDtMNUw
+oTCkMOsAUAByAG8AZgBpAGwAIABnAHIAaQAgAGcAZQBuAGUAcgBpA5MDtQO9A7kDugPMACADwAPBA78D
+xgOvA7sAIAOzA7oDwQO5AFAAZQByAGYAaQBsACAAZwBlAG4A6QByAGkAYwBvACAAZABlACAAYwBpAG4A
+egBlAG4AdABvAHMAQQBsAGcAZQBtAGUAZQBuACAAZwByAGkAagBzAHAAcgBvAGYAaQBlAGwAUABlAHIA
+ZgBpAGwAIABnAHIAaQBzACAAZwBlAG4A6QByAGkAYwBvDkIOGw4jDkQOHw4lDkwOKg41DkAOFw4yDhcO
+MQ5IDicORA4bAEcAZQBuAGUAbAAgAEcAcgBpACAAUAByAG8AZgBpAGwAaQBZAGwAZQBpAG4AZQBuACAA
+aABhAHIAbQBhAGEAcAByAG8AZgBpAGkAbABpAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYA
+aQBsACAAcwB6AGEAcgBvAVsAYwBpBB4EMQRJBDgEOQAgBEEENQRABEsEOQAgBD8EQAQ+BEQEOAQ7BEwG
+RQZEBkEAIAYqBjkGMQZKBkEAIABHAHIAYQB5ACAGJwZEBjkGJwZFAEcAZQBuAGUAcgBpAGMAIABHAHIA
+YQB5ACAAUAByAG8AZgBpAGwAZQBHAGUAbgBlAHIAZQBsACAAZwByAOUAdABvAG4AZQBiAGUAcwBrAHIA
+aQB2AGUAbABzAGV0ZXh0AAAAAENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVz
+ZXJ2ZWQuAFhZWiAAAAAAAADzUQABAAAAARbMY3VydgAAAAAAAAABAc0AANIlJicoWiRjbGFzc25hbWVY
+JGNsYXNzZXNfEBBOU0JpdG1hcEltYWdlUmVwoykqK18QEE5TQml0bWFwSW1hZ2VSZXBaTlNJbWFnZVJl
+cFhOU09iamVjdNIlJi0uV05TQXJyYXmiLSvSJSYwMV5OU011dGFibGVBcnJheaMwLSvTMzQKNTY3V05T
+V2hpdGVcTlNDb2xvclNwYWNlRDAgMAAQA4AM0iUmOTpXTlNDb2xvcqI5K9IlJjw9V05TSW1hZ2WiPCtf
+EA9OU0tleWVkQXJjaGl2ZXLRQEFUcm9vdIABAAgAEQAaACMALQAyADcARgBMAFcAXgBlAHIAeQCBAIMA
+hQCKAIwAjgCVAJoApQCnAKkAqwCwALMAtQC3ALkAuwDAANcA2QDbCU8JVAlfCWgJewl/CZIJnQmmCasJ
+swm2CbsJygnOCdUJ3QnqCe8J8QnzCfgKAAoDCggKEAoTCiUKKAotAAAAAAAAAgEAAAAAAAAAQgAAAAAA
+AAAAAAAAAAAACi8
+</mutableData>
+        </image>
+    </resources>
 </document>
