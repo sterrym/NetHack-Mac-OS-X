@@ -225,7 +225,7 @@ coord CoordMake(xchar i, xchar j) {
 
 FILE *cocoa_dlb_fopen(const char *filename, const char *mode)
 {
-	char path[FQN_MAX_FILENAME];
+	char path[PATH_MAX];
 	[WinCocoa expandFilename:filename intoPath:path];
 	FILE *file = fopen(path, mode);
 	return file;

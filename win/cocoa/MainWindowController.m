@@ -59,6 +59,14 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 	}
 }
 
+static inline void RunOnMainThreadAsync(dispatch_block_t block)
+{
+	if ([NSThread isMainThread]) {
+		block();
+	} else {
+		dispatch_async(dispatch_get_main_queue(), block);
+	}
+}
 
 @implementation MainWindowController
 
@@ -239,16 +247,13 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 
 -(void)nethackExited
 {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(nethackExited) withObject:nil waitUntilDone:NO];
-	} else {
-		
+	RunOnMainThreadAsync(^{
 		if ( terminatedByUser ) {
 			[[NSApplication sharedApplication] terminate:self];
 		} else {
 			// nethack exited, but let user close the app manually 
 		}
-	}		
+	});
 }
 
 
@@ -408,15 +413,12 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 
 - (void)preferenceUpdate:(NSString *)pref
 {
-	// user changed game options
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(preferenceUpdate:) withObject:pref waitUntilDone:YES];
-	} else {
+	RunOnMainThreadSync(^{
 		if ( [pref isEqualToString:@"ascii_map"] ) {
 			[asciiModeMenuItem setState:iflags.wc_ascii_map ? NSOnState : NSOffState];
 			[mainView enableAsciiMode:iflags.wc_ascii_map];
 		}
-	}		
+	});
 }
 
 
@@ -452,12 +454,10 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 }
 
 - (void)refreshMessages {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(refreshMessages) withObject:nil waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		// update message window
 		[messagesView reloadData];
-		NSInteger rows = [messagesView numberOfRows];		
+		NSInteger rows = [messagesView numberOfRows];
 		if (rows > 0) {
 			[messagesView scrollRowToVisible:rows-1];
 		}
@@ -465,17 +465,15 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 		for ( NSString * text in [[NhWindow statusWindow] messages] ) {
 			[statsView setItems:text];
 		}
-	}
+	});
 }
 
 
 - (void)showExtendedCommands
 {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(showExtendedCommands) withObject:nil waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		[extCommandWindow runModal];
-	}
+	});
 }
 
 - (void)showPlayerSelection
@@ -483,7 +481,9 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 	if (![NSThread isMainThread]) {
 		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
 		[appDelegate unlockNethackCore];
-		[self performSelectorOnMainThread:@selector(showPlayerSelection) withObject:nil waitUntilDone:YES];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[showPlayerSelection runModal];
+		});
 		[appDelegate lockNethackCore];
 	} else {
 		[showPlayerSelection runModal];
@@ -566,17 +566,13 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 
 - (void)showDirectionWithPrompt:(NSString *)prompt
 {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(showDirectionWithPrompt:) withObject:prompt waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		[directionWindow runModalWithPrompt:prompt];
-	}			
+	});
 }
 
 - (void)showYnQuestion:(NhYnQuestion *)q {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(showYnQuestion:) withObject:q waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		if ([q.question containsString:@"direction"]) {
 			[self handleDirectionQuestion:q];
 		} else if (q.choices) {
@@ -620,40 +616,30 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 				//assert( NO );
 			}
 		}
-	}
+	});
 }
 
 - (void)refreshAllViews {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(refreshAllViews) withObject:nil waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		// hardware keyboard
 		[self refreshMessages];
-	}
+	});
 }
 
 
 - (void)displayMessageWindow:(NSString *)text {
 	if ( [text length] == 0 ) {
 		// do nothing
-	} else if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(displayMessageWindow:) withObject:text waitUntilDone:NO];
 	} else {
-		[MessageWindowController messageWindowWithText:text];
+		RunOnMainThreadAsync(^{
+			[MessageWindowController messageWindowWithText:text];
+		});
 	}
 }
 
-- (void)displayWindow:(NhWindow *)w {
-	if (![NSThread isMainThread]) {
-
-		BOOL blocking = w.blocking;
-		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
-		[appDelegate unlockNethackCore];
-		[self performSelectorOnMainThread:@selector(displayWindow:) withObject:w waitUntilDone:blocking];
-		[appDelegate lockNethackCore];
-
-	} else {
-		
+- (void)displayWindow:(NhWindow *)w
+{
+	dispatch_block_t dispWind = ^{
 		if (w == [NhWindow messageWindow]) {
 			[self refreshMessages];
 		} else if (w.type == NHW_MAP) {
@@ -668,15 +654,37 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 				[MessageWindowController messageWindowWithText:text];
 			}
 		}
+	};
+	
+	if (![NSThread isMainThread]) {
+		BOOL blocking = w.blocking;
+		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		[appDelegate unlockNethackCore];
+		if (blocking) {
+			dispatch_sync(dispatch_get_main_queue(), dispWind);
+		} else {
+			dispatch_async(dispatch_get_main_queue(), dispWind);
+		}
+		[appDelegate lockNethackCore];
+	} else {
+		dispWind();
 	}
 }
 
 - (void)showMenuWindow:(NhMenuWindow *)w {
+	dispatch_block_t menuWindow = ^{
+		[MenuWindowController menuWindowWithMenu:w];
+	};
+	
 	if (![NSThread isMainThread]) {
 		BOOL blocking = w.blocking;
-		[self performSelectorOnMainThread:@selector(showMenuWindow:) withObject:w waitUntilDone:blocking];
+		if (blocking) {
+			dispatch_sync(dispatch_get_main_queue(), menuWindow);
+		} else {
+			dispatch_async(dispatch_get_main_queue(), menuWindow);
+		}
 	} else {
-		[MenuWindowController menuWindowWithMenu:w];
+		menuWindow();
 	}
 }
 
@@ -690,8 +698,9 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 
 		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
 		[appDelegate unlockNethackCore];
-		[self performSelectorOnMainThread:@selector(clipAround:)
-							   withObject:[NSValue valueWithRange:NSMakeRange(x, y)] waitUntilDone:YES];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[mainView cliparoundX:x y:y];
+		});
 		[appDelegate lockNethackCore];
 	} else {
 		[mainView cliparoundX:x y:y];
@@ -699,21 +708,17 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 }
 
 - (void)updateInventory {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(updateInventory) withObject:nil waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		[equipmentView updateInventory];
-	}
+	});
 }
 
 - (void)getLine {
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(getLine) withObject:nil waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		NSAttributedString * attrPrompt = [[[NhWindow messageWindow] messages] lastObject];
 		NSString * prompt = [attrPrompt string];
 		[inputWindow runModalWithPrompt:prompt];
-	}
+	});
 }
 
 #pragma mark touch handling
@@ -784,9 +789,7 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 		return;
 	
 	// add text to queue
-	if (![NSThread isMainThread]) {
-		[self performSelectorOnMainThread:@selector(speakString:) withObject:text waitUntilDone:NO];
-	} else {
+	RunOnMainThreadAsync(^{
 		if ( [voice isSpeaking] ) {
 			// don't be too redundant for messages repeated many times
 			int cnt = 0;
@@ -799,7 +802,7 @@ static inline void RunOnMainThreadSync(dispatch_block_t block)
 		} else {
 			[voice startSpeakingString:text];
 		}
-	}
+	});
 }
 
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)success

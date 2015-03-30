@@ -78,6 +78,7 @@
 - (IBAction)addTileSet:(id)sender;
 
 - (void)prepareWindows;
+/// user changed game options
 - (void)preferenceUpdate:(NSString *)pref;
 - (void)setTerminatedByUser:(BOOL)byUser;
 - (void)nethackExited;

@@ -249,19 +249,11 @@ NSStringEncoding	codepage437encoding;
 							
 							// draw tile
 							NSRect srcRect = [[TileSet instance] sourceRectForGlyph:glyph];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1060
-							[image drawAdjustedInRect:r fromRect:srcRect operation:NSCompositeCopy fraction:1.0];
-#else
 							[image drawInRect:r fromRect:srcRect operation:NSCompositeCopy fraction:1.0f respectFlipped:YES hints:nil];
-#endif
 						}
 						
 						if (glyph_is_pet(glyph)) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1060
-							[petMark drawAdjustedInRect:r fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
-#else
 							[petMark drawInRect:r fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0f respectFlipped:YES hints:nil];
-#endif
 						}
 						
 					} else {
@@ -455,7 +447,7 @@ NSString * DescriptionForTile( int x, int y )
 		pt.y += size.height - hot.y;
 		pt.y += 20; // height of tooltip
 		
-		pt = [self convertPointToBacking:pt];
+		pt = [self convertPoint:pt toView:nil];
 		pt = [[self window] convertRectToScreen:NSMakeRect(pt.x, pt.y, 0, 0)].origin;
 		tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
 	}
@@ -466,6 +458,7 @@ NSString * DescriptionForTile( int x, int y )
 {
 	[self cancelTooltip];
 }
+
 - (void)mouseMoved:(NSEvent *)theEvent
 {
 	[self cancelTooltip];
@@ -483,7 +476,9 @@ NSString * DescriptionForTile( int x, int y )
 - (void) boundsDidChangeNotification:(NSNotification *)notification
 {
 	// not sure if we can do this synchronously...
-	[self performSelector:@selector(cliparoundHero) withObject:nil afterDelay:0.0];
+	dispatch_async(dispatch_get_current_queue(), ^{
+		[self cliparoundHero];
+	});
 }
 
 
