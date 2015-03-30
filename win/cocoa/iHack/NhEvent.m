@@ -39,7 +39,7 @@
 }
 
 + (id) eventWithKey:(int)k {
-	return [[[self alloc] initWithKey:k] autorelease];
+	return [[(NhEvent*)[self alloc] initWithKey:k] autorelease];
 }
 
 - (id) initWithKey:(int)k mod:(int)m x:(int)i y:(int)j {

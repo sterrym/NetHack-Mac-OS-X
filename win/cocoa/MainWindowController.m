@@ -52,8 +52,19 @@ static const float popoverItemHeight = 44.0f;
 
 @implementation MainWindowController
 
+@synthesize useSpeech;
+
+
 + (MainWindowController *)instance {
 	return instance;
+}
+
+- (void)setFont:(NSFont *)font
+{
+	for ( NSTableColumn * column in [self->messagesView tableColumns] ) {
+		NSCell * cell = [column dataCell];
+		[cell setFont:font];
+	}
 }
 
 // Convert keyEquivs in menu items to use their shifted equivalent
@@ -118,6 +129,13 @@ static const float popoverItemHeight = 44.0f;
 - (void)awakeFromNib {
 	instance = self;
 	
+#if 0
+	{
+		NSFont * font = [NSFont fontWithName:@"Lucida Bright" size:13];
+		[self setFont:font];
+	}
+#endif
+	
 	NSMenu * menu = [[NSApplication sharedApplication] mainMenu];
 	[self fixMenuKeyEquivalents:menu];
 	
@@ -134,6 +152,8 @@ static const float popoverItemHeight = 44.0f;
 		NSString *	tileSetName = [[NSUserDefaults standardUserDefaults] objectForKey:@"TileSetName"];
 		NSString *	asciiFontName = [[NSUserDefaults standardUserDefaults] objectForKey:@"AsciiFontName"];
 		CGFloat		asciiFontSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"AsciiFontSize"];
+		
+		self.useSpeech = [[NSUserDefaults standardUserDefaults] boolForKey:@"UseSpeech"];
 		
 		iflags.wc_ascii_map = [[NSUserDefaults standardUserDefaults] boolForKey:@"UseAscii"];
 		
@@ -159,8 +179,16 @@ static const float popoverItemHeight = 44.0f;
 		
 		// set table row spacing to zero in messages window
 		[messagesView setIntercellSpacing:NSMakeSize(0,0)];
+		
+		// initialize speech engine
+		voice = [[NSSpeechSynthesizer alloc] initWithVoice:@"com.apple.speech.synthesis.voice.Alex"];
+		float r = [voice rate];
+		[voice setRate:1.5*r];
+		[voice setDelegate:self];
+		voiceQueue = [[NSMutableArray array] retain];
 	}
 }
+
 
 -(void)windowWillClose:(NSNotification *)notification
 {
@@ -172,8 +200,14 @@ static const float popoverItemHeight = 44.0f;
 	[[NSUserDefaults standardUserDefaults] setFloat:[font pointSize] forKey:@"AsciiFontSize"];
 	BOOL	useAscii = iflags.wc_ascii_map;
 	[[NSUserDefaults standardUserDefaults] setBool:useAscii forKey:@"UseAscii"];
+	[[NSUserDefaults standardUserDefaults] setBool:self.useSpeech forKey:@"UseSpeech"];
+	
 	// save user defined tile sets
-	[[NSUserDefaults standardUserDefaults] setObject:userTiles forKey:@"UserTileSets"];		
+	[[NSUserDefaults standardUserDefaults] setObject:userTiles forKey:@"UserTileSets"];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	// if window closes then application needs to terminate
+	[self terminateApplication:nil];
 }
 
 - (void)setTerminatedByUser:(BOOL)byUser
@@ -197,14 +231,6 @@ static const float popoverItemHeight = 44.0f;
 
 
 #pragma mark menu actions
-
--(BOOL)windowShouldClose:(id)sender
-{
-	return NO;
-}
--(void)performClose:(id)sender
-{
-}
 
 - (void)performMenuAction:(id)sender
 {
@@ -372,7 +398,6 @@ static const float popoverItemHeight = 44.0f;
 }
 
 
-
 - (IBAction)terminateApplication:(id)sender
 {
 	NetHackCocoaAppDelegate * delegate = (NetHackCocoaAppDelegate *) [[NSApplication sharedApplication] delegate];
@@ -434,7 +459,10 @@ static const float popoverItemHeight = 44.0f;
 - (void)showPlayerSelection
 {
 	if (![NSThread isMainThread]) {
+		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		[appDelegate unlockNethackCore];
 		[self performSelectorOnMainThread:@selector(showPlayerSelection) withObject:nil waitUntilDone:YES];
+		[appDelegate lockNethackCore];
 	} else {
 		[showPlayerSelection runModal];
 	}	
@@ -462,7 +490,7 @@ static const float popoverItemHeight = 44.0f;
 	const char *pStr = [lets cStringUsingEncoding:NSASCIIStringEncoding];
 	enum eState { start, inv, invInterval, end } state = start;
 	char c, lastInv = 0;
-	while (c = *pStr++) {
+	while ((c = *pStr++)) {
 		switch (state) {
 			case start:
 				if (isalpha(c)) {
@@ -597,7 +625,10 @@ static const float popoverItemHeight = 44.0f;
 	if (![NSThread isMainThread]) {
 
 		BOOL blocking = w.blocking;
+		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		[appDelegate unlockNethackCore];
 		[self performSelectorOnMainThread:@selector(displayWindow:) withObject:w waitUntilDone:blocking];
+		[appDelegate lockNethackCore];
 
 	} else {
 		
@@ -634,8 +665,12 @@ static const float popoverItemHeight = 44.0f;
 
 - (void)clipAroundX:(int)x y:(int)y {
 	if (![NSThread isMainThread]) {
+
+		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		[appDelegate unlockNethackCore];
 		[self performSelectorOnMainThread:@selector(clipAround:)
-							   withObject:[NSValue valueWithRange:NSMakeRange(x, y)] waitUntilDone:NO];
+							   withObject:[NSValue valueWithRange:NSMakeRange(x, y)] waitUntilDone:YES];
+		[appDelegate lockNethackCore];
 	} else {
 		[mainView cliparoundX:x y:y];
 	}
@@ -668,14 +703,7 @@ static const float popoverItemHeight = 44.0f;
 
 - (BOOL)isMovementKey:(char)k {
 	if (isalpha(k)) {
-		static char directionKeys[] = "kulnjbhy";
-		char *pStr = directionKeys;
-		char c;
-		while (c = *pStr++) {
-			if (c == k) {
-				return YES;
-			}
-		}
+		return strchr("kulnjbhy",k) != NULL;
 	}
 	return NO;
 }
@@ -719,21 +747,41 @@ static const float popoverItemHeight = 44.0f;
 	}
 }
 
-// probably not used in cocoa
-- (void)handleDirectionTap:(e_direction)direction {
-	int key = [self keyFromDirection:direction];
-	[[NhEventQueue instance] addKey:key];
-}
+#pragma mark misc
 
-- (void)handleDirectionDoubleTap:(e_direction)direction {
-	if (!cocoa_getpos) {
-		int key = [self keyFromDirection:direction];
-		[[NhEventQueue instance] addKey:'g'];
-		[[NhEventQueue instance] addKey:key];
+- (void)speakString:(NSString *)text
+{
+	if ( !self.useSpeech )
+		return;
+	
+	// add text to queue
+	if (![NSThread isMainThread]) {
+		[self performSelectorOnMainThread:@selector(speakString:) withObject:text waitUntilDone:NO];
+	} else {
+		if ( [voice isSpeaking] ) {
+			// don't be too redundant for messages repeated many times
+			int cnt = 0;
+			for ( NSString * s in voiceQueue ) {
+				if ( [text isEqualToString:s] )
+					if ( ++cnt >= 3 )
+						return;
+			}
+			[voiceQueue addObject:text];
+		} else {
+			[voice startSpeakingString:text];
+		}
 	}
 }
 
-#pragma mark misc
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)success
+{
+	if ( [voiceQueue count] ) {
+		NSString * text = [voiceQueue objectAtIndex:0];
+		[voiceQueue removeObjectAtIndex:0];
+		[voice startSpeakingString:text];
+	}
+}
+
 
 - (void)dealloc {
     [super dealloc];
