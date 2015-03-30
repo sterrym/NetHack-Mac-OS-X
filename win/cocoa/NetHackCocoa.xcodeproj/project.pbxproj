@@ -662,9 +662,8 @@
 		02447C5D11B8C821008CB9C7 /* wizard3.lev in Resources */ = {isa = PBXBuildFile; fileRef = 02447BEB11B8C821008CB9C7 /* wizard3.lev */; };
 		028E8B3319FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		028E8B3419FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
-		1DDD58160DA1D0A300B32029 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
-		8D11072B0486CEB800E47090 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -709,44 +708,44 @@
 		0224CAE911B8A6F200FC2199 /* TooltipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TooltipWindow.m; sourceTree = "<group>"; };
 		0224CAEA11B8A6F200FC2199 /* YesNoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YesNoWindowController.h; sourceTree = "<group>"; };
 		0224CAEB11B8A6F200FC2199 /* YesNoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YesNoWindowController.m; sourceTree = "<group>"; };
-		0224CAFC11B8A73300FC2199 /* Action.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Action.h; path = iHack/Action.h; sourceTree = "<group>"; };
-		0224CAFD11B8A73300FC2199 /* Action.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Action.m; path = iHack/Action.m; sourceTree = "<group>"; };
-		0224CAFE11B8A73300FC2199 /* NhCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhCommand.h; path = iHack/NhCommand.h; sourceTree = "<group>"; };
-		0224CAFF11B8A73300FC2199 /* NhCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhCommand.m; path = iHack/NhCommand.m; sourceTree = "<group>"; };
-		0224CB0011B8A73300FC2199 /* NhEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhEvent.h; path = iHack/NhEvent.h; sourceTree = "<group>"; };
-		0224CB0111B8A73300FC2199 /* NhEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhEvent.m; path = iHack/NhEvent.m; sourceTree = "<group>"; };
-		0224CB0211B8A73300FC2199 /* NhEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhEventQueue.h; path = iHack/NhEventQueue.h; sourceTree = "<group>"; };
-		0224CB0311B8A73300FC2199 /* NhEventQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhEventQueue.m; path = iHack/NhEventQueue.m; sourceTree = "<group>"; };
-		0224CB0411B8A73300FC2199 /* NhInventory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhInventory.h; path = iHack/NhInventory.h; sourceTree = "<group>"; };
-		0224CB0511B8A73300FC2199 /* NhInventory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhInventory.m; path = iHack/NhInventory.m; sourceTree = "<group>"; };
-		0224CB0611B8A73300FC2199 /* NhItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhItem.h; path = iHack/NhItem.h; sourceTree = "<group>"; };
-		0224CB0711B8A73300FC2199 /* NhItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhItem.m; path = iHack/NhItem.m; sourceTree = "<group>"; };
-		0224CB0811B8A73300FC2199 /* NhItemGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhItemGroup.h; path = iHack/NhItemGroup.h; sourceTree = "<group>"; };
-		0224CB0911B8A73300FC2199 /* NhItemGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhItemGroup.m; path = iHack/NhItemGroup.m; sourceTree = "<group>"; };
-		0224CB0A11B8A73300FC2199 /* NhMapWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhMapWindow.h; path = iHack/NhMapWindow.h; sourceTree = "<group>"; };
-		0224CB0B11B8A73300FC2199 /* NhMapWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhMapWindow.m; path = iHack/NhMapWindow.m; sourceTree = "<group>"; };
-		0224CB0C11B8A73300FC2199 /* NhMenuWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhMenuWindow.h; path = iHack/NhMenuWindow.h; sourceTree = "<group>"; };
-		0224CB0D11B8A73300FC2199 /* NhMenuWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhMenuWindow.m; path = iHack/NhMenuWindow.m; sourceTree = "<group>"; };
-		0224CB0E11B8A73300FC2199 /* NhObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhObject.h; path = iHack/NhObject.h; sourceTree = "<group>"; };
-		0224CB0F11B8A73300FC2199 /* NhObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhObject.m; path = iHack/NhObject.m; sourceTree = "<group>"; };
-		0224CB1011B8A73300FC2199 /* NhStatusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhStatusWindow.h; path = iHack/NhStatusWindow.h; sourceTree = "<group>"; };
-		0224CB1111B8A73300FC2199 /* NhStatusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhStatusWindow.m; path = iHack/NhStatusWindow.m; sourceTree = "<group>"; };
-		0224CB1211B8A73300FC2199 /* NhTextInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhTextInputEvent.h; path = iHack/NhTextInputEvent.h; sourceTree = "<group>"; };
-		0224CB1311B8A73300FC2199 /* NhTextInputEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhTextInputEvent.m; path = iHack/NhTextInputEvent.m; sourceTree = "<group>"; };
-		0224CB1411B8A73300FC2199 /* NhWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhWindow.h; path = iHack/NhWindow.h; sourceTree = "<group>"; };
-		0224CB1511B8A73300FC2199 /* NhWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhWindow.m; path = iHack/NhWindow.m; sourceTree = "<group>"; };
-		0224CB1611B8A73300FC2199 /* NhYnQuestion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NhYnQuestion.h; path = iHack/NhYnQuestion.h; sourceTree = "<group>"; };
-		0224CB1711B8A73300FC2199 /* NhYnQuestion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NhYnQuestion.m; path = iHack/NhYnQuestion.m; sourceTree = "<group>"; };
-		0224CB1811B8A73300FC2199 /* NSIndexPath+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSIndexPath+Z.h"; path = "iHack/NSIndexPath+Z.h"; sourceTree = "<group>"; };
-		0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSIndexPath+Z.m"; path = "iHack/NSIndexPath+Z.m"; sourceTree = "<group>"; };
-		0224CB1A11B8A73300FC2199 /* NSString+NetHack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+NetHack.h"; path = "iHack/NSString+NetHack.h"; sourceTree = "<group>"; };
-		0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+NetHack.m"; path = "iHack/NSString+NetHack.m"; sourceTree = "<group>"; };
-		0224CB1C11B8A73300FC2199 /* NSString+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Z.h"; path = "iHack/NSString+Z.h"; sourceTree = "<group>"; };
-		0224CB1D11B8A73300FC2199 /* NSString+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Z.m"; path = "iHack/NSString+Z.m"; sourceTree = "<group>"; };
-		0224CB1E11B8A73300FC2199 /* TileSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileSet.h; path = iHack/TileSet.h; sourceTree = "<group>"; };
-		0224CB1F11B8A73300FC2199 /* TileSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TileSet.m; path = iHack/TileSet.m; sourceTree = "<group>"; };
-		0224CB2011B8A73300FC2199 /* ZDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZDirection.h; path = iHack/ZDirection.h; sourceTree = "<group>"; };
-		0224CB2111B8A73300FC2199 /* ZDirection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZDirection.m; path = iHack/ZDirection.m; sourceTree = "<group>"; };
+		0224CAFC11B8A73300FC2199 /* Action.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Action.h; sourceTree = "<group>"; };
+		0224CAFD11B8A73300FC2199 /* Action.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Action.m; sourceTree = "<group>"; };
+		0224CAFE11B8A73300FC2199 /* NhCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhCommand.h; sourceTree = "<group>"; };
+		0224CAFF11B8A73300FC2199 /* NhCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhCommand.m; sourceTree = "<group>"; };
+		0224CB0011B8A73300FC2199 /* NhEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhEvent.h; sourceTree = "<group>"; };
+		0224CB0111B8A73300FC2199 /* NhEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhEvent.m; sourceTree = "<group>"; };
+		0224CB0211B8A73300FC2199 /* NhEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhEventQueue.h; sourceTree = "<group>"; };
+		0224CB0311B8A73300FC2199 /* NhEventQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhEventQueue.m; sourceTree = "<group>"; };
+		0224CB0411B8A73300FC2199 /* NhInventory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhInventory.h; sourceTree = "<group>"; };
+		0224CB0511B8A73300FC2199 /* NhInventory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhInventory.m; sourceTree = "<group>"; };
+		0224CB0611B8A73300FC2199 /* NhItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhItem.h; sourceTree = "<group>"; };
+		0224CB0711B8A73300FC2199 /* NhItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhItem.m; sourceTree = "<group>"; };
+		0224CB0811B8A73300FC2199 /* NhItemGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhItemGroup.h; sourceTree = "<group>"; };
+		0224CB0911B8A73300FC2199 /* NhItemGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhItemGroup.m; sourceTree = "<group>"; };
+		0224CB0A11B8A73300FC2199 /* NhMapWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhMapWindow.h; sourceTree = "<group>"; };
+		0224CB0B11B8A73300FC2199 /* NhMapWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhMapWindow.m; sourceTree = "<group>"; };
+		0224CB0C11B8A73300FC2199 /* NhMenuWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhMenuWindow.h; sourceTree = "<group>"; };
+		0224CB0D11B8A73300FC2199 /* NhMenuWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhMenuWindow.m; sourceTree = "<group>"; };
+		0224CB0E11B8A73300FC2199 /* NhObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhObject.h; sourceTree = "<group>"; };
+		0224CB0F11B8A73300FC2199 /* NhObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhObject.m; sourceTree = "<group>"; };
+		0224CB1011B8A73300FC2199 /* NhStatusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhStatusWindow.h; sourceTree = "<group>"; };
+		0224CB1111B8A73300FC2199 /* NhStatusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhStatusWindow.m; sourceTree = "<group>"; };
+		0224CB1211B8A73300FC2199 /* NhTextInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhTextInputEvent.h; sourceTree = "<group>"; };
+		0224CB1311B8A73300FC2199 /* NhTextInputEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhTextInputEvent.m; sourceTree = "<group>"; };
+		0224CB1411B8A73300FC2199 /* NhWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhWindow.h; sourceTree = "<group>"; };
+		0224CB1511B8A73300FC2199 /* NhWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhWindow.m; sourceTree = "<group>"; };
+		0224CB1611B8A73300FC2199 /* NhYnQuestion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhYnQuestion.h; sourceTree = "<group>"; };
+		0224CB1711B8A73300FC2199 /* NhYnQuestion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhYnQuestion.m; sourceTree = "<group>"; };
+		0224CB1811B8A73300FC2199 /* NSIndexPath+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+Z.h"; sourceTree = "<group>"; };
+		0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+Z.m"; sourceTree = "<group>"; };
+		0224CB1A11B8A73300FC2199 /* NSString+NetHack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NetHack.h"; sourceTree = "<group>"; };
+		0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NetHack.m"; sourceTree = "<group>"; };
+		0224CB1C11B8A73300FC2199 /* NSString+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Z.h"; sourceTree = "<group>"; };
+		0224CB1D11B8A73300FC2199 /* NSString+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Z.m"; sourceTree = "<group>"; };
+		0224CB1E11B8A73300FC2199 /* TileSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileSet.h; sourceTree = "<group>"; };
+		0224CB1F11B8A73300FC2199 /* TileSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TileSet.m; sourceTree = "<group>"; };
+		0224CB2011B8A73300FC2199 /* ZDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZDirection.h; sourceTree = "<group>"; };
+		0224CB2111B8A73300FC2199 /* ZDirection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZDirection.m; sourceTree = "<group>"; };
 		0224CB7B11B8A7BE00FC2199 /* Arch.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Arch.des; sourceTree = "<group>"; };
 		0224CB7C11B8A7BE00FC2199 /* Barb.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Barb.des; sourceTree = "<group>"; };
 		0224CB7D11B8A7BE00FC2199 /* bigroom.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bigroom.des; sourceTree = "<group>"; };
@@ -1451,9 +1450,8 @@
 				0224CC5811B8A92500FC2199 /* you.h */,
 				0224CC5911B8A92500FC2199 /* youprop.h */,
 			);
-			name = include;
-			path = ../../include;
-			sourceTree = SOURCE_ROOT;
+			path = include;
+			sourceTree = "<group>";
 		};
 		0224CC5A11B8A92500FC2199 /* src */ = {
 			isa = PBXGroup;
@@ -1570,18 +1568,16 @@
 				0224CCC811B8A92500FC2199 /* write.c */,
 				0224CCC911B8A92500FC2199 /* zap.c */,
 			);
-			name = src;
-			path = ../../src;
-			sourceTree = SOURCE_ROOT;
+			path = src;
+			sourceTree = "<group>";
 		};
 		0224CCCA11B8A92500FC2199 /* sys */ = {
 			isa = PBXGroup;
 			children = (
 				0224CD5611B8A92600FC2199 /* unix */,
 			);
-			name = sys;
-			path = ../../sys;
-			sourceTree = SOURCE_ROOT;
+			path = sys;
+			sourceTree = "<group>";
 		};
 		0224CD5611B8A92600FC2199 /* unix */ = {
 			isa = PBXGroup;
@@ -1779,8 +1775,8 @@
 				0224CB2011B8A73300FC2199 /* ZDirection.h */,
 				0224CB2111B8A73300FC2199 /* ZDirection.m */,
 			);
-			name = iHack;
-			sourceTree = "<group>";
+			path = iHack;
+			sourceTree = SOURCE_ROOT;
 		};
 		43F7AB321129551500CF5B3C /* nethack */ = {
 			isa = PBXGroup;
@@ -1790,6 +1786,7 @@
 				0224CCCA11B8A92500FC2199 /* sys */,
 			);
 			name = nethack;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1996,6 +1993,7 @@
 				0212827914F6E6240046D56F /* Mon-loca.lev in Resources */,
 				0212827A14F6E6240046D56F /* Mon-strt.lev in Resources */,
 				0212827B14F6E6240046D56F /* oracle.lev in Resources */,
+				5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */,
 				0212827C14F6E6240046D56F /* orcus.lev in Resources */,
 				0212827D14F6E6240046D56F /* Pri-fila.lev in Resources */,
 				0212827E14F6E6240046D56F /* Pri-filb.lev in Resources */,
@@ -2057,9 +2055,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D11072B0486CEB800E47090 /* (null) in Resources */,
 				552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */,
-				1DDD58160DA1D0A300B32029 /* (null) in Resources */,
 				0224CBA911B8A7BE00FC2199 /* Arch.des in Resources */,
 				0224CBAA11B8A7BE00FC2199 /* Barb.des in Resources */,
 				0224CBAB11B8A7BE00FC2199 /* bigroom.des in Resources */,
@@ -2608,6 +2604,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Nethack;
 				CODE_SIGN_ENTITLEMENTS = NetHackCocoa.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
@@ -2629,6 +2626,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Nethack;
 				CODE_SIGN_ENTITLEMENTS = NetHackCocoa.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
@@ -2648,7 +2646,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = Nethack;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
@@ -2656,7 +2653,6 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
@@ -2670,7 +2666,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = Nethack;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
