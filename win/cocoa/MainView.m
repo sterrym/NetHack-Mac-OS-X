@@ -399,7 +399,7 @@ NSString * DescriptionForTile( int x, int y )
 		[scanner setScanLocation:0];
 	}
 	// scan to opening paren, if any
-	int pos = [scanner scanLocation];
+	NSUInteger pos = [scanner scanLocation];
 	if ( [scanner scanUpToString:@"(" intoString:NULL] && [scanner isAtEnd] ) {
 		// no paren, so take the rest of the string
 		return [[scanner string] substringFromIndex:pos];		

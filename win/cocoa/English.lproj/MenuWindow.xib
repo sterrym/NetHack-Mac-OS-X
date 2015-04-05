@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7528.3" systemVersion="14C1514" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7528.3" systemVersion="14C1514" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7528.3"/>
@@ -18,15 +18,17 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="3" userLabel="Menu Window" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="157" y="203" width="398" height="258"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
             <value key="minSize" type="size" width="250" height="100"/>
             <view key="contentView" id="4">
                 <rect key="frame" x="0.0" y="0.0" width="398" height="258"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6">
-                        <rect key="frame" x="216" y="13" width="84" height="32"/>
+                    <button verticalHuggingPriority="750" id="6">
+                        <rect key="frame" x="192" y="12" width="96" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="11">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -38,8 +40,9 @@ Gw
                             <action selector="doCancel:" target="-2" id="18"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                        <rect key="frame" x="300" y="13" width="84" height="32"/>
+                    <button verticalHuggingPriority="750" id="5">
+                        <rect key="frame" x="288" y="12" width="96" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="Accept" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -51,34 +54,31 @@ DQ
                             <action selector="doAccept:" target="-2" id="17"/>
                         </connections>
                     </button>
-                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                        <rect key="frame" x="0.0" y="61" width="398" height="175"/>
-                        <clipView key="contentView" id="VQD-Hh-cZg">
+                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="7">
+                        <rect key="frame" x="0.0" y="60" width="398" height="178"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" id="gKb-2B-4Rw">
                             <rect key="frame" x="0.0" y="0.0" width="398" height="178"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <customView translatesAutoresizingMaskIntoConstraints="NO" id="8" customClass="FlippedView">
-                                    <rect key="frame" x="0.0" y="0.0" width="398" height="175"/>
+                                <customView id="8" customClass="FlippedView">
+                                    <rect key="frame" x="0.0" y="0.0" width="398" height="178"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 </customView>
                             </subviews>
-                            <constraints>
-                                <constraint firstItem="8" firstAttribute="leading" secondItem="VQD-Hh-cZg" secondAttribute="leading" id="CTs-5h-2l1"/>
-                                <constraint firstAttribute="bottom" secondItem="8" secondAttribute="bottom" id="QSv-zE-UE7"/>
-                                <constraint firstItem="8" firstAttribute="top" secondItem="VQD-Hh-cZg" secondAttribute="top" id="THV-WV-9vT"/>
-                                <constraint firstAttribute="trailing" secondItem="8" secondAttribute="trailing" id="mYH-N2-9lW"/>
-                            </constraints>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="9">
                             <rect key="frame" x="0.0" y="163" width="383" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="10">
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="10">
                             <rect key="frame" x="383" y="0.0" width="15" height="163"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                        <rect key="frame" x="14" y="13" width="84" height="32"/>
+                    <button verticalHuggingPriority="750" id="30">
+                        <rect key="frame" x="14" y="12" width="96" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="push" title="All" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="31">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -89,33 +89,18 @@ DQ
                             <action selector="selectAll:" target="-2" id="34"/>
                         </connections>
                     </button>
-                    <button toolTip="Show items alphabetically" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g8C-KJ-7b6">
-                        <rect key="frame" x="358" y="237" width="35" height="19"/>
-                        <buttonCell key="cell" type="recessed" title="Abc" alternateTitle="Abc" bezelStyle="recessed" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Uvf-e0-aa7">
+                    <button toolTip="Show items alphabetically" verticalHuggingPriority="750" id="38">
+                        <rect key="frame" x="355" y="238" width="35" height="19"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="recessed" title="Abc" alternateTitle="Abc" bezelStyle="recessed" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="39">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                             <font key="font" size="12" name="Helvetica-Oblique"/>
                         </buttonCell>
                         <connections>
-                            <action selector="sortItems:" target="-2" id="zcr-MX-lBg"/>
+                            <action selector="sortItems:" target="-2" id="40"/>
                         </connections>
                     </button>
                 </subviews>
-                <constraints>
-                    <constraint firstItem="5" firstAttribute="leading" secondItem="6" secondAttribute="trailing" constant="12" symbolic="YES" id="3dX-Cb-8DT"/>
-                    <constraint firstItem="5" firstAttribute="top" secondItem="7" secondAttribute="bottom" constant="20" symbolic="YES" id="4eo-jc-3aQ"/>
-                    <constraint firstAttribute="trailing" secondItem="7" secondAttribute="trailing" id="D2V-Zw-3pK"/>
-                    <constraint firstItem="30" firstAttribute="width" secondItem="6" secondAttribute="width" id="EgZ-nB-iSI"/>
-                    <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="20" symbolic="YES" id="Fuz-DF-0OT"/>
-                    <constraint firstItem="7" firstAttribute="leading" secondItem="4" secondAttribute="leading" id="ImF-oJ-wzb"/>
-                    <constraint firstItem="6" firstAttribute="width" secondItem="5" secondAttribute="width" id="QnP-PD-dfl"/>
-                    <constraint firstAttribute="trailing" secondItem="g8C-KJ-7b6" secondAttribute="trailing" constant="5" id="U6y-9c-UIN"/>
-                    <constraint firstItem="g8C-KJ-7b6" firstAttribute="top" secondItem="4" secondAttribute="top" constant="2" id="XgZ-el-2jt"/>
-                    <constraint firstItem="30" firstAttribute="baseline" secondItem="6" secondAttribute="baseline" id="lpP-Kz-sck"/>
-                    <constraint firstItem="6" firstAttribute="baseline" secondItem="5" secondAttribute="baseline" id="tTr-94-DoH"/>
-                    <constraint firstItem="30" firstAttribute="leading" secondItem="4" secondAttribute="leading" constant="20" symbolic="YES" id="tdc-90-Jwx"/>
-                    <constraint firstItem="7" firstAttribute="top" secondItem="g8C-KJ-7b6" secondAttribute="bottom" constant="2" id="un8-X4-FWx"/>
-                    <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" constant="20" symbolic="YES" id="ygP-QJ-rzM"/>
-                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="19"/>
