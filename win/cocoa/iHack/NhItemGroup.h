@@ -35,7 +35,7 @@
 }
 
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic, readonly) NSArray *items;
+@property (nonatomic, readonly) NSArray<NhItem*> *items;
 @property (nonatomic, getter=isDummy) BOOL dummy;
 
 - (instancetype) initWithTitle:(NSString *)t dummy:(BOOL)d;

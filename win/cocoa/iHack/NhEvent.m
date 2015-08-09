@@ -23,6 +23,7 @@
  */
 
 #import "NhEvent.h"
+#import "ARCBridge.h"
 
 #include "hack.h"
 
@@ -31,15 +32,15 @@
 @synthesize key, mod, x, y;
 
 + (instancetype) eventWithKey:(int)k mod:(int)m x:(int)i y:(int)j {
-	return [[[self alloc] initWithKey:k mod:m x:i y:j] autorelease];
+	return AUTORELEASEOBJ([[self alloc] initWithKey:k mod:m x:i y:j]);
 }
 
 + (instancetype) eventWithX:(int)i y:(int)j {
-	return [[[self alloc] initWithX:i y:j] autorelease];
+	return AUTORELEASEOBJ([[self alloc] initWithX:i y:j]);
 }
 
 + (instancetype) eventWithKey:(int)k {
-	return [[(NhEvent*)[self alloc] initWithKey:k] autorelease];
+	return AUTORELEASEOBJ([(NhEvent*)[self alloc] initWithKey:k]);
 }
 
 - (instancetype) initWithKey:(int)k mod:(int)m x:(int)i y:(int)j {
@@ -64,9 +65,11 @@
 	return key != 0;
 }
 
+#if !__has_feature(objc_arc)
 - (void) dealloc {
 	//NSLog(@"%@ dealloc", self);
 	[super dealloc];
 }
+#endif
 
 @end

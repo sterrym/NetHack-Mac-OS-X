@@ -12,7 +12,27 @@ let kNetHackOptions = "kNetHackOptions"
 
 
 private func SwiftInitNHWindows(argc: UnsafeMutablePointer<Int32>, argv: UnsafeMutablePointer<UnsafeMutablePointer<Int8>>) {
+	//NSLog(@"init_nhwindows");
+	iflags.runmode = RUN_STEP;
+	iflags.window_inited = 1;
 	
+	// default ASCII mode is to use IBM graphics with color
+	iflags.wc_color = 1;
+	switch_graphics(IBM_GRAPHICS);
+	
+	// if user switches to DEC graphics don't let them
+	func decGraphicsModeCallback() {
+		// user tried to switch to DECgraphics, so switch them to IBM instead
+		switch_graphics( IBM_GRAPHICS );
+	}
+
+	decgraphics_mode_callback = decGraphicsModeCallback;
+	
+	// hardwire OPTIONS=time,showexp for issue 8
+	flags.time = 1;
+	flags.showexp = 1;
+	
+	MainWindowController.instance.prepareWindows()
 }
 
 private func SwiftPlayerSelection() {
@@ -236,6 +256,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		// Insert code here to tear down your application
 	}
 
-
+	func unlockNethackCore() {
+		
+	}
+	
+	func lockNethackCore() {
+		
+	}
 }
 

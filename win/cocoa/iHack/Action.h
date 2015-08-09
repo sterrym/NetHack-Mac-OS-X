@@ -27,7 +27,7 @@
 @interface Action : NSObject {
 	
 	NSString *title;
-	NSMutableArray *invocations;
+	NSMutableArray<NSInvocation*> *invocations;
 
 }
 

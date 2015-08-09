@@ -23,6 +23,7 @@
  */
 
 #import "Action.h"
+#import "ARCBridge.h"
 
 @implementation Action
 
@@ -65,6 +66,7 @@
 	[self.invocations addObject:inv];
 }
 
+#if !__has_feature(objc_arc)
 - (void)dealloc {
 	[title release];
 	if (invocations) { // guard against auto-creation
@@ -72,5 +74,6 @@
 	}
 	[super dealloc];
 }
+#endif
 
 @end

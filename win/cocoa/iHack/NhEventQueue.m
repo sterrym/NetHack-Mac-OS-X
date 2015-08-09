@@ -25,8 +25,15 @@
 #import "NhEventQueue.h"
 #import "NhEvent.h"
 #import "NhCommand.h"
-#import "NetHackCocoaAppDelegate.h"
 
+#import "ARCBridge.h"
+
+#ifdef NH_SWIFT
+#import "NetHackSwift-Swift.h"
+#define NetHackCocoaAppDelegate AppDelegate
+#else
+#import "NetHackCocoaAppDelegate.h"
+#endif
 
 static NhEventQueue *s_eventQueue;
 
@@ -83,13 +90,13 @@ static NhEventQueue *s_eventQueue;
 	while (events.count == 0) {
 		[condition wait];
 	}
-	NhEvent *e = [[events objectAtIndex:0] retain];
+	NhEvent *e = RETAINOBJ([events objectAtIndex:0]);
 	[events removeObjectAtIndex:0];
 	[condition unlock];
 	
 	[appDelegate lockNethackCore];
 	
-	return [e autorelease];
+	return AUTORELEASEOBJ(e);
 }
 
 - (void)waitForNextEvent {
@@ -117,10 +124,12 @@ static NhEventQueue *s_eventQueue;
 	return nil;
 }
 
+#if !__has_feature(objc_arc)
 - (void) dealloc {
 	[condition release];
 	[events release];
 	[super dealloc];
 }
+#endif
 
 @end

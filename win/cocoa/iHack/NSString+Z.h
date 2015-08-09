@@ -24,15 +24,19 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSString (Z)
 
 - (BOOL) containsString:(NSString *)s;
 - (BOOL) startsWithString:(NSString *)s;
 - (BOOL) containsChar:(char)c;
 - (BOOL) endsWithString:(NSString *)s;
-- (NSString *) substringBetweenDelimiters:(NSString *)del;
-- (NSString *) substringStartingWithString:(NSString *)start;
+- (nullable NSString *) substringBetweenDelimiters:(NSString *)del;
+- (nullable NSString *) substringStartingWithString:(NSString *)start;
 - (NSString *) stringWithTrimmedWhitespaces;
 - (NSRange) rangeOfString:(NSString *)text withDelimiter:(NSString *)delim;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -24,17 +24,24 @@
 
 #import "NhCommand.h"
 #import "NhEventQueue.h"
+#import "ARCBridge.h"
 
 #include "hack.h"
 
+static inline coord CoordMake(xchar i, xchar j) {
+	coord c = {i,j};
+	return c;
+}
+
 @implementation NhCommand
+@synthesize keys;
 
 + (instancetype)commandWithTitle:(const char *)t keys:(const char *)c {
-	return [[[self alloc] initWithTitle:t keys:c] autorelease];
+	return AUTORELEASEOBJ([[self alloc] initWithTitle:t keys:c]);
 }
 
 + (instancetype)commandWithTitle:(const char *)t key:(char)c {
-	return [[[self alloc] initWithTitle:t key:c] autorelease];
+	return AUTORELEASEOBJ([[self alloc] initWithTitle:t key:c]);
 }
 
 + (void)addCommand:(NhCommand *)cmd toCommands:(NSMutableArray *)commands {
@@ -263,7 +270,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 
 - (void)dealloc {
 	free(keys);
-	[super dealloc];
+	SUPERDEALLOC;
 }
 
 #pragma mark Action

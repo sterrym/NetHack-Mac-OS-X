@@ -952,6 +952,19 @@
 		55BF8C6C1B77BCCB0031A45A /* tiles20x40.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBE011B8A82300FC2199 /* tiles20x40.bmp */; };
 		55BF8C6D1B77BCCB0031A45A /* tiles32.png in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBE111B8A82300FC2199 /* tiles32.png */; };
 		55BF8C701B77BEF10031A45A /* compat.m in Sources */ = {isa = PBXBuildFile; fileRef = 55BF8C6F1B77BEF10031A45A /* compat.m */; };
+		55F514E81B77E00900DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
+		55F514EA1B77E0AF00DEC8F5 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */; };
+		55F514EC1B77E7EB00DEC8F5 /* NotesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAE011B8A6F200FC2199 /* NotesWindowController.m */; };
+		55F514ED1B77E89E00DEC8F5 /* NhEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0111B8A73300FC2199 /* NhEvent.m */; };
+		55F514EE1B77E8B000DEC8F5 /* NhEventQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0311B8A73300FC2199 /* NhEventQueue.m */; };
+		55F514F11B77EAEA00DEC8F5 /* NhCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAFF11B8A73300FC2199 /* NhCommand.m */; };
+		55F514F21B77ED2700DEC8F5 /* Action.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAFD11B8A73300FC2199 /* Action.m */; };
+		55F514F31B77EE6E00DEC8F5 /* MessageWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CADE11B8A6F200FC2199 /* MessageWindowController.m */; };
+		55F514F61B77EFB000DEC8F5 /* WinSwiftBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 55F514F51B77EFB000DEC8F5 /* WinSwiftBridge.m */; };
+		55F514F71B77F0F600DEC8F5 /* Inventory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAD511B8A6F200FC2199 /* Inventory.c */; };
+		55F514F91B77F14400DEC8F5 /* NhObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514F81B77F14400DEC8F5 /* NhObject.swift */; };
+		55F514FC1B77F72900DEC8F5 /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
+		55F514FD1B77F72900DEC8F5 /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -1437,6 +1450,13 @@
 		55BF8B4D1B77BC0F0031A45A /* MessageWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageWindow.xib; sourceTree = "<group>"; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
 		55BF8C6F1B77BEF10031A45A /* compat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = compat.m; sourceTree = "<group>"; };
+		55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftNetHack bridge.swift"; sourceTree = "<group>"; };
+		55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
+		55F514F01B77E9D400DEC8F5 /* ARCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCBridge.h; sourceTree = "<group>"; };
+		55F514F41B77EFB000DEC8F5 /* WinSwiftBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinSwiftBridge.h; sourceTree = "<group>"; };
+		55F514F51B77EFB000DEC8F5 /* WinSwiftBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WinSwiftBridge.m; sourceTree = "<group>"; };
+		55F514F81B77F14400DEC8F5 /* NhObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhObject.swift; sourceTree = "<group>"; };
+		55F514FA1B77F69D00DEC8F5 /* NhItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhItem.swift; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* NetHackCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetHackCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2033,6 +2053,7 @@
 		43153FFE114ABAE0003E9BF4 /* iHack */ = {
 			isa = PBXGroup;
 			children = (
+				55F514F01B77E9D400DEC8F5 /* ARCBridge.h */,
 				0224CAFC11B8A73300FC2199 /* Action.h */,
 				0224CAFD11B8A73300FC2199 /* Action.m */,
 				0224CAFE11B8A73300FC2199 /* NhCommand.h */,
@@ -2103,11 +2124,25 @@
 		55BF8B521B77BC4B0031A45A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				55F514EB1B77E29100DEC8F5 /* Supporting Source code */,
 				55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */,
-				55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */,
-				55BF8C6F1B77BEF10031A45A /* compat.m */,
+				55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */,
+				55F514F81B77F14400DEC8F5 /* NhObject.swift */,
+				55F514FA1B77F69D00DEC8F5 /* NhItem.swift */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		55F514EB1B77E29100DEC8F5 /* Supporting Source code */ = {
+			isa = PBXGroup;
+			children = (
+				55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */,
+				55BF8C6F1B77BEF10031A45A /* compat.m */,
+				55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */,
+				55F514F41B77EFB000DEC8F5 /* WinSwiftBridge.h */,
+				55F514F51B77EFB000DEC8F5 /* WinSwiftBridge.m */,
+			);
+			name = "Supporting Source code";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2958,10 +2993,14 @@
 				55BF8B811B77BC730031A45A /* mkmap.c in Sources */,
 				55BF8B581B77BC730031A45A /* ball.c in Sources */,
 				55BF8BA41B77BC730031A45A /* shk.c in Sources */,
+				55F514F91B77F14400DEC8F5 /* NhObject.swift in Sources */,
 				55BF8B821B77BC730031A45A /* mkmaze.c in Sources */,
 				55BF8BB31B77BC730031A45A /* uhitm.c in Sources */,
+				55F514F11B77EAEA00DEC8F5 /* NhCommand.m in Sources */,
 				55BF8BA71B77BC730031A45A /* sounds.c in Sources */,
 				55BF8B9F1B77BC730031A45A /* rip.c in Sources */,
+				55F514F71B77F0F600DEC8F5 /* Inventory.c in Sources */,
+				55F514EE1B77E8B000DEC8F5 /* NhEventQueue.m in Sources */,
 				55BF8B641B77BC730031A45A /* do_wear.c in Sources */,
 				55BF8B711B77BC730031A45A /* files.c in Sources */,
 				55BF8BB21B77BC730031A45A /* u_init.c in Sources */,
@@ -2974,6 +3013,7 @@
 				55BF8B911B77BC730031A45A /* options.c in Sources */,
 				55BF8B631B77BC730031A45A /* do_name.c in Sources */,
 				55BF8B531B77BC730031A45A /* allmain.c in Sources */,
+				55F514F21B77ED2700DEC8F5 /* Action.m in Sources */,
 				55BF8B851B77BC730031A45A /* mon.c in Sources */,
 				55BF8B961B77BC730031A45A /* potion.c in Sources */,
 				55BF8BAB1B77BC730031A45A /* steed.c in Sources */,
@@ -2987,6 +3027,7 @@
 				55BF8BA61B77BC730031A45A /* sit.c in Sources */,
 				55BF8B7F1B77BC730031A45A /* minion.c in Sources */,
 				55BF8B681B77BC730031A45A /* dothrow.c in Sources */,
+				55F514FD1B77F72900DEC8F5 /* NSString+Z.m in Sources */,
 				55BF8B611B77BC730031A45A /* dlb.c in Sources */,
 				55BF8B571B77BC730031A45A /* attrib.c in Sources */,
 				55BF8BB61B77BC730031A45A /* vis_tab.c in Sources */,
@@ -2997,12 +3038,14 @@
 				55BF8B921B77BC730031A45A /* pager.c in Sources */,
 				55BF8B8F1B77BC730031A45A /* objects.c in Sources */,
 				55BF8BA21B77BC730031A45A /* rumors.c in Sources */,
+				55F514FC1B77F72900DEC8F5 /* NSString+NetHack.m in Sources */,
 				55BF8BB91B77BC730031A45A /* were.c in Sources */,
 				55BF8B751B77BC730031A45A /* hacklib.c in Sources */,
 				55BF8B5A1B77BC730031A45A /* botl.c in Sources */,
 				55BF8B981B77BC730031A45A /* priest.c in Sources */,
 				55BF8B731B77BC730031A45A /* hack.c in Sources */,
 				55BF8B5B1B77BC730031A45A /* cmd.c in Sources */,
+				55F514ED1B77E89E00DEC8F5 /* NhEvent.m in Sources */,
 				55BF8BC11B77BC890031A45A /* unixmain.c in Sources */,
 				55BF8B9D1B77BC730031A45A /* region.c in Sources */,
 				55BF8B891B77BC730031A45A /* monstr.c in Sources */,
@@ -3020,6 +3063,7 @@
 				55BF8B6A1B77BC730031A45A /* dungeon.c in Sources */,
 				55BF8BB01B77BC730031A45A /* track.c in Sources */,
 				55BF8BAC1B77BC730031A45A /* teleport.c in Sources */,
+				55F514F31B77EE6E00DEC8F5 /* MessageWindowController.m in Sources */,
 				55BF8B881B77BC730031A45A /* monst.c in Sources */,
 				55BF8B551B77BC730031A45A /* apply.c in Sources */,
 				55BF8BBB1B77BC730031A45A /* windows.c in Sources */,
@@ -3027,16 +3071,20 @@
 				55BF8B781B77BC730031A45A /* lock.c in Sources */,
 				55BF8BA11B77BC730031A45A /* role.c in Sources */,
 				55BF8B401B77BBB80031A45A /* AppDelegate.swift in Sources */,
+				55F514EC1B77E7EB00DEC8F5 /* NotesWindowController.m in Sources */,
 				55BF8B7E1B77BC730031A45A /* mhitu.c in Sources */,
 				55BF8B9C1B77BC730031A45A /* rect.c in Sources */,
 				55BF8B701B77BC730031A45A /* extralev.c in Sources */,
 				55BF8BA31B77BC730031A45A /* save.c in Sources */,
+				55F514EA1B77E0AF00DEC8F5 /* MainWindowController.swift in Sources */,
+				55F514E81B77E00900DEC8F5 /* SwiftNetHack bridge.swift in Sources */,
 				55BF8BBD1B77BC730031A45A /* worm.c in Sources */,
 				55BF8BBF1B77BC730031A45A /* write.c in Sources */,
 				55BF8B991B77BC730031A45A /* quest.c in Sources */,
 				55BF8BC31B77BC890031A45A /* unixunix.c in Sources */,
 				55BF8B901B77BC730031A45A /* objnam.c in Sources */,
 				55BF8B771B77BC730031A45A /* light.c in Sources */,
+				55F514F61B77EFB000DEC8F5 /* WinSwiftBridge.m in Sources */,
 				55BF8B691B77BC730031A45A /* drawing.c in Sources */,
 				55BF8B591B77BC730031A45A /* bones.c in Sources */,
 			);
@@ -3321,6 +3369,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					NH_SWIFT,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3364,6 +3413,10 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NH_SWIFT,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

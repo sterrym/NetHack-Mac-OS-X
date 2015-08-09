@@ -40,7 +40,7 @@
 }
 
 - (BOOL) containsChar:(char)c {
-	int length = self.length;
+	NSInteger length = self.length;
 	for (int i = 0; i < length; ++i) {
 		char ct = [self characterAtIndex:i];
 		if (ct == c) {
@@ -111,7 +111,7 @@
 // search for string with paddig on both sides (or at front or back of string)
 - (NSRange) rangeOfString:(NSString *)text withDelimiter:(NSString *)delim
 {
-	int dl = [delim length];
+	NSInteger dl = [delim length];
 	NSRange rng = NSMakeRange(-1, [self length]);
 	for (;;) {
 		rng.location += 1;

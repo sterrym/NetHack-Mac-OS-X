@@ -27,6 +27,8 @@
 @class NhEvent;
 @class NhCommand;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NhEventQueue : NSObject {
 	
 	NSMutableArray *events;
@@ -45,6 +47,8 @@
 - (void)waitForNextEvent;
 
 // non-blocking
-- (NhEvent *)peek;
+- (nullable NhEvent *)peek;
 
 @end
+
+NS_ASSUME_NONNULL_END

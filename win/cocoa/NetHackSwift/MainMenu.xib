@@ -19,7 +19,7 @@
                 <outlet property="window" destination="371" id="532"/>
             </connections>
         </customObject>
-        <customObject id="943" customClass="MainWindowController">
+        <customObject id="943" customClass="MainWindowController" customModule="NetHackSwift" customModuleProvider="target">
             <connections>
                 <outlet property="asciiModeMenuItem" destination="1560" id="1562"/>
                 <outlet property="directionWindow" destination="855" id="944"/>
@@ -1990,7 +1990,7 @@ Gw
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" headerView="1138" id="1137">
-                                    <rect key="frame" x="0.0" y="0.0" width="129" height="255"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="129" height="19"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -2039,7 +2039,7 @@ Gw
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="32" headerView="1144" id="1145">
-                                    <rect key="frame" x="0.0" y="0.0" width="130" height="448"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="34"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>

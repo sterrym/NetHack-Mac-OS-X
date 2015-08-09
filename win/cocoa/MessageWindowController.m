@@ -25,8 +25,15 @@
 
 #import "MessageWindowController.h"
 #import "NhEventQueue.h"
-#import "wincocoa.h"
 
+#ifdef NH_SWIFT
+#import "NetHackSwift-Swift.h"
+#import "WinSwiftBridge.h"
+#define WinCocoa WinSwiftBridge
+#else
+#import "wincocoa.h"
+#endif
+#import "ARCBridge.h"
 
 #define RUN_MODAL	1
 
@@ -37,7 +44,7 @@
 {
 	if ( self = [super initWithWindowNibName:@"MessageWindow"] ) {
 		
-		text = [message retain];
+		text = [message copy];
 
 	}
 	return self;
@@ -46,7 +53,7 @@
 -(void)windowDidLoad
 {
 	// convert leading space to tab
-	NSMutableString * mutable = [[text mutableCopyWithZone:NULL] autorelease];
+	NSMutableString * mutable = AUTORELEASEOBJ([text mutableCopyWithZone:NULL]);
 	[mutable replaceOccurrencesOfString:@"\n  " withString:@"\n\t" options:0 range:NSMakeRange(0,[mutable length])];
 	[mutable replaceOccurrencesOfString:@"\n* " withString:@"\n\t*" options:0 range:NSMakeRange(0,[mutable length])];
 	
@@ -110,13 +117,15 @@
 	[[NSApplication sharedApplication] stopModal];
 #endif
 	
-	[self autorelease];
+	AUTORELEASEOBJNORETURN(self);
 }
 
+#if !__has_feature(objc_arc)
 -(void)dealloc
 {
 	[text release];
 	[super dealloc];
 }
+#endif
 
 @end

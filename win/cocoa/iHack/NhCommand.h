@@ -24,7 +24,11 @@
 
 #import <Foundation/Foundation.h>
 #import "Action.h"
+#include "hack.h"
+
+#ifndef NH_SWIFT
 #import "wincocoa.h"
+#endif
 
 #ifndef M
 # ifndef NHSTDC
@@ -36,6 +40,8 @@
 #ifndef C
 #define C(c)		(0x1f & (c))
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface NhCommand : Action {
 	
@@ -49,12 +55,14 @@
 + (instancetype)commandWithTitle:(const char *)t key:(char)c;
 
 // all commands possible at this stage
-+ (NSArray *)currentCommands;
++ (NSArray<NhCommand *> *)currentCommands;
 
 // all commands possible for an adjacent position
-+ (NSArray *)commandsForAdjacentTile:(coord)tp;
++ (NSArray<NhCommand*> *)commandsForAdjacentTile:(coord)tp;
 
 - (instancetype)initWithTitle:(const char *)t keys:(const char *)c;
 - (instancetype)initWithTitle:(const char *)t key:(char)c;
 
 @end
+
+NS_ASSUME_NONNULL_END
