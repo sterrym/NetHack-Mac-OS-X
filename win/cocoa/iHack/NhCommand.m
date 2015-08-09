@@ -28,10 +28,13 @@
 
 #include "hack.h"
 
+
+#ifdef NH_SWIFT
 static inline coord CoordMake(xchar i, xchar j) {
 	coord c = {i,j};
 	return c;
 }
+#endif
 
 @implementation NhCommand
 @synthesize keys;

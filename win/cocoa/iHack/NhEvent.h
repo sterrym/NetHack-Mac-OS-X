@@ -24,6 +24,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NhEvent : NSObject {
 	int key;
 	int mod;
@@ -46,3 +48,5 @@
 - (instancetype) initWithKey:(int)k;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -965,6 +965,9 @@
 		55F514F91B77F14400DEC8F5 /* NhObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514F81B77F14400DEC8F5 /* NhObject.swift */; };
 		55F514FC1B77F72900DEC8F5 /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		55F514FD1B77F72900DEC8F5 /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
+		55F514FE1B77FA4A00DEC8F5 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBEC11B8A85F00FC2199 /* Credits.rtf */; };
+		55F515001B77FAE700DEC8F5 /* NhItemGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514FA1B77F69D00DEC8F5 /* NhItemGroup.swift */; };
+		55F515021B77FD4600DEC8F5 /* ZDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F515011B77FD4600DEC8F5 /* ZDirection.swift */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -1456,7 +1459,8 @@
 		55F514F41B77EFB000DEC8F5 /* WinSwiftBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinSwiftBridge.h; sourceTree = "<group>"; };
 		55F514F51B77EFB000DEC8F5 /* WinSwiftBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WinSwiftBridge.m; sourceTree = "<group>"; };
 		55F514F81B77F14400DEC8F5 /* NhObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhObject.swift; sourceTree = "<group>"; };
-		55F514FA1B77F69D00DEC8F5 /* NhItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhItem.swift; sourceTree = "<group>"; };
+		55F514FA1B77F69D00DEC8F5 /* NhItemGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhItemGroup.swift; sourceTree = "<group>"; };
+		55F515011B77FD4600DEC8F5 /* ZDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDirection.swift; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* NetHackCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetHackCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2128,7 +2132,8 @@
 				55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */,
 				55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */,
 				55F514F81B77F14400DEC8F5 /* NhObject.swift */,
-				55F514FA1B77F69D00DEC8F5 /* NhItem.swift */,
+				55F514FA1B77F69D00DEC8F5 /* NhItemGroup.swift */,
+				55F515011B77FD4600DEC8F5 /* ZDirection.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -2581,6 +2586,7 @@
 				55BF8C031B77BCA60031A45A /* Pri-filb.lev in Resources */,
 				55BF8C391B77BCA60031A45A /* castle.des in Resources */,
 				55BF8C1E1B77BCA60031A45A /* soko4-2.lev in Resources */,
+				55F514FE1B77FA4A00DEC8F5 /* Credits.rtf in Resources */,
 				55BF8C6D1B77BCCB0031A45A /* tiles32.png in Resources */,
 				55BF8C621B77BCA60031A45A /* wizhelp in Resources */,
 				55BF8C0E1B77BCA60031A45A /* Rog-goal.lev in Resources */,
@@ -3002,6 +3008,7 @@
 				55F514F71B77F0F600DEC8F5 /* Inventory.c in Sources */,
 				55F514EE1B77E8B000DEC8F5 /* NhEventQueue.m in Sources */,
 				55BF8B641B77BC730031A45A /* do_wear.c in Sources */,
+				55F515021B77FD4600DEC8F5 /* ZDirection.swift in Sources */,
 				55BF8B711B77BC730031A45A /* files.c in Sources */,
 				55BF8BB21B77BC730031A45A /* u_init.c in Sources */,
 				55BF8BA91B77BC730031A45A /* spell.c in Sources */,
@@ -3023,6 +3030,7 @@
 				55BF8B6D1B77BC730031A45A /* engrave.c in Sources */,
 				55BF8BB41B77BC730031A45A /* vault.c in Sources */,
 				55BF8BBA1B77BC730031A45A /* wield.c in Sources */,
+				55F515001B77FAE700DEC8F5 /* NhItemGroup.swift in Sources */,
 				55BF8B951B77BC730031A45A /* polyself.c in Sources */,
 				55BF8BA61B77BC730031A45A /* sit.c in Sources */,
 				55BF8B7F1B77BC730031A45A /* minion.c in Sources */,

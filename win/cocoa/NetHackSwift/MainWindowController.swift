@@ -141,5 +141,43 @@ class MainWindowController: NSWindowController, NSWindowDelegate,NSMenuDelegate,
 		
 		window?.acceptsMouseMovedEvents = true
 	}
+	
 }
 
+func keyFromDirection(d: EuclideanDirection) -> Int32 {
+	let keys: [Int32] = [107, 117, 108, 110, 106, 98, 104, 121, 033]// = ["kulnjbhy\033"]
+	//ret
+	
+	return keys[d.rawValue]
+}
+
+func directionFromKey(k: Int8) -> EuclideanDirection {
+	switch k {
+	case 107:
+		return .Up
+		
+	case 117:
+		return .UpRight
+		
+	case 108:
+		return .Right
+		
+	case 110:
+		return .DownRight
+		
+	case 106:
+		return .Down
+		
+	case 98:
+		return .DownLeft
+		
+	case 104:
+		return .Left
+		
+	case 121:
+		return .UpLeft
+		
+	default:
+		return .Max
+	}
+}
