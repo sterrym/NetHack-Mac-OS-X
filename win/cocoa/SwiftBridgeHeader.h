@@ -31,6 +31,8 @@ static inline BOOL Swift_Invis() {
 #import "NSString+NetHack.h"
 #import "NSString+Z.h"
 
+#import "NhWindow.h"
+
 
 static inline int SwiftObjToGlyph(struct obj *object)
 {

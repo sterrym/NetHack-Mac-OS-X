@@ -50,6 +50,8 @@
 #include <TargetConditionals.h>
 #endif
 
+#include "NetHackCocoa-Swift.h"
+
 // mainly for tty port implementation
 #define BASE_WINDOW ((winid) [NhWindow messageWindow])
 
@@ -357,29 +359,30 @@ winid cocoa_create_nhwindow(int type)
 		default:
 			assert(NO);
 	}
+	[WinCocoa addWindow:w withID:type];
 	//NSLog(@"create_nhwindow(%x) %x", type, w);
-	return (winid) w;
+	return (winid) type;
 }
 
 void cocoa_clear_nhwindow(winid wid)
 {
 	//NSLog(@"clear_nhwindow %x", wid);
-	[(NhWindow *) wid clear];
+	[[WinCocoa windowForWindowID: wid] clear];
 }
 
 void cocoa_display_nhwindow(winid wid, BOOLEAN_P block)
 {
 	//NSLog(@"display_nhwindow %x, %i, %i", wid, ((NhWindow *) wid).type, block);
-	((NhWindow *) wid).blocking = block;
-	[[MainWindowController instance] displayWindow:(NhWindow *) wid];
+	[WinCocoa windowForWindowID: wid].blocking = block;
+	[[MainWindowController instance] displayWindow:[WinCocoa windowForWindowID: wid]];
 }
 
 void cocoa_destroy_nhwindow(winid wid)
 {
 	//NSLog(@"destroy_nhwindow %x", wid);
-	NhWindow *w = (NhWindow *) wid;
+	NhWindow *w = [WinCocoa windowForWindowID: wid];
 	if (w != [NhWindow messageWindow] && w != [NhWindow statusWindow] && w != [NhWindow mapWindow]) {
-		[w release];
+		[WinCocoa removeWindowWithID: wid];
 	}
 }
 
@@ -388,7 +391,7 @@ void cocoa_curs(winid wid, int x, int y)
 	//NSLog(@"curs %x %d,%d", wid, x, y);
 
 	if (wid == WIN_MAP) {
-		[(NhMapWindow *) wid setCursX:x y:y];
+		[(NhMapWindow*)[WinCocoa windowForWindowID: wid] setCursX:x y:y];
 	}
 }
 
@@ -399,7 +402,7 @@ void cocoa_putstr(winid wid, int attr, const char *text)
 		wid = BASE_WINDOW;
 	}
 	// normal output to a window
-	[(NhWindow *) wid print:text attr:attr];
+	[[WinCocoa windowForWindowID: wid] print:text attr:attr];
 	if (wid == WIN_MESSAGE || wid == BASE_WINDOW) {
 		[[MainWindowController instance] refreshMessages];
 	}		
@@ -429,7 +432,7 @@ void cocoa_display_file(const char *filename, BOOLEAN_P must_exist)
 void cocoa_start_menu(winid wid)
 {
 	//NSLog(@"start_menu %x", wid);
-	[(NhMenuWindow *) wid startMenu];
+	[(NhMenuWindow *)[WinCocoa windowForWindowID: wid] startMenu];
 }
 
 void cocoa_add_menu(winid wid, int glyph, const ANY_P *identifier,
@@ -437,7 +440,7 @@ void cocoa_add_menu(winid wid, int glyph, const ANY_P *identifier,
 					 const char *str, BOOLEAN_P presel)
 {
 	//NSLog(@"add_menu %x %s", wid, str);
-	NhMenuWindow *w = (NhMenuWindow *) wid;
+	NhMenuWindow *w = (NhMenuWindow *) [WinCocoa windowForWindowID: wid];
 	NSString *title = [NSString stringWithFormat:@"%s", str];
 	if (identifier->a_void) {
 		NhItem *i = [[NhItem alloc] initWithTitle:title
@@ -455,17 +458,17 @@ void cocoa_end_menu(winid wid, const char *prompt)
 {
 	//NSLog(@"end_menu %x, %s", wid, prompt);
 	if (prompt) {
-		((NhMenuWindow *) wid).prompt = [NSString stringWithFormat:@"%s", prompt];
+		((NhMenuWindow *) [WinCocoa windowForWindowID: wid]).prompt = [NSString stringWithFormat:@"%s", prompt];
 		//cocoa_putstr(WIN_MESSAGE, 0, prompt);
 	} else {
-		((NhMenuWindow *) wid).prompt = nil;
+		((NhMenuWindow *) [WinCocoa windowForWindowID: wid]).prompt = nil;
 	}
 }
 
 int cocoa_select_menu(winid wid, int how, menu_item **selected)
 {
 	//NSLog(@"select_menu %x", wid);
-	NhMenuWindow *w = (NhMenuWindow *) wid;
+	NhMenuWindow *w = (NhMenuWindow *) [WinCocoa windowForWindowID: wid];
 	w.how = how;
 	*selected = NULL;
 	[[MainWindowController instance] showMenuWindow:w];
@@ -523,7 +526,7 @@ void cocoa_cliparound_window(winid wid, int x, int y)
 void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph)
 {
 	//NSLog(@"print_glyph %x %d,%d", wid, x, y);
-	[(NhMapWindow *) wid printGlyph:glyph atX:x y:y];
+	[(NhMapWindow *) [WinCocoa windowForWindowID: wid] printGlyph:glyph atX:x y:y];
 }
 
 void cocoa_raw_print(const char *str)
