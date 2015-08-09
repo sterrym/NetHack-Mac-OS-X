@@ -11,162 +11,162 @@ import Cocoa
 let kNetHackOptions = "kNetHackOptions"
 
 
-func SwiftInitNHWindows(argc: UnsafeMutablePointer<Int32>, argv: UnsafeMutablePointer<UnsafeMutablePointer<Int8>>) {
+private func SwiftInitNHWindows(argc: UnsafeMutablePointer<Int32>, argv: UnsafeMutablePointer<UnsafeMutablePointer<Int8>>) {
 	
 }
 
-func SwiftPlayerSelection() {
+private func SwiftPlayerSelection() {
 	
 }
 
-func SwiftAskName() {
+private func SwiftAskName() {
 	
 }
 
-func SwiftGetNHEvent() {
+private func SwiftGetNHEvent() {
 	
 }
 
-func SwiftExitNHWindows(str: UnsafePointer<Int8>) {
+private func SwiftExitNHWindows(str: UnsafePointer<Int8>) {
 	
 }
 
-func SwiftSuspendNHWindows(str: UnsafePointer<Int8>) {
+private func SwiftSuspendNHWindows(str: UnsafePointer<Int8>) {
 	
 }
 
-func SwiftResumeNHWindows() {
+private func SwiftResumeNHWindows() {
 	
 }
 
-func SwiftCreateNHWindow(type: Int32) -> winid {
+private func SwiftCreateNHWindow(type: Int32) -> winid {
 	return 0
 }
 
-func SwiftClearNHWindow(wid: winid) {
+private func SwiftClearNHWindow(wid: winid) {
 	
 }
 
-func SwiftDisplayNHWindow(wid: winid, block: Int32) {
+private func SwiftDisplayNHWindow(wid: winid, block: Int32) {
 	
 }
 
-func SwiftDestroyNHWindow(wid: winid) {
+private func SwiftDestroyNHWindow(wid: winid) {
 	
 }
 
-func SwiftCurs(wid: winid, x: Int32, y: Int32) {
+private func SwiftCurs(wid: winid, x: Int32, y: Int32) {
 	
 }
 
-func SwiftPutStr(wid: winid, attr: Int32, text: UnsafePointer<Int8>) {
+private func SwiftPutStr(wid: winid, attr: Int32, text: UnsafePointer<Int8>) {
 	
 }
 
-func SwiftDisplayFile(filename: UnsafePointer<Int8>, must_exist: Int32) {
+private func SwiftDisplayFile(filename: UnsafePointer<Int8>, must_exist: Int32) {
 	
 }
 
-func SwiftStartMenu(wid: winid) {
+private func SwiftStartMenu(wid: winid) {
 	
 }
 
-func SwiftAddMenu(wid: winid, glypn: Int32, identifier: UnsafePointer<any>, accelerator: Int32, groupAccel: Int32, attr: Int32, str: UnsafePointer<Int8>, presel: Int32) {
+private func SwiftAddMenu(wid: winid, glypn: Int32, identifier: UnsafePointer<any>, accelerator: Int32, groupAccel: Int32, attr: Int32, str: UnsafePointer<Int8>, presel: Int32) {
 	
 }
 
-func SwiftEndMenu(wid: winid, prompt: UnsafePointer<Int8>) {
+private func SwiftEndMenu(wid: winid, prompt: UnsafePointer<Int8>) {
 	
 }
 
-func SwiftSelectMenu(wid: winid, how: Int32, selected: UnsafeMutablePointer<UnsafeMutablePointer<menu_item>>) -> Int32 {
+private func SwiftSelectMenu(wid: winid, how: Int32, selected: UnsafeMutablePointer<UnsafeMutablePointer<menu_item>>) -> Int32 {
 	return 0
 }
 
-func SwiftUpdateInventory() {
+private func SwiftUpdateInventory() {
 	
 }
 
-func SwiftMarkSynch() {
+private func SwiftMarkSynch() {
 	
 }
 
-func SwiftWaitSynch() {
+private func SwiftWaitSynch() {
 	
 }
 
-func SwiftClipAround(x: Int32, y: Int32) {
+private func SwiftClipAround(x: Int32, y: Int32) {
 	
 }
 
-func SwiftPrintGlyph(wid: winid, x: Int32, y: Int32, glyph: Int32) {
+private func SwiftPrintGlyph(wid: winid, x: Int32, y: Int32, glyph: Int32) {
 	
 }
 
-func swiftRawPrint(str: UnsafePointer<Int8>, bold: Bool) {
+private func swiftRawPrint(str: UnsafePointer<Int8>, bold: Bool) {
 	
 }
 
-func SwiftRawPrint(str: UnsafePointer<Int8>) {
+private func SwiftRawPrint(str: UnsafePointer<Int8>) {
 	swiftRawPrint(str, bold: false)
 }
 
-func SwiftRawPrintBold(str: UnsafePointer<Int8>) {
+private func SwiftRawPrintBold(str: UnsafePointer<Int8>) {
 	swiftRawPrint(str, bold: true)
 }
 
-func SwiftNHGetCh() -> Int32 {
+private func SwiftNHGetCh() -> Int32 {
 	return 0
 }
 
-func SwiftNHPosKey(x: UnsafeMutablePointer<Int32>, y: UnsafeMutablePointer<Int32>, mod: UnsafeMutablePointer<Int32>) -> Int32 {
+private func SwiftNHPosKey(x: UnsafeMutablePointer<Int32>, y: UnsafeMutablePointer<Int32>, mod: UnsafeMutablePointer<Int32>) -> Int32 {
 	return 0
 }
 
-func SwiftNHBell() {
+private func SwiftNHBell() {
 	NSLog("nhbell")
 	NSBeep()
 }
 
-func SwiftDoPrevMessage() -> Int32 {
+private func SwiftDoPrevMessage() -> Int32 {
 	
 	return 0
 }
 
-func SwiftYNFunction(question: UnsafePointer<Int8>, choices: UnsafePointer<Int8>, def: Int32) -> Int8 {
+private func SwiftYNFunction(question: UnsafePointer<Int8>, choices: UnsafePointer<Int8>, def: Int32) -> Int8 {
 	return 0
 }
 
-func SwiftGetLine(prompt: UnsafePointer<Int8>, line: UnsafeMutablePointer<Int8>) {
+private func SwiftGetLine(prompt: UnsafePointer<Int8>, line: UnsafeMutablePointer<Int8>) {
 	
 }
 
-func SwiftGetExtCommand() -> Int32 {
+private func SwiftGetExtCommand() -> Int32 {
 	return 0
 }
 
-func SwiftNumberPad(num: Int32) {
+private func SwiftNumberPad(num: Int32) {
 	
 }
 
-func SwiftDelayOutput() {
+private func SwiftDelayOutput() {
 	//NSLog(@"delay_output");
 	usleep(50000);
 }
 
-func SwiftStartScreen() {
+private func SwiftStartScreen() {
 	NSLog("start_screen");
 }
 
-func SwiftEndScreen() {
+private func SwiftEndScreen() {
 	NSLog("end_screen");
 }
 
-func SwiftOutRIP(wid: winid, how: Int32) {
+private func SwiftOutRIP(wid: winid, how: Int32) {
 	NSLog("outrip %x", wid);
 }
 
-func SwiftPreferenceUpdate(pref: UnsafePointer<Int8>) {
+private func SwiftPreferenceUpdate(pref: UnsafePointer<Int8>) {
 	
 }
 
