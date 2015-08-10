@@ -220,7 +220,6 @@
 		021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		021282D614F6E6240046D56F /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
-		021282D714F6E6240046D56F /* TileSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1F11B8A73300FC2199 /* TileSet.m */; };
 		021282D814F6E6240046D56F /* ZDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB2111B8A73300FC2199 /* ZDirection.m */; };
 		021282D914F6E6240046D56F /* allmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CC5B11B8A92500FC2199 /* allmain.c */; };
 		021282DA14F6E6240046D56F /* alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CC5C11B8A92500FC2199 /* alloc.c */; };
@@ -370,7 +369,6 @@
 		0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
-		0224CB3311B8A73300FC2199 /* TileSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1F11B8A73300FC2199 /* TileSet.m */; };
 		0224CB3411B8A73300FC2199 /* ZDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB2111B8A73300FC2199 /* ZDirection.m */; };
 		0224CBA911B8A7BE00FC2199 /* Arch.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7B11B8A7BE00FC2199 /* Arch.des */; };
 		0224CBAA11B8A7BE00FC2199 /* Barb.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7C11B8A7BE00FC2199 /* Barb.des */; };
@@ -875,7 +873,6 @@
 		55F515D81B78186F00DEC8F5 /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		55F515D91B78186F00DEC8F5 /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		55F515DA1B78186F00DEC8F5 /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
-		55F515DB1B78186F00DEC8F5 /* TileSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1F11B8A73300FC2199 /* TileSet.m */; };
 		55F515DC1B78186F00DEC8F5 /* ZDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB2111B8A73300FC2199 /* ZDirection.m */; };
 		55F515DD1B78186F00DEC8F5 /* allmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CC5B11B8A92500FC2199 /* allmain.c */; };
 		55F515DE1B78186F00DEC8F5 /* alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CC5C11B8A92500FC2199 /* alloc.c */; };
@@ -992,6 +989,7 @@
 		55F5164E1B78186F00DEC8F5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		55F516541B7819B400DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
 		55F516561B781AC100DEC8F5 /* WinCocoaAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */; };
+		55F5165A1B7831C700DEC8F5 /* TileSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516591B7831C700DEC8F5 /* TileSet.swift */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -1070,8 +1068,6 @@
 		0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NetHack.m"; sourceTree = "<group>"; };
 		0224CB1C11B8A73300FC2199 /* NSString+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Z.h"; sourceTree = "<group>"; };
 		0224CB1D11B8A73300FC2199 /* NSString+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Z.m"; sourceTree = "<group>"; };
-		0224CB1E11B8A73300FC2199 /* TileSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileSet.h; sourceTree = "<group>"; };
-		0224CB1F11B8A73300FC2199 /* TileSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TileSet.m; sourceTree = "<group>"; };
 		0224CB2011B8A73300FC2199 /* ZDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZDirection.h; sourceTree = "<group>"; };
 		0224CB2111B8A73300FC2199 /* ZDirection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZDirection.m; sourceTree = "<group>"; };
 		0224CB7B11B8A7BE00FC2199 /* Arch.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Arch.des; sourceTree = "<group>"; };
@@ -1486,6 +1482,7 @@
 		55F515011B77FD4600DEC8F5 /* ZDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDirection.swift; sourceTree = "<group>"; };
 		55F516521B78186F00DEC8F5 /* NetHackCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetHackCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WinCocoaAdditions.swift; sourceTree = "<group>"; };
+		55F516591B7831C700DEC8F5 /* TileSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileSet.swift; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* NetHackCocoa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetHackCocoa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2121,8 +2118,7 @@
 				0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */,
 				0224CB1C11B8A73300FC2199 /* NSString+Z.h */,
 				0224CB1D11B8A73300FC2199 /* NSString+Z.m */,
-				0224CB1E11B8A73300FC2199 /* TileSet.h */,
-				0224CB1F11B8A73300FC2199 /* TileSet.m */,
+				55F516591B7831C700DEC8F5 /* TileSet.swift */,
 				0224CB2011B8A73300FC2199 /* ZDirection.h */,
 				0224CB2111B8A73300FC2199 /* ZDirection.m */,
 			);
@@ -2870,7 +2866,6 @@
 				021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */,
 				021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */,
 				021282D614F6E6240046D56F /* NSString+Z.m in Sources */,
-				021282D714F6E6240046D56F /* TileSet.m in Sources */,
 				021282D814F6E6240046D56F /* ZDirection.m in Sources */,
 				021282D914F6E6240046D56F /* allmain.c in Sources */,
 				021282DA14F6E6240046D56F /* alloc.c in Sources */,
@@ -3022,12 +3017,12 @@
 				55F515D31B78186F00DEC8F5 /* NhObject.m in Sources */,
 				55F515D41B78186F00DEC8F5 /* NhStatusWindow.m in Sources */,
 				55F515D51B78186F00DEC8F5 /* NhTextInputEvent.m in Sources */,
+				55F5165A1B7831C700DEC8F5 /* TileSet.swift in Sources */,
 				55F515D61B78186F00DEC8F5 /* NhWindow.m in Sources */,
 				55F515D71B78186F00DEC8F5 /* NhYnQuestion.m in Sources */,
 				55F515D81B78186F00DEC8F5 /* NSIndexPath+Z.m in Sources */,
 				55F515D91B78186F00DEC8F5 /* NSString+NetHack.m in Sources */,
 				55F515DA1B78186F00DEC8F5 /* NSString+Z.m in Sources */,
-				55F515DB1B78186F00DEC8F5 /* TileSet.m in Sources */,
 				55F515DC1B78186F00DEC8F5 /* ZDirection.m in Sources */,
 				55F515DD1B78186F00DEC8F5 /* allmain.c in Sources */,
 				55F515DE1B78186F00DEC8F5 /* alloc.c in Sources */,
@@ -3186,7 +3181,6 @@
 				0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */,
 				0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */,
 				0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */,
-				0224CB3311B8A73300FC2199 /* TileSet.m in Sources */,
 				0224CB3411B8A73300FC2199 /* ZDirection.m in Sources */,
 				0224CDC211B8A92600FC2199 /* allmain.c in Sources */,
 				0224CDC311B8A92600FC2199 /* alloc.c in Sources */,
@@ -3494,6 +3488,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "";
@@ -3514,6 +3509,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE = "";

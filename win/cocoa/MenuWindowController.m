@@ -27,10 +27,11 @@
 #import "NhMenuWindow.h"
 #import "NhItem.h"
 #import "NhItemGroup.h"
-#import "TileSet.h"
 #import "NSString+Z.h"
 #import "NhEventQueue.h"
-#import "TileSet.h"
+
+#import "NetHackCocoa-Swift.h"
+
 
 #define RUN_MODAL	1
 #define QUICK_PICK	1

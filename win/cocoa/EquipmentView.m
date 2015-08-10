@@ -24,7 +24,7 @@
 
 #import "hack.h"
 #import "EquipmentView.h"
-#import "TileSet.h"
+#import "NetHackCocoa-Swift.h"
 
 @implementation EquipmentView
 

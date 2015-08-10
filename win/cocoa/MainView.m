@@ -26,7 +26,6 @@
 #import "MainView.h"
 #import "NhWindow.h"
 #import "NhMapWindow.h"
-#import "TileSet.h"
 #import "NhEventQueue.h"
 #import "NhTextInputEvent.h"
 #import "NhEvent.h"
@@ -37,6 +36,9 @@
 
 #import "Inventory.h"
 #import "NSString+Z.h"
+
+#import "NetHackCocoa-Swift.h"
+
 
 #import <Carbon/Carbon.h>	// key codes
 

@@ -50,7 +50,7 @@
 #include <TargetConditionals.h>
 #endif
 
-#include "NetHackCocoa-Swift.h"
+#import "NetHackCocoa-Swift.h"
 
 // mainly for tty port implementation
 #define BASE_WINDOW ((winid) [NhWindow messageWindow])

@@ -24,7 +24,7 @@
 
 
 #import "PlayerSelectionWindowController.h"
-#import "TileSet.h"
+#import "NetHackCocoa-Swift.h"
 
 #include "hack.h"
 

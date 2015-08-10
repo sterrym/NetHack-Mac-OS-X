@@ -39,4 +39,11 @@ static inline int SwiftObjToGlyph(struct obj *object)
 	return obj_to_glyph(object);
 }
 
+extern short glyph2tile[];
+
+static inline int glyphToTile(int glyph)
+{
+	return glyph2tile[glyph];
+}
+
 #endif /* SwiftBridgeHeader_h */
