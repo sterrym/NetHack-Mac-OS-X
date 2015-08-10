@@ -25,6 +25,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @class FlippedTextField;
 
@@ -36,3 +37,5 @@
 +(void)messageWindowWithText:(NSString *)text;
 
 @end
+
+NS_ASSUME_NONNULL_END

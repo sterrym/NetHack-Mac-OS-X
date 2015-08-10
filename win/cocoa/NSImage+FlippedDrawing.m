@@ -82,7 +82,7 @@
 		[self drawAdjustedAtPoint:NSZeroPoint fromRect:NSZeroRect operation:NSCompositeCopy fraction:1.0];
 		[newImage unlockFocus];
 		
-		return [newImage autorelease];
+		return newImage;
 	}
 	return self;
 }

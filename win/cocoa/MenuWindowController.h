@@ -26,6 +26,8 @@
 #import <Cocoa/Cocoa.h>
 #import "NhMenuWindow.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MenuWindowController : NSWindowController <NSWindowDelegate> {
 	
 	NhMenuWindow		*	menuParams;
@@ -41,10 +43,12 @@
 
 + (void)menuWindowWithMenu:(NhMenuWindow *)menu;
 
--(IBAction)doAccept:(id)sender;
--(IBAction)doCancel:(id)sender;
--(IBAction)selectAll:(id)sender;
--(IBAction)sortItems:(id)sender;
--(IBAction)selectUnknownBUC:(id)sender;
+-(IBAction)doAccept:(nullable id)sender;
+-(IBAction)doCancel:(nullable id)sender;
+-(IBAction)selectAll:(nullable id)sender;
+-(IBAction)sortItems:(nullable id)sender;
+-(IBAction)selectUnknownBUC:(nullable id)sender;
 
 @end
+
+NS_ASSUME_NONNULL_END

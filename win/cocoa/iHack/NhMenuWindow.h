@@ -30,6 +30,8 @@
 @class NhItemGroup;
 @class NhItem;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NhMenuWindow : NhWindow {
 	
 	NSMutableArray *itemGroups;
@@ -40,10 +42,10 @@
 	
 }
 
-@property (nonatomic, readonly) NSArray *itemGroups;
-@property (nonatomic, readonly) NhItemGroup *currentItemGroup;
+@property (nonatomic, readonly) NSArray<NhItemGroup *> *itemGroups;
+@property (weak, nonatomic, readonly) NhItemGroup *currentItemGroup;
 @property (nonatomic) int how;
-@property (nonatomic, readonly) NSMutableArray *selected;
+@property (nonatomic, readonly) NSMutableArray<NhItem *> *selected;
 @property (nonatomic, copy) NSString *prompt;
 
 - (void) addItemGroup:(NhItemGroup *)g;
@@ -54,3 +56,5 @@
 - (char)runModal;
 
 @end
+
+NS_ASSUME_NONNULL_END

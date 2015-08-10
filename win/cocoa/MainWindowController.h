@@ -39,6 +39,8 @@
 @class StatsView;
 @class EquipmentView;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MainWindowController : NSWindowController <NSWindowDelegate,NSMenuDelegate,NSTableViewDataSource,NSSpeechSynthesizerDelegate> {	
 	BOOL										isDirectionQuestion;
 	BOOL										terminatedByUser;
@@ -106,3 +108,5 @@
 - (void)speakString:(NSString *)text;
 
 @end
+
+NS_ASSUME_NONNULL_END

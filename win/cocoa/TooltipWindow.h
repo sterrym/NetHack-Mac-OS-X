@@ -24,10 +24,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface TooltipWindow : NSWindow <NSWindowDelegate> {
 
 }
 
--(id)initWithText:(NSString *)text location:(NSPoint)point;
+-(instancetype)initWithText:(NSString *)text location:(NSPoint)point;
 
 @end
+
+NS_ASSUME_NONNULL_END

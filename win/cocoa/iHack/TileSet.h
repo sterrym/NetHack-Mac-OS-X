@@ -26,6 +26,8 @@
 
 extern short glyph2tile[];
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface TileSet : NSObject {
 	
 	NSImage *image;
@@ -50,3 +52,5 @@ extern short glyph2tile[];
 - (NSImage *)imageForGlyph:(int)glyph enabled:(BOOL)enabled;
 
 @end
+
+NS_ASSUME_NONNULL_END

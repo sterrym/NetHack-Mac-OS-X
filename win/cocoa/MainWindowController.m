@@ -42,6 +42,7 @@
 #import "PlayerSelectionWindowController.h"
 #import "StatsView.h"
 #import "NetHackCocoaAppDelegate.h"
+#import "EquipmentView.h"
 
 #import "wincocoa.h" // cocoa_getpos etc.
 
@@ -215,7 +216,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		float r = [voice rate];
 		[voice setRate:1.5*r];
 		[voice setDelegate:self];
-		voiceQueue = [[NSMutableArray array] retain];
+		voiceQueue = [[NSMutableArray alloc] init];
 	});
 }
 
@@ -329,7 +330,6 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 			userTiles = [[NSMutableArray alloc] initWithCapacity:1];
 		}
 		[userTiles addObject:path];
-		[item release];
 	}
 }
 - (IBAction)selectTileSet:(id)sender
@@ -400,7 +400,6 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		NSMenuItem * item = [[NSMenuItem alloc] initWithTitle:name action:@selector(selectTileSet:) keyEquivalent:@""];
 		[item setTarget:self];
 		[menu addItem:item];
-		[item release];
 	}
 }
 - (void)menuWillOpen:(NSMenu *)menu
@@ -814,9 +813,5 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	}
 }
 
-
-- (void)dealloc {
-    [super dealloc];
-}
 
 @end

@@ -173,7 +173,7 @@
 		[[NSApplication sharedApplication] stopModal];
 	}
 
-	[self autorelease];
+	//[self autorelease];
 }
 
 
@@ -199,17 +199,10 @@
 - (id)initWithMenu:(NhMenuWindow *)menu
 {
 	if ( self = [super initWithWindowNibName:@"MenuWindow"] ) {
-		menuParams = [menu retain];
-		itemDict = [[NSMutableDictionary dictionaryWithCapacity:10] retain];
+		menuParams = menu;
+		itemDict = [NSMutableDictionary dictionaryWithCapacity:10];
 	}
 	return self;
-}
-
--(void)dealloc
-{
-	[menuParams release];
-	[itemDict release];
-	[super dealloc];
 }
 
 
@@ -267,7 +260,6 @@
 			ident.a_int = -1;
 			NhItem * item = [[NhItem alloc] initWithTitle:[group.title substringFromIndex:leadingSpaces] identifier:ident accelerator:0 group_accel:0 glyph:NO_GLYPH selected:NO];
 			[currentRealGroup addItem:item];
-			[item release];
 			[remove addObject:[NSNumber numberWithInt:index]];
 			--index;
 			
@@ -459,13 +451,12 @@
 		pos += [width floatValue] + SPACE;
 		NSTextTab * tab = [[NSTextTab alloc] initWithType:NSLeftTabStopType location:pos];
 		[tabs addObject:tab];
-		[tab release];	
 	}
 	
 	return tabs;
 }
 
-static NSString * skipPrefix( NSString * s, NSString * list[] )
+static NSString * skipPrefix( NSString * s, NSString * __strong list[] )
 {
 	for ( int i = 0; list[i] != nil; ++i ) {
 		if ( [s hasPrefix:list[i]] )
@@ -561,7 +552,7 @@ static NSInteger compareButtonText(id button1, id button2, void * context )
 		}
 		// sort buttons alphabetically
 		NSArray * newButtonList = useDefault 
-				? [[origButtonList copy] autorelease]
+				? [origButtonList copy]
 				: [origButtonList sortedArrayUsingFunction:compareButtonText context:NULL];
 		// get list of button locations
 		NSMutableArray * posList = [NSMutableArray arrayWithCapacity:len];
@@ -590,18 +581,18 @@ static BUC_ENUM GetBUC( NSString * text )
 {
 	// get blessed/cursed status
 	static struct {
-		NSString *	text;
+		CFStringRef	text;
 		BUC_ENUM	buc;
 	} List[] = {
-		@" blessed",	BUC_ENUM_BLESSED,
-		@" holy",		BUC_ENUM_BLESSED,
-		@" cursed",		BUC_ENUM_CURSED,
-		@" unholy",		BUC_ENUM_CURSED,
+		CFSTR(" blessed"),	BUC_ENUM_BLESSED,
+		CFSTR(" holy"),		BUC_ENUM_BLESSED,
+		CFSTR(" cursed"),		BUC_ENUM_CURSED,
+		CFSTR(" unholy"),		BUC_ENUM_CURSED,
 	};
 	BUC_ENUM buc = BUC_ENUM_UNCURSED;
 	NSUInteger pos = NSNotFound;
 	for ( int i = 0; i < sizeof List/sizeof List[0]; ++i) {
-		NSUInteger loc = [text rangeOfString:List[i].text].location;
+		NSUInteger loc = [text rangeOfString:(__bridge NSString*)List[i].text].location;
 		if ( loc < pos ) {
 			pos = loc;
 			buc = List[i].buc;
@@ -646,12 +637,12 @@ static BUC_ENUM GetBUC( NSString * text )
 	NSMutableArray * tabStops = [self computeTabStopsWithGroupAttr:groupAttr itemAttr:itemAttr];
 
 	// add tab stops to group attributes
-	NSMutableParagraphStyle *	groupPara	= [[[NSMutableParagraphStyle defaultParagraphStyle] mutableCopyWithZone:nil] autorelease];
+	NSMutableParagraphStyle *	groupPara	= [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopyWithZone:nil];
 	[groupPara setTabStops:tabStops];
 	[groupAttr setObject:groupPara forKey:NSParagraphStyleAttributeName];
 	
 	// add tab stops to item attributes
-	NSMutableParagraphStyle *	itemPara	= [[[NSMutableParagraphStyle defaultParagraphStyle] mutableCopyWithZone:nil] autorelease];
+	NSMutableParagraphStyle *	itemPara	= [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopyWithZone:nil];
 	[itemPara setTabStops:tabStops];
 	[itemAttr setObject:itemPara forKey:NSParagraphStyleAttributeName];
 	
@@ -674,7 +665,6 @@ static BUC_ENUM GetBUC( NSString * text )
 		NSString * title = [group title];
 		NSAttributedString * aTitle = [[NSAttributedString alloc] initWithString:title attributes:groupAttr];
 		[label setObjectValue:aTitle];
-		[aTitle release];
 		
 		[label setEditable:NO];
 		[label setDrawsBackground:NO];
@@ -683,7 +673,6 @@ static BUC_ENUM GetBUC( NSString * text )
 		[label sizeToFit];
 		[menuView addSubview:label];
 		yPos += [label bounds].size.height;
-		[label release];
 		
 		for ( NhItem * item in [group items] ) {
 			
@@ -723,12 +712,10 @@ static BUC_ENUM GetBUC( NSString * text )
 				NSTextAttachment * attachment = [[NSTextAttachment alloc] init];
 				[(NSCell *)[attachment attachmentCell] setImage:image];
 				aString = [[NSAttributedString attributedStringWithAttachment:attachment] mutableCopy];
-				[attachment release];
 				
 			} else {
 				NSAttributedString * s = [[NSAttributedString alloc] initWithString:@""];
 				aString = [s mutableCopy];
-				[s release];
 			}
 			
 			// get title
@@ -757,8 +744,6 @@ static BUC_ENUM GetBUC( NSString * text )
 			
 			// set button title
 			[button setAttributedTitle:aString];
-			
-			[aString release];
 
 #if 0
 			int maxAmt = [item maxAmount];
@@ -767,8 +752,6 @@ static BUC_ENUM GetBUC( NSString * text )
 			[menuView addSubview:button];
 
 			yPos += [button bounds].size.height + 3;
-			
-			[button release];
 		}
 	}
 	

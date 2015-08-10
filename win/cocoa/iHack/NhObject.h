@@ -25,6 +25,8 @@
 #import <Foundation/Foundation.h>
 #include "hack.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NhObject : NSObject {
 	
 	struct obj *object;
@@ -50,3 +52,5 @@
 - (instancetype)initWithObject:(struct obj *)obj;
 
 @end
+
+NS_ASSUME_NONNULL_END

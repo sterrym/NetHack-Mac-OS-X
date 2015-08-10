@@ -25,14 +25,8 @@
 
 #import "MessageWindowController.h"
 #import "NhEventQueue.h"
-
-#ifdef NH_SWIFT
-#import "NetHackSwift-Swift.h"
-#import "WinSwiftBridge.h"
-#define WinCocoa WinSwiftBridge
-#else
 #import "wincocoa.h"
-#endif
+
 #import "ARCBridge.h"
 
 #define RUN_MODAL	1

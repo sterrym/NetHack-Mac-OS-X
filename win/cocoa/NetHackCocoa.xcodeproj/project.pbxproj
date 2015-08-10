@@ -1945,7 +1945,6 @@
 		0224CF1A11B8ABE000FC2199 /* Windows */ = {
 			isa = PBXGroup;
 			children = (
-				55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */,
 				55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */,
 				55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */,
 				0224CAC811B8A64900FC2199 /* wincocoa.h */,
@@ -2050,6 +2049,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */,
 				0224CF2911B8AEE500FC2199 /* NetHackCocoa_Prefix.pch */,
 				0224CABD11B8A5E800FC2199 /* main.m */,
 			);
@@ -2241,7 +2241,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				TargetAttributes = {
 					021281F514F6E6240046D56F = {
 						DevelopmentTeam = MKTTC6734C;
@@ -3402,6 +3402,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = Nethack;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -3426,6 +3427,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = Nethack;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -3486,6 +3488,7 @@
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

@@ -25,15 +25,9 @@
 #import "NhEventQueue.h"
 #import "NhEvent.h"
 #import "NhCommand.h"
+#import "NetHackCocoaAppDelegate.h"
 
 #import "ARCBridge.h"
-
-#ifdef NH_SWIFT
-#import "NetHackSwift-Swift.h"
-#define NetHackCocoaAppDelegate AppDelegate
-#else
-#import "NetHackCocoaAppDelegate.h"
-#endif
 
 static NhEventQueue *s_eventQueue;
 

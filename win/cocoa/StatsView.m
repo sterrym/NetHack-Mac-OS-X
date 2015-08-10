@@ -41,7 +41,7 @@
 -(void)clearAll
 {
 	NSString * clear = @"";
-	[name setStringValue:clear];
+	[name	setStringValue:clear];
 	[role	setStringValue:clear];
 	[dlvl	setStringValue:clear];
 	[hp		setStringValue:clear];

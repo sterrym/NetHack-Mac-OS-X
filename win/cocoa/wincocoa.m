@@ -150,7 +150,6 @@ coord CoordMake(xchar i, xchar j) {
 	NSString *aFile = @(filename);
 	NSString *toRet = [rdir stringByAppendingPathComponent:aFile];
 	strcpy(path, [toRet fileSystemRepresentation]);
-	[fm release];
 }
 
 + (int)keyWithKeyEvent:(NSEvent *)keyEvent
@@ -446,11 +445,9 @@ void cocoa_add_menu(winid wid, int glyph, const ANY_P *identifier,
 		NhItem *i = [[NhItem alloc] initWithTitle:title
 									   identifier:*identifier accelerator:accelerator group_accel:group_accel glyph:glyph selected:presel];
 		[w.currentItemGroup addItem:i];
-		[i release];
 	} else {
 		NhItemGroup *g = [[NhItemGroup alloc] initWithTitle:title];
 		[w addItemGroup:g];
-		[g release];
 	}
 }
 
@@ -613,7 +610,6 @@ char cocoa_yn_function(const char *question, const char *choices, CHAR_P def)
 				NhYnQuestion * q = [[NhYnQuestion alloc] initWithQuestion:question choices:choices default:def];
 				[[MainWindowController instance] showYnQuestion:q];
 				NhEvent * e = [[NhEventQueue instance] nextEvent];
-				[q release];
 				return e.key;
 			}
 		}

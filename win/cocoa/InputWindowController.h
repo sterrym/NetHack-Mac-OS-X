@@ -29,8 +29,8 @@
 	IBOutlet NSTextField *	inputField;
 }
 
--(void)runModalWithPrompt:(NSString *)prompt;
--(IBAction)doAccept:(id)sender;
--(IBAction)doCancel:(id)sender;
+-(void)runModalWithPrompt:(nonnull NSString *)prompt;
+-(IBAction)doAccept:(nullable id)sender;
+-(IBAction)doCancel:(nullable id)sender;
 
 @end

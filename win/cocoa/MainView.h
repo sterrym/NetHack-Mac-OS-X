@@ -27,6 +27,8 @@
 @class MapView;
 @class DirectionPad;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MainView : NSView {
 
 	NSString *	_tileSetName;
@@ -41,19 +43,21 @@
 	NSFont	*	asciiFont;
 	
 	NSString *	contextMenuObject;
-	NSMenu *	contextMenu;
+	NSMenu *	__weak contextMenu;
 }
 
-@property (assign) IBOutlet NSMenu * contextMenu;
+@property (weak, null_unspecified) IBOutlet NSMenu * contextMenu;
 @property (strong,nonatomic) NSString * contextMenuObject;
 
 - (void)cliparoundX:(int)x y:(int)y;
 - (BOOL)setTileSet:(NSString *)tileSetName size:(NSSize)size;
 @property (readonly, copy) NSString *tileSet;
-@property (retain) NSFont *asciiFont;
+@property (strong) NSFont *asciiFont;
 - (void)enableAsciiMode:(BOOL)enable;
 
-- (IBAction)showContextInfo:(id)sender;
-- (IBAction)doWebSearch:(id)sender;
+- (IBAction)showContextInfo:(nullable id)sender;
+- (IBAction)doWebSearch:(nullable id)sender;
 
 @end
+
+NS_ASSUME_NONNULL_END

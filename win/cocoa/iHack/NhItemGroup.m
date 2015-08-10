@@ -52,10 +52,4 @@
 	[items removeObjectAtIndex:row];
 }
 
-- (void) dealloc {
-	[title release];
-	[items release];
-	[super dealloc];
-}
-
 @end

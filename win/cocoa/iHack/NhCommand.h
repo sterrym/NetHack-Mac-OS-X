@@ -24,11 +24,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Action.h"
-#include "hack.h"
-
-#ifndef NH_SWIFT
 #import "wincocoa.h"
-#endif
 
 #ifndef M
 # ifndef NHSTDC

@@ -36,8 +36,7 @@ static TileSet *s_instance = nil;
 }
 
 + (void)setInstance:(TileSet *)ts {
-	[s_instance release];
-	s_instance = [ts retain];
+	s_instance = ts;
 }
 
 - (id)initWithImage:(NSImage *)img tileSize:(NSSize)ts {
@@ -90,7 +89,7 @@ static TileSet *s_instance = nil;
 	// get image
 	NSRect srcRect = [self sourceRectForGlyph:glyph];
 	NSSize size = [self imageSize];
-	NSImage * newImage = [[[NSImage alloc] initWithSize:size] autorelease];
+	NSImage * newImage = [[NSImage alloc] initWithSize:size];
 	NSRect dstRect = NSMakeRect(0, 0, size.width, size.height);
 	[newImage lockFocus];
 	[image drawInRect:dstRect fromRect:srcRect operation:NSCompositeCopy fraction:enabled ? 1.0f : 0.5];
@@ -99,9 +98,5 @@ static TileSet *s_instance = nil;
 }
 
 
-- (void)dealloc {
-	[image release];
-	[super dealloc];
-}
 
 @end

@@ -30,16 +30,11 @@
 
 - (id) initWithQuestion:(const char *)q choices:(const char *)ch default:(int)d {
 	if (self = [super init]) {
-		question = [@(q) retain];
+		question = @(q);
 		choices = ch;
 		def = d;
 	}
 	return self;
-}
-
-- (void) dealloc {
-	[question release];
-	[super dealloc];
 }
 
 @end

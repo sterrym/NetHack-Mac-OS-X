@@ -66,7 +66,6 @@
 
 - (void) dealloc {
 	free(glyphs);
-	[super dealloc];
 }
 
 @end

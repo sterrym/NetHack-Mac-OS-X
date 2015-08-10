@@ -33,12 +33,12 @@
 	if (ws && ws.length > 1) {
 		NSRange r = [self rangeOfString:ws];
 		if ( r.location >= 2 ) {
-			strings = [NSArray arrayWithObjects:[self substringToIndex:r.location-2], ws, nil];
+			strings = @[[self substringToIndex:r.location-2], ws];
 		} else {
-			strings = [NSArray arrayWithObjects:self, nil];
+			strings = @[self];
 		}
 	} else {
-		strings = [NSArray arrayWithObjects:self, nil];
+		strings = @[self];
 	}
 	return strings;
 }

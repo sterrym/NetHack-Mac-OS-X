@@ -28,14 +28,6 @@
 
 #include "hack.h"
 
-
-#ifdef NH_SWIFT
-static inline coord CoordMake(xchar i, xchar j) {
-	coord c = {i,j};
-	return c;
-}
-#endif
-
 @implementation NhCommand
 @synthesize keys;
 
@@ -277,10 +269,6 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 }
 
 #pragma mark Action
-
-- (NSString *)title {
-	return title;
-}
 
 - (void)invoke:(id)sender {
 	[[NhEventQueue instance] addCommand:self];

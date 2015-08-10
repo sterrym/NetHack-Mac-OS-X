@@ -25,6 +25,8 @@
 #import <Cocoa/Cocoa.h>
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface YesNoWindowController : NSWindowController <NSWindowDelegate> {
 	IBOutlet NSTextField *	question;
 	IBOutlet NSButton	*	button1;
@@ -37,3 +39,5 @@
 -(IBAction)performButton:(id)sender;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -34,9 +34,9 @@
 
 }
 
-@property (nonatomic, readonly) NSString *text;
-@property (nonatomic, readonly) NSAttributedString *attributedText;
-@property (nonatomic, readonly) NSArray *messages;
+@property (weak, nonatomic, readonly) NSString *text;
+@property (weak, nonatomic, readonly) NSAttributedString *attributedText;
+@property (weak, nonatomic, readonly) NSArray *messages;
 @property (nonatomic, readonly) int type;
 @property (nonatomic, getter=isBlocking) BOOL blocking;
 
