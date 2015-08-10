@@ -176,14 +176,14 @@ static NhWindow *s_mapWindow = nil;
 		++r.length;
 	
 	// make sure no trailing letters
-	if ( r.location+r.length < [s length] && isalnum([s characterAtIndex:r.location+r.length]) ) 
+	if ( r.location+r.length < s.length && isalnum([s characterAtIndex:r.location+r.length]) ) 
 		return NO;
 	
 	return YES;
 }
 
 - (void)print:(const char *)str attr:(int)attr {
-	NSString *s = [NSString stringWithCString:str encoding:NSASCIIStringEncoding];
+	NSString *s = @(str);
 //	s = [s stringWithTrimmedWhitespaces];
 	
 //	s = [NSString stringWithFormat:@"%d: %@",moves,s];
@@ -197,9 +197,7 @@ static NhWindow *s_mapWindow = nil;
 				{
 					BOOL highlight = [self stringReferencesHero:s];
 					if ( highlight ) {
-						dict = [NSDictionary dictionaryWithObjectsAndKeys:
-								[NSColor blueColor], NSForegroundColorAttributeName,
-								nil];
+						dict = @{NSForegroundColorAttributeName: [NSColor blueColor]};
 					}
 					BOOL isVoiced = [self stringIsVoiced:s];
 					if ( isVoiced ) {
@@ -209,20 +207,16 @@ static NhWindow *s_mapWindow = nil;
 				}
 				break;
 			case ATR_BOLD:
-				dict = [NSDictionary dictionaryWithObject:[NSFont boldSystemFontOfSize:[NSFont systemFontSize]]
-												   forKey:NSFontAttributeName];
+				dict = @{NSFontAttributeName: [NSFont boldSystemFontOfSize:[NSFont systemFontSize]]};
 				break;
 			case ATR_DIM:
 			case ATR_ULINE:
-				dict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:NSUnderlineStyleSingle]
-												   forKey:NSUnderlineStyleAttributeName];
+				dict = @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle)};
 				break;
 			case ATR_BLINK:
 			case ATR_INVERSE:
-				dict = [NSDictionary dictionaryWithObjectsAndKeys:
-						[NSColor redColor], NSForegroundColorAttributeName,
-						[NSColor blueColor], NSBackgroundColorAttributeName,
-						nil];
+				dict = @{NSForegroundColorAttributeName: [NSColor redColor],
+						NSBackgroundColorAttributeName: [NSColor blueColor]};
 				break;
 		}
 		NSAttributedString * s2 = [[NSAttributedString alloc] initWithString:s attributes:dict];
@@ -238,7 +232,7 @@ static NhWindow *s_mapWindow = nil;
 	NSArray *res = nil;
 	[self lock];
 	if (lines.count > 0) {
-		res = [NSArray arrayWithArray:lines];
+		res = [[NSArray alloc] initWithArray:lines];
 	}
 	[self unlock];
 	return res;
@@ -254,7 +248,7 @@ static NhWindow *s_mapWindow = nil;
 
 	if ( [self useAttributedStrings] ) {
 		NSString * turn = @"------------";
-		if ( ! [[[lines lastObject] string] isEqualToString:turn] ) {
+		if ( ! [[lines.lastObject string] isEqualToString:turn] ) {
 			NSAttributedString * text = [[NSAttributedString alloc] initWithString:turn];
 			[lines addObject:text];
 		}		
@@ -267,7 +261,7 @@ static NhWindow *s_mapWindow = nil;
 	assert( ![self useAttributedStrings] );
 	
 	NSString * t = nil;
-	NSArray *messages = [self messages];
+	NSArray *messages = self.messages;
 	if (messages && messages.count > 0) {
 		
 		t = [messages componentsJoinedByString:lineDelimiter];
@@ -280,7 +274,7 @@ static NhWindow *s_mapWindow = nil;
 
 	assert( [self useAttributedStrings] );
 	
-	NSArray *messages = [self messages];
+	NSArray *messages = self.messages;
 	if (messages && messages.count > 0) {
 		
 		NSAttributedString * delim = [[NSMutableAttributedString alloc] initWithString:lineDelimiter];
@@ -307,7 +301,7 @@ static NhWindow *s_mapWindow = nil;
 {
 	NSInteger count;
 	[self lock];
-	count = [lines count];
+	count = lines.count;
 	[self unlock];
 	return count;
 }
@@ -316,8 +310,8 @@ static NhWindow *s_mapWindow = nil;
 {
 	id result = nil;
 	[self lock];
-	if ( row < [lines count] ) {
-		result = [lines objectAtIndex:row];
+	if ( row < lines.count ) {
+		result = lines[row];
 		//[[result retain] autorelease];
 	}
 	[self unlock];

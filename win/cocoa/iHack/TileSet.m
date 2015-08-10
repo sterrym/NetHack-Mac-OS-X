@@ -39,7 +39,7 @@ static TileSet *s_instance = nil;
 	s_instance = ts;
 }
 
-- (id)initWithImage:(NSImage *)img tileSize:(NSSize)ts {
+- (instancetype)initWithImage:(NSImage *)img tileSize:(NSSize)ts {
 	if (self = [super init]) {
 
 #if 1
@@ -73,7 +73,7 @@ static TileSet *s_instance = nil;
 
 - (NSSize)imageSize
 {
-	NSSize size = [self tileSize];
+	NSSize size = self.tileSize;
 	if ( size.width > 32.0 || size.height > 32.0 ) {
 		// since these images are used in menus we want to scale them down
 		CGFloat m = size.width > size.height ? size.width : size.height;
@@ -88,7 +88,7 @@ static TileSet *s_instance = nil;
 {
 	// get image
 	NSRect srcRect = [self sourceRectForGlyph:glyph];
-	NSSize size = [self imageSize];
+	NSSize size = self.imageSize;
 	NSImage * newImage = [[NSImage alloc] initWithSize:size];
 	NSRect dstRect = NSMakeRect(0, 0, size.width, size.height);
 	[newImage lockFocus];

@@ -48,27 +48,27 @@
 {
 	// convert leading space to tab
 	NSMutableString * mutable = AUTORELEASEOBJ([text mutableCopyWithZone:NULL]);
-	[mutable replaceOccurrencesOfString:@"\n  " withString:@"\n\t" options:0 range:NSMakeRange(0,[mutable length])];
-	[mutable replaceOccurrencesOfString:@"\n* " withString:@"\n\t*" options:0 range:NSMakeRange(0,[mutable length])];
+	[mutable replaceOccurrencesOfString:@"\n  " withString:@"\n\t" options:0 range:NSMakeRange(0,mutable.length)];
+	[mutable replaceOccurrencesOfString:@"\n* " withString:@"\n\t*" options:0 range:NSMakeRange(0,mutable.length)];
 	
 	[textField setEditable:YES];
-	[textField setStringValue:mutable];
+	textField.stringValue = mutable;
 	[textField setEditable:NO];
 	[textField setDrawsBackground:NO];
 	[textField setBordered:NO];
 	
-	NSSize minimumSize = [[self window] frame].size;
+	NSSize minimumSize = self.window.frame.size;
 	
 	// size view  
-	NSSize textSizeOrig = [textField frame].size;
+	NSSize textSizeOrig = textField.frame.size;
 	[textField sizeToFit];
-	NSRect  textRect = [textField bounds];
+	NSRect  textRect = textField.bounds;
 	
-	[textField setFrame:textRect];
+	textField.frame = textRect;
 	[textField setNeedsDisplay:YES];	
 	
 	// size containing window
-	NSRect rc = [[self window] frame];
+	NSRect rc = self.window.frame;
 	rc.size.height += textRect.size.height - textSizeOrig.height;
 	rc.size.width  += textRect.size.width  - textSizeOrig.width;
 	if ( rc.size.height < minimumSize.height )
@@ -76,17 +76,17 @@
 	if ( rc.size.width < minimumSize.width )
 		rc.size.width = minimumSize.width;
 	
-	[[self window] setFrame:rc display:NO];
+	[self.window setFrame:rc display:NO];
 }
 
 // automatically dismiss if move key pressed
 -(void)keyDown:(NSEvent *)theEvent
 {
-	if ( [theEvent type] == NSKeyDown ) {
+	if ( theEvent.type == NSKeyDown ) {
 		int key = [WinCocoa keyWithKeyEvent:theEvent];
 		if ( key ) {
 			[[NhEventQueue instance] addKey:key];
-			[[self window] close];
+			[self.window close];
 			return;
 		}
 	}
@@ -101,7 +101,7 @@
 	[win->textField scrollPoint:NSMakePoint(0,0)];
 	
 #if RUN_MODAL
-	[[NSApplication sharedApplication] runModalForWindow:[win window]];
+	[[NSApplication sharedApplication] runModalForWindow:win.window];
 #endif
 }
 

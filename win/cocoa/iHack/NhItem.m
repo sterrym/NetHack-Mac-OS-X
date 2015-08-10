@@ -35,9 +35,9 @@
 - (instancetype)initWithTitle:(NSString *)t identifier:(ANY_P)ident accelerator:(char)ch  group_accel:(char)group_accel glyph:(int)g selected:(BOOL)s {
 	NSArray *lines = [t splitNetHackDetails];
 	
-	if (self = [super initWithTitle:[lines objectAtIndex:0] inventoryLetter:ch group_accel:group_accel]) {
+	if (self = [super initWithTitle:lines[0] inventoryLetter:ch group_accel:group_accel]) {
 		if (lines.count == 2) {
-			detail = [[lines objectAtIndex:1] copy];
+			detail = [lines[1] copy];
 		} else {
 			title = [t copy];
 		}

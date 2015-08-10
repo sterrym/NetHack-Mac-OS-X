@@ -111,8 +111,8 @@
 // search for string with paddig on both sides (or at front or back of string)
 - (NSRange) rangeOfString:(NSString *)text withDelimiter:(NSString *)delim
 {
-	NSInteger dl = [delim length];
-	NSRange rng = NSMakeRange(-1, [self length]);
+	NSInteger dl = delim.length;
+	NSRange rng = NSMakeRange(-1, self.length);
 	for (;;) {
 		rng.location += 1;
 		rng = [self rangeOfString:text options:NSCaseInsensitiveSearch range:rng];
@@ -127,9 +127,9 @@
 			continue;
 		}
 		// check suffix
-		if ( rng.location + rng.length == [self length] ) {
+		if ( rng.location + rng.length == self.length ) {
 			// tail of string
-		} else if ( rng.location + rng.length + dl >= [self length]) {
+		} else if ( rng.location + rng.length + dl >= self.length) {
 			continue; // not enough room for suffix
 		} else if ( [self compare:delim options:NSCaseInsensitiveSearch range:NSMakeRange(rng.location+rng.length,dl)] != NSOrderedSame ) {
 			continue;

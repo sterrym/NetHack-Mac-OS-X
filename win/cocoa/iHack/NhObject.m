@@ -34,15 +34,15 @@
 @synthesize glyph;
 @synthesize group_ch;
 
-+ (id)objectWithTitle:(NSString *)t inventoryLetter:(char)invLet group_accel:(char)group_accel {
++ (instancetype)objectWithTitle:(NSString *)t inventoryLetter:(char)invLet group_accel:(char)group_accel {
 	return [[self alloc] initWithTitle:t inventoryLetter:invLet group_accel:group_accel];
 }
 
-+ (id)objectWithObject:(struct obj *)obj {
++ (instancetype)objectWithObject:(struct obj *)obj {
 	return [(NhObject*)[self alloc] initWithObject:obj];
 }
 
-- (id)initWithTitle:(NSString *)t inventoryLetter:(char)invLet group_accel:(char)group_accel {
+- (instancetype)initWithTitle:(NSString *)t inventoryLetter:(char)invLet group_accel:(char)group_accel {
 	if (self = [super init]) {
 		self.title = t;
 		inventoryLetter = invLet;
@@ -54,11 +54,11 @@
 - (instancetype)initWithObject:(struct obj *)obj {
 	NSString *tmp = [NSString stringWithFormat:@"%s", doname(obj)];
 	NSArray *lines = [tmp splitNetHackDetails];
-	if (self = [self initWithTitle:[lines objectAtIndex:0] inventoryLetter:obj->invlet group_accel:0]) {
+	if (self = [self initWithTitle:lines[0] inventoryLetter:obj->invlet group_accel:0]) {
 		object = obj;
 		inventoryLetter = object->invlet;
 		if (lines.count == 2) {
-			detail = [[lines objectAtIndex:1] copy];
+			detail = [lines[1] copy];
 		}
 		glyph = obj_to_glyph(obj);
 	}

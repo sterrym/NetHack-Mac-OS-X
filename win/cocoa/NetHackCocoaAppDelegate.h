@@ -35,7 +35,7 @@
 
 @property (weak) IBOutlet NSWindow *window;
 
--(BOOL)netHackThreadRunning;
+@property (readonly) BOOL netHackThreadRunning;
 
 -(void)lockNethackCore;
 -(void)unlockNethackCore;

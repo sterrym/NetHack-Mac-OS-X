@@ -30,17 +30,17 @@
 
 -(void)runModalWithPrompt:(NSString *)prompt
 {
-	[[self window] setTitle:prompt];
-	[[NSApplication sharedApplication] runModalForWindow:[self window]];
+	self.window.title = prompt;
+	[[NSApplication sharedApplication] runModalForWindow:self.window];
 }
 
 -(IBAction)chooseDirection:(id)sender;
 {
 	NSButton * button = (id)sender;
-	NSString * keyEquiv = [button keyEquivalent];
+	NSString * keyEquiv = button.keyEquivalent;
 
 	int key = [keyEquiv characterAtIndex:0];
-	int mod = [button keyEquivalentModifierMask];
+	int mod = button.keyEquivalentModifierMask;
 	if ( mod & NSShiftKeyMask ) {
 		if ( key == '.' )
 			key = '>';
@@ -48,7 +48,7 @@
 			key = '<';
 	}
 	[[NhEventQueue instance] addKey:key];
-	[[self window] close];
+	[self.window close];
 }
 
 
@@ -56,13 +56,13 @@
 - (void)keyDown:(NSEvent *)theEvent 
 {
 	const char directions[] = "bjnhlyku<.>";
-	if ( [theEvent type] == NSKeyDown ) {
+	if ( theEvent.type == NSKeyDown ) {
 		char key = [WinCocoa keyWithKeyEvent:theEvent];
 		if ( key ) {
 			if ( strchr( directions, key ) != NULL ) {
 				// user typed a valid direction
 				[[NhEventQueue instance] addKey:key];
-				[[self window] close];
+				[self.window close];
 			}
 		}
 	}

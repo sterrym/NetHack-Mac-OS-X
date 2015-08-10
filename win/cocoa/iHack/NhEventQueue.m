@@ -41,7 +41,7 @@ static NhEventQueue *s_eventQueue;
 	return s_eventQueue;
 }
 
-- (id) init {
+- (instancetype) init {
 	if (self = [super init]) {
 		condition = [[NSCondition alloc] init];
 		events = [[NSMutableArray alloc] init];
@@ -77,14 +77,14 @@ static NhEventQueue *s_eventQueue;
 
 - (NhEvent *) nextEvent {
 	
-	NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+	NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 	[appDelegate unlockNethackCore];
 	
 	[condition lock];
 	while (events.count == 0) {
 		[condition wait];
 	}
-	NhEvent *e = RETAINOBJ([events objectAtIndex:0]);
+	NhEvent *e = RETAINOBJ(events[0]);
 	[events removeObjectAtIndex:0];
 	[condition unlock];
 	
@@ -95,7 +95,7 @@ static NhEventQueue *s_eventQueue;
 
 - (void)waitForNextEvent {
 	
-	NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+	NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 	[appDelegate unlockNethackCore];
 	
 	[condition lock];
@@ -113,7 +113,7 @@ static NhEventQueue *s_eventQueue;
 
 - (NhEvent *)peek {
 	if (events.count > 0) {
-		return [events objectAtIndex:0];
+		return events[0];
 	}
 	return nil;
 }

@@ -65,14 +65,14 @@ NSStringEncoding	codepage437encoding;
 		// compute required size for selected font
 		NSSize total = { 0, 0 };
 		NSCell * cell = [[NSCell alloc] initTextCell:@""];
-		[cell setFont:asciiFont];
+		cell.font = asciiFont;
 		[cell setEditable:NO];
 		[cell setSelectable:NO];
 		for ( int ch = 32; ch < 127; ++ch ) {
 			NSString * text = [[NSString alloc] initWithFormat:@"%c", ch];
-			[cell setTitle:text];
+			cell.title = text;
 			
-			NSSize size = [cell cellSize];
+			NSSize size = cell.cellSize;
 			
 			if ( size.width > total.width )
 				total.width = size.width;
@@ -91,9 +91,9 @@ NSStringEncoding	codepage437encoding;
 	}
 
 	// update our bounds
-	NSRect frame = [self frame];
+	NSRect frame = self.frame;
 	frame.size = NSMakeSize( COLNO*tileSize.width, ROWNO*tileSize.height );
-	[self setFrame:frame];
+	self.frame = frame;
 	
 	[self setNeedsDisplay:YES];
 }
@@ -102,7 +102,7 @@ NSStringEncoding	codepage437encoding;
 {
 	NSImage *tilesetImage = [NSImage imageNamed:tileSetName];
 	if ( tilesetImage == nil ) {
-		tileSetName = [tileSetName stringByExpandingTildeInPath];
+		tileSetName = tileSetName.stringByExpandingTildeInPath;
 		NSURL * url = [NSURL fileURLWithPath:tileSetName isDirectory:NO];
 		tilesetImage = [[NSImage alloc] initByReferencingURL:url];
 		if ( tilesetImage == nil ) {
@@ -111,7 +111,7 @@ NSStringEncoding	codepage437encoding;
 	}
 	
 	// make sure dimensions work
-	NSSize imageSize = [tilesetImage size];
+	NSSize imageSize = tilesetImage.size;
 	if ( (imageSize.width / size.width) * (imageSize.height / size.height) < 1014 ) {
 		// not enough images
 		return NO;
@@ -126,7 +126,7 @@ NSStringEncoding	codepage437encoding;
 	return YES;
 }
 
-- (id)initWithFrame:(NSRect)frame {
+- (instancetype)initWithFrame:(NSRect)frame {
 
 	if (self = [super initWithFrame:frame]) {
 		
@@ -135,7 +135,7 @@ NSStringEncoding	codepage437encoding;
 		petMark = [NSImage imageNamed:@"petmark.png"];
 		
 		// we need to know when we scroll
-		NSClipView * clipView = [[self enclosingScrollView] contentView];
+		NSClipView * clipView = self.enclosingScrollView.contentView;
 		[clipView setPostsBoundsChangedNotifications: YES];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollClipviewBoundsDidChangeNotification:) 
 											name:NSViewBoundsDidChangeNotification object:clipView];
@@ -171,7 +171,7 @@ NSStringEncoding	codepage437encoding;
 {
 	// if we're too close to edge of window then scroll us back
 	NSSize border = NSMakeSize(8*tileSize.width, 8*tileSize.height);
-	NSSize frame = [[self enclosingScrollView] frame].size;
+	NSSize frame = self.enclosingScrollView.frame.size;
 	if ( border.width > frame.width*0.4 )
 		border.width = frame.width*0.4;
 	if ( border.height > frame.height*0.4 )
@@ -190,7 +190,7 @@ NSStringEncoding	codepage437encoding;
 {
 	NhMapWindow *map = (NhMapWindow *) [NhWindow mapWindow];
 	if (map) {
-		NSImage	*	image = [[TileSet instance] image];
+		NSImage	*	image = [TileSet instance].image;
 		
 		// cursor can update asynchronously behind us so gets its location upfront
 		XCHAR_P	cursorX, cursorY;
@@ -203,7 +203,7 @@ NSStringEncoding	codepage437encoding;
 	
 		// set stuff up for ascii drawing
 		NSMutableAttributedString * aString = [[NSMutableAttributedString alloc] initWithString:@"X"];
-		NSRange rangeAll = NSMakeRange(0,[aString length]);
+		NSRange rangeAll = NSMakeRange(0,aString.length);
 		[aString setAlignment:NSCenterTextAlignment range:rangeAll];
 		[aString addAttribute:NSFontAttributeName value:asciiFont range:rangeAll];
 		
@@ -223,16 +223,16 @@ NSStringEncoding	codepage437encoding;
 							
 							if ( ochar == 0x1 ) {
 								// smiley face in rogue level when using IBMgraphics
-								[[aString mutableString] setString:@"☺"];
+								[aString.mutableString setString:@"☺"];
 							} else {
 								// use CP437 which correctly maps when using ibm_graphics
 								char ch[] = { ochar, 0 };
 								NSString * string = [[NSString alloc] initWithCString:ch encoding:codepage437encoding];
-								[[aString mutableString] setString:string];
+								[aString.mutableString setString:string];
 							}
 							
 							// text color
-							NSColor * color = [asciiColors objectAtIndex:ocolor];
+							NSColor * color = asciiColors[ocolor];
 							[aString addAttribute:NSForegroundColorAttributeName value:color range:rangeAll];
 		
 							// background is black
@@ -299,7 +299,7 @@ NSStringEncoding	codepage437encoding;
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	NSPoint mouseLoc = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	NSPoint mouseLoc = [self convertPoint:theEvent.locationInWindow fromView:nil];
 	mouseLoc.x = (int)(mouseLoc.x / tileSize.width);
 	mouseLoc.y = (int)(mouseLoc.y / tileSize.height);
 	mouseLoc.y = mouseLoc.y;
@@ -323,7 +323,7 @@ NSStringEncoding	codepage437encoding;
 		text = [text substringToIndex:r.location];
 	}
 	// remove extra words
-	NSArray * a = [NSArray arrayWithObjects:@"tame", @"invisible", @"peaceful", @"a", @"an", @"the", nil];
+	NSArray * a = @[@"tame", @"invisible", @"peaceful", @"a", @"an", @"the"];
 	for ( NSString * s in a ) {
 		r = [text rangeOfString:s withDelimiter:@" "];
 		if ( r.location != NSNotFound ) {
@@ -342,7 +342,7 @@ NSStringEncoding	codepage437encoding;
 
 - (NSMenu *) menuForEvent:(NSEvent *)theEvent
 {
-	NSPoint contextMenuPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	NSPoint contextMenuPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
 	contextMenuPoint.x = (int)(contextMenuPoint.x / tileSize.width);
 	contextMenuPoint.y = (int)(contextMenuPoint.y / tileSize.height);
 	if ( contextMenuPoint.x >= 0 && contextMenuPoint.x < COLNO && contextMenuPoint.y >= 0 && contextMenuPoint.y < ROWNO ) {
@@ -350,7 +350,7 @@ NSStringEncoding	codepage437encoding;
 		contextMenuObject = [self cleanTileDescription:text];
 		NSMenuItem * item = [contextMenu itemAtIndex:0];
 		NSString * title = [NSString stringWithFormat:@"Search the Nethack Wiki for '%@'", contextMenuObject];
-		[item setTitle:title];
+		item.title = title;
 		return contextMenu;
 	}
 	return nil;
@@ -376,7 +376,7 @@ NSString * DescriptionForTile( int x, int y )
 	char    out_str[BUFSZ];
 
 	// get tile info, but don't interfere with nethack thread
-	NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+	NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 	[appDelegate lockNethackCore];
 	InventoryOfTile(x, y, out_str);
 	[appDelegate unlockNethackCore];
@@ -384,29 +384,29 @@ NSString * DescriptionForTile( int x, int y )
 	NSString * text = [NSString stringWithCString:out_str encoding:codepage437encoding];
 	
 	NSScanner * scanner = [NSScanner scannerWithString:text];
-	[scanner setScanLocation:1];
+	scanner.scanLocation = 1;
 	[scanner setCharactersToBeSkipped:nil];
 	if ( [scanner scanString:@"      " intoString:NULL] ) {
 		// skipped leading character
 	} else {
-		[scanner setScanLocation:0];
+		scanner.scanLocation = 0;
 	}
 	// scan to opening paren, if any
-	NSUInteger pos = [scanner scanLocation];
-	if ( [scanner scanUpToString:@"(" intoString:NULL] && [scanner isAtEnd] ) {
+	NSUInteger pos = scanner.scanLocation;
+	if ( [scanner scanUpToString:@"(" intoString:NULL] && scanner.atEnd ) {
 		// no paren, so take the rest of the string
-		return [[scanner string] substringFromIndex:pos];		
+		return [scanner.string substringFromIndex:pos];		
 	}
 	// look for additional opening paren
 	do {
 		[scanner scanString:@"(" intoString:NULL];
-		pos = [scanner scanLocation];
-	} while ( [scanner scanUpToString:@"(" intoString:NULL] && ![scanner isAtEnd] );
-	[scanner setScanLocation:pos];
+		pos = scanner.scanLocation;
+	} while ( [scanner scanUpToString:@"(" intoString:NULL] && !scanner.atEnd );
+	scanner.scanLocation = pos;
 	// remove paren and matching closing paren
 	[scanner scanUpToString:@")" intoString:&text];
 	[scanner scanString:@")" intoString:NULL];
-	NSString * rest = [[scanner string] substringFromIndex:[scanner scanLocation]];
+	NSString * rest = [scanner.string substringFromIndex:scanner.scanLocation];
 	text = [text stringByAppendingString:rest];
 	return text;
 }
@@ -430,18 +430,18 @@ NSString * DescriptionForTile( int x, int y )
 #else
 	NSString * text = DescriptionForTile(tileX, tileY);
 	
-	if ( text && [text length] ) {
+	if ( text && text.length ) {
 		NSPoint pt = tooltipPoint;
 		
 		NSCursor * cursor = [NSCursor currentCursor];
-		NSSize size = [[cursor image] size];
-		NSPoint hot = [cursor hotSpot];
+		NSSize size = cursor.image.size;
+		NSPoint hot = cursor.hotSpot;
 		pt.x += 2;
 		pt.y += size.height - hot.y;
 		pt.y += 20; // height of tooltip
 		
 		pt = [self convertPoint:pt toView:nil];
-		pt = [[self window] convertRectToScreen:NSMakeRect(pt.x, pt.y, 0, 0)].origin;
+		pt = [self.window convertRectToScreen:NSMakeRect(pt.x, pt.y, 0, 0)].origin;
 		tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
 	}
 #endif
@@ -456,10 +456,10 @@ NSString * DescriptionForTile( int x, int y )
 {
 	[self cancelTooltip];
 	
-	tooltipPoint = [theEvent locationInWindow];
+	tooltipPoint = theEvent.locationInWindow;
 	tooltipPoint = [self convertPoint:tooltipPoint fromView:nil];
 
-	NSRect visrect = [self visibleRect];
+	NSRect visrect = self.visibleRect;
 	if ( !NSPointInRect( tooltipPoint, visrect ) )
 		return;
 		
@@ -469,7 +469,7 @@ NSString * DescriptionForTile( int x, int y )
 - (void) boundsDidChangeNotification:(NSNotification *)notification
 {
 	// not sure if we can do this synchronously...
-	dispatch_async(dispatch_get_current_queue(), ^{
+	dispatch_async(dispatch_get_main_queue(), ^{
 		[self cliparoundHero];
 	});
 }
@@ -479,11 +479,11 @@ static NSEvent * g_pendingKeyEvent = nil;
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-	if ( [theEvent type] == NSKeyDown ) {
+	if ( theEvent.type == NSKeyDown ) {
 
 		if ( g_pendingKeyEvent ) {
-			unsigned short k1 = [g_pendingKeyEvent keyCode];
-			unsigned short k2 = [theEvent keyCode];
+			unsigned short k1 = g_pendingKeyEvent.keyCode;
+			unsigned short k2 = theEvent.keyCode;
 			unsigned int newKeyCode = 0;
 			if ( (k1 == kVK_LeftArrow && k2 == kVK_UpArrow) || (k2 == kVK_LeftArrow && k1 == kVK_UpArrow) )	{
 				newKeyCode = kVK_ANSI_Keypad7;
@@ -505,7 +505,7 @@ static NSEvent * g_pendingKeyEvent = nil;
 				theEvent = newEvent;
 			}
 		} else {
-			switch ( [theEvent keyCode] ) {
+			switch ( theEvent.keyCode ) {
 				case kVK_LeftArrow:
 				case kVK_RightArrow:
 				case kVK_DownArrow:
@@ -524,7 +524,7 @@ static NSEvent * g_pendingKeyEvent = nil;
 
 - (void)keyUp:(NSEvent *)theEvent
 {
-	if ( [theEvent type] == NSKeyUp ) {
+	if ( theEvent.type == NSKeyUp ) {
 		if ( g_pendingKeyEvent ) {
 			wchar_t key = [WinCocoa keyWithKeyEvent:g_pendingKeyEvent];
 			if ( key ) {

@@ -25,13 +25,11 @@
 #import <Foundation/Foundation.h>
 
 @interface NhWindow : NSObject <NSLocking> {
-	
 	int type;
 	NSMutableArray *lines;
 	NSLock *lock;
 	NSString *lineDelimiter;
 	BOOL blocking;
-
 }
 
 @property (weak, nonatomic, readonly) NSString *text;
@@ -48,7 +46,7 @@
 - (void)print:(const char *)str attr:(int)attr;
 - (void)clear;
 
-- (NSInteger)messageCount;
+@property (readonly) NSInteger messageCount;
 - (id)messageAtRow:(NSInteger)row;
 
 @end

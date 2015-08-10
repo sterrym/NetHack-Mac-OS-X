@@ -28,7 +28,7 @@
 
 @implementation EquipmentView
 
-- (id)initWithFrame:(NSRect)frame 
+- (instancetype)initWithFrame:(NSRect)frame 
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -51,11 +51,11 @@
 			char invent = item->invlet;
 			text = [NSString stringWithFormat:@"(%c) %s", invent, description];
 			if ( [text hasSuffix:@" (being worn)"] )
-				text = [text substringToIndex:[text length] - 13];
+				text = [text substringToIndex:text.length - 13];
 		}
 	}
-	[slot setImage:image];
-	[slot setToolTip:text];
+	slot.image = image;
+	slot.toolTip = text;
 }
 
 - (void)updateInventory

@@ -49,7 +49,7 @@
 	if (r.location != NSNotFound) {
 		NSString *amountString = [self substringToIndex:r.location];
 		if (amountString.length > 0) {
-			amount = [amountString intValue];
+			amount = amountString.intValue;
 			if (amount == 0) {
 				amount = -1;
 			}

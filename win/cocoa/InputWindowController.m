@@ -30,17 +30,17 @@
 
 -(void)runModalWithPrompt:(NSString *)prompt
 {
-	[promptField setStringValue:prompt];
-	[inputField setStringValue:@""];
-	[[NSApplication sharedApplication] runModalForWindow:[self window]];
+	promptField.stringValue = prompt;
+	inputField.stringValue = @"";
+	[[NSApplication sharedApplication] runModalForWindow:self.window];
 }
 
 -(IBAction)doAccept:(id)sender
 {
-	NSString * text = [inputField stringValue];
+	NSString * text = inputField.stringValue;
 	NhTextInputEvent * e = [[NhTextInputEvent alloc] initWithText:text];
 	[[NhEventQueue instance] addEvent:e];
-	[[self window] close];
+	[self.window close];
 }
 
 -(IBAction)doCancel:(id)sender
@@ -48,7 +48,7 @@
 	NSString * text = @"\033";
 	NhTextInputEvent * e = [[NhTextInputEvent alloc] initWithText:text];
 	[[NhEventQueue instance] addEvent:e];	
-	[[self window] close];
+	[self.window close];
 }
 
 -(BOOL)windowShouldClose:(id)sender

@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)waitForNextEvent;
 
 // non-blocking
-- (nullable NhEvent *)peek;
+@property (readonly, strong, nullable) NhEvent * peek;
 
 @end
 

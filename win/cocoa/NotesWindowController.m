@@ -32,13 +32,13 @@
 	// load text
 	NSString * text = [[NSUserDefaults standardUserDefaults] objectForKey:@"NotesWindowText"];
 	if ( text ) {
-		[textView setString:text];
+		textView.string = text;
 	}
 }
 
 -(void)windowWillClose:(NSNotification *)notification
 {
-	NSString * text = [textView string];
+	NSString * text = textView.string;
 	[[NSUserDefaults standardUserDefaults] setObject:text forKey:@"NotesWindowText"];	
 	[[NSUserDefaults standardUserDefaults] synchronize];	
 }

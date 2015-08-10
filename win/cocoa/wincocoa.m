@@ -133,7 +133,7 @@ coord CoordMake(xchar i, xchar j) {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSString *netHackOptions = [defaults stringForKey:kNetHackOptions];
 	if ( netHackOptions ) {
-		setenv("NETHACKOPTIONS", [netHackOptions UTF8String], 1);
+		setenv("NETHACKOPTIONS", netHackOptions.UTF8String, 1);
 	}
 	
 	}
@@ -154,11 +154,11 @@ coord CoordMake(xchar i, xchar j) {
 
 + (int)keyWithKeyEvent:(NSEvent *)keyEvent
 {
-	if ( [keyEvent type] != NSKeyDown )
+	if ( keyEvent.type != NSKeyDown )
 		return 0;
 		
 	int key = 0;
-	switch ( [keyEvent keyCode] ) {
+	switch ( keyEvent.keyCode ) {
 			// arrows
 		case kVK_LeftArrow:				key = 'h';				break;
 		case kVK_RightArrow:			key	= 'l';				break;
@@ -178,14 +178,14 @@ coord CoordMake(xchar i, xchar j) {
 		case kVK_Escape:				key = '\033';			break;
 	}
 	if ( key ) {
-		NSUInteger modifier = [keyEvent modifierFlags];
+		NSUInteger modifier = keyEvent.modifierFlags;
 		if ( modifier & NSShiftKeyMask ) {
 			key = toupper(key);
 		}
 	} else {
 		// "real" keys
-		NSString * chars = [keyEvent charactersIgnoringModifiers];
-		NSUInteger modifier = [keyEvent modifierFlags];
+		NSString * chars = keyEvent.charactersIgnoringModifiers;
+		NSUInteger modifier = keyEvent.modifierFlags;
 		key = [chars characterAtIndex:0];
 		
 		switch (key) {
@@ -257,7 +257,7 @@ void error(const char *s, ...)
 
 void cocoa_prepare_for_exit()
 {
-	NetHackCocoaAppDelegate * delegate = [[NSApplication sharedApplication] delegate];
+	NetHackCocoaAppDelegate * delegate = [NSApplication sharedApplication].delegate;
 	[delegate unlockNethackCore];
 
 	// give UI thread a chance to settle down before we tear down data structures (e.g. inventory)
@@ -615,7 +615,7 @@ char cocoa_yn_function(const char *question, const char *choices, CHAR_P def)
 		}
 	}
 	
-	cocoa_putstr(WIN_MESSAGE, ATR_BOLD, [text UTF8String] );
+	cocoa_putstr(WIN_MESSAGE, ATR_BOLD, text.UTF8String);
 	for (;;) {
 		NhEvent *e = nil;
 		e = [[NhEventQueue instance] nextEvent];
@@ -655,7 +655,7 @@ int cocoa_get_ext_cmd()
 	}
 	NhTextInputEvent *e = (NhTextInputEvent *) [[NhEventQueue instance] nextEvent];
 	assert( [e class] == [NhTextInputEvent class] );
-	const char * cmd = [e.text UTF8String];
+	const char * cmd = (e.text).UTF8String;
 		
 	// return index of command, not its key
 	for ( int i = 0; extcmdlist[i].ef_txt; ++i ) {
@@ -695,7 +695,7 @@ void cocoa_outrip(winid wid, int how)
 
 void cocoa_preference_update(const char * pref)
 {
-	[[MainWindowController instance] preferenceUpdate:[NSString stringWithUTF8String:pref]];
+	[[MainWindowController instance] preferenceUpdate:@(pref)];
 }
 
 #pragma mark window API player_selection()

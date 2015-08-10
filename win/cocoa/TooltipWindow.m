@@ -27,22 +27,22 @@
 
 @implementation TooltipWindow
 
--(id)initWithText:(NSString *)text location:(NSPoint)point
+-(instancetype)initWithText:(NSString *)text location:(NSPoint)point
 {
 	NSTextField * view = [[NSTextField alloc] initWithFrame:NSMakeRect(point.x, point.y, 10, 10)];
 	NSColor * bgColor = [NSColor colorWithDeviceRed:1.0 green:1.0 blue:202/255.0 alpha:1.0];
 	
-	[view setStringValue:text];
+	view.stringValue = text;
 	[view setBordered:YES];
-	[view setBackgroundColor:bgColor];
+	view.backgroundColor = bgColor;
 	[view setEditable:NO];
 	[view setSelectable:NO];
 	[view sizeToFit];
 	[view setRefusesFirstResponder:YES];
 	
 	// make sure it doesn't go off the screen
-	NSRect viewRect = [view frame];
-	NSRect screenRect = [[NSScreen mainScreen] visibleFrame];
+	NSRect viewRect = view.frame;
+	NSRect screenRect = [NSScreen mainScreen].visibleFrame;
 	if ( viewRect.origin.x + viewRect.size.width > screenRect.origin.x + screenRect.size.width ) {
 		// falls off right side
 		viewRect.origin.x = screenRect.origin.x + screenRect.size.width - viewRect.size.width;
@@ -59,12 +59,12 @@
 		// off left
 		viewRect.origin.x = screenRect.origin.x;
 	}
-	[view setFrame:viewRect];
+	view.frame = viewRect;
 	
 	
-	if ( self = [super initWithContentRect:[view frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES] ) {
-		[self setDelegate:self];
-		[self setContentView:view];
+	if ( self = [super initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES] ) {
+		self.delegate = self;
+		self.contentView = view;
 		[self setOpaque:YES];
 		[self setHasShadow:YES];
 		[self setReleasedWhenClosed:YES];

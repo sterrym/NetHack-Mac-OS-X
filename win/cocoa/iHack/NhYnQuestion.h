@@ -25,11 +25,9 @@
 #import <Foundation/Foundation.h>
 
 @interface NhYnQuestion : NSObject {
-	
 	NSString *question;
 	const char *choices;
 	char def;
-
 }
 
 @property (nonatomic, readonly, copy) NSString *question;

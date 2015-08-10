@@ -80,9 +80,9 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (void)setFont:(NSFont *)font
 {
-	for ( NSTableColumn * column in [self->messagesView tableColumns] ) {
-		NSCell * cell = [column dataCell];
-		[cell setFont:font];
+	for ( NSTableColumn * column in self->messagesView.tableColumns ) {
+		NSCell * cell = column.dataCell;
+		cell.font = font;
 	}
 }
 
@@ -91,14 +91,14 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 // bindings and lets us work internationally.
 - (void)fixMenuKeyEquivalents:(NSMenu *)menu
 {
-	for ( NSMenuItem * item in [menu itemArray] ) {
-		if ( [item hasSubmenu] ) {
-			NSMenu * submenu = [item submenu];
+	for ( NSMenuItem * item in menu.itemArray ) {
+		if ( item.hasSubmenu ) {
+			NSMenu * submenu = item.submenu;
 			[self fixMenuKeyEquivalents:submenu];
 		} else {
-			NSUInteger mask = [item keyEquivalentModifierMask];
+			NSUInteger mask = item.keyEquivalentModifierMask;
 			if ( mask & NSShiftKeyMask ) {
-				NSString * key = [item keyEquivalent];
+				NSString * key = item.keyEquivalent;
 				switch ( [key characterAtIndex:0] ) {
 					case '1':		key = @"!";		break;
 					case '2':		key = @"@";		break;
@@ -123,8 +123,8 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 				}
 				if ( key ) {
 					mask &= ~NSShiftKeyMask;
-					[item setKeyEquivalent:key];
-					[item setKeyEquivalentModifierMask:mask];
+					item.keyEquivalent = key;
+					item.keyEquivalentModifierMask = mask;
 				}				
 			}
 		}
@@ -134,9 +134,9 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 -(NSSize)tileSetSizeFromName:(NSString *)name
 {
 	int dx, dy;
-	if ( sscanf([name UTF8String], "%*[^0-9]%dx%d.%*s", &dx, &dy ) == 2 ) {
+	if ( sscanf(name.UTF8String, "%*[^0-9]%dx%d.%*s", &dx, &dy ) == 2 ) {
 		// fully described
-	} else if ( sscanf([name UTF8String], "%*[^0-9]%d.%*s", &dx ) == 1 ) {
+	} else if ( sscanf(name.UTF8String, "%*[^0-9]%d.%*s", &dx ) == 1 ) {
 		dy = dx;
 	} else {
 		dx = dy = 16;
@@ -155,10 +155,10 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	}
 #endif
 	
-	NSMenu * menu = [[NSApplication sharedApplication] mainMenu];
+	NSMenu * menu = [NSApplication sharedApplication].mainMenu;
 	[self fixMenuKeyEquivalents:menu];
 	
-	[[self window] setAcceptsMouseMovedEvents:YES];
+	[self.window setAcceptsMouseMovedEvents:YES];
 }
 
 + (void)initialize
@@ -200,22 +200,22 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		if ( font == nil ) {
 			font = [NSFont systemFontOfSize:14.0];
 		}
-		[mainView setAsciiFont:font];
+		mainView.asciiFont = font;
 		
 		// place check mark on ASCII menu item
-		[asciiModeMenuItem setState:iflags.wc_ascii_map ? NSOnState : NSOffState];
+		asciiModeMenuItem.state = iflags.wc_ascii_map ? NSOnState : NSOffState;
 		
 		// select ascii mode in map view
 		[mainView enableAsciiMode:iflags.wc_ascii_map];
 		
 		// set table row spacing to zero in messages window
-		[messagesView setIntercellSpacing:NSMakeSize(0,0)];
+		messagesView.intercellSpacing = NSMakeSize(0,0);
 		
 		// initialize speech engine
 		voice = [[NSSpeechSynthesizer alloc] initWithVoice:@"com.apple.speech.synthesis.voice.Alex"];
-		float r = [voice rate];
-		[voice setRate:1.5*r];
-		[voice setDelegate:self];
+		float r = voice.rate;
+		voice.rate = 1.5*r;
+		voice.delegate = self;
 		voiceQueue = [[NSMutableArray alloc] init];
 	});
 }
@@ -224,11 +224,11 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 -(void)windowWillClose:(NSNotification *)notification
 {
 	// save tile set preferences
-	NSString * tileSetName = [mainView tileSet];
+	NSString * tileSetName = mainView.tileSet;
 	[[NSUserDefaults standardUserDefaults] setObject:tileSetName forKey:@"TileSetName"];
-	NSFont * font = [mainView asciiFont];
-	[[NSUserDefaults standardUserDefaults] setObject:[font fontName] forKey:@"AsciiFontName"];
-	[[NSUserDefaults standardUserDefaults] setFloat:[font pointSize] forKey:@"AsciiFontSize"];
+	NSFont * font = mainView.asciiFont;
+	[[NSUserDefaults standardUserDefaults] setObject:font.fontName forKey:@"AsciiFontName"];
+	[[NSUserDefaults standardUserDefaults] setFloat:font.pointSize forKey:@"AsciiFontSize"];
 	BOOL	useAscii = iflags.wc_ascii_map;
 	[[NSUserDefaults standardUserDefaults] setBool:useAscii forKey:@"UseAscii"];
 	[[NSUserDefaults standardUserDefaults] setBool:self.useSpeech forKey:@"UseSpeech"];
@@ -263,11 +263,11 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (void)performMenuAction:(id)sender
 {
 	NSMenuItem * menuItem = sender;
-	NSString * key = [menuItem keyEquivalent];
-	if ( key && [key length] ) {
+	NSString * key = menuItem.keyEquivalent;
+	if ( key && key.length ) {
 		// it has a key equivalent to use
 		char keyEquiv = [key characterAtIndex:0];
-		int modifier = [menuItem keyEquivalentModifierMask];
+		int modifier = menuItem.keyEquivalentModifierMask;
 		if ( modifier & NSControlKeyMask ) {
 			keyEquiv = toupper(keyEquiv) - 'A' + 1;
 		}
@@ -277,10 +277,10 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		[[NhEventQueue instance] addKey:keyEquiv];
 	} else {
 		// maybe an extended command?
-		NSString * cmd = [menuItem title];
+		NSString * cmd = menuItem.title;
 		if ( [cmd characterAtIndex:0] == '#' ) {
 			cmd = [cmd substringFromIndex:1];
-			cmd = [cmd lowercaseString];
+			cmd = cmd.lowercaseString;
 			NhTextInputEvent * e = [NhTextInputEvent eventWithText:cmd];
 			[[NhEventQueue instance] addKey:'#'];
 			[[NhEventQueue instance] addEvent:e];
@@ -295,8 +295,8 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (IBAction)enableAsciiMode:(id)sender
 {
 	NSMenuItem * menuItem = sender;
-	bool enable = [menuItem state] == NSOffState;
-	[menuItem setState:enable ? NSOnState : NSOffState];
+	bool enable = menuItem.state == NSOffState;
+	menuItem.state = enable ? NSOnState : NSOffState;
 	
 	[mainView enableAsciiMode:enable];
 }
@@ -304,12 +304,12 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (IBAction)changeFont:(id)sender
 {
 	// update font
-	NSFont *oldFont = [mainView asciiFont];
+	NSFont *oldFont = mainView.asciiFont;
 	NSFont *newFont = [sender convertFont:oldFont];
-	[mainView setAsciiFont:newFont];
+	mainView.asciiFont = newFont;
 	// put us in ascii mode
 	[mainView enableAsciiMode:YES];
-	[asciiModeMenuItem setState:NSOnState];
+	asciiModeMenuItem.state = NSOnState;
 }
 
 - (IBAction)addTileSet:(id)sender
@@ -319,12 +319,12 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	[panel setCanChooseDirectories:NO];
 	[panel setAllowsMultipleSelection:YES];
 	[panel runModal];
-	NSArray * result = [panel URLs];
+	NSArray * result = panel.URLs;
 	for ( NSURL * url in result ) {
-		NSString * path = [url path];
-		path = [path stringByAbbreviatingWithTildeInPath];
+		NSString * path = url.path;
+		path = path.stringByAbbreviatingWithTildeInPath;
 		NSMenuItem * item = [[NSMenuItem alloc] initWithTitle:path action:@selector(selectTileSet:) keyEquivalent:@""];
-		[item setTarget:self];
+		item.target = self;
 		[tileSetMenu addItem:item];
 		if ( userTiles == nil ) {
 			userTiles = [[NSMutableArray alloc] initWithCapacity:1];
@@ -335,7 +335,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (IBAction)selectTileSet:(id)sender
 {
 	NSMenuItem * item = sender;
-	NSString * name = [item title];
+	NSString * name = item.title;
 	NSSize size = [self tileSetSizeFromName:name];
 
 	BOOL ok = [mainView setTileSet:name size:size];
@@ -343,7 +343,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 		// put us in tile mode
 		[mainView enableAsciiMode:NO];
-		[asciiModeMenuItem setState:NSOffState];
+		asciiModeMenuItem.state = NSOffState;
 		[equipmentView updateInventory];
 		
 	} else {
@@ -354,7 +354,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (void)createTileSetListInMenu:(NSMenu *)menu 
 {
-	int count = [[menu itemArray] count];
+	int count = menu.itemArray.count;
 	if ( count > 3 ) {
 		// already initialized
 		return;
@@ -363,9 +363,9 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	NSMutableArray * files = [NSMutableArray array];
 	
 	// get list of builtin tiles
-	NSString * tileFolder = [[NSBundle mainBundle] resourcePath];
+	NSString * tileFolder = [NSBundle mainBundle].resourcePath;
 	for ( NSString * name in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:tileFolder error:NULL] ) {
-		NSString * ext = [name pathExtension];
+		NSString * ext = name.pathExtension;
 		if ( [ext isEqualToString:@"png"] || [ext isEqualToString:@"bmp"] ) {
 			// we have an image file, just make sure it is larger than a single image (petmark)
 			NSString * path = [tileFolder stringByAppendingPathComponent:name];
@@ -378,14 +378,14 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 	// add user defined tile file
 	if (iflags.wc_tile_file) {
-		[files addObject:[NSString stringWithUTF8String:iflags.wc_tile_file]];
+		[files addObject:@(iflags.wc_tile_file)];
 	}
 		
 	// get user defined tiles
 	userTiles = [[[NSUserDefaults standardUserDefaults] objectForKey:@"UserTileSets"] mutableCopy];
-	for ( int idx = 0; idx < [userTiles count]; ++idx ) {		
-		NSString * path = [userTiles objectAtIndex:idx];
-		NSString * fullPath = [path stringByExpandingTildeInPath];
+	for ( int idx = 0; idx < userTiles.count; ++idx ) {		
+		NSString * path = userTiles[idx];
+		NSString * fullPath = path.stringByExpandingTildeInPath;
 		NSDictionary * attr = [[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:NULL];
 		if ( attr ) {
 			[files addObject:path];
@@ -398,7 +398,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	// add files
 	for ( NSString * name in files ) {
 		NSMenuItem * item = [[NSMenuItem alloc] initWithTitle:name action:@selector(selectTileSet:) keyEquivalent:@""];
-		[item setTarget:self];
+		item.target = self;
 		[menu addItem:item];
 	}
 }
@@ -414,7 +414,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 {
 	RunOnMainThreadSync(^{
 		if ( [pref isEqualToString:@"ascii_map"] ) {
-			[asciiModeMenuItem setState:iflags.wc_ascii_map ? NSOnState : NSOffState];
+			asciiModeMenuItem.state = iflags.wc_ascii_map ? NSOnState : NSOffState;
 			[mainView enableAsciiMode:iflags.wc_ascii_map];
 		}
 	});
@@ -423,7 +423,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (IBAction)terminateApplication:(id)sender
 {
-	NetHackCocoaAppDelegate * delegate = (NetHackCocoaAppDelegate *) [[NSApplication sharedApplication] delegate];
+	NetHackCocoaAppDelegate * delegate = (NetHackCocoaAppDelegate *) [NSApplication sharedApplication].delegate;
 	if ( [delegate netHackThreadRunning] ) {
 		// map Cmd-Q to Shift-S
 		terminatedByUser = YES;
@@ -456,12 +456,12 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	RunOnMainThreadAsync(^{
 		// update message window
 		[messagesView reloadData];
-		NSInteger rows = [messagesView numberOfRows];
+		NSInteger rows = messagesView.numberOfRows;
 		if (rows > 0) {
 			[messagesView scrollRowToVisible:rows-1];
 		}
 		// update status window
-		for ( NSString * text in [[NhWindow statusWindow] messages] ) {
+		for ( NSString * text in [NhWindow statusWindow].messages ) {
 			[statsView setItems:text];
 		}
 	});
@@ -478,7 +478,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (void)showPlayerSelection
 {
 	if (![NSThread isMainThread]) {
-		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 		[appDelegate unlockNethackCore];
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			[showPlayerSelection runModal];
@@ -559,8 +559,8 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	*pSpecials = 0;
 	*pItems = 0;
 	
-	*specials = [NSString stringWithCString:cSpecials encoding:NSASCIIStringEncoding];
-	*items = [NSString stringWithCString:cItems encoding:NSASCIIStringEncoding];
+	*specials = @(cSpecials);
+	*items = @(cItems);
 }
 
 - (void)showDirectionWithPrompt:(NSString *)prompt
@@ -605,10 +605,10 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 			[self parseYnChoices:args specials:&specials items:&items];
 			
 			BOOL questionMark = [args containsString:@"?"];
-			if (questionMark && [items length] > 1) {
+			if (questionMark && items.length > 1) {
 				// ask for a comprehensive list instead
 				[[NhEventQueue instance] addKey:'?'];
-			} else if ( [items length] == 1 ) {
+			} else if ( items.length == 1 ) {
 				// do nothing for only a single arg
 			} else {
 				NSLog(@"unknown question %@", q.question);
@@ -627,7 +627,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 
 - (void)displayMessageWindow:(NSString *)text {
-	if ( [text length] == 0 ) {
+	if ( text.length == 0 ) {
 		// do nothing
 	} else {
 		RunOnMainThreadAsync(^{
@@ -644,12 +644,12 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		} else if (w.type == NHW_MAP) {
 			[mainView setNeedsDisplay:YES];
 		} else if ( w.type == NHW_STATUS ) {
-			for ( NSString * text in [w messages] ) {
+			for ( NSString * text in w.messages ) {
 				[statsView setItems:text];
 			}
 		} else {
-			NSString * text = [w text];
-			if ( [text length] ) {
+			NSString * text = w.text;
+			if ( text.length ) {
 				[MessageWindowController messageWindowWithText:text];
 			}
 		}
@@ -657,7 +657,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	
 	if (![NSThread isMainThread]) {
 		BOOL blocking = w.blocking;
-		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 		[appDelegate unlockNethackCore];
 		if (blocking) {
 			dispatch_sync(dispatch_get_main_queue(), dispWind);
@@ -688,14 +688,14 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 }
 
 - (void)clipAround:(NSValue *)clip {
-	NSRange r = [clip rangeValue];
+	NSRange r = clip.rangeValue;
 	[mainView cliparoundX:r.location y:r.length];
 }
 
 - (void)clipAroundX:(int)x y:(int)y {
 	if (![NSThread isMainThread]) {
 
-		NetHackCocoaAppDelegate * appDelegate = [[NSApplication sharedApplication] delegate];
+		NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 		[appDelegate unlockNethackCore];
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			[mainView cliparoundX:x y:y];
@@ -714,8 +714,8 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (void)getLine {
 	RunOnMainThreadAsync(^{
-		NSAttributedString * attrPrompt = [[[NhWindow messageWindow] messages] lastObject];
-		NSString * prompt = [attrPrompt string];
+		NSAttributedString * attrPrompt = [NhWindow messageWindow].messages.lastObject;
+		NSString * prompt = attrPrompt.string;
 		[inputWindow runModalWithPrompt:prompt];
 	});
 }
@@ -789,7 +789,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	
 	// add text to queue
 	RunOnMainThreadAsync(^{
-		if ( [voice isSpeaking] ) {
+		if ( voice.speaking ) {
 			// don't be too redundant for messages repeated many times
 			int cnt = 0;
 			for ( NSString * s in voiceQueue ) {
@@ -806,8 +806,8 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)success
 {
-	if ( [voiceQueue count] ) {
-		NSString * text = [voiceQueue objectAtIndex:0];
+	if ( voiceQueue.count ) {
+		NSString * text = voiceQueue[0];
 		[voiceQueue removeObjectAtIndex:0];
 		[voice startSpeakingString:text];
 	}

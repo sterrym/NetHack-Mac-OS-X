@@ -28,7 +28,7 @@
 
 @synthesize question, choices, def;
 
-- (id) initWithQuestion:(const char *)q choices:(const char *)ch default:(int)d {
+- (instancetype) initWithQuestion:(const char *)q choices:(const char *)ch default:(int)d {
 	if (self = [super init]) {
 		question = @(q);
 		choices = ch;

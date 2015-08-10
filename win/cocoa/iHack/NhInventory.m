@@ -76,16 +76,16 @@
 	// Hands / Gold
 	NSArray *specialObjects = nil;
 	if (u.ugold) {
-		specialObjects = [NSArray arrayWithObjects:[NhObject objectWithTitle:@"Gold" inventoryLetter:'$' group_accel:0],
-						  [NhObject objectWithTitle:@"Hands" inventoryLetter:'-' group_accel:0], nil];
+		specialObjects = @[[NhObject objectWithTitle:@"Gold" inventoryLetter:'$' group_accel:0],
+						  [NhObject objectWithTitle:@"Hands" inventoryLetter:'-' group_accel:0]];
 	} else {
-		specialObjects = [NSArray arrayWithObject:[NhObject objectWithTitle:@"Hands" inventoryLetter:'-' group_accel:0]];
+		specialObjects = @[[NhObject objectWithTitle:@"Hands" inventoryLetter:'-' group_accel:0]];
 	}
 	[objectClasses addObject:specialObjects];
 }
 
 - (NhObject *)objectAtIndexPath:(NSIndexPath *)indexPath {
-	return [[objectClasses objectAtIndex:[indexPath section]] objectAtIndex:[indexPath row]];
+	return objectClasses[indexPath.section][indexPath.row];
 }
 
 - (BOOL)containsObjectClass:(char)oclass {

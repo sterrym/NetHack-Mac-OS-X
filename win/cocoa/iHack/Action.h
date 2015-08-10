@@ -35,7 +35,7 @@
 
 - (instancetype)initWithTitle:(NSString *)t;
 - (void)invoke:(id)sender;
-- (void)addTarget:(id)target action:(SEL)action arg:(id)arg;
+- (void)addTarget:(id)target action:(SEL)action arg:(__unsafe_unretained id)arg;
 - (void)addInvocation:(NSInvocation *)inv;
 
 @end

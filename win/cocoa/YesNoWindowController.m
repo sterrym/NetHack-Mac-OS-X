@@ -29,52 +29,52 @@
 
 -(void)runModalWithQuestion:(NSString *)prompt choice1:(NSString *)choice1 choice2:(NSString *)choice2 defaultAnswer:(char)def onCancelSend:(char)cancelChar
 {
-	[question setStringValue:prompt];
-	[button1 setTitle:choice1];
-	[button2 setTitle:choice2];
+	question.stringValue = prompt;
+	button1.title = choice1;
+	button2.title = choice2;
 	defaultAnswer = def;
 	onCancelChar = cancelChar;
 	
 	// add/remove close button so ESC will/won't work
-	NSUInteger style = [[self window] styleMask];
+	NSUInteger style = self.window.styleMask;
 	if ( cancelChar ) {
 		style |= NSClosableWindowMask;
 	} else {
 		style &= ~NSClosableWindowMask;
 	}
-	[[self window] setStyleMask:style];
+	self.window.styleMask = style;
 	
 	// disable default button
-	[[self window] setDefaultButtonCell:nil];
+	[self.window setDefaultButtonCell:nil];
 	
 	if ( def ) {
 		// if default value is present then set a button as using default
 		if ( tolower( [choice1 characterAtIndex:0] ) == def ) {
-			[[self window] setDefaultButtonCell:[button1 cell]];
+			self.window.defaultButtonCell = button1.cell;
 		} 
 		if ( tolower( [choice2 characterAtIndex:0] ) == def ) {
-			[[self window] setDefaultButtonCell:[button2 cell]];
+			self.window.defaultButtonCell = button2.cell;
 		}
 	}
 	
-	[[NSApplication sharedApplication] runModalForWindow:[self window]];	
+	[[NSApplication sharedApplication] runModalForWindow:self.window];	
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-	if ( [theEvent type] == NSKeyDown ) {
-		NSString * text = [theEvent charactersIgnoringModifiers];
-		if ( [text isEqualToString:[[[button1 title] substringToIndex:1] lowercaseString]] ) {
+	if ( theEvent.type == NSKeyDown ) {
+		NSString * text = theEvent.charactersIgnoringModifiers;
+		if ( [text isEqualToString:[button1.title substringToIndex:1].lowercaseString] ) {
 			[self performButton:button1];
 			return;
 		}
-		if ( [text isEqualToString:[[[button2 title] substringToIndex:1] lowercaseString]] ) {
+		if ( [text isEqualToString:[button2.title substringToIndex:1].lowercaseString] ) {
 			[self performButton:button2];
 			return;
 		}
 		if ( defaultAnswer && [text isEqualToString:@"\r"] ) {
 			[[NhEventQueue instance] addKey:defaultAnswer];
-			[[self window] close];
+			[self.window close];
 			return;
 		}
 	}
@@ -86,9 +86,9 @@
 {
 	NSButton * button = sender;
 	
-	char key = tolower( [[button title] characterAtIndex:0] );
+	char key = tolower( [button.title characterAtIndex:0] );
 	[[NhEventQueue instance] addKey:key];
-	[[self window] close];
+	[self.window close];
 }
 
 -(BOOL)windowShouldClose:(id)sender

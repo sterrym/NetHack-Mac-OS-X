@@ -27,18 +27,16 @@
 @class NhItem;
 
 @interface NhItemGroup : NSObject {
-	
 	NSString *title;
 	NSMutableArray *items;
 	BOOL dummy;
-
 }
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, readonly) NSArray<NhItem*> *items;
 @property (nonatomic, getter=isDummy) BOOL dummy;
 
-- (instancetype) initWithTitle:(NSString *)t dummy:(BOOL)d;
+- (instancetype) initWithTitle:(NSString *)t dummy:(BOOL)d NS_DESIGNATED_INITIALIZER;
 - (instancetype) initWithTitle:(NSString *)t;
 - (void) addItem:(NhItem *)i;
 - (void)removeItemAtIndex:(NSUInteger)row;

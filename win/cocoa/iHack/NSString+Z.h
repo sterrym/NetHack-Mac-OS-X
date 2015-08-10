@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL) endsWithString:(NSString *)s;
 - (nullable NSString *) substringBetweenDelimiters:(NSString *)del;
 - (nullable NSString *) substringStartingWithString:(NSString *)start;
-- (NSString *) stringWithTrimmedWhitespaces;
+@property (readonly, copy) NSString *stringWithTrimmedWhitespaces;
 - (NSRange) rangeOfString:(NSString *)text withDelimiter:(NSString *)delim;
 
 @end

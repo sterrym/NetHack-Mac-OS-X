@@ -53,8 +53,8 @@
 
 - (void)addTarget:(id)target action:(SEL)action arg:(__unsafe_unretained id)arg {
 	NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[target methodSignatureForSelector:action]];
-	[inv setTarget:target];
-	[inv setSelector:action];
+	inv.target = target;
+	inv.selector = action;
 	if (arg) {
 		[inv setArgument:&arg atIndex:2];
 	}

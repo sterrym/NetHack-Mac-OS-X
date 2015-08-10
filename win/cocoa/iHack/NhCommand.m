@@ -285,7 +285,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 }
 
 - (NSUInteger)hash {
-	return [@(self.keys) hash];
+	return (@(self.keys)).hash;
 }
 
 @end

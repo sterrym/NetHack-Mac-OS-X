@@ -26,7 +26,7 @@
 
 @implementation NhStatusWindow
 
-- (id) initWithType:(int)t {
+- (instancetype) initWithType:(int)t {
 	if (self = [super initWithType:t]) {
 	}
 	return self;

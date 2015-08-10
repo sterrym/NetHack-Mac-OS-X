@@ -54,19 +54,19 @@
 }
 
 - (NhItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
-	NhItemGroup *g = [itemGroups objectAtIndex:[indexPath section]];
-	NhItem *i = [g.items objectAtIndex:[indexPath row]];
+	NhItemGroup *g = itemGroups[indexPath.section];
+	NhItem *i = (g.items)[indexPath.row];
 	return i;
 }
 
 - (void)removeItemAtIndexPath:(NSIndexPath *)indexPath {
-	if ( [indexPath length] == 1 ) {
+	if ( indexPath.length == 1 ) {
 		// remove a group
-		[itemGroups removeObjectAtIndex:[indexPath section]];
+		[itemGroups removeObjectAtIndex:indexPath.section];
 	} else {
 		// remove an item in a group
-		NhItemGroup *g = [itemGroups objectAtIndex:[indexPath section]];
-		[g removeItemAtIndex:[indexPath row]];
+		NhItemGroup *g = itemGroups[indexPath.section];
+		[g removeItemAtIndex:indexPath.row];
 	}
 }
 
@@ -79,8 +79,8 @@
 
 -(char)runModal
 {
-	NSString * text = [self text];
-	if ( [text length] ) {
+	NSString * text = self.text;
+	if ( text.length ) {
 		NSAlert * alert = [NSAlert alertWithMessageText:text defaultButton:nil alternateButton:nil otherButton:nil informativeTextWithFormat:@""];
 		return [alert runModal];
 	}

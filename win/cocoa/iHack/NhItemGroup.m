@@ -31,6 +31,11 @@
 @synthesize items;
 @synthesize dummy;
 
+- (instancetype)init
+{
+	return [self initWithTitle:@"blank title"];
+}
+
 - (instancetype) initWithTitle:(NSString *)t dummy:(BOOL)d {
 	if (self = [super init]) {
 		self.title = t;

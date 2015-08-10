@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 }
 
--(instancetype)initWithText:(NSString *)text location:(NSPoint)point;
+-(instancetype)initWithText:(NSString *)text location:(NSPoint)point NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -44,38 +44,38 @@
 
 -(void)setupOthers
 {
-    NSInteger ro = [role selectedRow];
-    NSInteger ra = [race selectedRow];
+    NSInteger ro = role.selectedRow;
+    NSInteger ra = race.selectedRow;
     NSInteger valid = -1;
     NSInteger c = 0;
     for ( int j = 0; j<ROLE_GENDERS; j++) {
 		bool v = validgend(ro,ra,j);
-		if ( [gender[j] state] )
+		if ( gender[j].state )
 			c = j;
-		[gender[j] setEnabled:v];
+		gender[j].enabled = v;
 		if ( valid<0 && v ) 
 			valid = j;
     }
     if ( !validgend(ro,ra,c) )
 		c = valid;
     for ( int k = 0; k<ROLE_GENDERS; k++) {
-		[gender[k] setState:c==k];
+		gender[k].state = c==k;
     }
     [self selectGender:c];
 	
     valid = -1;
     for ( int j=0; j<ROLE_ALIGNS; j++) {
 		bool v = validalign(ro,ra,j);
-		if ( [alignment[j] state] )
+		if ( alignment[j].state )
 			c = j;
-		[alignment[j] setEnabled:v];
+		alignment[j].enabled = v;
 		if ( valid<0 && v )
 			valid = j;
     }
     if ( !validalign(ro,ra,c) )
 		c = valid;
     for ( int k=0; k<ROLE_ALIGNS; k++) {
-		[alignment[k] setState:c==k];
+		alignment[k].state = c==k;
     }
     [self selectAlignment:c];
 }
@@ -83,8 +83,8 @@
 
 -(void)selectRace
 {
-    NSInteger ra = [race selectedRow];
-    NSInteger ro = [role selectedRow];
+    NSInteger ra = race.selectedRow;
+    NSInteger ro = role.selectedRow;
 	
     if (ra >= 0 && ro >= 0)  {
 		
@@ -119,8 +119,8 @@
 
 -(void)selectRole
 {
-    NSInteger ra = [race selectedRow];
-    NSInteger ro = [role selectedRow];
+    NSInteger ra = race.selectedRow;
+    NSInteger ro = role.selectedRow;
 	
     if (ra >= 0 && ro >= 0)  {
 		
@@ -163,7 +163,7 @@
 	alignment[2] = alignChaotic;
 	
 	if ( strncmp(plname,"player",6) && strncmp(plname,"games",5) ) {
-		[name setStringValue:@(plname)];
+		name.stringValue = @(plname);
 	}
 		
 	// count roles and races
@@ -180,9 +180,9 @@
 		roleEnabled[i] = YES;
 
 	// set table row height based on tiles
-	CGFloat rowHeight = [[TileSet instance] imageSize].height;
-	[role setRowHeight:rowHeight];
-	[race setRowHeight:rowHeight];
+	CGFloat rowHeight = [TileSet instance].imageSize.height;
+	role.rowHeight = rowHeight;
+	race.rowHeight = rowHeight;
 
 	[race reloadData];
 	[role reloadData];
@@ -228,10 +228,10 @@
 		a = rn2(ROLE_ALIGNS);
     }
 	
-	[gender[g] setState:NSOnState];
+	gender[g].state = NSOnState;
 	[self selectGender:g];
 	
-    [alignment[a] setState:NSOnState];
+    alignment[a].state = NSOnState;
 	[self selectAlignment:a];
 	
 	[role selectRowIndexes:[NSIndexSet indexSetWithIndex:ro] byExtendingSelection:NO];
@@ -261,7 +261,7 @@
 	} else {
 		enabled = roleEnabled[ row ];
 	}
-	[cell setEnabled:enabled];
+	cell.enabled = enabled;
 	return cell;
 }
 
@@ -289,14 +289,14 @@
 	
 	// create attributed string with glyph
 	NSTextAttachment * attachment = [[NSTextAttachment alloc] init];
-	[(NSCell *)[attachment attachmentCell] setImage:image];
+	((NSCell *)attachment.attachmentCell).image = image;
 	NSMutableAttributedString * aString = [[NSAttributedString attributedStringWithAttachment:attachment] mutableCopy];
 	
 	// add text to string and adjust vertical baseline of text so it aligns with icon
-	[[aString mutableString] appendString:title];
-	CGFloat offset = [[TileSet instance] imageSize].height;
+	[aString.mutableString appendString:title];
+	CGFloat offset = [TileSet instance].imageSize.height;
 	offset = (offset - 16) * 10/16 + 2;
-	[aString addAttribute:NSBaselineOffsetAttributeName value:[NSNumber numberWithDouble:offset] range:NSMakeRange(1, [title length])];
+	[aString addAttribute:NSBaselineOffsetAttributeName value:@(offset) range:NSMakeRange(1, title.length)];
 
 	return aString;
 }
@@ -314,7 +314,7 @@
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
-	NSTableView * table = [aNotification object];
+	NSTableView * table = aNotification.object;
 	if ( table == race ) {
 		[self selectRace];
 	} else {
@@ -343,12 +343,12 @@
 -(void)doAccept:(id)sender
 {
 	strcpy( plname, [[name stringValue] UTF8String] );
-	[[self window] close];
+	[self.window close];
 }
 
 -(void)doCancel:(id)sender
 {
-	[[self window] close];	
+	[self.window close];	
 	[[NSApplication sharedApplication] terminate:self];
 }
 
@@ -359,7 +359,7 @@
 	[race reloadData];
 	[role reloadData];
 
-	[[NSApplication sharedApplication] runModalForWindow:[self window]];
+	[[NSApplication sharedApplication] runModalForWindow:self.window];
 }
 
 -(void)windowWillClose:(NSNotification *)notification
