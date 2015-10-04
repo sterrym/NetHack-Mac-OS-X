@@ -39,7 +39,7 @@
 	return AUTORELEASEOBJ([[self alloc] initWithTitle:t key:c]);
 }
 
-+ (void)addCommand:(NhCommand *)cmd toCommands:(NSMutableArray *)commands {
++ (void)addCommand:(NhCommand *)cmd toCommands:(NSMutableArray<NhCommand*> *)commands {
 	if (![commands containsObject:cmd]) {
 		[commands addObject:cmd];
 	}
@@ -204,7 +204,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 	}
 	[self addCommand:[NhCommand commandWithTitle:"Rest" keys:"9."] toCommands:commands];
 
-	return commands;
+	return [commands copy];
 }
 
 + (instancetype)directionCommandWithTitle:(const char *)t key:(char)key direction:(char)d {
@@ -248,8 +248,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 - (instancetype)initWithTitle:(const char *)t keys:(const char *)c {
 	if (self = [super init]) {
 		title = [@(t) copy];
-		keys = malloc(strlen(c)+1);
-		strcpy(keys, c);
+		keys = strdup(c);
 	}
 	return self;
 }

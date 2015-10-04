@@ -89,6 +89,7 @@
 }
 
 - (NSString *) stringWithTrimmedWhitespaces {
+#if 0
 	NSMutableString *s1 = [NSMutableString stringWithCapacity:1];
 	BOOL wasSpace = NO;
 	for (int i = 0; i < self.length; ++i) {
@@ -106,6 +107,11 @@
 		}
 	}
 	return s1;
+#else
+	NSMutableString *s1 = [[NSMutableString alloc] initWithString:self];
+	CFStringTrimWhitespace((CFMutableStringRef)s1);
+	return [NSString stringWithString:s1];
+#endif
 }
 
 // search for string with paddig on both sides (or at front or back of string)

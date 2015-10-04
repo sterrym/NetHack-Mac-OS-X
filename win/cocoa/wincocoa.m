@@ -51,7 +51,8 @@
 #import "NetHackCocoa-Swift.h"
 
 // mainly for tty port implementation
-#define BASE_WINDOW ((winid) [NhWindow messageWindow])
+//#define BASE_WINDOW ((winid) [NhWindow messageWindow])
+#define BASE_WINDOW NHW_MESSAGE
 
 #define kNetHackOptions (@"kNetHackOptions")
 
@@ -283,8 +284,7 @@ void cocoa_decgraphics_mode_callback()
 
 #pragma mark nethack window API
 
-void cocoa_init_nhwindows(int* argc, char** argv)
-{
+void cocoa_init_nhwindows(int* argc, char** argv) {
 	//NSLog(@"init_nhwindows");
 	iflags.runmode = RUN_STEP;
 	iflags.window_inited = TRUE;
@@ -304,14 +304,12 @@ void cocoa_init_nhwindows(int* argc, char** argv)
 	[[MainWindowController instance] prepareWindows];
 }
 
-void cocoa_askname()
-{
+void cocoa_askname() {
 	//NSLog(@"askname");
 	cocoa_getlin("Enter your name", plname);
 }
 
-void cocoa_get_nh_event()
-{
+void cocoa_get_nh_event() {
 	//NSLog(@"get_nh_event");
 }
 
@@ -324,18 +322,15 @@ void cocoa_exit_nhwindows(const char *str) {
 	}
 }
 
-void cocoa_suspend_nhwindows(const char *str)
-{
+void cocoa_suspend_nhwindows(const char *str) {
 	NSLog(@"suspend_nhwindows %s", str);
 }
 
-void cocoa_resume_nhwindows()
-{
+void cocoa_resume_nhwindows() {
 	NSLog(@"resume_nhwindows");
 }
 
-winid cocoa_create_nhwindow(int type)
-{
+winid cocoa_create_nhwindow(int type) {
 	NhWindow *w = nil;
 	switch (type) {
 		case NHW_MAP:
@@ -383,8 +378,7 @@ void cocoa_destroy_nhwindow(winid wid)
 	}
 }
 
-void cocoa_curs(winid wid, int x, int y)
-{
+void cocoa_curs(winid wid, int x, int y) {
 	//NSLog(@"curs %x %d,%d", wid, x, y);
 
 	if (wid == WIN_MAP) {
@@ -392,8 +386,7 @@ void cocoa_curs(winid wid, int x, int y)
 	}
 }
 
-void cocoa_putstr(winid wid, int attr, const char *text)
-{
+void cocoa_putstr(winid wid, int attr, const char *text) {
 	//NSLog(@"putstr %x %s", wid, text);
 	if (wid == WIN_ERR || !wid) {
 		wid = BASE_WINDOW;
@@ -405,8 +398,7 @@ void cocoa_putstr(winid wid, int attr, const char *text)
 	}		
 }
 
-void cocoa_display_file(const char *filename, BOOLEAN_P must_exist)
-{
+void cocoa_display_file(const char *filename, BOOLEAN_P must_exist) {
 	char tmp[ PATH_MAX ];
 	NSFileManager *fm = [NSFileManager defaultManager];
 	[WinCocoa expandFilename:filename intoPath:tmp];
@@ -426,8 +418,7 @@ void cocoa_display_file(const char *filename, BOOLEAN_P must_exist)
 
 #pragma mark menu
 
-void cocoa_start_menu(winid wid)
-{
+void cocoa_start_menu(winid wid) {
 	//NSLog(@"start_menu %x", wid);
 	[(NhMenuWindow *)[WinCocoa windowForWindowID: wid] startMenu];
 }
@@ -449,8 +440,7 @@ void cocoa_add_menu(winid wid, int glyph, const ANY_P *identifier,
 	}
 }
 
-void cocoa_end_menu(winid wid, const char *prompt)
-{
+void cocoa_end_menu(winid wid, const char *prompt) {
 	//NSLog(@"end_menu %x, %s", wid, prompt);
 	if (prompt) {
 		((NhMenuWindow *) [WinCocoa windowForWindowID: wid]).prompt = [NSString stringWithFormat:@"%s", prompt];
@@ -460,8 +450,7 @@ void cocoa_end_menu(winid wid, const char *prompt)
 	}
 }
 
-int cocoa_select_menu(winid wid, int how, menu_item **selected)
-{
+int cocoa_select_menu(winid wid, int how, menu_item **selected) {
 	//NSLog(@"select_menu %x", wid);
 	NhMenuWindow *w = (NhMenuWindow *) [WinCocoa windowForWindowID: wid];
 	w.how = how;
@@ -527,7 +516,8 @@ void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph)
 void cocoa_raw_print(const char *str)
 {
 	//NSLog(@"raw_print %s", str);
-	cocoa_putstr((winid) [NhWindow messageWindow], 0, str);
+	//cocoa_putstr( [NhWindow messageWindow], 0, str);
+	cocoa_putstr(NHW_MESSAGE, 0, str);
 }
 
 void cocoa_raw_print_bold(const char *str)

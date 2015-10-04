@@ -38,7 +38,7 @@
 #import "NetHackCocoa-Swift.h"
 
 
-#import <Carbon/Carbon.h>	// key codes
+#include <Carbon/Carbon.h>	// key codes
 
 
 @implementation MainView
@@ -442,7 +442,8 @@ NSString * DescriptionForTile( int x, int y )
 		
 		pt = [self convertPoint:pt toView:nil];
 		pt = [self.window convertRectToScreen:NSMakeRect(pt.x, pt.y, 0, 0)].origin;
-		tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
+		//tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
+		NSLog(@"ToolTip text: %@, location: %@", text, NSStringFromPoint(pt));
 	}
 #endif
 }

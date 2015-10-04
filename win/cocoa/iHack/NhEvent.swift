@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import Foundation
 
-class NhEvent : NSObject{
+class NhEvent : NSObject {
 	let key: Int32
 	let mod: Int32
 	let x: Int32
