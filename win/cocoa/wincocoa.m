@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #import "NetHackCocoaAppDelegate.h"
-#import <Carbon/Carbon.h>	// key codes
+#include <Carbon/Carbon.h>	// key codes
 
 #include "dlb.h"
 #include "hack.h"
@@ -37,14 +37,12 @@
 #import "NhMapWindow.h"
 #import "MainWindowController.h"
 #import "NhYnQuestion.h"
-#import "NhEvent.h"
 #import "NhEventQueue.h"
 #import "NhItem.h"
 #import "NhItemGroup.h"
 #import "NhMenuWindow.h"
 #import "NhStatusWindow.h"
 #import "NSString+Z.h"
-#import "NhTextInputEvent.h"
 
 #ifdef __APPLE__
 #include <TargetConditionals.h>
@@ -479,7 +477,7 @@ int cocoa_select_menu(winid wid, int how, menu_item **selected)
 				pMenu->item = item.identifier;
 				pMenu++;
 			}
-			return w.selected.count;		
+			return (int)w.selected.count;
 		} else {
 			// cancelled
 			return -1;
@@ -549,7 +547,7 @@ int cocoa_nh_poskey(int *x, int *y, int *mod)
 	//NSLog(@"nh_poskey");
 	[[MainWindowController instance] refreshAllViews];
 	NhEvent *e = [[NhEventQueue instance] nextEvent];
-	if (!e.isKeyEvent) {
+	if (!e.keyEvent) {
 		*x = e.x;
 		*y = e.y;
 		*mod = e.mod;
@@ -619,7 +617,7 @@ char cocoa_yn_function(const char *question, const char *choices, CHAR_P def)
 	for (;;) {
 		NhEvent *e = nil;
 		e = [[NhEventQueue instance] nextEvent];
-		if ( e.isKeyEvent ) {
+		if ( e.keyEvent ) {
 			if ( choices == NULL || strchr( choices, e.key ) != NULL ) {
 				return e.key;
 			}

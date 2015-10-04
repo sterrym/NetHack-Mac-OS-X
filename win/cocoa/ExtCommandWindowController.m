@@ -24,7 +24,7 @@
 
 #import "ExtCommandWindowController.h"
 #import "NhEventQueue.h"
-#import "NhTextInputEvent.h"
+#import "NetHackCocoa-Swift.h"
 
 #include "hack.h"
 #include "func_tab.h"
@@ -118,7 +118,7 @@
 	for ( NSButton * button in menuView.subviews ) {
 		// add selected item
 		if ( button.state == NSOnState ) {
-			int tag = button.tag;
+			NSInteger tag = button.tag;
 			NSString * cmd = @(extcmdlist[tag].ef_txt);
 			NhTextInputEvent * e = [[NhTextInputEvent alloc] initWithText:cmd];
 			[[NhEventQueue instance] addEvent:e];

@@ -25,7 +25,6 @@ static inline BOOL Swift_Invis() {
 #import "NotesWindowController.h"
 #import "MessageWindowController.h"
 #import "NhEventQueue.h"
-#import "NhEvent.h"
 #import "NhCommand.h"
 
 #import "NSString+NetHack.h"

@@ -30,7 +30,7 @@
 
 static int append_str(char * buf, const char * new_str)
 {
-    int space_left;	/* space remaining in buf */
+    size_t space_left;	/* space remaining in buf */
 	
     if (strstri(buf, new_str)) return 0;
 	

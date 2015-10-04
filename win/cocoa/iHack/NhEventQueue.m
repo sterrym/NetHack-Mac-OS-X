@@ -23,9 +23,9 @@
  */
 
 #import "NhEventQueue.h"
-#import "NhEvent.h"
 #import "NhCommand.h"
 #import "NetHackCocoaAppDelegate.h"
+#import "NetHackCocoa-Swift.h"
 
 #import "ARCBridge.h"
 
@@ -57,7 +57,7 @@ static NhEventQueue *s_eventQueue;
 }
 
 - (void) addKey:(int)k {
-	[self addEvent:[NhEvent eventWithKey:k]];
+	[self addEvent:[[NhEvent alloc] initWithKey:k]];
 }
 
 - (void)addEscapeKey {
@@ -68,7 +68,7 @@ static NhEventQueue *s_eventQueue;
 	[condition lock];
 	const char *pStr = keys;
 	while (*pStr) {
-		[events addObject:[NhEvent eventWithKey:*pStr]];
+		[events addObject:[[NhEvent alloc] initWithKey:*pStr]];
 		pStr++;
 	}
 	[condition signal];

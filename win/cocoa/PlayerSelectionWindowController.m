@@ -44,10 +44,10 @@
 
 -(void)setupOthers
 {
-    NSInteger ro = role.selectedRow;
-    NSInteger ra = race.selectedRow;
-    NSInteger valid = -1;
-    NSInteger c = 0;
+    int ro = (int)role.selectedRow;
+    int ra = (int)race.selectedRow;
+    int valid = -1;
+    int c = 0;
     for ( int j = 0; j<ROLE_GENDERS; j++) {
 		bool v = validgend(ro,ra,j);
 		if ( gender[j].state )
@@ -83,15 +83,15 @@
 
 -(void)selectRace
 {
-    NSInteger ra = race.selectedRow;
-    NSInteger ro = role.selectedRow;
+    int ra = (int)race.selectedRow;
+    int ro = (int)role.selectedRow;
 	
     if (ra >= 0 && ro >= 0)  {
 		
 		[race setDelegate:nil];
 		[role setDelegate:nil];
 		
-		NSInteger valid = -1;
+		int valid = -1;
 		for ( int j = 0; j < cntRoles; j++) {
 			bool v = validrace(j,ra);
 			roleEnabled[j] = v;
@@ -119,15 +119,15 @@
 
 -(void)selectRole
 {
-    NSInteger ra = race.selectedRow;
-    NSInteger ro = role.selectedRow;
+    int ra = (int)race.selectedRow;
+    int ro = (int)role.selectedRow;
 	
     if (ra >= 0 && ro >= 0)  {
 		
 		[race setDelegate:nil];
 		[role setDelegate:nil];
 		
-		NSInteger valid = -1;
+		int valid = -1;
 		for ( int j = 0; j < cntRaces; j++) {
 			bool v = validrace(ro,j);
 			raceEnabled[j] = v;
@@ -190,12 +190,12 @@
     // Randomize race and role, unless specified in config
     int ro = flags.initrole;
     if (ro == ROLE_NONE || ro == ROLE_RANDOM) {
-		ro = rn2(cntRoles);
+		ro = rn2((int)cntRoles);
     }
 
     int ra = flags.initrace;
     if (ra == ROLE_NONE || ra == ROLE_RANDOM) {
-		ra = rn2(cntRaces);
+		ra = rn2((int)cntRaces);
     }
 	
     // make sure we have a valid combination, honoring 
@@ -206,9 +206,9 @@
     }
     while (!validrace(ro,ra)) {
 		if (choose_race_first) {
-			ro = rn2(cntRoles);
+			ro = rn2((int)cntRoles);
 		} else {
-			ra = rn2(cntRaces);
+			ra = rn2((int)cntRaces);
 		}
     }
 	

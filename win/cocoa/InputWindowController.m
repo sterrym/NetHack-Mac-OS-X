@@ -23,8 +23,8 @@
  */
 
 #import "InputWindowController.h"
-#import "NhTextInputEvent.h"
 #import "NhEventQueue.h"
+#import "NetHackCocoa-Swift.h"
 
 @implementation InputWindowController
 

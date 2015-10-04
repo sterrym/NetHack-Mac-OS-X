@@ -205,7 +205,6 @@
 		021282C514F6E6240046D56F /* YesNoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAEB11B8A6F200FC2199 /* YesNoWindowController.m */; };
 		021282C614F6E6240046D56F /* Action.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAFD11B8A73300FC2199 /* Action.m */; };
 		021282C714F6E6240046D56F /* NhCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAFF11B8A73300FC2199 /* NhCommand.m */; };
-		021282C814F6E6240046D56F /* NhEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0111B8A73300FC2199 /* NhEvent.m */; };
 		021282C914F6E6240046D56F /* NhEventQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0311B8A73300FC2199 /* NhEventQueue.m */; };
 		021282CA14F6E6240046D56F /* NhInventory.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0511B8A73300FC2199 /* NhInventory.m */; };
 		021282CB14F6E6240046D56F /* NhItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0711B8A73300FC2199 /* NhItem.m */; };
@@ -214,7 +213,6 @@
 		021282CE14F6E6240046D56F /* NhMenuWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0D11B8A73300FC2199 /* NhMenuWindow.m */; };
 		021282CF14F6E6240046D56F /* NhObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0F11B8A73300FC2199 /* NhObject.m */; };
 		021282D014F6E6240046D56F /* NhStatusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1111B8A73300FC2199 /* NhStatusWindow.m */; };
-		021282D114F6E6240046D56F /* NhTextInputEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1311B8A73300FC2199 /* NhTextInputEvent.m */; };
 		021282D214F6E6240046D56F /* NhWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1511B8A73300FC2199 /* NhWindow.m */; };
 		021282D314F6E6240046D56F /* NhYnQuestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1711B8A73300FC2199 /* NhYnQuestion.m */; };
 		021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
@@ -354,7 +352,6 @@
 		0224CAFB11B8A6F200FC2199 /* YesNoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAEB11B8A6F200FC2199 /* YesNoWindowController.m */; };
 		0224CB2211B8A73300FC2199 /* Action.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAFD11B8A73300FC2199 /* Action.m */; };
 		0224CB2311B8A73300FC2199 /* NhCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CAFF11B8A73300FC2199 /* NhCommand.m */; };
-		0224CB2411B8A73300FC2199 /* NhEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0111B8A73300FC2199 /* NhEvent.m */; };
 		0224CB2511B8A73300FC2199 /* NhEventQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0311B8A73300FC2199 /* NhEventQueue.m */; };
 		0224CB2611B8A73300FC2199 /* NhInventory.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0511B8A73300FC2199 /* NhInventory.m */; };
 		0224CB2711B8A73300FC2199 /* NhItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0711B8A73300FC2199 /* NhItem.m */; };
@@ -363,7 +360,6 @@
 		0224CB2A11B8A73300FC2199 /* NhMenuWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0D11B8A73300FC2199 /* NhMenuWindow.m */; };
 		0224CB2B11B8A73300FC2199 /* NhObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0F11B8A73300FC2199 /* NhObject.m */; };
 		0224CB2C11B8A73300FC2199 /* NhStatusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1111B8A73300FC2199 /* NhStatusWindow.m */; };
-		0224CB2D11B8A73300FC2199 /* NhTextInputEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1311B8A73300FC2199 /* NhTextInputEvent.m */; };
 		0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1511B8A73300FC2199 /* NhWindow.m */; };
 		0224CB2F11B8A73300FC2199 /* NhYnQuestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1711B8A73300FC2199 /* NhYnQuestion.m */; };
 		0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
@@ -668,6 +664,10 @@
 		559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; settings = {ASSET_TAGS = (); }; };
 		559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; settings = {ASSET_TAGS = (); }; };
 		559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; settings = {ASSET_TAGS = (); }; };
+		55E6B4881BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; settings = {ASSET_TAGS = (); }; };
+		55E6B4891BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; settings = {ASSET_TAGS = (); }; };
+		55E6B48B1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; settings = {ASSET_TAGS = (); }; };
+		55E6B48C1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; settings = {ASSET_TAGS = (); }; };
 		55F5165B1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
 		55F5165C1B783C9500DEC8F5 /* WinCocoaAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */; };
 		55F5165D1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
@@ -722,8 +722,6 @@
 		0224CAFD11B8A73300FC2199 /* Action.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Action.m; sourceTree = "<group>"; };
 		0224CAFE11B8A73300FC2199 /* NhCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhCommand.h; sourceTree = "<group>"; };
 		0224CAFF11B8A73300FC2199 /* NhCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhCommand.m; sourceTree = "<group>"; };
-		0224CB0011B8A73300FC2199 /* NhEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhEvent.h; sourceTree = "<group>"; };
-		0224CB0111B8A73300FC2199 /* NhEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhEvent.m; sourceTree = "<group>"; };
 		0224CB0211B8A73300FC2199 /* NhEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhEventQueue.h; sourceTree = "<group>"; };
 		0224CB0311B8A73300FC2199 /* NhEventQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhEventQueue.m; sourceTree = "<group>"; };
 		0224CB0411B8A73300FC2199 /* NhInventory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhInventory.h; sourceTree = "<group>"; };
@@ -740,8 +738,6 @@
 		0224CB0F11B8A73300FC2199 /* NhObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhObject.m; sourceTree = "<group>"; };
 		0224CB1011B8A73300FC2199 /* NhStatusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhStatusWindow.h; sourceTree = "<group>"; };
 		0224CB1111B8A73300FC2199 /* NhStatusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhStatusWindow.m; sourceTree = "<group>"; };
-		0224CB1211B8A73300FC2199 /* NhTextInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhTextInputEvent.h; sourceTree = "<group>"; };
-		0224CB1311B8A73300FC2199 /* NhTextInputEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhTextInputEvent.m; sourceTree = "<group>"; };
 		0224CB1411B8A73300FC2199 /* NhWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhWindow.h; sourceTree = "<group>"; };
 		0224CB1511B8A73300FC2199 /* NhWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhWindow.m; sourceTree = "<group>"; };
 		0224CB1611B8A73300FC2199 /* NhYnQuestion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhYnQuestion.h; sourceTree = "<group>"; };
@@ -1154,6 +1150,8 @@
 		55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
 		55BF8C6F1B77BEF10031A45A /* compat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = compat.m; sourceTree = "<group>"; };
+		55E6B4871BC1D94000E8125A /* NhEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhEvent.swift; sourceTree = "<group>"; };
+		55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhTextInputEvent.swift; sourceTree = "<group>"; };
 		55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftNetHack bridge.swift"; sourceTree = "<group>"; };
 		55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		55F514F01B77E9D400DEC8F5 /* ARCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCBridge.h; sourceTree = "<group>"; };
@@ -1764,8 +1762,7 @@
 				0224CAFD11B8A73300FC2199 /* Action.m */,
 				0224CAFE11B8A73300FC2199 /* NhCommand.h */,
 				0224CAFF11B8A73300FC2199 /* NhCommand.m */,
-				0224CB0011B8A73300FC2199 /* NhEvent.h */,
-				0224CB0111B8A73300FC2199 /* NhEvent.m */,
+				55E6B4871BC1D94000E8125A /* NhEvent.swift */,
 				0224CB0211B8A73300FC2199 /* NhEventQueue.h */,
 				0224CB0311B8A73300FC2199 /* NhEventQueue.m */,
 				0224CB0411B8A73300FC2199 /* NhInventory.h */,
@@ -1782,8 +1779,7 @@
 				0224CB0F11B8A73300FC2199 /* NhObject.m */,
 				0224CB1011B8A73300FC2199 /* NhStatusWindow.h */,
 				0224CB1111B8A73300FC2199 /* NhStatusWindow.m */,
-				0224CB1211B8A73300FC2199 /* NhTextInputEvent.h */,
-				0224CB1311B8A73300FC2199 /* NhTextInputEvent.m */,
+				55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */,
 				0224CB1411B8A73300FC2199 /* NhWindow.h */,
 				0224CB1511B8A73300FC2199 /* NhWindow.m */,
 				0224CB1611B8A73300FC2199 /* NhYnQuestion.h */,
@@ -1890,6 +1886,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = "Dirk Zimmermann";
 				TargetAttributes = {
 					021281F514F6E6240046D56F = {
 						DevelopmentTeam = MKTTC6734C;
@@ -2326,7 +2323,6 @@
 				021282C514F6E6240046D56F /* YesNoWindowController.m in Sources */,
 				021282C614F6E6240046D56F /* Action.m in Sources */,
 				021282C714F6E6240046D56F /* NhCommand.m in Sources */,
-				021282C814F6E6240046D56F /* NhEvent.m in Sources */,
 				021282C914F6E6240046D56F /* NhEventQueue.m in Sources */,
 				021282CA14F6E6240046D56F /* NhInventory.m in Sources */,
 				021282CB14F6E6240046D56F /* NhItem.m in Sources */,
@@ -2335,7 +2331,6 @@
 				021282CE14F6E6240046D56F /* NhMenuWindow.m in Sources */,
 				021282CF14F6E6240046D56F /* NhObject.m in Sources */,
 				021282D014F6E6240046D56F /* NhStatusWindow.m in Sources */,
-				021282D114F6E6240046D56F /* NhTextInputEvent.m in Sources */,
 				021282D214F6E6240046D56F /* NhWindow.m in Sources */,
 				021282D314F6E6240046D56F /* NhYnQuestion.m in Sources */,
 				021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */,
@@ -2375,6 +2370,7 @@
 				021282F414F6E6240046D56F /* exper.c in Sources */,
 				021282F514F6E6240046D56F /* explode.c in Sources */,
 				021282F614F6E6240046D56F /* extralev.c in Sources */,
+				55E6B48C1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */,
 				021282F714F6E6240046D56F /* files.c in Sources */,
 				021282F814F6E6240046D56F /* fountain.c in Sources */,
 				021282F914F6E6240046D56F /* hack.c in Sources */,
@@ -2455,6 +2451,7 @@
 				0212834314F6E6240046D56F /* worn.c in Sources */,
 				0212834414F6E6240046D56F /* write.c in Sources */,
 				0212834514F6E6240046D56F /* zap.c in Sources */,
+				55E6B4891BC1D94000E8125A /* NhEvent.swift in Sources */,
 				0212834614F6E6240046D56F /* unixmain.c in Sources */,
 				0212834714F6E6240046D56F /* unixres.c in Sources */,
 			);
@@ -2485,7 +2482,6 @@
 				0224CAFB11B8A6F200FC2199 /* YesNoWindowController.m in Sources */,
 				0224CB2211B8A73300FC2199 /* Action.m in Sources */,
 				0224CB2311B8A73300FC2199 /* NhCommand.m in Sources */,
-				0224CB2411B8A73300FC2199 /* NhEvent.m in Sources */,
 				0224CB2511B8A73300FC2199 /* NhEventQueue.m in Sources */,
 				0224CB2611B8A73300FC2199 /* NhInventory.m in Sources */,
 				0224CB2711B8A73300FC2199 /* NhItem.m in Sources */,
@@ -2494,7 +2490,6 @@
 				0224CB2A11B8A73300FC2199 /* NhMenuWindow.m in Sources */,
 				0224CB2B11B8A73300FC2199 /* NhObject.m in Sources */,
 				0224CB2C11B8A73300FC2199 /* NhStatusWindow.m in Sources */,
-				0224CB2D11B8A73300FC2199 /* NhTextInputEvent.m in Sources */,
 				0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */,
 				0224CB2F11B8A73300FC2199 /* NhYnQuestion.m in Sources */,
 				0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */,
@@ -2534,6 +2529,7 @@
 				0224CDDE11B8A92600FC2199 /* exper.c in Sources */,
 				0224CDDF11B8A92600FC2199 /* explode.c in Sources */,
 				0224CDE011B8A92600FC2199 /* extralev.c in Sources */,
+				55E6B48B1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */,
 				0224CDE111B8A92600FC2199 /* files.c in Sources */,
 				0224CDE211B8A92600FC2199 /* fountain.c in Sources */,
 				0224CDE311B8A92600FC2199 /* hack.c in Sources */,
@@ -2614,6 +2610,7 @@
 				0224CE2E11B8A92600FC2199 /* worn.c in Sources */,
 				0224CE2F11B8A92600FC2199 /* write.c in Sources */,
 				0224CE3011B8A92600FC2199 /* zap.c in Sources */,
+				55E6B4881BC1D94000E8125A /* NhEvent.swift in Sources */,
 				0224CEB911B8A92600FC2199 /* unixmain.c in Sources */,
 				0224CEBA11B8A92600FC2199 /* unixres.c in Sources */,
 			);

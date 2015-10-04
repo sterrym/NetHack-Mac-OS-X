@@ -27,8 +27,6 @@
 #import "NhWindow.h"
 #import "NhMapWindow.h"
 #import "NhEventQueue.h"
-#import "NhTextInputEvent.h"
-#import "NhEvent.h"
 #import "wincocoa.h"
 #import "TooltipWindow.h"
 #import "NSImage+FlippedDrawing.h"
@@ -306,7 +304,7 @@ NSStringEncoding	codepage437encoding;
 	mouseLoc.y = (int)(mouseLoc.y / tileSize.height);
 	mouseLoc.y = mouseLoc.y;
 	
-	NhEvent * e = [NhEvent eventWithX:mouseLoc.x y:mouseLoc.y];
+	NhEvent * e = [[NhEvent alloc] initWithX:mouseLoc.x y:mouseLoc.y];
 	[[NhEventQueue instance] addEvent:e];
 }
 

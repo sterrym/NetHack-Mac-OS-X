@@ -30,8 +30,6 @@
 #import "NhWindow.h"
 #import "NhMenuWindow.h"
 #import "MainView.h"
-#import "NhEvent.h"
-#import "NhTextInputEvent.h"
 #import "NhCommand.h"
 #import "MenuWindowController.h"
 #import "MessageWindowController.h"
@@ -43,6 +41,7 @@
 #import "StatsView.h"
 #import "NetHackCocoaAppDelegate.h"
 #import "EquipmentView.h"
+#import "NetHackCocoa-Swift.h"
 
 #import "wincocoa.h" // cocoa_getpos etc.
 
@@ -267,7 +266,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	if ( key && key.length ) {
 		// it has a key equivalent to use
 		char keyEquiv = [key characterAtIndex:0];
-		int modifier = menuItem.keyEquivalentModifierMask;
+		NSUInteger modifier = menuItem.keyEquivalentModifierMask;
 		if ( modifier & NSControlKeyMask ) {
 			keyEquiv = toupper(keyEquiv) - 'A' + 1;
 		}
@@ -281,7 +280,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		if ( [cmd characterAtIndex:0] == '#' ) {
 			cmd = [cmd substringFromIndex:1];
 			cmd = cmd.lowercaseString;
-			NhTextInputEvent * e = [NhTextInputEvent eventWithText:cmd];
+			NhTextInputEvent * e = [[NhTextInputEvent alloc] initWithText:cmd];
 			[[NhEventQueue instance] addKey:'#'];
 			[[NhEventQueue instance] addEvent:e];
 		} else {
@@ -354,7 +353,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (void)createTileSetListInMenu:(NSMenu *)menu 
 {
-	int count = menu.itemArray.count;
+	NSInteger count = menu.itemArray.count;
 	if ( count > 3 ) {
 		// already initialized
 		return;
@@ -689,7 +688,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (void)clipAround:(NSValue *)clip {
 	NSRange r = clip.rangeValue;
-	[mainView cliparoundX:r.location y:r.length];
+	[mainView cliparoundX:(int)r.location y:(int)r.length];
 }
 
 - (void)clipAroundX:(int)x y:(int)y {
@@ -776,7 +775,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		[[NhEventQueue instance] addKey:key];
 	} else {
 		// travel / movement
-		[[NhEventQueue instance] addEvent:[NhEvent eventWithX:x y:y]];
+		[[NhEventQueue instance] addEvent:[[NhEvent alloc] initWithX:x y:y]];
 	}
 }
 

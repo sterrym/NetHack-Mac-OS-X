@@ -39,8 +39,8 @@
 	NSButton * button = (id)sender;
 	NSString * keyEquiv = button.keyEquivalent;
 
-	int key = [keyEquiv characterAtIndex:0];
-	int mod = button.keyEquivalentModifierMask;
+	unichar key = [keyEquiv characterAtIndex:0];
+	NSUInteger mod = button.keyEquivalentModifierMask;
 	if ( mod & NSShiftKeyMask ) {
 		if ( key == '.' )
 			key = '>';

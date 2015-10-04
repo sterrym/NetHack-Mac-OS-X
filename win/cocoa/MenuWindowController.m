@@ -89,7 +89,7 @@
 	for ( NSButton * button in menuView.subviews ) {
 		if ( [button class] == [NSButton class] )  {
 			NSInteger itemTag = button.tag;
-			id item = itemDict[[NSNumber numberWithInt:itemTag]];
+			id item = itemDict[@(itemTag)];
 			if ( item && [item class] == [NhItem class] ) {
 				NhItem * entry = item;
 				if ( entry.group_ch == groupAccel ) {
@@ -542,7 +542,7 @@ static NSInteger compareButtonText(id button1, id button2, void * context )
 	BOOL useDefault = ((NSButton *)sender).state == NSOffState;
 	
 	for ( NhItemGroup * group in menuParams.itemGroups ) {
-		int len = group.items.count;
+		NSInteger len = group.items.count;
 		// get list of buttons in this group
 		NSMutableArray * origButtonList = [NSMutableArray arrayWithCapacity:len];
 		for ( NhItem * item in group.items ) {
