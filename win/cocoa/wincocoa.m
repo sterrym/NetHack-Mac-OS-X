@@ -149,7 +149,7 @@ coord CoordMake(xchar i, xchar j) {
 	NSString *rdir = [fm stringWithFileSystemRepresentation:[self baseFilePath] length:strlen([self baseFilePath])];
 	NSString *aFile = @(filename);
 	NSString *toRet = [rdir stringByAppendingPathComponent:aFile];
-	strcpy(path, [toRet fileSystemRepresentation]);
+	strlcpy(path, [toRet fileSystemRepresentation], PATH_MAX);
 }
 
 + (int)keyWithKeyEvent:(NSEvent *)keyEvent
@@ -414,13 +414,13 @@ void cocoa_display_file(const char *filename, BOOLEAN_P must_exist)
 	[WinCocoa expandFilename:filename intoPath:tmp];
 	NSString *filePath = [fm stringWithFileSystemRepresentation:tmp length:strlen(tmp)];
 	
-	NSString * text = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:NULL];
+	NSString * text = [[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:NULL];
 	if ( text ) {
 		[[MainWindowController instance] displayMessageWindow:text];
 	} else {
 		if ( must_exist ) {
 			char msg[512];
-			sprintf(msg, "Could not display file %s", filename);
+			snprintf(msg, 512, "Could not display file %s", filename);
 			cocoa_raw_print(msg);
 		}
 	}

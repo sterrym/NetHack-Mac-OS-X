@@ -68,7 +68,7 @@
 		[self setOpaque:YES];
 		[self setHasShadow:YES];
 		[self setReleasedWhenClosed:YES];
-		[self orderFront:self];
+		[self orderFront:nil];
 	}
 	return self;
 }

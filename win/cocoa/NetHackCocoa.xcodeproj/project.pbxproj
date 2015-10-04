@@ -660,6 +660,14 @@
 		028E8B3419FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
+		559CDEE21BC1A4C5008ED534 /* nextstep.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEE31BC1A4C5008ED534 /* nextstep.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEE71BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEE81BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEE91BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; settings = {ASSET_TAGS = (); }; };
 		55F5165B1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
 		55F5165C1B783C9500DEC8F5 /* WinCocoaAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */; };
 		55F5165D1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
@@ -1139,6 +1147,10 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		559CDEE11BC1A4C5008ED534 /* nextstep.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nextstep.png; sourceTree = "<group>"; };
+		559CDEE41BC1A53E008ED534 /* dawnhack32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dawnhack32.png; sourceTree = "<group>"; };
+		559CDEE51BC1A53E008ED534 /* nevanda32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32.png; sourceTree = "<group>"; };
+		559CDEE61BC1A53E008ED534 /* nevanda32black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32black.png; sourceTree = "<group>"; };
 		55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
 		55BF8C6F1B77BEF10031A45A /* compat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = compat.m; sourceTree = "<group>"; };
@@ -1345,11 +1357,15 @@
 		0224CBD711B8A82300FC2199 /* tilesets */ = {
 			isa = PBXGroup;
 			children = (
-				0224CBD811B8A82300FC2199 /* absurd128.png */,
 				0224CBD911B8A82300FC2199 /* absurd32.png */,
+				0224CBD811B8A82300FC2199 /* absurd128.png */,
 				0224CBDA11B8A82300FC2199 /* chozo32.png */,
 				0224CBDB11B8A82300FC2199 /* chozo32b.png */,
+				559CDEE41BC1A53E008ED534 /* dawnhack32.png */,
 				0224CBDC11B8A82300FC2199 /* kins32.bmp */,
+				559CDEE51BC1A53E008ED534 /* nevanda32.png */,
+				559CDEE61BC1A53E008ED534 /* nevanda32black.png */,
+				559CDEE11BC1A4C5008ED534 /* nextstep.png */,
 				0224CBDD11B8A82300FC2199 /* nh32.png */,
 				0224CBDE11B8A82300FC2199 /* tiles10x20.bmp */,
 				0224CBDF11B8A82300FC2199 /* tiles16.bmp */,
@@ -1931,6 +1947,7 @@
 				0212821314F6E6240046D56F /* knox.des in Resources */,
 				0212821414F6E6240046D56F /* license in Resources */,
 				0212821514F6E6240046D56F /* medusa.des in Resources */,
+				559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */,
 				0212821614F6E6240046D56F /* mines.des in Resources */,
 				0212821714F6E6240046D56F /* Monk.des in Resources */,
 				0212821814F6E6240046D56F /* opthelp in Resources */,
@@ -2032,6 +2049,7 @@
 				0212827914F6E6240046D56F /* Mon-loca.lev in Resources */,
 				0212827A14F6E6240046D56F /* Mon-strt.lev in Resources */,
 				0212827B14F6E6240046D56F /* oracle.lev in Resources */,
+				559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */,
 				5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */,
 				0212827C14F6E6240046D56F /* orcus.lev in Resources */,
 				0212827D14F6E6240046D56F /* Pri-fila.lev in Resources */,
@@ -2074,6 +2092,7 @@
 				021282A214F6E6240046D56F /* Val-fila.lev in Resources */,
 				021282A314F6E6240046D56F /* Val-filb.lev in Resources */,
 				021282A414F6E6240046D56F /* Val-goal.lev in Resources */,
+				559CDEE81BC1A53E008ED534 /* dawnhack32.png in Resources */,
 				021282A514F6E6240046D56F /* Val-loca.lev in Resources */,
 				021282A614F6E6240046D56F /* Val-strt.lev in Resources */,
 				021282A714F6E6240046D56F /* valley.lev in Resources */,
@@ -2086,6 +2105,7 @@
 				021282AE14F6E6240046D56F /* wizard1.lev in Resources */,
 				021282AF14F6E6240046D56F /* wizard2.lev in Resources */,
 				021282B014F6E6240046D56F /* wizard3.lev in Resources */,
+				559CDEE31BC1A4C5008ED534 /* nextstep.png in Resources */,
 				021282B114F6E6240046D56F /* container-migration.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2115,6 +2135,7 @@
 				0224CBBA11B8A7BE00FC2199 /* Knight.des in Resources */,
 				0224CBBB11B8A7BE00FC2199 /* knox.des in Resources */,
 				0224CBBC11B8A7BE00FC2199 /* license in Resources */,
+				559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */,
 				0224CBBD11B8A7BE00FC2199 /* medusa.des in Resources */,
 				0224CBBE11B8A7BE00FC2199 /* mines.des in Resources */,
 				0224CBBF11B8A7BE00FC2199 /* Monk.des in Resources */,
@@ -2216,6 +2237,7 @@
 				02447C2511B8C821008CB9C7 /* Mon-goal.lev in Resources */,
 				02447C2611B8C821008CB9C7 /* Mon-loca.lev in Resources */,
 				02447C2711B8C821008CB9C7 /* Mon-strt.lev in Resources */,
+				559CDEE91BC1A53E008ED534 /* nevanda32.png in Resources */,
 				02447C2811B8C821008CB9C7 /* oracle.lev in Resources */,
 				02447C2911B8C821008CB9C7 /* orcus.lev in Resources */,
 				02447C2A11B8C821008CB9C7 /* Pri-fila.lev in Resources */,
@@ -2258,6 +2280,7 @@
 				02447C4F11B8C821008CB9C7 /* Val-fila.lev in Resources */,
 				02447C5011B8C821008CB9C7 /* Val-filb.lev in Resources */,
 				02447C5111B8C821008CB9C7 /* Val-goal.lev in Resources */,
+				559CDEE71BC1A53E008ED534 /* dawnhack32.png in Resources */,
 				02447C5211B8C821008CB9C7 /* Val-loca.lev in Resources */,
 				02447C5311B8C821008CB9C7 /* Val-strt.lev in Resources */,
 				02447C5411B8C821008CB9C7 /* valley.lev in Resources */,
@@ -2270,6 +2293,7 @@
 				02447C5B11B8C821008CB9C7 /* wizard1.lev in Resources */,
 				02447C5C11B8C821008CB9C7 /* wizard2.lev in Resources */,
 				02447C5D11B8C821008CB9C7 /* wizard3.lev in Resources */,
+				559CDEE21BC1A4C5008ED534 /* nextstep.png in Resources */,
 				021281F414F6E0250046D56F /* container-migration.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2664,6 +2688,7 @@
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.hack.cocoa.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NetHack;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
@@ -2687,6 +2712,7 @@
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.hack.cocoa.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NetHack;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
@@ -2710,6 +2736,7 @@
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.hack.cocoa.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NetHackCocoa;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
@@ -2730,6 +2757,7 @@
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.hack.cocoa.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = NetHackCocoa;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
@@ -2739,7 +2767,6 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
 				CODE_SIGN_IDENTITY = "-";
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -2761,7 +2788,6 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
 				CODE_SIGN_IDENTITY = "-";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

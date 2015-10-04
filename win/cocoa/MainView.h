@@ -43,16 +43,15 @@ NS_ASSUME_NONNULL_BEGIN
 	NSFont	*	asciiFont;
 	
 	NSString *	contextMenuObject;
-	NSMenu *	__weak contextMenu;
 }
 
 @property (weak, null_unspecified) IBOutlet NSMenu * contextMenu;
-@property (strong,nonatomic) NSString * contextMenuObject;
+@property (copy, nonatomic) NSString * contextMenuObject;
 
 - (void)cliparoundX:(int)x y:(int)y;
 - (BOOL)setTileSet:(NSString *)tileSetName size:(NSSize)size;
 @property (readonly, copy) NSString *tileSet;
-@property (strong) NSFont *asciiFont;
+@property (copy) NSFont *asciiFont;
 - (void)enableAsciiMode:(BOOL)enable;
 
 - (IBAction)showContextInfo:(nullable id)sender;

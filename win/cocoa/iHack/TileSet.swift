@@ -18,7 +18,7 @@ final class TileSet: NSObject {
 	private let columns: Int
 
 	init(image img: NSImage, tileSize ts: NSSize) {
-		let rect = NSRect(origin: .zeroPoint, size: img.size)
+		let rect = NSRect(origin: .zero, size: img.size)
 		image = NSImage(size: rect.size)
 		image.lockFocus()
 		img.drawInRect(rect, fromRect: rect, operation: .CompositeCopy, fraction: 1.0)
@@ -64,7 +64,7 @@ final class TileSet: NSObject {
 		let srcRect = sourceRectForGlyph(glyph)
 		let size = imageSize
 		let newImage = NSImage(size: size)
-		let dstRect = NSRect(origin: .zeroPoint, size: size)
+		let dstRect = NSRect(origin: .zero, size: size)
 		newImage.lockFocus()
 		image.drawInRect(dstRect, fromRect: srcRect, operation: .CompositeCopy, fraction: enabled ? 1.0 : 0.5)
 		newImage.unlockFocus()

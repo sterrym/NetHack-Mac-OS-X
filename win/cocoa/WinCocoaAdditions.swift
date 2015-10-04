@@ -21,6 +21,6 @@ extension WinCocoa {
 	}
 	
 	@objc(removeWindowWithID:) class func removeWindow(id wid: winid) {
-		windowDict[wid] = nil
+		windowDict.removeValueForKey(wid)
 	}
 }
