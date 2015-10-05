@@ -180,6 +180,7 @@ NSStringEncoding	codepage437encoding;
 	NSRect rect = NSMakeRect( center.x-border.width, center.y-border.height, 2*border.width, 2*border.height );
 	[self scrollRectToVisible:rect];	 	 
 }
+
 - (void)cliparoundHero
 {
 	[self cliparoundX:u.ux y:u.uy];

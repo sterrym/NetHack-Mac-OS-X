@@ -553,7 +553,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="16" id="1680">
-                                    <rect key="frame" x="0.0" y="0.0" width="119" height="163"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="119" height="18"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <animations/>
                                     <size key="intercellSpacing" width="3" height="2"/>
@@ -1839,11 +1839,17 @@ DQ
                             <rect key="frame" x="0.0" y="0.0" width="398" height="198"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1492" customClass="FlippedView">
+                                <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1492" customClass="FlippedView">
                                     <rect key="frame" x="-118" y="-65" width="167" height="145"/>
                                     <animations/>
                                 </customView>
                             </subviews>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="1492" secondAttribute="bottom" id="HgD-fK-jbb"/>
+                                <constraint firstItem="1492" firstAttribute="top" secondItem="XU0-mf-kix" secondAttribute="top" id="N14-mt-Vbj"/>
+                                <constraint firstAttribute="trailing" secondItem="1492" secondAttribute="trailing" id="ars-Qg-x4D"/>
+                                <constraint firstItem="1492" firstAttribute="leading" secondItem="XU0-mf-kix" secondAttribute="leading" id="gAb-rk-t9m"/>
+                            </constraints>
                             <animations/>
                         </clipView>
                         <animations/>
