@@ -27,8 +27,8 @@
 
 #import "ZDirection.h"
 
-#define kCos45 (0.707106829)
-#define kCos30 (0.866025404)
+#define kCos45 (0.707106781186548)
+#define kCos30 (0.866025403784439)
 
 static const CGPoint s_directionVectors[kDirectionMax] = {
 	{ 0.0, 1.0 },
