@@ -307,7 +307,7 @@ checkfile(inp, pm, user_typed_name, without_asking)
     dlb *fp;
     char buf[BUFSZ], newstr[BUFSZ];
     char *ep, *dbase_str;
-    long txt_offset;
+    long txt_offset = 0;
     int chk_skip;
     boolean found_in_file = FALSE, skipping_entry = FALSE;
 

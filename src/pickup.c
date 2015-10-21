@@ -1585,7 +1585,7 @@ lootcont:
 	    freeinv(goldob);
 #endif
 	    if (IS_THRONE(levl[u.ux][u.uy].typ)){
-		struct obj *coffers;
+		struct obj *coffers = NULL;
 		int pass;
 		/* find the original coffers chest, or any chest */
 		for (pass = 2; pass > -1; pass -= 2)

@@ -868,8 +868,8 @@ domove()
 	struct trap *trap;
 	int wtcap;
 	boolean on_ice;
-	xchar chainx, chainy, ballx, bally;	/* ball&chain new positions */
-	int bc_control;				/* control for ball&chain */
+	xchar chainx=0, chainy=0, ballx = 0, bally = 0;	/* ball&chain new positions */
+	int bc_control = 0;				/* control for ball&chain */
 	boolean cause_delay = FALSE;	/* dragging ball will skip a move */
 	const char *predicament;
 

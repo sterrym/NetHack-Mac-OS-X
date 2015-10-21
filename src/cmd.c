@@ -593,7 +593,7 @@ STATIC_PTR int
 wiz_level_change()
 {
     char buf[BUFSZ];
-    int newlevel;
+    int newlevel = 0;
     int ret;
 
     getlin("To what experience level do you want to be set?", buf);

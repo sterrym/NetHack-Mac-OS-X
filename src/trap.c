@@ -3048,9 +3048,9 @@ STATIC_OVL void
 move_into_trap(ttmp)
 struct trap *ttmp;
 {
-	int bc;
-	xchar x = ttmp->tx, y = ttmp->ty, bx, by, cx, cy;
-	boolean unused;
+	int bc = 0;
+	xchar x = ttmp->tx, y = ttmp->ty, bx = 0, by = 0, cx = 0, cy = 0;
+	boolean unused = 0;
 
 	/* we know there's no monster in the way, and we're not trapped */
 	if (!Punished || drag_ball(x, y, &bc, &bx, &by, &cx, &cy, &unused,

@@ -2370,7 +2370,7 @@ int
 doset()
 {
 	char buf[BUFSZ], buf2[BUFSZ];
-	int i, pass, boolcount, pick_cnt, pick_idx, opt_indx;
+	int i = 0, pass, boolcount, pick_cnt, pick_idx, opt_indx;
 	boolean *bool_p;
 	winid tmpwin;
 	anything any;

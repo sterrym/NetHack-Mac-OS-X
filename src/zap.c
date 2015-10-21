@@ -1615,7 +1615,7 @@ struct obj *obj, *otmp;
 			    obj = poly_obj(obj, HUGE_CHUNK_OF_MEAT);
 			    goto smell;
 			} else if (obj->otyp == STATUE) {
-			    xchar oox, ooy;
+			    xchar oox = 0, ooy = 0;
 
 			    (void) get_obj_location(obj, &oox, &ooy, 0);
 			    refresh_x = oox; refresh_y = ooy;
@@ -1651,7 +1651,7 @@ makecorpse:			if (mons[obj->corpsenm].geno &
 		    case TOOL_CLASS:	/* figurine */
 		    {
 			struct monst *mon;
-			xchar oox, ooy;
+			xchar oox = 0, ooy = 0;
 
 			if (obj->otyp != FIGURINE) {
 			    res = 0;

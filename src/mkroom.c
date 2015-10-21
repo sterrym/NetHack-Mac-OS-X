@@ -229,7 +229,7 @@ struct mkroom *sroom;
 {
 	struct monst *mon;
 	register int sx,sy,i;
-	int sh, tx, ty, goldlim, type = sroom->rtype;
+	int sh=0, tx, ty, goldlim, type = sroom->rtype;
 	int rmno = (sroom - rooms) + ROOMOFFSET;
 	coord mm;
 
