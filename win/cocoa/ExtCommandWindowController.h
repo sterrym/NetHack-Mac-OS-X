@@ -25,10 +25,10 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface ExtCommandWindowController : NSWindowController <NSWindowDelegate> {
-	IBOutlet NSView * menuView;
-	IBOutlet NSButton * acceptButton;
-}
+@interface ExtCommandWindowController : NSWindowController <NSWindowDelegate>
+
+@property (weak) IBOutlet NSView * menuView;
+@property (weak) IBOutlet NSButton * acceptButton;
 
 -(void)runModal;
 -(IBAction)doAccept:(id)sender;

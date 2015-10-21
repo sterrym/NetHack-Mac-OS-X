@@ -29,10 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class FlippedTextField;
 
-@interface MessageWindowController : NSWindowController <NSWindowDelegate> {
-	NSString				*	text;
-	IBOutlet NSTextField	*	textField;
-}
+@interface MessageWindowController : NSWindowController <NSWindowDelegate>
+@property (weak) IBOutlet NSTextField *textField;
 
 +(void)messageWindowWithText:(NSString *)text;
 

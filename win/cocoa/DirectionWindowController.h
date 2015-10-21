@@ -25,9 +25,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface DirectionWindowController : NSWindowController <NSWindowDelegate> {
-
-}
+@interface DirectionWindowController : NSWindowController <NSWindowDelegate>
 
 -(void)runModalWithPrompt:(nonnull NSString *)prompt;
 -(IBAction)chooseDirection:(__null_unspecified id)sender;

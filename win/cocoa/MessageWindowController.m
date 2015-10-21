@@ -32,7 +32,10 @@
 #define RUN_MODAL	1
 
 
-@implementation MessageWindowController
+@implementation MessageWindowController {
+	NSString				*	text;
+}
+@synthesize textField;
 
 -(instancetype)initWithMessage:(NSString *)message
 {

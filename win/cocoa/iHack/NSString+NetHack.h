@@ -24,13 +24,13 @@
 
 #import <Foundation/Foundation.h>
 
-// some NetHack utility functions for strings
+//! some NetHack utility functions for strings
 @interface NSString (NetHack)
 
-// splits the given string into title and detail string
+//! splits the given string into title and detail string
 - (nonnull NSArray<NSString*> *) splitNetHackDetails;
 
-// tries to parse an item amount
+//! tries to parse an item amount
 - (int) parseNetHackAmount;
 
 @end

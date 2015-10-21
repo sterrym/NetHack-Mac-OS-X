@@ -24,10 +24,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface InputWindowController : NSWindowController <NSWindowDelegate> {
-	IBOutlet NSTextField *	promptField;
-	IBOutlet NSTextField *	inputField;
-}
+@interface InputWindowController : NSWindowController <NSWindowDelegate>
+@property (weak) IBOutlet NSTextField *	promptField;
+@property (weak) IBOutlet NSTextField *	inputField;
 
 -(void)runModalWithPrompt:(nonnull NSString *)prompt;
 -(IBAction)doAccept:(nullable id)sender;

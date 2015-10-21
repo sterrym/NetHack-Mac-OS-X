@@ -26,9 +26,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TooltipWindow : NSWindow <NSWindowDelegate> {
-
-}
+@interface TooltipWindow : NSWindow <NSWindowDelegate>
 
 -(instancetype)initWithText:(NSString *)text location:(NSPoint)point NS_DESIGNATED_INITIALIZER;
 

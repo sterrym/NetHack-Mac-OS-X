@@ -25,8 +25,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface NotesWindowController : NSWindowController <NSWindowDelegate> {
-	IBOutlet NSTextView * textView;
-}
+@interface NotesWindowController : NSWindowController <NSWindowDelegate>
+@property (weak) IBOutlet NSTextView * textView;
 
 @end

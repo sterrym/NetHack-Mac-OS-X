@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 }
 
-@property (nonatomic, readonly) const char *keys;
+@property (nonatomic, readonly) const char *keys NS_RETURNS_INNER_POINTER;
 
 + (instancetype)commandWithTitle:(const char *)t keys:(const char *)c;
 + (instancetype)commandWithTitle:(const char *)t key:(char)c;

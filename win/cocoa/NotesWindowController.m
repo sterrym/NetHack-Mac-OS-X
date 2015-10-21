@@ -26,6 +26,7 @@
 
 
 @implementation NotesWindowController
+@synthesize textView;
 
 -(void)awakeFromNib
 {

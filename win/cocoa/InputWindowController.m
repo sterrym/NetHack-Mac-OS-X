@@ -27,6 +27,8 @@
 #import "NetHackCocoa-Swift.h"
 
 @implementation InputWindowController
+@synthesize promptField;
+@synthesize inputField;
 
 -(void)runModalWithPrompt:(NSString *)prompt
 {
