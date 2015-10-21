@@ -132,7 +132,7 @@ NSStringEncoding	codepage437encoding;
 		
 		codepage437encoding = CFStringConvertEncodingToNSStringEncoding( kCFStringEncodingDOSLatinUS );
 
-		petMark = [NSImage imageNamed:@"petmark.png"];
+		petMark = [NSImage imageNamed:@"petmark"];
 		
 		// we need to know when we scroll
 		NSClipView * clipView = self.enclosingScrollView.contentView;
@@ -183,6 +183,9 @@ NSStringEncoding	codepage437encoding;
 
 - (void)cliparoundHero
 {
+	if (u.ulevel == 0) {
+		return;
+	}
 	[self cliparoundX:u.ux y:u.uy];
 }
 
@@ -195,7 +198,7 @@ NSStringEncoding	codepage437encoding;
 		
 		// cursor can update asynchronously behind us so gets its location upfront
 		XCHAR_P	cursorX, cursorY;
-		[map cursX:&cursorX	y:&cursorY];
+		[map getCursX:&cursorX	y:&cursorY];
 		
 		
 		if ( Is_rogue_level(&u.uz) && !iflags.wc_ascii_map ) {
@@ -292,11 +295,11 @@ NSStringEncoding	codepage437encoding;
 - (BOOL)acceptsFirstResponder {
 	return YES;
 }
+
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
 {
 	return YES;
 }
-
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
@@ -372,7 +375,7 @@ NSStringEncoding	codepage437encoding;
 }
 
 
-NSString * DescriptionForTile( int x, int y )
+static NSString * DescriptionForTile( int x, int y )
 {
 	char    out_str[BUFSZ];
 
@@ -452,6 +455,10 @@ NSString * DescriptionForTile( int x, int y )
 - (void) scrollClipviewBoundsDidChangeNotification:(NSNotification *)notification
 {
 	[self cancelTooltip];
+	// not sure if we can do this synchronously...
+	//dispatch_async(dispatch_get_main_queue(), ^{
+	//	[self cliparoundHero];
+	//});
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent
@@ -471,9 +478,9 @@ NSString * DescriptionForTile( int x, int y )
 - (void) boundsDidChangeNotification:(NSNotification *)notification
 {
 	// not sure if we can do this synchronously...
-	dispatch_async(dispatch_get_main_queue(), ^{
+	//dispatch_async(dispatch_get_main_queue(), ^{
 		[self cliparoundHero];
-	});
+	//});
 }
 
 

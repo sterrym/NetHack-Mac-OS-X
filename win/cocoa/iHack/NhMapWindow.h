@@ -42,6 +42,6 @@
 - (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y;
 - (int) glyphAtX:(XCHAR_P)x y:(XCHAR_P)y;
 - (void)setCursX:(XCHAR_P)x y:(XCHAR_P)y;
-- (void)cursX:(XCHAR_P *)px y:(XCHAR_P *)py;
+- (void)getCursX:(XCHAR_P *)px y:(XCHAR_P *)py;
 		
 @end

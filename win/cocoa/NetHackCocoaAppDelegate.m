@@ -40,6 +40,7 @@ extern int unixmain(int argc, char **argv);
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	netHackThread = [[NSThread alloc] initWithTarget:self selector:@selector(netHackMainLoop:) object:nil];
+	netHackThread.name = @"NetHack Thread";
 	[netHackThread start];
 }
 
@@ -62,7 +63,7 @@ extern int unixmain(int argc, char **argv);
 	extern char ** g_argv;
 	
 		@autoreleasepool {
-	
+			NSFileManager *fm = [[NSFileManager alloc] init];
 	nethackCoreLock = [[NSRecursiveLock alloc] init];
 	[self lockNethackCore];
 	
@@ -70,14 +71,14 @@ extern int unixmain(int argc, char **argv);
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
 	NSString *baseDirectory = paths[0];
 	baseDirectory = [baseDirectory stringByAppendingPathComponent:@"NetHackCocoa"];
-	if (![[NSFileManager defaultManager] fileExistsAtPath:baseDirectory]) {
-		[[NSFileManager defaultManager] createDirectoryAtPath:baseDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+	if (![fm fileExistsAtPath:baseDirectory]) {
+		[fm createDirectoryAtPath:baseDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
 	}
 	NSLog(@"baseDir %@", baseDirectory);
 	setenv("NETHACKDIR", baseDirectory.fileSystemRepresentation, 1);
 	NSString *saveDirectory = [baseDirectory stringByAppendingPathComponent:@"save"];
-	if (![[NSFileManager defaultManager] fileExistsAtPath:saveDirectory]) {
-		[[NSFileManager defaultManager] createDirectoryAtPath:saveDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+	if (![fm fileExistsAtPath:saveDirectory]) {
+		[fm createDirectoryAtPath:saveDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
 	}
 		
 	// set plname (very important for save files and getlock)

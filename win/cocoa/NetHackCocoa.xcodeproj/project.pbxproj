@@ -656,8 +656,8 @@
 		028E8B3419FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
-		559CDEE21BC1A4C5008ED534 /* nextstep.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEE31BC1A4C5008ED534 /* nextstep.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEE21BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; settings = {ASSET_TAGS = (); }; };
+		559CDEE31BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; settings = {ASSET_TAGS = (); }; };
 		559CDEE71BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; settings = {ASSET_TAGS = (); }; };
 		559CDEE81BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; settings = {ASSET_TAGS = (); }; };
 		559CDEE91BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; settings = {ASSET_TAGS = (); }; };
@@ -1143,7 +1143,7 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		559CDEE11BC1A4C5008ED534 /* nextstep.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nextstep.png; sourceTree = "<group>"; };
+		559CDEE11BC1A4C5008ED534 /* nextstep10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nextstep10.png; sourceTree = "<group>"; };
 		559CDEE41BC1A53E008ED534 /* dawnhack32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dawnhack32.png; sourceTree = "<group>"; };
 		559CDEE51BC1A53E008ED534 /* nevanda32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32.png; sourceTree = "<group>"; };
 		559CDEE61BC1A53E008ED534 /* nevanda32black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32black.png; sourceTree = "<group>"; };
@@ -1363,7 +1363,7 @@
 				0224CBDC11B8A82300FC2199 /* kins32.bmp */,
 				559CDEE51BC1A53E008ED534 /* nevanda32.png */,
 				559CDEE61BC1A53E008ED534 /* nevanda32black.png */,
-				559CDEE11BC1A4C5008ED534 /* nextstep.png */,
+				559CDEE11BC1A4C5008ED534 /* nextstep10.png */,
 				0224CBDD11B8A82300FC2199 /* nh32.png */,
 				0224CBDE11B8A82300FC2199 /* tiles10x20.bmp */,
 				0224CBDF11B8A82300FC2199 /* tiles16.bmp */,
@@ -2102,7 +2102,7 @@
 				021282AE14F6E6240046D56F /* wizard1.lev in Resources */,
 				021282AF14F6E6240046D56F /* wizard2.lev in Resources */,
 				021282B014F6E6240046D56F /* wizard3.lev in Resources */,
-				559CDEE31BC1A4C5008ED534 /* nextstep.png in Resources */,
+				559CDEE31BC1A4C5008ED534 /* nextstep10.png in Resources */,
 				021282B114F6E6240046D56F /* container-migration.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2290,7 +2290,7 @@
 				02447C5B11B8C821008CB9C7 /* wizard1.lev in Resources */,
 				02447C5C11B8C821008CB9C7 /* wizard2.lev in Resources */,
 				02447C5D11B8C821008CB9C7 /* wizard3.lev in Resources */,
-				559CDEE21BC1A4C5008ED534 /* nextstep.png in Resources */,
+				559CDEE21BC1A4C5008ED534 /* nextstep10.png in Resources */,
 				021281F414F6E0250046D56F /* container-migration.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

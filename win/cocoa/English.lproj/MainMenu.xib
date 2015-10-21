@@ -46,7 +46,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="643" height="414"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" scrollerKnobStyle="light" translatesAutoresizingMaskIntoConstraints="NO" id="563">
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" scrollerKnobStyle="light" translatesAutoresizingMaskIntoConstraints="NO" id="563">
                         <rect key="frame" x="-1" y="-1" width="645" height="249"/>
                         <clipView key="contentView" id="AtP-c9-qyT">
                             <rect key="frame" x="1" y="1" width="628" height="232"/>
@@ -1839,8 +1839,8 @@ DQ
                             <rect key="frame" x="0.0" y="0.0" width="398" height="198"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1492" customClass="FlippedView">
-                                    <rect key="frame" x="-118" y="-65" width="167" height="145"/>
+                                <customView translatesAutoresizingMaskIntoConstraints="NO" id="1492" customClass="FlippedView">
+                                    <rect key="frame" x="0.0" y="0.0" width="398" height="198"/>
                                     <animations/>
                                 </customView>
                             </subviews>

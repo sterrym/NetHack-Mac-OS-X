@@ -30,7 +30,7 @@
 
 - (instancetype) initWithType:(int)t {
 	if (self = [super initWithType:t]) {
-		NSLog(@"map window %x", self);
+		NSLog(@"map window %lx", self);
 		size_t numBytes = COLNO * ROWNO * sizeof(int);
 		glyphs = malloc(numBytes);
 		memset(glyphs, kNoGlyph, numBytes);
@@ -47,7 +47,7 @@
 	cursorY = y;	
 }
 
-- (void)cursX:(XCHAR_P *)px y:(XCHAR_P *)py {
+- (void)getCursX:(XCHAR_P *)px y:(XCHAR_P *)py {
 	*px = cursorX;
 	*py = cursorY;
 }
