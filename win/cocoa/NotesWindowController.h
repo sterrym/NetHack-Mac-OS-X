@@ -26,6 +26,6 @@
 
 
 @interface NotesWindowController : NSWindowController <NSWindowDelegate>
-@property (weak) IBOutlet NSTextView * textView;
+@property (unsafe_unretained) IBOutlet NSTextView * textView;
 
 @end

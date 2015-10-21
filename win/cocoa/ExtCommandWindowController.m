@@ -32,7 +32,7 @@
 
 @implementation ExtCommandWindowController
 @synthesize menuView;
-@synthesize acceptButton
+@synthesize acceptButton;
 
 -(void)runModal
 {
