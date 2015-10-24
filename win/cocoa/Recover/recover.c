@@ -14,21 +14,16 @@
  *  time NetHack creates those level files.
  */
 #include "config.h"
-#if !defined(O_WRONLY) && !defined(LSC) && !defined(AZTEC_C)
 #include <fcntl.h>
-#endif
-#ifdef WIN32
-#include <errno.h>
-#include "win32api.h"
-#endif
+#include <limits.h>
+#include <stdbool.h>
 
-/*
-int FDECL(restore_savefile, (char *));
-void FDECL(set_levelfile_name, (int));
-int FDECL(open_levelfile, (int));
-int NDECL(create_savefile);
-void FDECL(copy_bytes, (int,int));
-*/
+
+static void FDECL(set_levelfile_name, (int));
+static int FDECL(open_levelfile, (int));
+static int NDECL(create_savefile);
+static bool FDECL(copy_bytes, (int,int));
+
 #ifndef WIN_CE
 #define Fprintf	(void)fprintf
 #else
@@ -146,7 +141,7 @@ char *argv[];
 }
 #endif
 
-static char lock[256];
+static char lock[PATH_MAX];
 
 void
 set_levelfile_name(lev)
@@ -157,9 +152,6 @@ int lev;
 	tf = rindex(lock, '.');
 	if (!tf) tf = lock + strlen(lock);
 	(void) sprintf(tf, ".%d", lev);
-#ifdef VMS
-	(void) strcat(tf, ";1");
-#endif
 }
 
 int
@@ -190,7 +182,7 @@ create_savefile()
 	return fd;
 }
 
-void
+bool
 copy_bytes(ifd, ofd)
 int ifd, ofd;
 {
@@ -202,9 +194,10 @@ int ifd, ofd;
 		nto = write(ofd, buf, nfrom);
 		if (nto != nfrom) {
 			Fprintf(stderr, "file copy failed!\n");
-			exit(EXIT_FAILURE);
+			return false;
 		}
 	} while (nfrom == BUFSIZ);
+	return true;
 }
 
 int
@@ -291,11 +284,22 @@ const char *basename;
 		return(-1);
 	}
 	
-	copy_bytes(lfd, sfd);
+	if (!copy_bytes(lfd, sfd)) {
+		Close(gfd);
+		Close(sfd);
+		Close(lfd);
+		(void) unlink(lock);
+		return -1;
+	}
 	Close(lfd);
 	(void) unlink(lock);
 	
-	copy_bytes(gfd, sfd);
+	if (!copy_bytes(gfd, sfd)) {
+		Close(gfd);
+		Close(sfd);
+		(void) unlink(lock);
+		return -1;
+	}
 	Close(gfd);
 	set_levelfile_name(0);
 	(void) unlink(lock);
@@ -310,7 +314,11 @@ const char *basename;
 				/* any or all of these may not exist */
 				levc = (xchar) lev;
 				write(sfd, (genericptr_t) &levc, sizeof(levc));
-				copy_bytes(lfd, sfd);
+				if (!copy_bytes(lfd, sfd)) {
+					Close(lfd);
+					(void) unlink(lock);
+					return -1;
+				}
 				Close(lfd);
 				(void) unlink(lock);
 			}
@@ -319,66 +327,7 @@ const char *basename;
 	
 	Close(sfd);
 	
-#if 0 /* OBSOLETE, HackWB is no longer in use */
-#ifdef AMIGA
-	/* we need to create an icon for the saved game
-	 * or HackWB won't notice the file.
-	 */
-	{
-		char iconfile[FILENAME];
-		int in, out;
-		
-		(void) sprintf(iconfile, "%s.info", savename);
-		in = open("NetHack:default.icon", O_RDONLY);
-		out = open(iconfile, O_WRONLY | O_TRUNC | O_CREAT);
-		if(in > -1 && out > -1){
-			copy_bytes(in,out);
-		}
-		if(in > -1)close(in);
-		if(out > -1)close(out);
-	}
-#endif
-#endif
 	return(0);
 }
-
-#ifdef EXEPATH
-# ifdef __DJGPP__
-#define PATH_SEPARATOR '/'
-# else
-#define PATH_SEPARATOR '\\'
-# endif
-
-#define EXEPATHBUFSZ 256
-char exepathbuf[EXEPATHBUFSZ];
-
-char *exepath(str)
-char *str;
-{
-	char *tmp, *tmp2;
-	int bsize;
-	
-	if (!str) return (char *)0;
-	bsize = EXEPATHBUFSZ;
-	tmp = exepathbuf;
-#if !defined(WIN32)
-	strcpy (tmp, str);
-#else
-# if defined(WIN_CE)
-	{
-		TCHAR wbuf[EXEPATHBUFSZ];
-		GetModuleFileName((HANDLE)0, wbuf, EXEPATHBUFSZ);
-		NH_W2A(wbuf, tmp, bsize);
-	}
-# else
-	*(tmp + GetModuleFileName((HANDLE)0, tmp, bsize)) = '\0';
-# endif
-#endif
-	tmp2 = strrchr(tmp, PATH_SEPARATOR);
-	if (tmp2) *tmp2 = '\0';
-		return tmp;
-}
-#endif /* EXEPATH */
-
 
 /*recover.c*/

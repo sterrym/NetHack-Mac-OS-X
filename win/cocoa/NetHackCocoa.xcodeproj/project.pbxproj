@@ -660,26 +660,27 @@
 		5571199E1BD8203500959CD5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5571199C1BD8203500959CD5 /* MainMenu.xib */; };
 		557119A91BD8203500959CD5 /* RecoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119A81BD8203500959CD5 /* RecoverTests.swift */; };
 		557119B41BD8203500959CD5 /* RecoverUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119B31BD8203500959CD5 /* RecoverUITests.swift */; };
-		557119C21BD8205F00959CD5 /* recover.c in Sources */ = {isa = PBXBuildFile; fileRef = 557119C01BD8205F00959CD5 /* recover.c */; settings = {ASSET_TAGS = (); }; };
+		557119C21BD8205F00959CD5 /* recover.c in Sources */ = {isa = PBXBuildFile; fileRef = 557119C01BD8205F00959CD5 /* recover.c */; };
 		5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
-		559CDEE21BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEE31BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEE71BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEE81BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEE91BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; settings = {ASSET_TAGS = (); }; };
-		559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; settings = {ASSET_TAGS = (); }; };
-		55E6B4881BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; settings = {ASSET_TAGS = (); }; };
-		55E6B4891BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; settings = {ASSET_TAGS = (); }; };
-		55E6B48B1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; settings = {ASSET_TAGS = (); }; };
-		55E6B48C1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; settings = {ASSET_TAGS = (); }; };
+		559CDEE21BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; };
+		559CDEE31BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; };
+		559CDEE71BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; };
+		559CDEE81BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; };
+		559CDEE91BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; };
+		559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; };
+		559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
+		559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
+		55E6B4881BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; };
+		55E6B4891BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; };
+		55E6B48B1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; };
+		55E6B48C1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; };
 		55F5165B1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
 		55F5165C1B783C9500DEC8F5 /* WinCocoaAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */; };
 		55F5165D1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
 		55F5165E1B783C9500DEC8F5 /* WinCocoaAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */; };
 		55F5165F1B783CAC00DEC8F5 /* TileSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516591B7831C700DEC8F5 /* TileSet.swift */; };
 		55F516601B783CAC00DEC8F5 /* TileSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516591B7831C700DEC8F5 /* TileSet.swift */; };
+		55F819801BD8416D00FFE986 /* Recover.app in Resources */ = {isa = PBXBuildFile; fileRef = 557119961BD8203500959CD5 /* Recover.app */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -692,6 +693,13 @@
 			remoteInfo = Recover;
 		};
 		557119B01BD8203500959CD5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 557119951BD8203500959CD5;
+			remoteInfo = Recover;
+		};
+		55F819811BD8416D00FFE986 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -2020,6 +2028,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				55F819821BD8416D00FFE986 /* PBXTargetDependency */,
 			);
 			name = NetHackCocoa;
 			productInstallPath = "$(HOME)/Applications";
@@ -2042,6 +2051,7 @@
 					};
 					557119951BD8203500959CD5 = {
 						CreatedOnToolsVersion = 7.0.1;
+						DevelopmentTeam = MKTTC6734C;
 					};
 					557119A31BD8203500959CD5 = {
 						CreatedOnToolsVersion = 7.0.1;
@@ -2297,6 +2307,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55F819801BD8416D00FFE986 /* Recover.app in Resources */,
 				552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */,
 				0224CBA911B8A7BE00FC2199 /* Arch.des in Resources */,
 				0224CBAA11B8A7BE00FC2199 /* Barb.des in Resources */,
@@ -2840,6 +2851,11 @@
 			target = 557119951BD8203500959CD5 /* Recover */;
 			targetProxy = 557119B01BD8203500959CD5 /* PBXContainerItemProxy */;
 		};
+		55F819821BD8416D00FFE986 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 557119951BD8203500959CD5 /* Recover */;
+			targetProxy = 55F819811BD8416D00FFE986 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -3082,6 +3098,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -3105,6 +3122,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -3212,6 +3230,7 @@
 				557119B71BD8203500959CD5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		557119BD1BD8203500959CD5 /* Build configuration list for PBXNativeTarget "RecoverTests" */ = {
 			isa = XCConfigurationList;
@@ -3220,6 +3239,7 @@
 				557119B91BD8203500959CD5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		557119BE1BD8203500959CD5 /* Build configuration list for PBXNativeTarget "RecoverUITests" */ = {
 			isa = XCConfigurationList;
@@ -3228,6 +3248,7 @@
 				557119BB1BD8203500959CD5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "NetHackCocoa" */ = {
 			isa = XCConfigurationList;

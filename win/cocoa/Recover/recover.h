@@ -12,10 +12,6 @@
 #include <stdio.h>
 
 int restore_savefile(const char *);
-void set_levelfile_name(int);
-int open_levelfile(int);
-int create_savefile();
-void copy_bytes(int,int);
 
 
 #endif /* recover_h */

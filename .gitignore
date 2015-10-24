@@ -1,4 +1,5 @@
 build
+Build/
 *.mode1v3
 *.pbxuser
 *.lev
@@ -19,6 +20,7 @@ util/lev_lex.c
 util/lev_yacc.c
 util/makedefs
 util/tilemap
+util/recover
 .DS_Store
 project.xcworkspace/
 xcuserdata/
