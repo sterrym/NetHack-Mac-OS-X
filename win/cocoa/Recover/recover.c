@@ -17,19 +17,14 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <stdbool.h>
-
+#include <stdio.h>
 
 static void FDECL(set_levelfile_name, (int));
 static int FDECL(open_levelfile, (int));
 static int NDECL(create_savefile);
 static bool FDECL(copy_bytes, (int,int));
 
-#ifndef WIN_CE
 #define Fprintf	(void)fprintf
-#else
-#define Fprintf	(void)nhce_message
-static void nhce_message(FILE*, const char*, ...);
-#endif
 
 #define Close	(void)close
 
@@ -47,14 +42,8 @@ static void nhce_message(FILE*, const char*, ...);
 # endif
 #endif
 
-#if defined(EXEPATH)
-char *FDECL(exepath, (char *));
-#endif
 
-#if defined(__BORLANDC__) && !defined(_WIN32)
-extern unsigned _stklen = STKSIZ;
-#endif
-char savename[SAVESIZE]; /* holds relative path of save file from playground */
+static char savename[SAVESIZE]; /* holds relative path of save file from playground */
 
 
 #if 0
@@ -144,8 +133,7 @@ char *argv[];
 static char lock[PATH_MAX];
 
 void
-set_levelfile_name(lev)
-int lev;
+set_levelfile_name(int lev)
 {
 	char *tf;
 	
@@ -155,17 +143,12 @@ int lev;
 }
 
 int
-open_levelfile(lev)
-int lev;
+open_levelfile(int lev)
 {
 	int fd;
 	
 	set_levelfile_name(lev);
-#if defined(MICRO) || defined(WIN32) || defined(MSDOS)
-	fd = open(lock, O_RDONLY | O_BINARY);
-#else
 	fd = open(lock, O_RDONLY, 0);
-#endif
 	return fd;
 }
 
@@ -174,11 +157,8 @@ create_savefile()
 {
 	int fd;
 	
-#if defined(MICRO) || defined(WIN32) || defined(MSDOS)
-	fd = open(savename, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, FCMASK);
-#else
 	fd = creat(savename, FCMASK);
-#endif
+	
 	return fd;
 }
 
@@ -201,8 +181,7 @@ int ifd, ofd;
 }
 
 int
-restore_savefile(basename)
-const char *basename;
+restore_savefile(const char *basename)
 {
 	int gfd, lfd, sfd;
 	int lev, savelev, hpid;
@@ -218,16 +197,6 @@ const char *basename;
 	(void) strcpy(lock, basename);
 	gfd = open_levelfile(0);
 	if (gfd < 0) {
-#if defined(WIN32) && !defined(WIN_CE)
-		if(errno == EACCES) {
-			Fprintf(stderr,
-					"\nThere are files from a game in progress under your name.");
-			Fprintf(stderr,"\nThe files are locked or inaccessible.");
-			Fprintf(stderr,"\nPerhaps the other game is still running?\n");
-		} else
-			Fprintf(stderr,
-					"\nTrouble accessing level 0 (errno = %d).\n", errno);
-#endif
 		Fprintf(stderr, "Cannot open level 0 for %s.\n", basename);
 		return(-1);
 	}

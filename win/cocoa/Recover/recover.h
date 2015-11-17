@@ -9,8 +9,6 @@
 #ifndef recover_h
 #define recover_h
 
-#include <stdio.h>
-
 int restore_savefile(const char *);
 
 
