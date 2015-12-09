@@ -1879,6 +1879,7 @@
 			name = nethack;
 			path = ../..;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		557119971BD8203500959CD5 /* Recover */ = {
 			isa = PBXGroup;
