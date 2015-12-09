@@ -655,6 +655,16 @@
 		028E8B3319FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		028E8B3419FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
+		555B7B611C18C19A00A24D24 /* bogusmon in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B601C18C19A00A24D24 /* bogusmon */; };
+		555B7B621C18C19A00A24D24 /* bogusmon in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B601C18C19A00A24D24 /* bogusmon */; };
+		555B7B641C18C1B700A24D24 /* engrave in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B631C18C1B700A24D24 /* engrave */; };
+		555B7B651C18C1B700A24D24 /* engrave in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B631C18C1B700A24D24 /* engrave */; };
+		555B7B671C18C1C500A24D24 /* epitaph in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B661C18C1C500A24D24 /* epitaph */; };
+		555B7B681C18C1C500A24D24 /* epitaph in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B661C18C1C500A24D24 /* epitaph */; };
+		555B7B701C18CE0800A24D24 /* posixregex.c in Sources */ = {isa = PBXBuildFile; fileRef = 555B7B6F1C18CE0800A24D24 /* posixregex.c */; };
+		555B7B711C18CE0800A24D24 /* posixregex.c in Sources */ = {isa = PBXBuildFile; fileRef = 555B7B6F1C18CE0800A24D24 /* posixregex.c */; };
+		555B7B731C18D00100A24D24 /* sys.c in Sources */ = {isa = PBXBuildFile; fileRef = 555B7B721C18D00100A24D24 /* sys.c */; };
+		555B7B741C18D00100A24D24 /* sys.c in Sources */ = {isa = PBXBuildFile; fileRef = 555B7B721C18D00100A24D24 /* sys.c */; };
 		557119991BD8203500959CD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119981BD8203500959CD5 /* AppDelegate.swift */; };
 		5571199B1BD8203500959CD5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5571199A1BD8203500959CD5 /* Assets.xcassets */; };
 		5571199E1BD8203500959CD5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5571199C1BD8203500959CD5 /* MainMenu.xib */; };
@@ -857,11 +867,7 @@
 		0224CC0711B8A92500FC2199 /* display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = display.h; sourceTree = "<group>"; };
 		0224CC0811B8A92500FC2199 /* dlb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dlb.h; sourceTree = "<group>"; };
 		0224CC0911B8A92500FC2199 /* dungeon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dungeon.h; sourceTree = "<group>"; };
-		0224CC0A11B8A92500FC2199 /* edog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = edog.h; sourceTree = "<group>"; };
-		0224CC0B11B8A92500FC2199 /* emin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emin.h; sourceTree = "<group>"; };
 		0224CC0C11B8A92500FC2199 /* engrave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = engrave.h; sourceTree = "<group>"; };
-		0224CC0D11B8A92500FC2199 /* epri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = epri.h; sourceTree = "<group>"; };
-		0224CC0E11B8A92500FC2199 /* eshk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eshk.h; sourceTree = "<group>"; };
 		0224CC0F11B8A92500FC2199 /* extern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = extern.h; sourceTree = "<group>"; };
 		0224CC1011B8A92500FC2199 /* flag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flag.h; sourceTree = "<group>"; };
 		0224CC1111B8A92500FC2199 /* func_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = func_tab.h; sourceTree = "<group>"; };
@@ -888,7 +894,6 @@
 		0224CC2611B8A92500FC2199 /* monst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = monst.h; sourceTree = "<group>"; };
 		0224CC2711B8A92500FC2199 /* monsym.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = monsym.h; sourceTree = "<group>"; };
 		0224CC2811B8A92500FC2199 /* mttypriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mttypriv.h; sourceTree = "<group>"; };
-		0224CC2911B8A92500FC2199 /* nhlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nhlan.h; sourceTree = "<group>"; };
 		0224CC2A11B8A92500FC2199 /* ntconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ntconf.h; sourceTree = "<group>"; };
 		0224CC2B11B8A92500FC2199 /* obj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = obj.h; sourceTree = "<group>"; };
 		0224CC2C11B8A92500FC2199 /* objclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objclass.h; sourceTree = "<group>"; };
@@ -921,7 +926,6 @@
 		0224CC4711B8A92500FC2199 /* trampoli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trampoli.h; sourceTree = "<group>"; };
 		0224CC4811B8A92500FC2199 /* trap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trap.h; sourceTree = "<group>"; };
 		0224CC4911B8A92500FC2199 /* unixconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unixconf.h; sourceTree = "<group>"; };
-		0224CC4A11B8A92500FC2199 /* vault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vault.h; sourceTree = "<group>"; };
 		0224CC4B11B8A92500FC2199 /* vis_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vis_tab.h; sourceTree = "<group>"; };
 		0224CC4C11B8A92500FC2199 /* vision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vision.h; sourceTree = "<group>"; };
 		0224CC4D11B8A92500FC2199 /* vmsconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vmsconf.h; sourceTree = "<group>"; };
@@ -1174,6 +1178,16 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		555B7B601C18C19A00A24D24 /* bogusmon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bogusmon; sourceTree = "<group>"; };
+		555B7B631C18C1B700A24D24 /* engrave */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = engrave; sourceTree = "<group>"; };
+		555B7B661C18C1C500A24D24 /* epitaph */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = epitaph; sourceTree = "<group>"; };
+		555B7B691C18C66100A24D24 /* context.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
+		555B7B6A1C18C74D00A24D24 /* botl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = botl.h; sourceTree = "<group>"; };
+		555B7B6B1C18C76500A24D24 /* lint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lint.h; sourceTree = "<group>"; };
+		555B7B6C1C18C77D00A24D24 /* mextra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mextra.h; sourceTree = "<group>"; };
+		555B7B6D1C18C79700A24D24 /* sys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sys.h; sourceTree = "<group>"; };
+		555B7B6F1C18CE0800A24D24 /* posixregex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = posixregex.c; sourceTree = "<group>"; };
+		555B7B721C18D00100A24D24 /* sys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys.c; sourceTree = "<group>"; };
 		557119961BD8203500959CD5 /* Recover.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Recover.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		557119981BD8203500959CD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5571199A1BD8203500959CD5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1260,6 +1274,7 @@
 				02447B7D11B8C821008CB9C7 /* Arc-goal.lev */,
 				02447B7E11B8C821008CB9C7 /* Arc-loca.lev */,
 				02447B7F11B8C821008CB9C7 /* Arc-strt.lev */,
+				0224CB7B11B8A7BE00FC2199 /* Arch.des */,
 				02447B8011B8C821008CB9C7 /* asmodeus.lev */,
 				02447B8111B8C821008CB9C7 /* astral.lev */,
 				02447B8211B8C821008CB9C7 /* baalz.lev */,
@@ -1268,39 +1283,63 @@
 				02447B8511B8C821008CB9C7 /* Bar-goal.lev */,
 				02447B8611B8C821008CB9C7 /* Bar-loca.lev */,
 				02447B8711B8C821008CB9C7 /* Bar-strt.lev */,
+				0224CB7C11B8A7BE00FC2199 /* Barb.des */,
 				02447B8811B8C821008CB9C7 /* bigrm-1.lev */,
 				02447B8911B8C821008CB9C7 /* bigrm-2.lev */,
 				02447B8A11B8C821008CB9C7 /* bigrm-3.lev */,
 				02447B8B11B8C821008CB9C7 /* bigrm-4.lev */,
 				02447B8C11B8C821008CB9C7 /* bigrm-5.lev */,
+				0224CB7D11B8A7BE00FC2199 /* bigroom.des */,
+				555B7B601C18C19A00A24D24 /* bogusmon */,
+				0224CB7E11B8A7BE00FC2199 /* castle.des */,
 				02447B8D11B8C821008CB9C7 /* castle.lev */,
 				02447B8E11B8C821008CB9C7 /* Cav-fila.lev */,
 				02447B8F11B8C821008CB9C7 /* Cav-filb.lev */,
 				02447B9011B8C821008CB9C7 /* Cav-goal.lev */,
 				02447B9111B8C821008CB9C7 /* Cav-loca.lev */,
 				02447B9211B8C821008CB9C7 /* Cav-strt.lev */,
+				0224CB7F11B8A7BE00FC2199 /* Caveman.des */,
+				0224CB8011B8A7BE00FC2199 /* cmdhelp */,
+				0224CB8111B8A7BE00FC2199 /* data */,
+				0224CB8211B8A7BE00FC2199 /* data.base */,
+				0224CB8311B8A7BE00FC2199 /* dungeon */,
+				0224CB8411B8A7BE00FC2199 /* dungeon.def */,
+				0224CB8511B8A7BE00FC2199 /* dungeon.pdf */,
 				02447B9311B8C821008CB9C7 /* earth.lev */,
+				0224CB8611B8A7BE00FC2199 /* endgame.des */,
+				555B7B631C18C1B700A24D24 /* engrave */,
+				555B7B661C18C1C500A24D24 /* epitaph */,
 				02447B9411B8C821008CB9C7 /* fakewiz1.lev */,
 				02447B9511B8C821008CB9C7 /* fakewiz2.lev */,
 				02447B9611B8C821008CB9C7 /* fire.lev */,
+				0224CB8711B8A7BE00FC2199 /* gehennom.des */,
 				02447B9711B8C821008CB9C7 /* Hea-fila.lev */,
 				02447B9811B8C821008CB9C7 /* Hea-filb.lev */,
 				02447B9911B8C821008CB9C7 /* Hea-goal.lev */,
 				02447B9A11B8C821008CB9C7 /* Hea-loca.lev */,
 				02447B9B11B8C821008CB9C7 /* Hea-strt.lev */,
+				0224CB8811B8A7BE00FC2199 /* Healer.des */,
+				0224CB8911B8A7BE00FC2199 /* help */,
+				0224CB8A11B8A7BE00FC2199 /* hh */,
+				0224CB8B11B8A7BE00FC2199 /* history */,
 				02447B9C11B8C821008CB9C7 /* juiblex.lev */,
 				02447B9D11B8C821008CB9C7 /* Kni-fila.lev */,
 				02447B9E11B8C821008CB9C7 /* Kni-filb.lev */,
 				02447B9F11B8C821008CB9C7 /* Kni-goal.lev */,
 				02447BA011B8C821008CB9C7 /* Kni-loca.lev */,
 				02447BA111B8C821008CB9C7 /* Kni-strt.lev */,
+				0224CB8C11B8A7BE00FC2199 /* Knight.des */,
+				0224CB8D11B8A7BE00FC2199 /* knox.des */,
 				02447BA211B8C821008CB9C7 /* knox.lev */,
+				0224CB8E11B8A7BE00FC2199 /* license */,
 				02447BA411B8C821008CB9C7 /* medusa-1.lev */,
 				02447BA511B8C821008CB9C7 /* medusa-2.lev */,
+				0224CB8F11B8A7BE00FC2199 /* medusa.des */,
 				02447BA611B8C821008CB9C7 /* minefill.lev */,
 				02447BA711B8C821008CB9C7 /* minend-1.lev */,
 				02447BA811B8C821008CB9C7 /* minend-2.lev */,
 				02447BA911B8C821008CB9C7 /* minend-3.lev */,
+				0224CB9011B8A7BE00FC2199 /* mines.des */,
 				02447BAA11B8C821008CB9C7 /* minetn-1.lev */,
 				02447BAB11B8C821008CB9C7 /* minetn-2.lev */,
 				02447BAC11B8C821008CB9C7 /* minetn-3.lev */,
@@ -1313,28 +1352,44 @@
 				02447BB311B8C821008CB9C7 /* Mon-goal.lev */,
 				02447BB411B8C821008CB9C7 /* Mon-loca.lev */,
 				02447BB511B8C821008CB9C7 /* Mon-strt.lev */,
+				0224CB9111B8A7BE00FC2199 /* Monk.des */,
+				0224CB9211B8A7BE00FC2199 /* opthelp */,
+				0224CB9311B8A7BE00FC2199 /* options */,
+				0224CB9411B8A7BE00FC2199 /* oracle.des */,
 				02447BB611B8C821008CB9C7 /* oracle.lev */,
+				0224CB9511B8A7BE00FC2199 /* oracles */,
+				0224CB9611B8A7BE00FC2199 /* oracles.txt */,
 				02447BB711B8C821008CB9C7 /* orcus.lev */,
 				02447BB811B8C821008CB9C7 /* Pri-fila.lev */,
 				02447BB911B8C821008CB9C7 /* Pri-filb.lev */,
 				02447BBA11B8C821008CB9C7 /* Pri-goal.lev */,
 				02447BBB11B8C821008CB9C7 /* Pri-loca.lev */,
 				02447BBC11B8C821008CB9C7 /* Pri-strt.lev */,
+				0224CB9711B8A7BE00FC2199 /* Priest.des */,
+				0224CB9A11B8A7BE00FC2199 /* quest_levs */,
+				0224CB9811B8A7BE00FC2199 /* quest.dat */,
+				0224CB9911B8A7BE00FC2199 /* quest.txt */,
 				02447BBD11B8C821008CB9C7 /* Ran-fila.lev */,
 				02447BBE11B8C821008CB9C7 /* Ran-filb.lev */,
 				02447BBF11B8C821008CB9C7 /* Ran-goal.lev */,
 				02447BC011B8C821008CB9C7 /* Ran-loca.lev */,
 				02447BC111B8C821008CB9C7 /* Ran-strt.lev */,
+				0224CB9B11B8A7BE00FC2199 /* Ranger.des */,
 				02447BC211B8C821008CB9C7 /* Rog-fila.lev */,
 				02447BC311B8C821008CB9C7 /* Rog-filb.lev */,
 				02447BC411B8C821008CB9C7 /* Rog-goal.lev */,
 				02447BC511B8C821008CB9C7 /* Rog-loca.lev */,
 				02447BC611B8C821008CB9C7 /* Rog-strt.lev */,
+				0224CB9C11B8A7BE00FC2199 /* Rogue.des */,
+				0224CB9D11B8A7BE00FC2199 /* rumors */,
+				0224CB9E11B8A7BE00FC2199 /* rumors.fal */,
+				0224CB9F11B8A7BE00FC2199 /* rumors.tru */,
 				02447BC711B8C821008CB9C7 /* Sam-fila.lev */,
 				02447BC811B8C821008CB9C7 /* Sam-filb.lev */,
 				02447BC911B8C821008CB9C7 /* Sam-goal.lev */,
 				02447BCA11B8C821008CB9C7 /* Sam-loca.lev */,
 				02447BCB11B8C821008CB9C7 /* Sam-strt.lev */,
+				0224CBA011B8A7BE00FC2199 /* Samurai.des */,
 				02447BCC11B8C821008CB9C7 /* sanctum.lev */,
 				02447BCD11B8C821008CB9C7 /* soko1-1.lev */,
 				02447BCE11B8C821008CB9C7 /* soko1-2.lev */,
@@ -1344,11 +1399,15 @@
 				02447BD211B8C821008CB9C7 /* soko3-2.lev */,
 				02447BD311B8C821008CB9C7 /* soko4-1.lev */,
 				02447BD411B8C821008CB9C7 /* soko4-2.lev */,
+				0224CBA111B8A7BE00FC2199 /* sokoban.des */,
+				0224CBA211B8A7BE00FC2199 /* spec_levs */,
 				02447BD511B8C821008CB9C7 /* Tou-fila.lev */,
 				02447BD611B8C821008CB9C7 /* Tou-filb.lev */,
 				02447BD711B8C821008CB9C7 /* Tou-goal.lev */,
 				02447BD811B8C821008CB9C7 /* Tou-loca.lev */,
 				02447BD911B8C821008CB9C7 /* Tou-strt.lev */,
+				0224CBA311B8A7BE00FC2199 /* Tourist.des */,
+				0224CBA411B8A7BE00FC2199 /* tower.des */,
 				02447BDA11B8C821008CB9C7 /* tower1.lev */,
 				02447BDB11B8C821008CB9C7 /* tower2.lev */,
 				02447BDC11B8C821008CB9C7 /* tower3.lev */,
@@ -1357,6 +1416,7 @@
 				02447BDF11B8C821008CB9C7 /* Val-goal.lev */,
 				02447BE011B8C821008CB9C7 /* Val-loca.lev */,
 				02447BE111B8C821008CB9C7 /* Val-strt.lev */,
+				0224CBA511B8A7BE00FC2199 /* Valkyrie.des */,
 				02447BE211B8C821008CB9C7 /* valley.lev */,
 				02447BE311B8C821008CB9C7 /* water.lev */,
 				02447BE411B8C821008CB9C7 /* Wiz-fila.lev */,
@@ -1364,53 +1424,10 @@
 				02447BE611B8C821008CB9C7 /* Wiz-goal.lev */,
 				02447BE711B8C821008CB9C7 /* Wiz-loca.lev */,
 				02447BE811B8C821008CB9C7 /* Wiz-strt.lev */,
+				0224CBA611B8A7BE00FC2199 /* Wizard.des */,
 				02447BE911B8C821008CB9C7 /* wizard1.lev */,
 				02447BEA11B8C821008CB9C7 /* wizard2.lev */,
 				02447BEB11B8C821008CB9C7 /* wizard3.lev */,
-				0224CB7B11B8A7BE00FC2199 /* Arch.des */,
-				0224CB7C11B8A7BE00FC2199 /* Barb.des */,
-				0224CB7D11B8A7BE00FC2199 /* bigroom.des */,
-				0224CB7E11B8A7BE00FC2199 /* castle.des */,
-				0224CB7F11B8A7BE00FC2199 /* Caveman.des */,
-				0224CB8011B8A7BE00FC2199 /* cmdhelp */,
-				0224CB8111B8A7BE00FC2199 /* data */,
-				0224CB8211B8A7BE00FC2199 /* data.base */,
-				0224CB8311B8A7BE00FC2199 /* dungeon */,
-				0224CB8411B8A7BE00FC2199 /* dungeon.def */,
-				0224CB8511B8A7BE00FC2199 /* dungeon.pdf */,
-				0224CB8611B8A7BE00FC2199 /* endgame.des */,
-				0224CB8711B8A7BE00FC2199 /* gehennom.des */,
-				0224CB8811B8A7BE00FC2199 /* Healer.des */,
-				0224CB8911B8A7BE00FC2199 /* help */,
-				0224CB8A11B8A7BE00FC2199 /* hh */,
-				0224CB8B11B8A7BE00FC2199 /* history */,
-				0224CB8C11B8A7BE00FC2199 /* Knight.des */,
-				0224CB8D11B8A7BE00FC2199 /* knox.des */,
-				0224CB8E11B8A7BE00FC2199 /* license */,
-				0224CB8F11B8A7BE00FC2199 /* medusa.des */,
-				0224CB9011B8A7BE00FC2199 /* mines.des */,
-				0224CB9111B8A7BE00FC2199 /* Monk.des */,
-				0224CB9211B8A7BE00FC2199 /* opthelp */,
-				0224CB9311B8A7BE00FC2199 /* options */,
-				0224CB9411B8A7BE00FC2199 /* oracle.des */,
-				0224CB9511B8A7BE00FC2199 /* oracles */,
-				0224CB9611B8A7BE00FC2199 /* oracles.txt */,
-				0224CB9711B8A7BE00FC2199 /* Priest.des */,
-				0224CB9811B8A7BE00FC2199 /* quest.dat */,
-				0224CB9911B8A7BE00FC2199 /* quest.txt */,
-				0224CB9A11B8A7BE00FC2199 /* quest_levs */,
-				0224CB9B11B8A7BE00FC2199 /* Ranger.des */,
-				0224CB9C11B8A7BE00FC2199 /* Rogue.des */,
-				0224CB9D11B8A7BE00FC2199 /* rumors */,
-				0224CB9E11B8A7BE00FC2199 /* rumors.fal */,
-				0224CB9F11B8A7BE00FC2199 /* rumors.tru */,
-				0224CBA011B8A7BE00FC2199 /* Samurai.des */,
-				0224CBA111B8A7BE00FC2199 /* sokoban.des */,
-				0224CBA211B8A7BE00FC2199 /* spec_levs */,
-				0224CBA311B8A7BE00FC2199 /* Tourist.des */,
-				0224CBA411B8A7BE00FC2199 /* tower.des */,
-				0224CBA511B8A7BE00FC2199 /* Valkyrie.des */,
-				0224CBA611B8A7BE00FC2199 /* Wizard.des */,
 				0224CBA711B8A7BE00FC2199 /* wizhelp */,
 				0224CBA811B8A7BE00FC2199 /* yendor.des */,
 			);
@@ -1449,9 +1466,11 @@
 				0224CBFB11B8A92500FC2199 /* attrib.h */,
 				0224CBFC11B8A92500FC2199 /* beconf.h */,
 				0224CBFD11B8A92500FC2199 /* bitmfile.h */,
+				555B7B6A1C18C74D00A24D24 /* botl.h */,
 				0224CBFE11B8A92500FC2199 /* color.h */,
 				0224CBFF11B8A92500FC2199 /* config.h */,
 				0224CC0011B8A92500FC2199 /* config1.h */,
+				555B7B691C18C66100A24D24 /* context.h */,
 				0224CC0111B8A92500FC2199 /* coord.h */,
 				0224CC0211B8A92500FC2199 /* date.h */,
 				0224CC0311B8A92500FC2199 /* decl.h */,
@@ -1461,19 +1480,16 @@
 				0224CC0711B8A92500FC2199 /* display.h */,
 				0224CC0811B8A92500FC2199 /* dlb.h */,
 				0224CC0911B8A92500FC2199 /* dungeon.h */,
-				0224CC0A11B8A92500FC2199 /* edog.h */,
-				0224CC0B11B8A92500FC2199 /* emin.h */,
 				0224CC0C11B8A92500FC2199 /* engrave.h */,
-				0224CC0D11B8A92500FC2199 /* epri.h */,
-				0224CC0E11B8A92500FC2199 /* eshk.h */,
 				0224CC0F11B8A92500FC2199 /* extern.h */,
 				0224CC1011B8A92500FC2199 /* flag.h */,
 				0224CC1111B8A92500FC2199 /* func_tab.h */,
 				0224CC1211B8A92500FC2199 /* gem_rsc.h */,
 				0224CC1311B8A92500FC2199 /* global.h */,
 				0224CC1411B8A92500FC2199 /* hack.h */,
-				0224CC1511B8A92500FC2199 /* lev.h */,
 				0224CC1611B8A92500FC2199 /* lev_comp.h */,
+				0224CC1511B8A92500FC2199 /* lev.h */,
+				555B7B6B1C18C76500A24D24 /* lint.h */,
 				0224CC1711B8A92500FC2199 /* load_img.h */,
 				0224CC1811B8A92500FC2199 /* mac-carbon.h */,
 				0224CC1911B8A92500FC2199 /* mac-qt.h */,
@@ -1483,6 +1499,7 @@
 				0224CC1D11B8A92500FC2199 /* mactty.h */,
 				0224CC1E11B8A92500FC2199 /* macwin.h */,
 				0224CC1F11B8A92500FC2199 /* mail.h */,
+				555B7B6C1C18C77D00A24D24 /* mextra.h */,
 				0224CC2011B8A92500FC2199 /* mfndpos.h */,
 				0224CC2111B8A92500FC2199 /* micro.h */,
 				0224CC2211B8A92500FC2199 /* mkroom.h */,
@@ -1492,7 +1509,6 @@
 				0224CC2611B8A92500FC2199 /* monst.h */,
 				0224CC2711B8A92500FC2199 /* monsym.h */,
 				0224CC2811B8A92500FC2199 /* mttypriv.h */,
-				0224CC2911B8A92500FC2199 /* nhlan.h */,
 				0224CC2A11B8A92500FC2199 /* ntconf.h */,
 				0224CC2B11B8A92500FC2199 /* obj.h */,
 				0224CC2C11B8A92500FC2199 /* objclass.h */,
@@ -1516,6 +1532,7 @@
 				0224CC3E11B8A92500FC2199 /* skills.h */,
 				0224CC3F11B8A92500FC2199 /* sp_lev.h */,
 				0224CC4011B8A92500FC2199 /* spell.h */,
+				555B7B6D1C18C79700A24D24 /* sys.h */,
 				0224CC4111B8A92500FC2199 /* system.h */,
 				0224CC4211B8A92500FC2199 /* tcap.h */,
 				0224CC4311B8A92500FC2199 /* tile2x11.h */,
@@ -1525,7 +1542,6 @@
 				0224CC4711B8A92500FC2199 /* trampoli.h */,
 				0224CC4811B8A92500FC2199 /* trap.h */,
 				0224CC4911B8A92500FC2199 /* unixconf.h */,
-				0224CC4A11B8A92500FC2199 /* vault.h */,
 				0224CC4B11B8A92500FC2199 /* vis_tab.h */,
 				0224CC4C11B8A92500FC2199 /* vision.h */,
 				0224CC4D11B8A92500FC2199 /* vmsconf.h */,
@@ -1558,6 +1574,7 @@
 				0224CC6211B8A92500FC2199 /* botl.c */,
 				0224CC6311B8A92500FC2199 /* cmd.c */,
 				0224CC6511B8A92500FC2199 /* dbridge.c */,
+				555B7B721C18D00100A24D24 /* sys.c */,
 				0224CC6611B8A92500FC2199 /* decl.c */,
 				0224CC6711B8A92500FC2199 /* detect.c */,
 				0224CC6811B8A92500FC2199 /* dig.c */,
@@ -1665,6 +1682,7 @@
 		0224CCCA11B8A92500FC2199 /* sys */ = {
 			isa = PBXGroup;
 			children = (
+				555B7B6E1C18CDEC00A24D24 /* share */,
 				0224CD5611B8A92600FC2199 /* unix */,
 			);
 			path = sys;
@@ -1880,6 +1898,14 @@
 			path = ../..;
 			sourceTree = "<group>";
 			usesTabs = 0;
+		};
+		555B7B6E1C18CDEC00A24D24 /* share */ = {
+			isa = PBXGroup;
+			children = (
+				555B7B6F1C18CE0800A24D24 /* posixregex.c */,
+			);
+			path = share;
+			sourceTree = "<group>";
 		};
 		557119971BD8203500959CD5 /* Recover */ = {
 			isa = PBXGroup;
@@ -2100,6 +2126,7 @@
 				0212820114F6E6240046D56F /* Arch.des in Resources */,
 				0212820214F6E6240046D56F /* Barb.des in Resources */,
 				0212820314F6E6240046D56F /* bigroom.des in Resources */,
+				555B7B651C18C1B700A24D24 /* engrave in Resources */,
 				0212820414F6E6240046D56F /* castle.des in Resources */,
 				0212820514F6E6240046D56F /* Caveman.des in Resources */,
 				0212820614F6E6240046D56F /* cmdhelp in Resources */,
@@ -2146,6 +2173,7 @@
 				0212822E14F6E6240046D56F /* yendor.des in Resources */,
 				0212822F14F6E6240046D56F /* absurd128.png in Resources */,
 				0212823014F6E6240046D56F /* absurd32.png in Resources */,
+				555B7B681C18C1C500A24D24 /* epitaph in Resources */,
 				0212823114F6E6240046D56F /* chozo32.png in Resources */,
 				0212823214F6E6240046D56F /* chozo32b.png in Resources */,
 				0212823314F6E6240046D56F /* kins32.bmp in Resources */,
@@ -2219,6 +2247,7 @@
 				0212827814F6E6240046D56F /* Mon-goal.lev in Resources */,
 				0212827914F6E6240046D56F /* Mon-loca.lev in Resources */,
 				0212827A14F6E6240046D56F /* Mon-strt.lev in Resources */,
+				555B7B621C18C19A00A24D24 /* bogusmon in Resources */,
 				0212827B14F6E6240046D56F /* oracle.lev in Resources */,
 				559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */,
 				5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */,
@@ -2386,6 +2415,7 @@
 				02447BF611B8C821008CB9C7 /* Bar-filb.lev in Resources */,
 				02447BF711B8C821008CB9C7 /* Bar-goal.lev in Resources */,
 				02447BF811B8C821008CB9C7 /* Bar-loca.lev in Resources */,
+				555B7B671C18C1C500A24D24 /* epitaph in Resources */,
 				02447BF911B8C821008CB9C7 /* Bar-strt.lev in Resources */,
 				02447BFA11B8C821008CB9C7 /* bigrm-1.lev in Resources */,
 				02447BFB11B8C821008CB9C7 /* bigrm-2.lev in Resources */,
@@ -2395,8 +2425,10 @@
 				02447BFF11B8C821008CB9C7 /* castle.lev in Resources */,
 				02447C0011B8C821008CB9C7 /* Cav-fila.lev in Resources */,
 				02447C0111B8C821008CB9C7 /* Cav-filb.lev in Resources */,
+				555B7B641C18C1B700A24D24 /* engrave in Resources */,
 				02447C0211B8C821008CB9C7 /* Cav-goal.lev in Resources */,
 				02447C0311B8C821008CB9C7 /* Cav-loca.lev in Resources */,
+				555B7B611C18C19A00A24D24 /* bogusmon in Resources */,
 				02447C0411B8C821008CB9C7 /* Cav-strt.lev in Resources */,
 				02447C0511B8C821008CB9C7 /* earth.lev in Resources */,
 				02447C0611B8C821008CB9C7 /* fakewiz1.lev in Resources */,
@@ -2518,6 +2550,7 @@
 				021282C214F6E6240046D56F /* PlayerSelectionWindowController.m in Sources */,
 				021282C314F6E6240046D56F /* StatsView.m in Sources */,
 				021282C414F6E6240046D56F /* TooltipWindow.m in Sources */,
+				555B7B711C18CE0800A24D24 /* posixregex.c in Sources */,
 				021282C514F6E6240046D56F /* YesNoWindowController.m in Sources */,
 				021282C614F6E6240046D56F /* Action.m in Sources */,
 				021282C714F6E6240046D56F /* NhCommand.m in Sources */,
@@ -2532,6 +2565,7 @@
 				021282D214F6E6240046D56F /* NhWindow.m in Sources */,
 				021282D314F6E6240046D56F /* NhYnQuestion.m in Sources */,
 				021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */,
+				555B7B741C18D00100A24D24 /* sys.c in Sources */,
 				021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */,
 				021282D614F6E6240046D56F /* NSString+Z.m in Sources */,
 				021282D814F6E6240046D56F /* ZDirection.m in Sources */,
@@ -2702,6 +2736,7 @@
 				0224CAF811B8A6F200FC2199 /* PlayerSelectionWindowController.m in Sources */,
 				0224CAF911B8A6F200FC2199 /* StatsView.m in Sources */,
 				0224CAFA11B8A6F200FC2199 /* TooltipWindow.m in Sources */,
+				555B7B701C18CE0800A24D24 /* posixregex.c in Sources */,
 				0224CAFB11B8A6F200FC2199 /* YesNoWindowController.m in Sources */,
 				0224CB2211B8A73300FC2199 /* Action.m in Sources */,
 				0224CB2311B8A73300FC2199 /* NhCommand.m in Sources */,
@@ -2716,6 +2751,7 @@
 				0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */,
 				0224CB2F11B8A73300FC2199 /* NhYnQuestion.m in Sources */,
 				0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */,
+				555B7B731C18D00100A24D24 /* sys.c in Sources */,
 				0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */,
 				0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */,
 				0224CB3411B8A73300FC2199 /* ZDirection.m in Sources */,
@@ -2931,6 +2967,13 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NOMAIL,
+					NOTPARMDECL,
+					SECURE,
+					DLB,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -2955,6 +2998,13 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NOMAIL,
+					NOTPARMDECL,
+					SECURE,
+					DLB,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -3104,6 +3154,13 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NOMAIL,
+					NOTPARMDECL,
+					SECURE,
+					DLB,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -3126,6 +3183,13 @@
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = NetHackCocoa_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NOMAIL,
+					NOTPARMDECL,
+					SECURE,
+					DLB,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				INFOPLIST_FILE = "NetHackCocoa-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";

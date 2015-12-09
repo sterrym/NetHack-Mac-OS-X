@@ -4,6 +4,8 @@
 
 #include "hack.h"
 
+#define filter nh_filter
+
 /*** Table of all roles ***/
 /* According to AD&D, HD for some classes (ex. Wizard) should be smaller
  * (4-sided for wizards).  But this is not AD&D, and using the AD&D

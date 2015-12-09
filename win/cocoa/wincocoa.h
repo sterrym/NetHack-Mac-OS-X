@@ -40,6 +40,7 @@ void cocoa_display_nhwindow(winid wid, BOOLEAN_P block);
 void cocoa_destroy_nhwindow(winid wid);
 void cocoa_curs(winid wid, int x, int y);
 void cocoa_putstr(winid wid, int attr, const char *text);
+void cocoa_putmixed(winid wid, int attr, const char* text);
 void cocoa_display_file(const char *filename, BOOLEAN_P must_exist);
 void cocoa_start_menu(winid wid);
 void cocoa_add_menu(winid wid, int glyph, const ANY_P *identifier,
@@ -52,7 +53,7 @@ void cocoa_mark_synch();
 void cocoa_wait_synch();
 void cocoa_cliparound(int x, int y);
 void cocoa_cliparound_window(winid wid, int x, int y);
-void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph);
+void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph);
 void cocoa_raw_print(const char *str);
 void cocoa_raw_print_bold(const char *str);
 int cocoa_nhgetch();
@@ -66,7 +67,7 @@ void cocoa_number_pad(int num);
 void cocoa_delay_output();
 void cocoa_start_screen();
 void cocoa_end_screen();
-void cocoa_outrip(winid wid, int how);
+void cocoa_outrip(winid wid, int how, time_t when);
 void cocoa_preference_update(const char * pref);
 void cocoa_prepare_for_exit();
 

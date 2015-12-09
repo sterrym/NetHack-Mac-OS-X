@@ -237,7 +237,7 @@ static struct permonst * lookat(int x, int y, char * buf, char * monbuf)
 				if (otmp->oclass == COIN_CLASS)
 					otmp->quan = 2L; /* to force pluralization */
 				else if (otmp->otyp == SLIME_MOLD)
-					otmp->spe = current_fruit;	/* give the fruit a type */
+					otmp->spe = context.current_fruit;	/* give the fruit a type */
 				Strcpy(buf, distant_name(otmp, xname));
 				dealloc_obj(otmp);
 			}
@@ -351,7 +351,7 @@ void InventoryOfTile( int xPos, int yPos, char out_str[] )
 	
 	/* Check for monsters */
 	for (i = 0; i < MAXMCLASSES; i++) {
-		if (sym == (from_screen ? monsyms[i] : def_monsyms[i]) &&
+		if (sym == (from_screen ? monsyms[i] : def_monsyms[i].sym) &&
 			monexplain[i]) {
 			need_to_look = TRUE;
 			if (!found) {
@@ -368,7 +368,7 @@ void InventoryOfTile( int xPos, int yPos, char out_str[] )
 	 symbol; firstmatch is assumed to already be set for '@' */
 	if ((from_screen ?
 		 (sym == monsyms[S_HUMAN] && cc.x == u.ux && cc.y == u.uy) :
-		 (sym == def_monsyms[S_HUMAN] && !iflags.showrace)) &&
+		 (sym == def_monsyms[S_HUMAN].sym && !flags.showrace)) &&
 		!(Race_if(PM_HUMAN) || Race_if(PM_ELF)) && !Upolyd)
 		found += append_str(out_str, "you");	/* tack on "or you" */
 	
@@ -389,7 +389,7 @@ void InventoryOfTile( int xPos, int yPos, char out_str[] )
 	
 	/* Now check for objects */
 	for (i = 1; i < MAXOCLASSES; i++) {
-		if (sym == (from_screen ? oc_syms[i] : def_oc_syms[i])) {
+		if (sym == (from_screen ? oc_syms[i] : def_oc_syms[i].sym)) {
 			need_to_look = TRUE;
 			if (from_screen && i == VENOM_CLASS) {
 				skipped_venom++;

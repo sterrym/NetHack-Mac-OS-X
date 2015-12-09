@@ -28,6 +28,8 @@
 #import "NetHackCocoaAppDelegate.h"
 #include <Carbon/Carbon.h>	// key codes
 
+#include "config.h"
+#include "global.h"
 #include "dlb.h"
 #include "hack.h"
 #include "func_tab.h"
@@ -76,6 +78,11 @@ cocoa_display_nhwindow,
 cocoa_destroy_nhwindow,
 cocoa_curs,
 cocoa_putstr,
+#if 0
+cocoa_putmixed,
+#else
+genl_putmixed,
+#endif
 cocoa_display_file,
 cocoa_start_menu,
 cocoa_add_menu,
@@ -279,19 +286,19 @@ void nethack_exit(int status)
 void cocoa_decgraphics_mode_callback()
 {
 	// user tried to switch to DECgraphics, so switch them to IBM instead
-	switch_graphics( IBM_GRAPHICS );	
+	//switch_graphics( IBM_GRAPHICS );
 }
 
 #pragma mark nethack window API
 
 void cocoa_init_nhwindows(int* argc, char** argv) {
 	//NSLog(@"init_nhwindows");
-	iflags.runmode = RUN_STEP;
+	flags.runmode = RUN_STEP;
 	iflags.window_inited = TRUE;
 	
 	// default ASCII mode is to use IBM graphics with color
 	iflags.use_color = TRUE;
-	switch_graphics(IBM_GRAPHICS);
+	//switch_graphics(IBM_GRAPHICS);
 	
 	// if user switches to DEC graphics don't let them
 	extern void NDECL((*decgraphics_mode_callback));
@@ -507,7 +514,7 @@ void cocoa_cliparound_window(winid wid, int x, int y)
 	}
 }
 
-void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph)
+void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph)
 {
 	//NSLog(@"print_glyph %x %d,%d", wid, x, y);
 	[(NhMapWindow *) [WinCocoa windowForWindowID: wid] printGlyph:glyph atX:x y:y];
@@ -675,7 +682,7 @@ void cocoa_end_screen()
 	NSLog(@"end_screen");
 }
 
-void cocoa_outrip(winid wid, int how)
+void cocoa_outrip(winid wid, int how, time_t when)
 {
 	NSLog(@"outrip %x", wid);
 }
@@ -684,6 +691,12 @@ void cocoa_outrip(winid wid, int how)
 void cocoa_preference_update(const char * pref)
 {
 	[[MainWindowController instance] preferenceUpdate:@(pref)];
+}
+
+void cocoa_putmixed(winid wid, int attr, const char* text)
+{
+	//TODO: implement!
+	genl_putmixed(wid, attr, text);
 }
 
 #pragma mark window API player_selection()

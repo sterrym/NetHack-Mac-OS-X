@@ -1466,6 +1466,9 @@ static struct win_info window_opts[] = {
 #ifdef BEOS_GRAPHICS
     { "BeOS", "BeOS InterfaceKit" },
 #endif
+#ifdef COCOA_GRAPHICS
+    { "cocoa", "Cocoa AppKit" },
+#endif
     { 0, 0 }
 };
 

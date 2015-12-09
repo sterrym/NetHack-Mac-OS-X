@@ -216,7 +216,7 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 	NSMutableArray *commands = [NSMutableArray array];
 	coord nhDelta = CoordMake(tp.x-u.ux, tp.y-u.uy);
 	int dir = xytod(nhDelta.x, nhDelta.y);
-	char direction = sdir[dir];
+	char direction = Cmd.dirchars[dir];
 	if (tp.x > 0 && tp.y > 0 && tp.x < COLNO && tp.y < ROWNO) {
 		if (IS_DOOR(levl[tp.x][tp.y].typ)) {
 			int mask = levl[tp.x][tp.y].doormask;
