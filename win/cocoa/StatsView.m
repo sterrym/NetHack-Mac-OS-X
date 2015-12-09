@@ -73,7 +73,7 @@
 	//	Home 1 $:218 HP:173(173) Pw:36(36) AC:-7 Xp:16/366949 T:45071 Hungry   Blind Burdened
 	//	Dlvl:17 *:143 HP:199(199) Pw:57(57) AC:-9 Xp:20/5124335 T:52985 Fainting
 
-	NSString * Gold = [NSString stringWithFormat:@"%c:", oc_syms[COIN_CLASS]];
+	NSString * Gold = [NSString stringWithFormat:@"%c:", def_oc_syms[COIN_CLASS].sym];
 	
 	if ( [text rangeOfString:Gold].location != NSNotFound ) {
 		
