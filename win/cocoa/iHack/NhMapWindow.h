@@ -28,7 +28,7 @@
 
 #include "hack.h"
 
-#define kNoGlyph (-1)
+#define kNoGlyph NO_GLYPH
 
 @interface NhMapWindow : NhWindow {
 	
@@ -39,8 +39,10 @@
 }
 
 - (instancetype) initWithType:(int)t NS_DESIGNATED_INITIALIZER;
-- (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y;
+- (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y DEPRECATED_ATTRIBUTE;
+- (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y backgroundGlyph:(int)bgGlyph;
 - (int) glyphAtX:(XCHAR_P)x y:(XCHAR_P)y;
+- (int) backgroundGlyphAtX:(XCHAR_P)x y:(XCHAR_P)y;
 - (void)setCursX:(XCHAR_P)x y:(XCHAR_P)y;
 - (void)getCursX:(XCHAR_P *)px y:(XCHAR_P *)py;
 		

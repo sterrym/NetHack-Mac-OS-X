@@ -26,20 +26,32 @@
 
 #include "hack.h"
 
-@implementation NhMapWindow
+static const int aNoGlyph = kNoGlyph;
+
+@implementation NhMapWindow {
+	int *bgGlyphs;
+
+}
 
 - (instancetype) initWithType:(int)t {
 	if (self = [super initWithType:t]) {
 		NSLog(@"map window %lx", self);
 		size_t numBytes = COLNO * ROWNO * sizeof(int);
 		glyphs = malloc(numBytes);
-		memset(glyphs, kNoGlyph, numBytes);
+		memset_pattern4(glyphs, &aNoGlyph, numBytes);
+		bgGlyphs = malloc(numBytes);
+		memset_pattern4(bgGlyphs, &aNoGlyph, numBytes);
 	}
 	return self;
 }
 
-- (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y {
+- (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y backgroundGlyph:(int)bgGlyph {
 	glyphs[y * COLNO + x] = glyph;
+	bgGlyphs[y * COLNO + x] = bgGlyph;
+}
+
+- (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y {
+	[self printGlyph:glyph atX:x y:y backgroundGlyph:NO_GLYPH];
 }
 
 - (void)setCursX:(XCHAR_P)x y:(XCHAR_P)y {
@@ -58,14 +70,20 @@
 	return glyphs[y * COLNO + x];
 }
 
+- (int) backgroundGlyphAtX:(XCHAR_P)x y:(XCHAR_P)y {
+	return bgGlyphs[y * COLNO + x];
+}
+
 - (void) clear {
 	[super clear];
 	size_t numBytes = COLNO * ROWNO * sizeof(int);
-	memset(glyphs, kNoGlyph, numBytes);
+	memset_pattern4(glyphs, &aNoGlyph, numBytes);
+	memset_pattern4(bgGlyphs, &aNoGlyph, numBytes);
 }
 
 - (void) dealloc {
 	free(glyphs);
+	free(bgGlyphs);
 }
 
 @end

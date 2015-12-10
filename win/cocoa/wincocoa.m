@@ -517,7 +517,7 @@ void cocoa_cliparound_window(winid wid, int x, int y)
 void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph)
 {
 	//NSLog(@"print_glyph %x %d,%d", wid, x, y);
-	[(NhMapWindow *) [WinCocoa windowForWindowID: wid] printGlyph:glyph atX:x y:y];
+	[(NhMapWindow *) [WinCocoa windowForWindowID: wid] printGlyph:glyph atX:x y:y backgroundGlyph:bkglyph];
 }
 
 void cocoa_raw_print(const char *str)
