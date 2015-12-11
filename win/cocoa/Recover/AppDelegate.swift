@@ -15,9 +15,23 @@ enum ConversionErrors: ErrorType {
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-	private var errorToReport: ConversionErrors?
 	@IBOutlet weak var window: NSWindow!
+	@IBOutlet weak var progress: NSProgressIndicator!
+	
+	private var errorToReport: ConversionErrors?
+	private let opQueue: NSOperationQueue = {
+		let aQueue = NSOperationQueue()
+		
+		aQueue.name = "NetHack Recovery"
+		
+		if #available(OSX 10.10, *) {
+		    aQueue.qualityOfService = .UserInitiated
+		} else {
+		    // Fallback on earlier versions
+		}
+		
+		return aQueue
+	}()
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -29,8 +43,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 				let anAlert = NSAlert(error: error)
 				
 				anAlert.runModal()
+				//NSApp.terminate(nil)
 			}
 		}
+	}
+	
+	func addURL(url: NSURL) {
+		let saveRecover = SaveRecoveryOperation(saveFileURL: url)
+		
+		opQueue.addOperation(saveRecover)
 	}
 
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
@@ -52,13 +73,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func application(sender: NSApplication, openFile filename: String) -> Bool {
 		let fileURL = NSURL(fileURLWithPath: filename)
-		dispatch_async(dispatch_get_global_queue(0, 0)) { () -> Void in
-			let status = restore_savefile(fileURL.fileSystemRepresentation)
-			if status != 0 {
-				
-			}
-		}
-		
+		addURL(fileURL)
 		return true
 	}
 }

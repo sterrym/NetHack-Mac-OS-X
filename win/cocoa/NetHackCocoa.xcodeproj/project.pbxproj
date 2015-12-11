@@ -660,7 +660,6 @@
 		5571199E1BD8203500959CD5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5571199C1BD8203500959CD5 /* MainMenu.xib */; };
 		557119A91BD8203500959CD5 /* RecoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119A81BD8203500959CD5 /* RecoverTests.swift */; };
 		557119B41BD8203500959CD5 /* RecoverUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119B31BD8203500959CD5 /* RecoverUITests.swift */; };
-		557119C21BD8205F00959CD5 /* recover.c in Sources */ = {isa = PBXBuildFile; fileRef = 557119C01BD8205F00959CD5 /* recover.c */; };
 		5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		559CDEE21BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; };
 		559CDEE31BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; };
@@ -670,6 +669,7 @@
 		559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; };
 		559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
 		559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
+		55DDEAA41C1A1853001F944B /* SaveRecoveryOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */; };
 		55E6B4881BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; };
 		55E6B4891BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; };
 		55E6B48B1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; };
@@ -1186,8 +1186,6 @@
 		557119B31BD8203500959CD5 /* RecoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverUITests.swift; sourceTree = "<group>"; };
 		557119B51BD8203500959CD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		557119BF1BD8205F00959CD5 /* Recover-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Recover-Bridging-Header.h"; sourceTree = "<group>"; };
-		557119C01BD8205F00959CD5 /* recover.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recover.c; sourceTree = "<group>"; };
-		557119C11BD8205F00959CD5 /* recover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = recover.h; sourceTree = "<group>"; };
 		559CDEE11BC1A4C5008ED534 /* nextstep10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nextstep10.png; sourceTree = "<group>"; };
 		559CDEE41BC1A53E008ED534 /* dawnhack32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dawnhack32.png; sourceTree = "<group>"; };
 		559CDEE51BC1A53E008ED534 /* nevanda32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32.png; sourceTree = "<group>"; };
@@ -1195,6 +1193,8 @@
 		55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
 		55BF8C6F1B77BEF10031A45A /* compat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = compat.m; sourceTree = "<group>"; };
+		55DDEAA21C1A1853001F944B /* SaveRecoveryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveRecoveryOperation.h; sourceTree = "<group>"; };
+		55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveRecoveryOperation.m; sourceTree = "<group>"; };
 		55E6B4871BC1D94000E8125A /* NhEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhEvent.swift; sourceTree = "<group>"; };
 		55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhTextInputEvent.swift; sourceTree = "<group>"; };
 		55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftNetHack bridge.swift"; sourceTree = "<group>"; };
@@ -1884,8 +1884,8 @@
 			isa = PBXGroup;
 			children = (
 				557119BF1BD8205F00959CD5 /* Recover-Bridging-Header.h */,
-				557119C11BD8205F00959CD5 /* recover.h */,
-				557119C01BD8205F00959CD5 /* recover.c */,
+				55DDEAA21C1A1853001F944B /* SaveRecoveryOperation.h */,
+				55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */,
 				557119981BD8203500959CD5 /* AppDelegate.swift */,
 				5571199A1BD8203500959CD5 /* Assets.xcassets */,
 				5571199C1BD8203500959CD5 /* MainMenu.xib */,
@@ -2658,8 +2658,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				557119C21BD8205F00959CD5 /* recover.c in Sources */,
 				557119991BD8203500959CD5 /* AppDelegate.swift in Sources */,
+				55DDEAA41C1A1853001F944B /* SaveRecoveryOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
