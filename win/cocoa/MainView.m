@@ -369,7 +369,7 @@ NSStringEncoding	codepage437encoding;
 		tooltipTimer = nil;
 	}
 	if ( tooltipWindow ) {
-		[tooltipWindow close];	// automatically released when closed
+		[tooltipWindow close];
 		tooltipWindow = nil;
 	}
 }
@@ -446,8 +446,7 @@ static NSString * DescriptionForTile( int x, int y )
 		
 		pt = [self convertPoint:pt toView:nil];
 		pt = [self.window convertRectToScreen:NSMakeRect(pt.x, pt.y, 0, 0)].origin;
-		//tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
-		NSLog(@"ToolTip text: %@, location: %@", text, NSStringFromPoint(pt));
+		tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
 	}
 #endif
 }
