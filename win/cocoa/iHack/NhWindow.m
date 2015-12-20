@@ -327,4 +327,48 @@ static NhWindow *s_mapWindow = nil;
 	[lock unlock];
 }
 
+#define TypeTest(atype) \
+case atype:\
+winType = @#atype;\
+break
+
+- (NSString *)description
+{
+	NSString *winType;
+	
+	switch (type) {
+			TypeTest(NHW_MESSAGE);
+			TypeTest(NHW_STATUS);
+			TypeTest(NHW_MAP);
+			TypeTest(NHW_MENU);
+			TypeTest(NHW_TEXT);
+
+		default:
+			winType = @"unknown";
+			break;
+	}
+	
+	return [NSString stringWithFormat:@"%@: NetHack type %@", [self class], winType];
+}
+
+- (NSString *)debugDescription
+{
+	NSString *winType;
+	
+	switch (type) {
+			TypeTest(NHW_MESSAGE);
+			TypeTest(NHW_STATUS);
+			TypeTest(NHW_MAP);
+			TypeTest(NHW_MENU);
+			TypeTest(NHW_TEXT);
+			
+		default:
+			winType = @"unknown";
+			break;
+	}
+	
+	return [NSString stringWithFormat:@"%@: NetHack type %@ address %p", [self class], winType, self];
+}
+#undef TypeTest
+
 @end

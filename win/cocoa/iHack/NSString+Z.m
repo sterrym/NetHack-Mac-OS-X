@@ -110,7 +110,7 @@
 #else
 	NSMutableString *s1 = [[NSMutableString alloc] initWithString:self];
 	CFStringTrimWhitespace((CFMutableStringRef)s1);
-	return [NSString stringWithString:s1];
+	return [[self.class alloc] initWithString:s1];
 #endif
 }
 

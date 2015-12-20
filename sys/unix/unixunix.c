@@ -162,6 +162,7 @@ getlock()
 			}
 		} else {
 			// Try to recover
+			// TODO: use our own recovery app.
 			if(!recover_savefile()) {
 				unlock_file(HLOCK);
 				int fail = unlink(lock);

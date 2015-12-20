@@ -45,7 +45,7 @@
 	}
 }
 
-typedef NS_ENUM(unsigned int, InvFlags) {
+typedef NS_OPTIONS(unsigned int, InvFlags) {
 	fWieldedWeapon = 1,
 	fWand = 2,
 	fReadable = 4,

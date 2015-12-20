@@ -331,29 +331,37 @@ void cocoa_resume_nhwindows() {
 }
 
 winid cocoa_create_nhwindow(int type) {
-	NhWindow *w = nil;
+	NhWindow *w;
+	winid newID = 0;
 	switch (type) {
 		case NHW_MAP:
 			w =  [NhWindow mapWindow];
+			[WinCocoa setWindow:w forID:type];
+			newID = type;
 			break;
 		case NHW_STATUS:
 			w = [NhWindow statusWindow];
+			[WinCocoa setWindow:w forID:type];
+			newID = type;
 			break;
 		case NHW_MESSAGE:
 			w = [NhWindow messageWindow];
+			[WinCocoa setWindow:w forID:type];
+			newID = type;
 			break;
 		case NHW_MENU:
 			w = [[NhMenuWindow alloc] initWithType:NHW_MENU];
+			newID = [WinCocoa addWindow:w];
 			break;
 		case NHW_TEXT:
 			w = [[NhWindow alloc] initWithType:NHW_TEXT];
+			newID = [WinCocoa addWindow:w];
 			break;
 		default:
 			assert(NO);
 	}
-	[WinCocoa addWindow:w withID:type];
-	//NSLog(@"create_nhwindow(%x) %x", type, w);
-	return (winid) type;
+	//NSLog(@"create_nhwindow(%x) %p", type, w);
+	return newID;
 }
 
 void cocoa_clear_nhwindow(winid wid)
@@ -364,7 +372,7 @@ void cocoa_clear_nhwindow(winid wid)
 
 void cocoa_display_nhwindow(winid wid, BOOLEAN_P block)
 {
-	//NSLog(@"display_nhwindow %x, %i, %i", wid, ((NhWindow *) wid).type, block);
+	//NSLog(@"display_nhwindow %x, %i, %i", wid, [WinCocoa windowForWindowID: wid].type, block);
 	[WinCocoa windowForWindowID: wid].blocking = block;
 	[[MainWindowController instance] displayWindow:[WinCocoa windowForWindowID: wid]];
 }

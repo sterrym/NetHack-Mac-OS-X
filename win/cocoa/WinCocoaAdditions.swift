@@ -8,6 +8,8 @@
 
 import Cocoa
 
+// 6 is above the window types used by NetHack
+private var currentWid: winid = 6
 private var windowDict = [winid: NhWindow]()
 
 extension WinCocoa {
@@ -16,8 +18,14 @@ extension WinCocoa {
 		return windowDict[wid]
 	}
 	
-	@objc(addWindow:withID:) class func addWindow(window: NhWindow, id wid: winid) {
+	@objc(setWindow:forID:) class func setWindow(window: NhWindow, id wid: winid) {
 		windowDict[wid] = window
+	}
+	
+	@objc class func addWindow(window: NhWindow) -> winid {
+		let newID = ++currentWid
+		windowDict[newID] = window
+		return newID
 	}
 	
 	@objc(removeWindowWithID:) class func removeWindow(id wid: winid) {
