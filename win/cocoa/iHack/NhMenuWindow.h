@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSArray<NhItemGroup *> *itemGroups;
 @property (weak, nonatomic, readonly) NhItemGroup *currentItemGroup;
 @property (nonatomic) int how;
-@property (nonatomic, readonly) NSMutableArray<NhItem *> *selected;
+@property (nonatomic, readonly, strong) NSMutableArray<NhItem *> *selected;
 @property (nonatomic, copy) NSString *prompt;
 
 - (void) addItemGroup:(NhItemGroup *)g;

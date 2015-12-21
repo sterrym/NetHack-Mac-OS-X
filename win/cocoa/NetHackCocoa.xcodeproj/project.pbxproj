@@ -214,7 +214,6 @@
 		021282CF14F6E6240046D56F /* NhObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0F11B8A73300FC2199 /* NhObject.m */; };
 		021282D014F6E6240046D56F /* NhStatusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1111B8A73300FC2199 /* NhStatusWindow.m */; };
 		021282D214F6E6240046D56F /* NhWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1511B8A73300FC2199 /* NhWindow.m */; };
-		021282D314F6E6240046D56F /* NhYnQuestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1711B8A73300FC2199 /* NhYnQuestion.m */; };
 		021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		021282D614F6E6240046D56F /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
@@ -361,7 +360,6 @@
 		0224CB2B11B8A73300FC2199 /* NhObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0F11B8A73300FC2199 /* NhObject.m */; };
 		0224CB2C11B8A73300FC2199 /* NhStatusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1111B8A73300FC2199 /* NhStatusWindow.m */; };
 		0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1511B8A73300FC2199 /* NhWindow.m */; };
-		0224CB2F11B8A73300FC2199 /* NhYnQuestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1711B8A73300FC2199 /* NhYnQuestion.m */; };
 		0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
@@ -654,6 +652,8 @@
 		02447C5D11B8C821008CB9C7 /* wizard3.lev in Resources */ = {isa = PBXBuildFile; fileRef = 02447BEB11B8C821008CB9C7 /* wizard3.lev */; };
 		028E8B3319FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		028E8B3419FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
+		5519D0AD1C264E0E001654FD /* NhYnQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */; };
+		5519D0AE1C264E0E001654FD /* NhYnQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */; };
 		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		557119991BD8203500959CD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119981BD8203500959CD5 /* AppDelegate.swift */; };
 		5571199B1BD8203500959CD5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5571199A1BD8203500959CD5 /* Assets.xcassets */; };
@@ -771,8 +771,6 @@
 		0224CB1111B8A73300FC2199 /* NhStatusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhStatusWindow.m; sourceTree = "<group>"; };
 		0224CB1411B8A73300FC2199 /* NhWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhWindow.h; sourceTree = "<group>"; };
 		0224CB1511B8A73300FC2199 /* NhWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhWindow.m; sourceTree = "<group>"; };
-		0224CB1611B8A73300FC2199 /* NhYnQuestion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhYnQuestion.h; sourceTree = "<group>"; };
-		0224CB1711B8A73300FC2199 /* NhYnQuestion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhYnQuestion.m; sourceTree = "<group>"; };
 		0224CB1811B8A73300FC2199 /* NSIndexPath+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+Z.h"; sourceTree = "<group>"; };
 		0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+Z.m"; sourceTree = "<group>"; };
 		0224CB1A11B8A73300FC2199 /* NSString+NetHack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NetHack.h"; sourceTree = "<group>"; };
@@ -1173,6 +1171,7 @@
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhYnQuestion.swift; sourceTree = "<group>"; };
 		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		557119961BD8203500959CD5 /* Recover.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Recover.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		557119981BD8203500959CD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -1854,8 +1853,7 @@
 				55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */,
 				0224CB1411B8A73300FC2199 /* NhWindow.h */,
 				0224CB1511B8A73300FC2199 /* NhWindow.m */,
-				0224CB1611B8A73300FC2199 /* NhYnQuestion.h */,
-				0224CB1711B8A73300FC2199 /* NhYnQuestion.m */,
+				5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */,
 				0224CB1811B8A73300FC2199 /* NSIndexPath+Z.h */,
 				0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */,
 				0224CB1A11B8A73300FC2199 /* NSString+NetHack.h */,
@@ -2529,7 +2527,6 @@
 				021282CF14F6E6240046D56F /* NhObject.m in Sources */,
 				021282D014F6E6240046D56F /* NhStatusWindow.m in Sources */,
 				021282D214F6E6240046D56F /* NhWindow.m in Sources */,
-				021282D314F6E6240046D56F /* NhYnQuestion.m in Sources */,
 				021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */,
 				021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */,
 				021282D614F6E6240046D56F /* NSString+Z.m in Sources */,
@@ -2602,6 +2599,7 @@
 				0212831614F6E6240046D56F /* options.c in Sources */,
 				0212831714F6E6240046D56F /* pager.c in Sources */,
 				0212831814F6E6240046D56F /* pickup.c in Sources */,
+				5519D0AE1C264E0E001654FD /* NhYnQuestion.swift in Sources */,
 				0212831914F6E6240046D56F /* pline.c in Sources */,
 				0212831A14F6E6240046D56F /* polyself.c in Sources */,
 				0212831B14F6E6240046D56F /* potion.c in Sources */,
@@ -2713,7 +2711,6 @@
 				0224CB2B11B8A73300FC2199 /* NhObject.m in Sources */,
 				0224CB2C11B8A73300FC2199 /* NhStatusWindow.m in Sources */,
 				0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */,
-				0224CB2F11B8A73300FC2199 /* NhYnQuestion.m in Sources */,
 				0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */,
 				0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */,
 				0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */,
@@ -2786,6 +2783,7 @@
 				0224CE0111B8A92600FC2199 /* options.c in Sources */,
 				0224CE0211B8A92600FC2199 /* pager.c in Sources */,
 				0224CE0311B8A92600FC2199 /* pickup.c in Sources */,
+				5519D0AD1C264E0E001654FD /* NhYnQuestion.swift in Sources */,
 				0224CE0411B8A92600FC2199 /* pline.c in Sources */,
 				0224CE0511B8A92600FC2199 /* polyself.c in Sources */,
 				0224CE0611B8A92600FC2199 /* potion.c in Sources */,

@@ -36,7 +36,6 @@
 #import "NhWindow.h"
 #import "NhMapWindow.h"
 #import "MainWindowController.h"
-#import "NhYnQuestion.h"
 #import "NhEventQueue.h"
 #import "NhItem.h"
 #import "NhItemGroup.h"
@@ -372,9 +371,10 @@ void cocoa_clear_nhwindow(winid wid)
 
 void cocoa_display_nhwindow(winid wid, BOOLEAN_P block)
 {
+	NhWindow *w = [WinCocoa windowForWindowID: wid];
 	//NSLog(@"display_nhwindow %x, %i, %i", wid, [WinCocoa windowForWindowID: wid].type, block);
-	[WinCocoa windowForWindowID: wid].blocking = block;
-	[[MainWindowController instance] displayWindow:[WinCocoa windowForWindowID: wid]];
+	w.blocking = block;
+	[[MainWindowController instance] displayWindow:w];
 }
 
 void cocoa_destroy_nhwindow(winid wid)
@@ -603,7 +603,7 @@ char cocoa_yn_function(const char *question, const char *choices, CHAR_P def)
 		};
 		for ( int i = 0; i < sizeof yesNo/sizeof yesNo[0]; ++i ) {
 			if ( strcmp( choices, yesNo[i] ) == 0 ) {
-				NhYnQuestion * q = [[NhYnQuestion alloc] initWithQuestion:question choices:choices default:def];
+				NhYnQuestion * q = [[NhYnQuestion alloc] initWithQuestion:question choices:choices defaultChoice:def];
 				[[MainWindowController instance] showYnQuestion:q];
 				NhEvent * e = [[NhEventQueue instance] nextEvent];
 				return e.key;

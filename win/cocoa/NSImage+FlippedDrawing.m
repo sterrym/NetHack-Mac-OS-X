@@ -62,7 +62,7 @@
 		dstRect.origin.y = 0.0;
 	}
 	
-	[self drawInRect:dstRect fromRect:srcRect operation:op fraction:delta];
+	[self drawInRect:dstRect fromRect:srcRect operation:op fraction:delta respectFlipped:NO hints:nil];
 	
 	if (contextIsFlipped)
 	{

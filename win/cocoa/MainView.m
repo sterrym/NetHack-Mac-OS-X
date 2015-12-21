@@ -477,9 +477,7 @@ static NSString * DescriptionForTile( int x, int y )
 - (void) boundsDidChangeNotification:(NSNotification *)notification
 {
 	// not sure if we can do this synchronously...
-	//dispatch_async(dispatch_get_main_queue(), ^{
-		[self cliparoundHero];
-	//});
+	[self performSelector:@selector(cliparoundHero) withObject:nil afterDelay:0.0];
 }
 
 

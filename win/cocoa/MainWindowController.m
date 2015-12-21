@@ -24,7 +24,6 @@
 
 #import "MainWindowController.h"
 #import "MainView.h"
-#import "NhYnQuestion.h"
 #import "NSString+Z.h"
 #import "NhEventQueue.h"
 #import "NhWindow.h"

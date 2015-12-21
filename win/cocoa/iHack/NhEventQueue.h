@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NhEventQueue : NSObject {
 	
-	NSMutableArray *events;
+	NSMutableArray<NhEvent*> *events;
 	NSCondition *condition;
 
 }
