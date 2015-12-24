@@ -9,6 +9,8 @@
 #ifndef SwiftBridgeHeader_h
 #define SwiftBridgeHeader_h
 
+#define NHSTDC
+
 #import <objc/objc.h>
 #include "hack.h"
 #include "Inventory.h"
