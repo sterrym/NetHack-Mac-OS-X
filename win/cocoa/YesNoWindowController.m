@@ -26,6 +26,9 @@
 #import "NhEventQueue.h"
 
 @implementation YesNoWindowController
+@synthesize question;
+@synthesize button1;
+@synthesize button2;
 
 -(void)runModalWithQuestion:(NSString *)prompt choice1:(NSString *)choice1 choice2:(NSString *)choice2 defaultAnswer:(char)def onCancelSend:(char)cancelChar
 {

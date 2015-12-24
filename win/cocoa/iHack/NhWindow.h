@@ -27,7 +27,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NhWindow : NSObject <NSLocking> {
-	int type;
 	NSMutableArray *lines;
 	NSLock *lock;
 	NSString *lineDelimiter;

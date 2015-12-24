@@ -24,18 +24,20 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Action : NSObject {
-	
 	NSString *title;
 	NSMutableArray<NSInvocation*> *invocations;
-
 }
 
 @property (nonatomic, readonly) NSString *title;
 
 - (instancetype)initWithTitle:(NSString *)t;
-- (void)invoke:(id)sender;
-- (void)addTarget:(id)target action:(SEL)action arg:(__unsafe_unretained id)arg;
+- (IBAction)invoke:(nullable id)sender;
+- (void)addTarget:(id)target action:(SEL)action arg:(nullable __unsafe_unretained id)arg;
 - (void)addInvocation:(NSInvocation *)inv;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -41,7 +41,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MainWindowController : NSWindowController <NSWindowDelegate,NSMenuDelegate,NSTableViewDataSource,NSSpeechSynthesizerDelegate> {	
+@interface MainWindowController : NSWindowController <NSWindowDelegate, NSMenuDelegate, NSTableViewDataSource, NSSpeechSynthesizerDelegate> {
 	BOOL										isDirectionQuestion;
 	BOOL										terminatedByUser;
 	

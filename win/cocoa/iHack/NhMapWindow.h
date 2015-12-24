@@ -31,17 +31,16 @@
 #define kNoGlyph (-1)
 
 @interface NhMapWindow : NhWindow {
-	
 	int *glyphs;
 
 	XCHAR_P cursorX;
 	XCHAR_P cursorY;
 }
 
-- (instancetype) initWithType:(int)t NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype) initWithType:(int)t NS_DESIGNATED_INITIALIZER;
 - (void) printGlyph:(int)glyph atX:(XCHAR_P)x y:(XCHAR_P)y;
 - (int) glyphAtX:(XCHAR_P)x y:(XCHAR_P)y;
 - (void)setCursX:(XCHAR_P)x y:(XCHAR_P)y;
-- (void)getCursX:(XCHAR_P *)px y:(XCHAR_P *)py;
+- (void)getCursX:(XCHAR_P * __nullable)px y:(XCHAR_P * __nullable)py;
 		
 @end

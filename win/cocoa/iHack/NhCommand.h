@@ -40,9 +40,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NhCommand : Action {
-	
 	char *keys;
-
 }
 
 @property (nonatomic, readonly) const char *keys NS_RETURNS_INNER_POINTER;
@@ -50,10 +48,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)commandWithTitle:(const char *)t keys:(const char *)c;
 + (instancetype)commandWithTitle:(const char *)t key:(char)c;
 
-// all commands possible at this stage
+/// all commands possible at this stage
 + (NSArray<NhCommand *> *)currentCommands;
 
-// all commands possible for an adjacent position
+/// all commands possible for an adjacent position
 + (NSArray<NhCommand*> *)commandsForAdjacentTile:(coord)tp;
 
 - (instancetype)initWithTitle:(const char *)t keys:(const char *)c;

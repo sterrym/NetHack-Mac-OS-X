@@ -89,7 +89,7 @@
 }
 
 - (BOOL)containsObjectClass:(char)oclass {
-	return classArray[oclass] != nil;
+	return classArray[oclass] != nil || [classArray[oclass] isEqual:[NSNull null]];
 }
 
 @end

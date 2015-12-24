@@ -30,7 +30,6 @@
 extern int unixmain(int argc, char **argv);
 
 @implementation NetHackCocoaAppDelegate
-
 @synthesize window;
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
@@ -62,34 +61,34 @@ extern int unixmain(int argc, char **argv);
 	extern int g_argc;
 	extern char ** g_argv;
 	
-		@autoreleasepool {
-			NSFileManager *fm = [[NSFileManager alloc] init];
-	nethackCoreLock = [[NSRecursiveLock alloc] init];
-	[self lockNethackCore];
-	
-	// create necessary directories
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-	NSString *baseDirectory = paths[0];
-	baseDirectory = [baseDirectory stringByAppendingPathComponent:@"NetHackCocoa"];
-	if (![fm fileExistsAtPath:baseDirectory]) {
-		[fm createDirectoryAtPath:baseDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-	}
-	NSLog(@"baseDir %@", baseDirectory);
-	setenv("NETHACKDIR", baseDirectory.fileSystemRepresentation, 1);
-	NSString *saveDirectory = [baseDirectory stringByAppendingPathComponent:@"save"];
-	if (![fm fileExistsAtPath:saveDirectory]) {
-		[fm createDirectoryAtPath:saveDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-	}
+	@autoreleasepool {
+		NSFileManager *fm = [[NSFileManager alloc] init];
+		nethackCoreLock = [[NSRecursiveLock alloc] init];
+		[self lockNethackCore];
 		
-	// set plname (very important for save files and getlock)
-	[NSUserName().capitalizedString getCString:plname maxLength:PL_NSIZ encoding:NSASCIIStringEncoding];
-	
-	// call NetHack
-	unixmain(g_argc, g_argv);
-	
-	[self unlockNethackCore];
-
-	// clean up thread pool
+		// create necessary directories
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+		NSString *baseDirectory = paths[0];
+		baseDirectory = [baseDirectory stringByAppendingPathComponent:@"NetHackCocoa"];
+		if (![fm fileExistsAtPath:baseDirectory]) {
+			[fm createDirectoryAtPath:baseDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+		}
+		NSLog(@"baseDir %@", baseDirectory);
+		setenv("NETHACKDIR", baseDirectory.fileSystemRepresentation, 1);
+		NSString *saveDirectory = [baseDirectory stringByAppendingPathComponent:@"save"];
+		if (![fm fileExistsAtPath:saveDirectory]) {
+			[fm createDirectoryAtPath:saveDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+		}
+		
+		// set plname (very important for save files and getlock)
+		[NSUserName().capitalizedString getCString:plname maxLength:PL_NSIZ encoding:NSASCIIStringEncoding];
+		
+		// call NetHack
+		unixmain(g_argc, g_argv);
+		
+		[self unlockNethackCore];
+		
+		// clean up thread pool
 	}
 }
 

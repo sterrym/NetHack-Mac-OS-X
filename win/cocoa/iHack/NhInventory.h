@@ -28,10 +28,8 @@
 @class NhObject;
 
 @interface NhInventory : NSObject {
-	
 	NSMutableArray *objectClasses;
 	NSMutableArray *classArray;
-	
 }
 
 @property (nonatomic, readonly, copy) NSArray *objectClasses;

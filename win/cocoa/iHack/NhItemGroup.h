@@ -28,7 +28,7 @@
 
 @interface NhItemGroup : NSObject {
 	NSString *title;
-	NSMutableArray *items;
+	NSMutableArray<NhItem*> *items;
 	BOOL dummy;
 }
 

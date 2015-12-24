@@ -27,7 +27,6 @@
 @class MainWindowController;
 
 @interface NetHackCocoaAppDelegate : NSObject <NSApplicationDelegate> {
-    NSWindow *__weak window;
 	NSThread *netHackThread;
 	MainWindowController *mainWindowController;
 	NSRecursiveLock *nethackCoreLock;

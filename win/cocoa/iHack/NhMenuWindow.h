@@ -34,10 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NhMenuWindow : NhWindow {
 	
-	NSMutableArray *itemGroups;
+	NSMutableArray<NhItemGroup *> *itemGroups;
 	NhItemGroup *currentItemGroup;
 	int how;
-	NSMutableArray *selected;
+	NSMutableArray<NhItem *> *selected;
 	NSString *prompt;
 	
 }

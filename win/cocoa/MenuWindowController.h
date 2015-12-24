@@ -29,7 +29,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MenuWindowController : NSWindowController <NSWindowDelegate> {
-	
 	NhMenuWindow		*	menuParams;
 	
 	NSMutableDictionary	*	itemDict;

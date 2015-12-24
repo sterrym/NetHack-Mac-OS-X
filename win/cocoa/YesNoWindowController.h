@@ -28,12 +28,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YesNoWindowController : NSWindowController <NSWindowDelegate> {
-	IBOutlet NSTextField *	question;
-	IBOutlet NSButton	*	button1;
-	IBOutlet NSButton	*	button2;
 	char					defaultAnswer;
 	char					onCancelChar;
 }
+@property (weak) IBOutlet NSTextField	*question;
+@property (weak) IBOutlet NSButton		*button1;
+@property (weak) IBOutlet NSButton		*button2;
 
 -(void)runModalWithQuestion:(NSString *)prompt choice1:(NSString *)choice1 choice2:(NSString *)choice2 defaultAnswer:(char)def onCancelSend:(char)cancelChar;
 -(IBAction)performButton:(id)sender;

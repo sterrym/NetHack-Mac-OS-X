@@ -30,7 +30,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MainView : NSView {
-
 	NSString *	_tileSetName;
 	NSSize		tileSize;
 	NSImage	*	petMark;
