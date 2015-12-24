@@ -22,7 +22,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#import "ZDirection.h"
+#import <Cocoa/Cocoa.h>
 
 @class NhYnQuestion;
 @class MainView;
@@ -38,6 +38,7 @@
 @class NotesWindowController;
 @class StatsView;
 @class EquipmentView;
+@class ZDirection;
 
 NS_ASSUME_NONNULL_BEGIN
 

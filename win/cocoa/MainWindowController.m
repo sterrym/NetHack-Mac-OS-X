@@ -720,7 +720,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 #pragma mark touch handling
 
-- (int)keyFromDirection:(e_direction)d {
+- (int)keyFromDirection:(EuclideanDirection)d {
 	static char keys[] = "kulnjbhy\033";
 	return keys[d];
 }
@@ -739,26 +739,26 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	return NO;
 }
 
-- (e_direction)directionFromKey:(char)k {
+- (EuclideanDirection)directionFromKey:(char)k {
 	switch (k) {
 		case 'k':
-			return kDirectionUp;
+			return EuclideanDirectionUp;
 		case 'u':
-			return kDirectionUpRight;
+			return EuclideanDirectionUpRight;
 		case 'l':
-			return kDirectionRight;
+			return EuclideanDirectionRight;
 		case 'n':
-			return kDirectionDownRight;
+			return EuclideanDirectionDownRight;
 		case 'j':
-			return kDirectionDown;
+			return EuclideanDirectionDown;
 		case 'b':
-			return kDirectionDownLeft;
+			return EuclideanDirectionDownLeft;
 		case 'h':
-			return kDirectionLeft;
+			return EuclideanDirectionLeft;
 		case 'y':
-			return kDirectionUpLeft;
+			return EuclideanDirectionUpLeft;
 	}
-	return kDirectionMax;
+	return EuclideanDirectionMax;
 }
 
 - (void)handleMapTapTileX:(int)x y:(int)y forLocation:(CGPoint)p inView:(NSView *)view {
@@ -768,7 +768,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		CGPoint delta = CGPointMake(x*32.0f-u.ux*32.0f, y*32.0f-u.uy*32.0f);
 		delta.y *= -1;
 		//NSLog(@"delta %3.2f,%3.2f", delta.x, delta.y);
-		e_direction direction = [ZDirection directionFromEuclideanPointDelta:&delta];
+		EuclideanDirection direction = [ZDirection directionFromEuclideanPointDelta:delta];
 		int key = [self keyFromDirection:direction];
 		//NSLog(@"key %c", key);
 		[[NhEventQueue instance] addKey:key];

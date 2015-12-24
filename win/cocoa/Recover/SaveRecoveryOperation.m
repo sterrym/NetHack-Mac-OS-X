@@ -32,7 +32,7 @@ NSString * const NHRecoveryErrorDomain = @"net.hack.cocoa.recover.error";
 #define set_levelfile_name(first) [self setLevelFileName: first ]
 #define open_levelfile(first) [self openLevelFile: first ]
 #define create_savefile() [self createSaveFile] 
-static bool copy_bytes(int ifd, int ofd);
+static BOOL copy_bytes(int ifd, int ofd);
 
 #define Fprintf	(void)fprintf
 
@@ -247,7 +247,7 @@ static bool copy_bytes(int ifd, int ofd);
 
 @end
 
-static bool copy_bytes(int ifd, int ofd)
+BOOL copy_bytes(int ifd, int ofd)
 {
 	char buf[BUFSIZ];
 	ssize_t nfrom, nto;

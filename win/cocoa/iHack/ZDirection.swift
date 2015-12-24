@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum EuclideanDirection : Int {
+@objc enum EuclideanDirection : Int {
 	case Up = 0
 	case UpRight
 	case Right
@@ -20,8 +20,8 @@ public enum EuclideanDirection : Int {
 	case Max
 }
 
-private let kCos45: CGFloat = 0.707106829
-private let kCos30: CGFloat = 0.866025404
+private let kCos45: CGFloat = 0.707106781186548
+private let kCos30: CGFloat = 0.866025403784439
 
 private let s_directionVectors: [CGPoint] = [
 	CGPoint(x: 0, y: 1),
@@ -48,8 +48,7 @@ private func normalize(inout v: CGPoint) {
 	v.y /= l
 }
 
-func directionFromEuclideanPointDelta(delta1: CGPoint) -> EuclideanDirection {
-	var delta = delta1
+func directionFromEuclideanPointDelta(var delta: CGPoint) -> EuclideanDirection {
 	normalize(&delta)
 	for i in 0 ..< EuclideanDirection.Max.rawValue {
 		let dotP = dotProduct(delta, s_directionVectors[i])
@@ -59,4 +58,10 @@ func directionFromEuclideanPointDelta(delta1: CGPoint) -> EuclideanDirection {
 	}
 	
 	return .Max
+}
+
+final class ZDirection: NSObject {
+	class func directionFromEuclideanPointDelta(delta: CGPoint) -> EuclideanDirection {
+		return directionFromEuclideanPointDelta(delta)
+	}
 }
