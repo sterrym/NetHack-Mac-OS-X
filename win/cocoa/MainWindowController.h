@@ -38,7 +38,6 @@
 @class NotesWindowController;
 @class StatsView;
 @class EquipmentView;
-@class ZDirection;
 
 NS_ASSUME_NONNULL_BEGIN
 
