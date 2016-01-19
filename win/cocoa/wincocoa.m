@@ -120,6 +120,15 @@ cocoa_outrip,
 cocoa_preference_update,
 genl_getmsghistory,
 genl_putmsghistory,
+#ifdef STATUS_VIA_WINDOWPORT
+hup_void_ndecl,
+hup_void_ndecl,
+genl_status_enablefield, hup_status_update,
+#ifdef STATUS_HILITES
+genl_status_threshold,
+#endif
+#endif
+genl_can_suspend_no,
 };
 
 
