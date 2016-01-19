@@ -22,6 +22,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#import <Cocoa/Cocoa.h>
 #import "NhMenuWindow.h"
 #import "NhItemGroup.h"
 #import "NSIndexPath+Z.h"

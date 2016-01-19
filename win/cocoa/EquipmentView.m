@@ -22,7 +22,8 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#import "hack.h"
+#import <Cocoa/Cocoa.h>
+#include "hack.h"
 #import "EquipmentView.h"
 #import "NetHackCocoa-Swift.h"
 

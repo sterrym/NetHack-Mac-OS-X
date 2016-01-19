@@ -79,6 +79,22 @@ extern int unixmain(int argc, char **argv);
 		if (![fm fileExistsAtPath:saveDirectory]) {
 			[fm createDirectoryAtPath:saveDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
 		}
+		@autoreleasepool{
+			NSString *sysCFStr = @(SYSCF_FILE);
+			NSString *ourPlace = [baseDirectory stringByAppendingPathComponent:sysCFStr];
+			NSString *bundPlace = [[NSBundle mainBundle] pathForResource:sysCFStr ofType:nil];
+			if (![fm fileExistsAtPath:ourPlace]) {
+				[fm copyItemAtPath:bundPlace toPath:ourPlace error:NULL];
+			}
+
+			NSData *blankData = [[NSData alloc] init];
+			for (NSString *addlPatch in @[@"perm", @"logfile", @"xlogfile"]) {
+				NSString *aStr = [baseDirectory stringByAppendingPathComponent:addlPatch];
+				if (![fm fileExistsAtPath:aStr]) {
+					[blankData writeToFile:aStr atomically:NO];
+				}
+			}
+		}
 		
 		// set plname (very important for save files and getlock)
 		[NSUserName().capitalizedString getCString:plname maxLength:PL_NSIZ encoding:NSASCIIStringEncoding];

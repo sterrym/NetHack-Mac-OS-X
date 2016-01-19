@@ -208,6 +208,43 @@ WINGNOMEOBJ = gnaskstr.o gnbind.o gnglyph.o gnmain.o gnmap.o gnmenu.o \
 	gnmesg.o gnopts.o gnplayer.o gnsignal.o gnstatus.o gntext.o \
 	gnyesno.o gnworn.o tile.o
 #
+# Files for a Cocoa port
+#
+OBJCFLAGS = -fobjc-arc -I../win/cocoa/iHack -I../win/cocoa -I.
+WINCOCOASSRC = ../win/cocoa/WinCocoaAdditions.swift ../win/cocoa/SwiftNetHack\ bridge.swift \
+	../win/cocoa/iHack/NhEvent.swift ../win/cocoa/iHack/TileSet.swift \
+	../win/cocoa/iHack/NhTextInputEvent.swift ../win/cocoa/iHack/ZDirection.swift \
+	../win/cocoa/iHack/NhYnQuestion.swift
+WINCOCOASRC = ../win/cocoa/DirectionWindowController.m ../win/cocoa/NSImage+FlippedDrawing.m \
+	../win/cocoa/EquipmentView.m ../win/cocoa/NetHackCocoaAppDelegate.m \
+	../win/cocoa/ExtCommandWindowController.m ../win/cocoa/NotesWindowController.m \
+	../win/cocoa/FlippedView.m ../win/cocoa/PlayerSelectionWindowController.m \
+	../win/cocoa/InputWindowController.m ../win/cocoa/StatsView.m ../win/cocoa/MainView.m \
+	../win/cocoa/TooltipWindow.m ../win/cocoa/MainWindowController.m \
+	../win/cocoa/YesNoWindowController.m ../win/cocoa/MenuWindowController.m \
+	../win/cocoa/MessageWindowController.m ../win/cocoa/wincocoa.m \
+	../win/cocoa/iHack/Action.m ../win/cocoa/iHack/NhItem.m \
+	../win/cocoa/iHack/NSIndexPath+Z.m ../win/cocoa/iHack/NhItemGroup.m \
+	../win/cocoa/iHack/NSString+NetHack.m ../win/cocoa/iHack/NhMapWindow.m \
+	../win/cocoa/iHack/NSString+Z.m ../win/cocoa/iHack/NhMenuWindow.m \
+	../win/cocoa/iHack/NhCommand.m ../win/cocoa/iHack/NhObject.m \
+	../win/cocoa/iHack/NhEventQueue.m ../win/cocoa/iHack/NhStatusWindow.m \
+	../win/cocoa/iHack/NhInventory.m ../win/cocoa/iHack/NhWindow.m \
+	../win/cocoa/inventory.c ../win/cocoa/main.m
+WINCOCOASOBJ = WinCocoaAdditions.o SwiftNetHack\ bridge.o NhEvent.o TileSet.o \
+	NhTextInputEvent.o ZDirection.o NhYnQuestion.o
+WINCOCOAOBJ = DirectionWindowController.o NSImage+FlippedDrawing.o EquipmentView.o \
+	NetHackCocoaAppDelegate.o ExtCommandWindowController.o NotesWindowController.o \
+	FlippedView.o PlayerSelectionWindowController.o InputWindowController.o StatsView.o \
+	MainView.o TooltipWindow.o MainWindowController.o YesNoWindowController.o \
+	MenuWindowController.o MessageWindowController.o wincocoa.o Action.o NhItem.o \
+	NSIndexPath+Z.o NhItemGroup.o NSString+NetHack.o NhMapWindow.o NSString+Z.o \
+	NhMenuWindow.o NhCommand.o NhObject.o NhEventQueue.o NhStatusWindow.o \
+	NhInventory.o NhWindow.o inventory.o CocoaMain.o tile.o $(WINCOCOASOBJ)
+SWIFTFLAGS = -module-name $(GAME) -import-objc-header ../win/cocoa/SwiftBridgeHeader.h \
+	-I../include -I../win/cocoa/iHack -I../win/cocoa \
+	-sdk $(shell xcrun --show-sdk-path -sdk macosx) -target x86_64-apple-macosx10.9
+#
 # Files for a Gem port
 WINGEMSRC = ../win/gem/wingem.c ../win/gem/wingem1.c ../win/gem/load_img.c \
 	../win/gem/gr_rect.c tile.c
@@ -840,6 +877,127 @@ worm.o: worm.c $(HACK_H) ../include/lev.h
 worn.o: worn.c $(HACK_H)
 write.o: write.c $(HACK_H)
 zap.o: zap.c $(HACK_H)
+inventory.o: ../win/cocoa/inventory.c $(HACK_H)
+	$(CC) $(CFLAGS) -c ../win/cocoa/inventory.c
+
+# Cocoa depends
+NetHackCocoa-Swift.h: NetHackCocoa.swiftmodule
+	swiftc -frontend -c -parse-as-library -color-diagnostics $(SWIFTFLAGS) \
+	NetHackCocoa.swiftmodule -emit-objc-header-path NetHackCocoa-Swift.h
+
+DirectionWindowController.o: ../win/cocoa/DirectionWindowController.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/DirectionWindowController.m -c -o DirectionWindowController.o
+NSImage+FlippedDrawing.o: ../win/cocoa/NSImage+FlippedDrawing.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/NSImage+FlippedDrawing.m -c -o NSImage+FlippedDrawing.o
+EquipmentView.o: ../win/cocoa/EquipmentView.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/EquipmentView.m -c -o EquipmentView.o
+NetHackCocoaAppDelegate.o: ../win/cocoa/NetHackCocoaAppDelegate.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/NetHackCocoaAppDelegate.m -c -o NetHackCocoaAppDelegate.o
+ExtCommandWindowController.o: ../win/cocoa/ExtCommandWindowController.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/ExtCommandWindowController.m -c -o ExtCommandWindowController.o
+NotesWindowController.o: ../win/cocoa/NotesWindowController.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/NotesWindowController.m -c -o NotesWindowController.o
+FlippedView.o: ../win/cocoa/FlippedView.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/FlippedView.m -c -o FlippedView.o
+PlayerSelectionWindowController.o: ../win/cocoa/PlayerSelectionWindowController.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/PlayerSelectionWindowController.m -c -o PlayerSelectionWindowController.o
+InputWindowController.o: ../win/cocoa/InputWindowController.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/InputWindowController.m -c -o InputWindowController.o
+StatsView.o: ../win/cocoa/StatsView.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/StatsView.m -c -o StatsView.o
+MainView.o: ../win/cocoa/MainView.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/MainView.m -c -o MainView.o
+TooltipWindow.o: ../win/cocoa/TooltipWindow.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/TooltipWindow.m -c -o TooltipWindow.o
+MainWindowController.o: ../win/cocoa/MainWindowController.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/MainWindowController.m -c -o MainWindowController.o
+YesNoWindowController.o: ../win/cocoa/YesNoWindowController.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/YesNoWindowController.m -c -o YesNoWindowController.o
+MenuWindowController.o: ../win/cocoa/MenuWindowController.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/MenuWindowController.m -c -o MenuWindowController.o
+MessageWindowController.o: ../win/cocoa/MessageWindowController.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/MessageWindowController.m -c -o MessageWindowController.o
+wincocoa.o: ../win/cocoa/wincocoa.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/wincocoa.m -c -o wincocoa.o
+
+Action.o: ../win/cocoa/iHack/Action.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/Action.m -c -o Action.o
+NhItem.o: ../win/cocoa/iHack/NhItem.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhItem.m -c -o NhItem.o
+NSIndexPath+Z.o: ../win/cocoa/iHack/NSIndexPath+Z.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NSIndexPath+Z.m -c -o NSIndexPath+Z.o
+NhItemGroup.o: ../win/cocoa/iHack/NhItemGroup.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhItemGroup.m -c -o NhItemGroup.o
+NSString+NetHack.o: ../win/cocoa/iHack/NSString+NetHack.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NSString+NetHack.m -c -o NSString+NetHack.o
+NhMapWindow.o: ../win/cocoa/iHack/NhMapWindow.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhMapWindow.m -c -o NhMapWindow.o
+NSString+Z.o: ../win/cocoa/iHack/NSString+Z.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NSString+Z.m -c -o NSString+Z.o
+NhMenuWindow.o: ../win/cocoa/iHack/NhMenuWindow.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhMenuWindow.m -c -o NhMenuWindow.o
+NhCommand.o: ../win/cocoa/iHack/NhCommand.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhCommand.m -c -o NhCommand.o
+NhObject.o: ../win/cocoa/iHack/NhObject.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhObject.m -c -o NhObject.o
+NhEventQueue.o: ../win/cocoa/iHack/NhEventQueue.m NetHackCocoa-Swift.h
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhEventQueue.m -c -o NhEventQueue.o
+NhStatusWindow.o: ../win/cocoa/iHack/NhStatusWindow.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhStatusWindow.m -c -o NhStatusWindow.o
+NhInventory.o: ../win/cocoa/iHack/NhInventory.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhInventory.m -c -o NhInventory.o
+NhWindow.o: ../win/cocoa/iHack/NhWindow.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/iHack/NhWindow.m -c -o NhWindow.o
+
+
+WinCocoaAdditions.o: $(WINCOCOASSRC) ../win/cocoa/SwiftBridgeHeader.h $(HACK_H)
+	swiftc -frontend -c -color-diagnostics -primary-file \
+	../win/cocoa/WinCocoaAdditions.swift $(SWIFTFLAGS) \
+	$(filter-out ../win/cocoa/GLHelpers.swift,$(WINCOCOASSRC)) \
+	-emit-module -emit-module-path WinCocoaAdditions-partial.swiftmodule \
+	-o WinCocoaAdditions.o 
+SwiftNetHack\ bridge.o: $(WINCOCOASSRC) ../win/cocoa/SwiftBridgeHeader.h $(HACK_H)
+	swiftc -frontend -c -color-diagnostics -primary-file \
+	../win/cocoa/SwiftNetHack\ bridge.swift $(SWIFTFLAGS) \
+	$(filter-out ../win/cocoa/SwiftNetHack\ bridge.swift,$(WINCOCOASSRC)) \
+	-emit-module -emit-module-path SwiftNetHack\ bridge-partial.swiftmodule \
+	-o SwiftNetHack\ bridge.o 
+NhEvent.o: $(WINCOCOASSRC) ../win/cocoa/SwiftBridgeHeader.h $(HACK_H)
+	swiftc -frontend -c -color-diagnostics -primary-file \
+	../win/cocoa/iHack/NhEvent.swift $(SWIFTFLAGS) \
+	$(filter-out ../win/cocoa/iHack/NhEvent.swift,$(WINCOCOASSRC)) \
+	-emit-module -emit-module-path NhEvent-partial.swiftmodule \
+	-o NhEvent.o 
+TileSet.o: $(WINCOCOASSRC) ../win/cocoa/SwiftBridgeHeader.h $(HACK_H)
+	swiftc -frontend -c -color-diagnostics -primary-file \
+	../win/cocoa/iHack/TileSet.swift $(SWIFTFLAGS) \
+	$(filter-out ../win/cocoa/iHack/TileSet.swift,$(WINCOCOASSRC)) \
+	-emit-module -emit-module-path TileSet-partial.swiftmodule \
+	-o TileSet.o 
+NhTextInputEvent.o: $(WINCOCOASSRC) ../win/cocoa/SwiftBridgeHeader.h $(HACK_H)
+	swiftc -frontend -c -color-diagnostics -primary-file \
+	../win/cocoa/iHack/NhTextInputEvent.swift $(SWIFTFLAGS) \
+	$(filter-out ../win/cocoa/iHack/NhTextInputEvent.swift,$(WINCOCOASSRC)) \
+	-emit-module -emit-module-path NhTextInputEvent-partial.swiftmodule \
+	-o NhTextInputEvent.o 
+ZDirection.o: $(WINCOCOASSRC) ../win/cocoa/SwiftBridgeHeader.h $(HACK_H)
+	swiftc -frontend -c -color-diagnostics -primary-file \
+	../win/cocoa/iHack/ZDirection.swift $(SWIFTFLAGS) \
+	$(filter-out ../win/cocoa/iHack/ZDirection.swift,$(WINCOCOASSRC)) \
+	-emit-module -emit-module-path ZDirection-partial.swiftmodule \
+	-o ZDirection.o
+NhYnQuestion.o: $(WINCOCOASSRC) ../win/cocoa/SwiftBridgeHeader.h $(HACK_H)
+	swiftc -frontend -c -color-diagnostics -primary-file \
+	../win/cocoa/iHack/NhYnQuestion.swift $(SWIFTFLAGS) \
+	$(filter-out ../win/cocoa/iHack/NhYnQuestion.swift,$(WINCOCOASSRC)) \
+	-emit-module -emit-module-path NhYnQuestion-partial.swiftmodule \
+	-o NhYnQuestion.o
+NetHackCocoa.swiftmodule: $(WINCOCOASOBJ)
+	swiftc -frontend -c -color-diagnostics -emit-module $(SWIFTFLAGS) -emit-module-path \
+	NetHackCocoa.swiftmodule $(subst .o,-partial.swiftmodule,$(WINCOCOASOBJ)) -parse-as-library
+CocoaMain.o: ../win/cocoa/main.m
+	$(CC) $(OBJCFLAGS) $(CFLAGS) ../win/cocoa/main.m -c -o CocoaMain.o
+
 # DEPENDENCIES MUST END AT END OF FILE
 # IF YOU PUT STUFF HERE IT WILL GO AWAY
 # see make depend above

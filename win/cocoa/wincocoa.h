@@ -76,6 +76,7 @@ coord CoordMake(xchar i, xchar j);
 #ifdef __OBJC__
 
 @class NhEventQueue;
+@class NSEvent;
 
 @interface WinCocoa : NSObject
 

@@ -65,7 +65,7 @@ CC=gcc
 #
 
 #CFLAGS+=-W -Wimplicit -Wreturn-type -Wunused -Wformat -Wswitch -Wshadow -Wcast-qual -Wwrite-strings -DGCC_WARN
-CFLAGS+=-Wall -Wextra -Wno-missing-field-initializers -Wimplicit -Wreturn-type -Wunused -Wformat -Wswitch -Wshadow -Wwrite-strings -DGCC_WARN -ansi -pedantic
+CFLAGS+=-Wall -Wextra -Wno-missing-field-initializers -Wimplicit -Wreturn-type -Wunused -Wformat -Wswitch -Wshadow -Wwrite-strings -DGCC_WARN -std=gnu99
 # As of LLVM build 2336.1.00, this gives dozens of spurious messages, so
 # leave it out by default.
 #CFLAGS+=-Wunreachable-code
@@ -75,7 +75,7 @@ CFLAGS+=-g -I../include
 # older binaries use NOCLIPPING, but that disables SIGWINCH
 #CFLAGS+=-DNOCLIPPING
 CFLAGS+= -DNOMAIL -DNOTPARMDECL -DHACKDIR=\"$(HACKDIR)\"
-CFLAGS+= -DDEFAULT_WINDOW_SYS=\"$(WANT_DEFAULT)\" -DDLB
+CFLAGS+= -DDEFAULT_WINDOW_SYS=\"$(WANT_DEFAULT)\" -UDLB
 
 CFLAGS+= -DGREPPATH=\"/usr/bin/grep\"
 
@@ -87,6 +87,12 @@ endif
 
 ifdef WANT_WIN_COCOA
 CFLAGS+= -DCOCOA_GRAPHICS
+CFLAGS+= -mmacosx-version-min=10.9
+WINSRC = $(WINCOCOASRC)
+WINOBJ = $(WINCOCOAOBJ)
+WINLIB = -framework Cocoa -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/ \
+-rpath /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/ \
+-rpath @executable_path/../Frameworks 
 endif
 
 ifdef WANT_WIN_TTY

@@ -118,6 +118,8 @@ cocoa_start_screen,
 cocoa_end_screen,
 cocoa_outrip,
 cocoa_preference_update,
+genl_getmsghistory,
+genl_putmsghistory,
 };
 
 
@@ -241,11 +243,11 @@ FILE *cocoa_dlb_fopen(const char *filename, const char *mode)
 void intron() {}
 void introff() {}
 
-int dosuspend()
-{
-	NSLog(@"dosuspend");
-	return 0;
-}
+//int dosuspend()
+//{
+//	NSLog(@"dosuspend");
+//	return 0;
+//}
 
 void error(const char *s, ...)
 {
@@ -407,6 +409,9 @@ void cocoa_putstr(winid wid, int attr, const char *text) {
 		wid = BASE_WINDOW;
 	}
 	// normal output to a window
+	if (![WinCocoa windowForWindowID:wid]) {
+		NSLog(@"%s", text);
+	}
 	[[WinCocoa windowForWindowID: wid] print:text attr:attr];
 	if (wid == WIN_MESSAGE || wid == BASE_WINDOW) {
 		[[MainWindowController instance] refreshMessages];
@@ -538,7 +543,8 @@ void cocoa_raw_print(const char *str)
 void cocoa_raw_print_bold(const char *str)
 {
 	//NSLog(@"raw_print_bold %s", str);
-	cocoa_raw_print(str);
+	cocoa_putstr(NHW_MESSAGE, ATR_BOLD, str);
+	//cocoa_raw_print(str);
 }
 
 int cocoa_nhgetch()

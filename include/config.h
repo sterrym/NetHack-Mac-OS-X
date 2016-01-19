@@ -52,11 +52,6 @@
 /* #define GNOME_GRAPHICS */ /* Gnome interface */
 /* #define MSWIN_GRAPHICS */ /* Windows NT, CE, Graphics */
 
-#if TARGET_OS_MAC
-#undef TTY_GRAPHICS
-#define COCOA_GRAPHICS
-#endif /* TARGET_OS_MAC */
-
 /*
  * Define the default window system.  This should be one that is compiled
  * into your system (see defines above).  Known window systems are:
