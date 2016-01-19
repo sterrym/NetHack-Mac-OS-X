@@ -6,8 +6,21 @@
 //
 //
 
-import Cocoa
+//  This file is part of NetHackCocoa.
+//
+//  iNetHack is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, version 2 of the License only.
+//
+//  iNetHack is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with iNetHack.  If not, see <http://www.gnu.org/licenses/>.
 
+import Cocoa
 
 
 final class TileSet: NSObject {
@@ -48,7 +61,7 @@ final class TileSet: NSObject {
 	
 	var imageSize: NSSize {
 		var size = tileSize
-		if ( size.width > 32.0 || size.height > 32.0 ) {
+		if size.width > 32.0 || size.height > 32.0 {
 			// since these images are used in menus we want to scale them down
 			var m = size.width > size.height ? size.width : size.height;
 			m = 32.0 / m;

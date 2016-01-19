@@ -213,11 +213,9 @@
 		021282CF14F6E6240046D56F /* NhObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0F11B8A73300FC2199 /* NhObject.m */; };
 		021282D014F6E6240046D56F /* NhStatusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1111B8A73300FC2199 /* NhStatusWindow.m */; };
 		021282D214F6E6240046D56F /* NhWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1511B8A73300FC2199 /* NhWindow.m */; };
-		021282D314F6E6240046D56F /* NhYnQuestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1711B8A73300FC2199 /* NhYnQuestion.m */; };
 		021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		021282D614F6E6240046D56F /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
-		021282D814F6E6240046D56F /* ZDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB2111B8A73300FC2199 /* ZDirection.m */; };
 		021282D914F6E6240046D56F /* allmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CC5B11B8A92500FC2199 /* allmain.c */; };
 		021282DA14F6E6240046D56F /* alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CC5C11B8A92500FC2199 /* alloc.c */; };
 		021282DB14F6E6240046D56F /* apply.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CC5D11B8A92500FC2199 /* apply.c */; };
@@ -360,11 +358,9 @@
 		0224CB2B11B8A73300FC2199 /* NhObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB0F11B8A73300FC2199 /* NhObject.m */; };
 		0224CB2C11B8A73300FC2199 /* NhStatusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1111B8A73300FC2199 /* NhStatusWindow.m */; };
 		0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1511B8A73300FC2199 /* NhWindow.m */; };
-		0224CB2F11B8A73300FC2199 /* NhYnQuestion.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1711B8A73300FC2199 /* NhYnQuestion.m */; };
 		0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
-		0224CB3411B8A73300FC2199 /* ZDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB2111B8A73300FC2199 /* ZDirection.m */; };
 		0224CBA911B8A7BE00FC2199 /* Arch.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7B11B8A7BE00FC2199 /* Arch.des */; };
 		0224CBAA11B8A7BE00FC2199 /* Barb.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7C11B8A7BE00FC2199 /* Barb.des */; };
 		0224CBAB11B8A7BE00FC2199 /* bigroom.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7D11B8A7BE00FC2199 /* bigroom.des */; };
@@ -652,6 +648,8 @@
 		02447C5D11B8C821008CB9C7 /* wizard3.lev in Resources */ = {isa = PBXBuildFile; fileRef = 02447BEB11B8C821008CB9C7 /* wizard3.lev */; };
 		028E8B3319FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		028E8B3419FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
+		5519D0AD1C264E0E001654FD /* NhYnQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */; };
+		5519D0AE1C264E0E001654FD /* NhYnQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */; };
 		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		555B7B611C18C19A00A24D24 /* bogusmon in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B601C18C19A00A24D24 /* bogusmon */; };
 		555B7B621C18C19A00A24D24 /* bogusmon in Resources */ = {isa = PBXBuildFile; fileRef = 555B7B601C18C19A00A24D24 /* bogusmon */; };
@@ -668,7 +666,6 @@
 		5571199E1BD8203500959CD5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5571199C1BD8203500959CD5 /* MainMenu.xib */; };
 		557119A91BD8203500959CD5 /* RecoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119A81BD8203500959CD5 /* RecoverTests.swift */; };
 		557119B41BD8203500959CD5 /* RecoverUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119B31BD8203500959CD5 /* RecoverUITests.swift */; };
-		557119C21BD8205F00959CD5 /* recover.c in Sources */ = {isa = PBXBuildFile; fileRef = 557119C01BD8205F00959CD5 /* recover.c */; };
 		5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
 		559CDEE21BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; };
 		559CDEE31BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; };
@@ -678,8 +675,11 @@
 		559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; };
 		559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
 		559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
+		55A9A44C1C2CA62700A0023E /* ZDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F515011B77FD4600DEC8F5 /* ZDirection.swift */; };
+		55A9A44D1C2CA62800A0023E /* ZDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F515011B77FD4600DEC8F5 /* ZDirection.swift */; };
 		55DDEAA01C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
 		55DDEAA11C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
+		55DDEAA41C1A1853001F944B /* SaveRecoveryOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */; };
 		55E6B4881BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; };
 		55E6B4891BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; };
 		55E6B48B1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; };
@@ -781,16 +781,12 @@
 		0224CB1111B8A73300FC2199 /* NhStatusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhStatusWindow.m; sourceTree = "<group>"; };
 		0224CB1411B8A73300FC2199 /* NhWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhWindow.h; sourceTree = "<group>"; };
 		0224CB1511B8A73300FC2199 /* NhWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhWindow.m; sourceTree = "<group>"; };
-		0224CB1611B8A73300FC2199 /* NhYnQuestion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NhYnQuestion.h; sourceTree = "<group>"; };
-		0224CB1711B8A73300FC2199 /* NhYnQuestion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NhYnQuestion.m; sourceTree = "<group>"; };
 		0224CB1811B8A73300FC2199 /* NSIndexPath+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexPath+Z.h"; sourceTree = "<group>"; };
 		0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexPath+Z.m"; sourceTree = "<group>"; };
 		0224CB1A11B8A73300FC2199 /* NSString+NetHack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NetHack.h"; sourceTree = "<group>"; };
 		0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NetHack.m"; sourceTree = "<group>"; };
 		0224CB1C11B8A73300FC2199 /* NSString+Z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Z.h"; sourceTree = "<group>"; };
 		0224CB1D11B8A73300FC2199 /* NSString+Z.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Z.m"; sourceTree = "<group>"; };
-		0224CB2011B8A73300FC2199 /* ZDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZDirection.h; sourceTree = "<group>"; };
-		0224CB2111B8A73300FC2199 /* ZDirection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZDirection.m; sourceTree = "<group>"; };
 		0224CB7B11B8A7BE00FC2199 /* Arch.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Arch.des; sourceTree = "<group>"; };
 		0224CB7C11B8A7BE00FC2199 /* Barb.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Barb.des; sourceTree = "<group>"; };
 		0224CB7D11B8A7BE00FC2199 /* bigroom.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bigroom.des; sourceTree = "<group>"; };
@@ -1176,6 +1172,7 @@
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhYnQuestion.swift; sourceTree = "<group>"; };
 		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		555B7B601C18C19A00A24D24 /* bogusmon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bogusmon; sourceTree = "<group>"; };
 		555B7B631C18C1B700A24D24 /* engrave */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = engrave; sourceTree = "<group>"; };
@@ -1199,8 +1196,6 @@
 		557119B31BD8203500959CD5 /* RecoverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverUITests.swift; sourceTree = "<group>"; };
 		557119B51BD8203500959CD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		557119BF1BD8205F00959CD5 /* Recover-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Recover-Bridging-Header.h"; sourceTree = "<group>"; };
-		557119C01BD8205F00959CD5 /* recover.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recover.c; sourceTree = "<group>"; };
-		557119C11BD8205F00959CD5 /* recover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = recover.h; sourceTree = "<group>"; };
 		559CDEE11BC1A4C5008ED534 /* nextstep10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nextstep10.png; sourceTree = "<group>"; };
 		559CDEE41BC1A53E008ED534 /* dawnhack32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dawnhack32.png; sourceTree = "<group>"; };
 		559CDEE51BC1A53E008ED534 /* nevanda32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32.png; sourceTree = "<group>"; };
@@ -1209,6 +1204,8 @@
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
 		55BF8C6F1B77BEF10031A45A /* compat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = compat.m; sourceTree = "<group>"; };
 		55DDEA9F1C19084E001F944B /* tiles16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tiles16.png; sourceTree = "<group>"; };
+		55DDEAA21C1A1853001F944B /* SaveRecoveryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveRecoveryOperation.h; sourceTree = "<group>"; };
+		55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveRecoveryOperation.m; sourceTree = "<group>"; };
 		55E6B4871BC1D94000E8125A /* NhEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhEvent.swift; sourceTree = "<group>"; };
 		55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhTextInputEvent.swift; sourceTree = "<group>"; };
 		55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftNetHack bridge.swift"; sourceTree = "<group>"; };
@@ -1872,8 +1869,7 @@
 				55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */,
 				0224CB1411B8A73300FC2199 /* NhWindow.h */,
 				0224CB1511B8A73300FC2199 /* NhWindow.m */,
-				0224CB1611B8A73300FC2199 /* NhYnQuestion.h */,
-				0224CB1711B8A73300FC2199 /* NhYnQuestion.m */,
+				5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */,
 				0224CB1811B8A73300FC2199 /* NSIndexPath+Z.h */,
 				0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */,
 				0224CB1A11B8A73300FC2199 /* NSString+NetHack.h */,
@@ -1881,8 +1877,7 @@
 				0224CB1C11B8A73300FC2199 /* NSString+Z.h */,
 				0224CB1D11B8A73300FC2199 /* NSString+Z.m */,
 				55F516591B7831C700DEC8F5 /* TileSet.swift */,
-				0224CB2011B8A73300FC2199 /* ZDirection.h */,
-				0224CB2111B8A73300FC2199 /* ZDirection.m */,
+				55F515011B77FD4600DEC8F5 /* ZDirection.swift */,
 			);
 			path = iHack;
 			sourceTree = SOURCE_ROOT;
@@ -1911,8 +1906,8 @@
 			isa = PBXGroup;
 			children = (
 				557119BF1BD8205F00959CD5 /* Recover-Bridging-Header.h */,
-				557119C11BD8205F00959CD5 /* recover.h */,
-				557119C01BD8205F00959CD5 /* recover.c */,
+				55DDEAA21C1A1853001F944B /* SaveRecoveryOperation.h */,
+				55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */,
 				557119981BD8203500959CD5 /* AppDelegate.swift */,
 				5571199A1BD8203500959CD5 /* Assets.xcassets */,
 				5571199C1BD8203500959CD5 /* MainMenu.xib */,
@@ -1955,7 +1950,6 @@
 				55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */,
 				55F514F81B77F14400DEC8F5 /* NhObject.swift */,
 				55F514FA1B77F69D00DEC8F5 /* NhItemGroup.swift */,
-				55F515011B77FD4600DEC8F5 /* ZDirection.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -2563,12 +2557,10 @@
 				021282CF14F6E6240046D56F /* NhObject.m in Sources */,
 				021282D014F6E6240046D56F /* NhStatusWindow.m in Sources */,
 				021282D214F6E6240046D56F /* NhWindow.m in Sources */,
-				021282D314F6E6240046D56F /* NhYnQuestion.m in Sources */,
 				021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */,
 				555B7B741C18D00100A24D24 /* sys.c in Sources */,
 				021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */,
 				021282D614F6E6240046D56F /* NSString+Z.m in Sources */,
-				021282D814F6E6240046D56F /* ZDirection.m in Sources */,
 				021282D914F6E6240046D56F /* allmain.c in Sources */,
 				021282DA14F6E6240046D56F /* alloc.c in Sources */,
 				021282DB14F6E6240046D56F /* apply.c in Sources */,
@@ -2627,6 +2619,7 @@
 				0212830C14F6E6240046D56F /* monmove.c in Sources */,
 				0212830D14F6E6240046D56F /* monst.c in Sources */,
 				0212830E14F6E6240046D56F /* monstr.c in Sources */,
+				55A9A44D1C2CA62800A0023E /* ZDirection.swift in Sources */,
 				0212830F14F6E6240046D56F /* mplayer.c in Sources */,
 				0212831014F6E6240046D56F /* mthrowu.c in Sources */,
 				0212831114F6E6240046D56F /* muse.c in Sources */,
@@ -2637,6 +2630,7 @@
 				0212831614F6E6240046D56F /* options.c in Sources */,
 				0212831714F6E6240046D56F /* pager.c in Sources */,
 				0212831814F6E6240046D56F /* pickup.c in Sources */,
+				5519D0AE1C264E0E001654FD /* NhYnQuestion.swift in Sources */,
 				0212831914F6E6240046D56F /* pline.c in Sources */,
 				0212831A14F6E6240046D56F /* polyself.c in Sources */,
 				0212831B14F6E6240046D56F /* potion.c in Sources */,
@@ -2693,8 +2687,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				557119C21BD8205F00959CD5 /* recover.c in Sources */,
 				557119991BD8203500959CD5 /* AppDelegate.swift in Sources */,
+				55DDEAA41C1A1853001F944B /* SaveRecoveryOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2749,12 +2743,10 @@
 				0224CB2B11B8A73300FC2199 /* NhObject.m in Sources */,
 				0224CB2C11B8A73300FC2199 /* NhStatusWindow.m in Sources */,
 				0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */,
-				0224CB2F11B8A73300FC2199 /* NhYnQuestion.m in Sources */,
 				0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */,
 				555B7B731C18D00100A24D24 /* sys.c in Sources */,
 				0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */,
 				0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */,
-				0224CB3411B8A73300FC2199 /* ZDirection.m in Sources */,
 				0224CDC211B8A92600FC2199 /* allmain.c in Sources */,
 				0224CDC311B8A92600FC2199 /* alloc.c in Sources */,
 				0224CDC411B8A92600FC2199 /* apply.c in Sources */,
@@ -2813,6 +2805,7 @@
 				0224CDF711B8A92600FC2199 /* monmove.c in Sources */,
 				0224CDF811B8A92600FC2199 /* monst.c in Sources */,
 				0224CDF911B8A92600FC2199 /* monstr.c in Sources */,
+				55A9A44C1C2CA62700A0023E /* ZDirection.swift in Sources */,
 				0224CDFA11B8A92600FC2199 /* mplayer.c in Sources */,
 				0224CDFB11B8A92600FC2199 /* mthrowu.c in Sources */,
 				0224CDFC11B8A92600FC2199 /* muse.c in Sources */,
@@ -2823,6 +2816,7 @@
 				0224CE0111B8A92600FC2199 /* options.c in Sources */,
 				0224CE0211B8A92600FC2199 /* pager.c in Sources */,
 				0224CE0311B8A92600FC2199 /* pickup.c in Sources */,
+				5519D0AD1C264E0E001654FD /* NhYnQuestion.swift in Sources */,
 				0224CE0411B8A92600FC2199 /* pline.c in Sources */,
 				0224CE0511B8A92600FC2199 /* polyself.c in Sources */,
 				0224CE0611B8A92600FC2199 /* potion.c in Sources */,
@@ -2982,6 +2976,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "NetHackCocoa-Swift.h";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Debug;
 		};
@@ -3013,6 +3008,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "NetHackCocoa-Swift.h";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Release;
 		};
@@ -3168,6 +3164,7 @@
 				PRODUCT_NAME = NetHackCocoa;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Debug;
 		};
@@ -3197,6 +3194,7 @@
 				PRODUCT_NAME = NetHackCocoa;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Release;
 		};

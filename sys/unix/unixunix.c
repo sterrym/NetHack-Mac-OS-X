@@ -162,27 +162,28 @@ getlock()
         (void) close(fd);
 
 #ifdef COCOA_GRAPHICS
-        char c = yn("There are files from a game in progress. Recover?");
-        if (c != 'y' && c != 'Y') {
-            int fail = unlink(lock);
-            if (!fail) {
-                // iphone_remove_stale_files();
-                fd = open(lock, O_RDWR | O_EXCL | O_CREAT, 0644);
-                delete_savefile();
-            } else {
-                panic("Failed to unlink %s", lock);
-            }
-        } else {
-            // Try to recover
-            if(!recover_savefile()) {
-                unlock_file(HLOCK);
-                (void)unlink(lock);
-                error("Couldn't recover old game.");
-            } else {
-                set_levelfile_name(lock, 0);
-                fd = open(fq_lock, O_RDWR | O_EXCL | O_CREAT, 0644);
-            }
-        }
+		char c = yn("There are files from a game in progress. Recover?");
+		if (c != 'y' && c != 'Y') {
+			int fail = unlink(lock);
+			if (!fail) {
+				// iphone_remove_stale_files();
+				fd = open(lock, O_RDWR | O_EXCL | O_CREAT, 0644);
+				delete_savefile();
+			} else {
+				panic("Failed to unlink %s", lock);
+			}
+		} else {
+			// Try to recover
+			// TODO: use our own recovery app.
+			if(!recover_savefile()) {
+				unlock_file(HLOCK);
+				int fail = unlink(lock);
+				error("Couldn't recover old game.");
+			} else {
+				set_levelfile_name(lock, 0);
+				fd = open(fq_lock, O_RDWR | O_EXCL | O_CREAT, 0644);
+			}
+		}
 #else
         if (iflags.window_inited) {
             c = yn("There is already a game in progress under your name.  "

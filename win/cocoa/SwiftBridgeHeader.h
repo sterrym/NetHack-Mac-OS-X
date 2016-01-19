@@ -9,6 +9,8 @@
 #ifndef SwiftBridgeHeader_h
 #define SwiftBridgeHeader_h
 
+#define NHSTDC
+
 #import <objc/objc.h>
 #include "hack.h"
 #include "Inventory.h"
@@ -38,10 +40,9 @@ static inline int SwiftObjToGlyph(struct obj *object)
 	return obj_to_glyph(object);
 }
 
-extern short glyph2tile[];
-
 static inline int glyphToTile(int glyph)
 {
+	extern short glyph2tile[];
 	return glyph2tile[glyph];
 }
 

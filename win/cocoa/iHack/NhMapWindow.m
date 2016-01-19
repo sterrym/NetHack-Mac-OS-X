@@ -35,7 +35,7 @@ static const int aNoGlyph = kNoGlyph;
 
 - (instancetype) initWithType:(int)t {
 	if (self = [super initWithType:t]) {
-		NSLog(@"map window %lx", self);
+		NSLog(@"map window %p", self);
 		size_t numBytes = COLNO * ROWNO * sizeof(int);
 		glyphs = malloc(numBytes);
 		memset_pattern4(glyphs, &aNoGlyph, numBytes);

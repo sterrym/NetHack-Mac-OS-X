@@ -369,7 +369,7 @@ NSStringEncoding	codepage437encoding;
 		tooltipTimer = nil;
 	}
 	if ( tooltipWindow ) {
-		[tooltipWindow close];	// automatically released when closed
+		[tooltipWindow close];
 		tooltipWindow = nil;
 	}
 }
@@ -446,8 +446,7 @@ static NSString * DescriptionForTile( int x, int y )
 		
 		pt = [self convertPoint:pt toView:nil];
 		pt = [self.window convertRectToScreen:NSMakeRect(pt.x, pt.y, 0, 0)].origin;
-		//tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
-		NSLog(@"ToolTip text: %@, location: %@", text, NSStringFromPoint(pt));
+		tooltipWindow = [[TooltipWindow alloc] initWithText:text location:pt];
 	}
 #endif
 }
@@ -478,9 +477,7 @@ static NSString * DescriptionForTile( int x, int y )
 - (void) boundsDidChangeNotification:(NSNotification *)notification
 {
 	// not sure if we can do this synchronously...
-	//dispatch_async(dispatch_get_main_queue(), ^{
-		[self cliparoundHero];
-	//});
+	[self performSelector:@selector(cliparoundHero) withObject:nil afterDelay:0.0];
 }
 
 

@@ -28,7 +28,6 @@
 #include "hack.h"
 
 @interface NhItem : NhObject {
-	
 	ANY_P identifier;
 	int amount;
 	int maxAmount;

@@ -24,17 +24,17 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NhWindow : NSObject <NSLocking> {
-	int type;
 	NSMutableArray *lines;
 	NSLock *lock;
 	NSString *lineDelimiter;
-	BOOL blocking;
 }
 
-@property (weak, nonatomic, readonly) NSString *text;
-@property (weak, nonatomic, readonly) NSAttributedString *attributedText;
-@property (weak, nonatomic, readonly) NSArray *messages;
+@property (weak, nonatomic, readonly, null_unspecified) NSString *text;
+@property (weak, nonatomic, readonly, null_unspecified) NSAttributedString *attributedText;
+@property (copy, nonatomic, readonly) NSArray *messages;
 @property (nonatomic, readonly) int type;
 @property (nonatomic, getter=isBlocking) BOOL blocking;
 
@@ -50,3 +50,5 @@
 - (id)messageAtRow:(NSInteger)row;
 
 @end
+
+NS_ASSUME_NONNULL_END

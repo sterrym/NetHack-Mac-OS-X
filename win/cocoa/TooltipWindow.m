@@ -67,7 +67,7 @@
 		self.contentView = view;
 		[self setOpaque:YES];
 		[self setHasShadow:YES];
-		[self setReleasedWhenClosed:YES];
+		[self setReleasedWhenClosed:NO];
 		[self orderFront:nil];
 	}
 	return self;

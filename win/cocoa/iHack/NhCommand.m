@@ -45,7 +45,7 @@
 	}
 }
 
-typedef NS_ENUM(unsigned int, InvFlags) {
+typedef NS_OPTIONS(unsigned int, InvFlags) {
 	fWieldedWeapon = 1,
 	fWand = 2,
 	fReadable = 4,
@@ -275,6 +275,9 @@ typedef NS_ENUM(unsigned int, InvFlags) {
 }
 
 - (BOOL)isEqual:(id)anObject {
+	if (![anObject isKindOfClass:[NhCommand class]]) {
+		return NO;
+	}
 	NhCommand *cmd = (NhCommand *)anObject;
 	if (!strcmp(self.keys, cmd.keys)) {
 		return YES;
