@@ -24,13 +24,16 @@
 
 #import "TooltipWindow.h"
 
+@interface NSColor (privateToolTipColor)
++ (NSColor*)toolTipColor;
+@end
 
 @implementation TooltipWindow
 
 -(instancetype)initWithText:(NSString *)text location:(NSPoint)point
 {
 	NSTextField * view = [[NSTextField alloc] initWithFrame:NSMakeRect(point.x, point.y, 10, 10)];
-	NSColor * bgColor = [NSColor colorWithDeviceRed:1.0 green:1.0 blue:202/255.0 alpha:1.0];
+	NSColor * bgColor = [NSColor toolTipColor];
 	
 	view.stringValue = text;
 	[view setBordered:YES];
@@ -43,26 +46,25 @@
 	// make sure it doesn't go off the screen
 	NSRect viewRect = view.frame;
 	NSRect screenRect = [NSScreen mainScreen].visibleFrame;
-	if ( viewRect.origin.x + viewRect.size.width > screenRect.origin.x + screenRect.size.width ) {
+	if (viewRect.origin.x + viewRect.size.width > screenRect.origin.x + screenRect.size.width) {
 		// falls off right side
 		viewRect.origin.x = screenRect.origin.x + screenRect.size.width - viewRect.size.width;
 	}
-	if ( viewRect.origin.y + viewRect.size.height > screenRect.origin.y + screenRect.size.height ) {
+	if (viewRect.origin.y + viewRect.size.height > screenRect.origin.y + screenRect.size.height) {
 		// off top
 		viewRect.origin.y = screenRect.origin.y + screenRect.size.height - viewRect.size.height;
 	}
-	if ( viewRect.origin.y < screenRect.origin.y ) {
+	if (viewRect.origin.y < screenRect.origin.y) {
 		// off bottom
 		viewRect.origin.y = screenRect.origin.y;
 	}
-	if ( viewRect.origin.x < screenRect.origin.x ) {
+	if (viewRect.origin.x < screenRect.origin.x) {
 		// off left
 		viewRect.origin.x = screenRect.origin.x;
 	}
 	view.frame = viewRect;
 	
-	
-	if ( self = [super initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES] ) {
+	if (self = [super initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]) {
 		self.delegate = self;
 		self.contentView = view;
 		[self setOpaque:YES];

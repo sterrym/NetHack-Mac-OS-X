@@ -81,10 +81,7 @@ var NUMBER_OF_TILES_ROW: Int {
 */
 
 @noreturn func panic(str: String) {
-	fputs(" ERROR:  ", stderr)
-	fputs(str, stderr)
-	fflush(stderr)
-	abort() /* generate core dump */
+	Swift_panic(str)
 }
 
 var HSee_invisible: Int {

@@ -647,7 +647,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 			}
 		} else {
 			NSString * text = w.text;
-			if ( text.length ) {
+			if (text.length) {
 				[MessageWindowController messageWindowWithText:text];
 			}
 		}

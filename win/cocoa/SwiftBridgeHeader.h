@@ -34,6 +34,11 @@ static inline BOOL Swift_Invis() {
 
 #import "NhWindow.h"
 
+static inline void Swift_panic(const char* str) NORETURN;
+static inline void Swift_panic(const char* str)
+{
+	panic("%s", str);
+}
 
 static inline int SwiftObjToGlyph(struct obj *object)
 {

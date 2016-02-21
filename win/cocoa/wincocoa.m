@@ -49,6 +49,8 @@
 #include <TargetConditionals.h>
 #endif
 
+#include "SwiftBridgeHeader.h"
+
 #import "NetHackCocoa-Swift.h"
 
 // mainly for tty port implementation
@@ -623,8 +625,8 @@ char cocoa_yn_function(const char *question, const char *choices, CHAR_P def)
 			"ynq",
 			"rl",
 		};
-		for ( int i = 0; i < sizeof yesNo/sizeof yesNo[0]; ++i ) {
-			if ( strcmp( choices, yesNo[i] ) == 0 ) {
+		for (int i = 0; i < sizeof yesNo/sizeof yesNo[0]; ++i) {
+			if (strcmp(choices, yesNo[i]) == 0) {
 				NhYnQuestion * q = [[NhYnQuestion alloc] initWithQuestion:question choices:choices defaultChoice:def];
 				[[MainWindowController instance] showYnQuestion:q];
 				NhEvent * e = [[NhEventQueue instance] nextEvent];
