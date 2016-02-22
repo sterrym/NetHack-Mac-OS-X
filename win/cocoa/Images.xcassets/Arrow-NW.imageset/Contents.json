@@ -2,8 +2,8 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "Arrow-NW.png"
+      "filename" : "Arrow-NW.png",
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
