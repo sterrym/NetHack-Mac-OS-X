@@ -1090,3 +1090,37 @@ void cocoa_player_selection()
 	cocoa_display_nhwindow(BASE_WINDOW, FALSE);
 #endif
 }
+
+#pragma mark recovery app
+extern void app_recover(const char* path);
+void app_recover(const char* path)
+{
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSURL *url = [[NSBundle mainBundle] URLForResource:@"Recover" withExtension:@"app"];
+	if (url == nil) {
+		unlock_file(HLOCK);
+		(void)unlink(lock);
+		error("Couldn't find recovery app.");
+		return;
+	}
+	
+	NSString *filePath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:path length:strlen(path)] stringByStandardizingPath];
+	@autoreleasepool {
+		NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+		NSURL *aURL;
+		if ((aURL = [fileURL fileReferenceURL])) {
+			fileURL = aURL;
+		}
+		filePath = [fileURL path];
+	}
+	
+	NSError *error = nil;
+	NSArray *arguments = @[filePath];
+	NSRunningApplication *recoverApp = [workspace launchApplicationAtURL:url options:0 configuration:[NSDictionary dictionaryWithObject:arguments forKey:NSWorkspaceLaunchConfigurationArguments] error:&error];
+	if (!recoverApp) {
+		[[NSAlert alertWithError:error] runModal];
+		return;
+	}
+	
+	exit(EXIT_SUCCESS);
+}

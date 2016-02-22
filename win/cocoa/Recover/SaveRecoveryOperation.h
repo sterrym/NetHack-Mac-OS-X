@@ -21,6 +21,7 @@ typedef NS_ENUM(NSInteger, NHRecoveryErrors) {
 	NHRecoveryErrorCannotOpenLevel,
 	NHRecoveryErrorWriting,
 	NHRecoveryErrorFileCopy,
+	NHRecoveryErrorHostBundleNotFound,
 	NHRecoveryErrorUnknown
 };
 

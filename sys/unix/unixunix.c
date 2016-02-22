@@ -174,15 +174,8 @@ getlock()
 			}
 		} else {
 			// Try to recover
-			// TODO: use our own recovery app.
-			if(!recover_savefile()) {
-				unlock_file(HLOCK);
-				int fail = unlink(lock);
-				error("Couldn't recover old game.");
-			} else {
-				set_levelfile_name(lock, 0);
-				fd = open(fq_lock, O_RDWR | O_EXCL | O_CREAT, 0644);
-			}
+            extern void app_recover(const char* path);
+            app_recover(lock);
 		}
 #else
         if (iflags.window_inited) {

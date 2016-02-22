@@ -8,17 +8,27 @@
 
 import Cocoa
 
-enum ConversionErrors: ErrorType {
-	case HostBundleNotFound
-	case RecoveryFailed
+extension NHRecoveryErrors: ErrorType {
+	public var _domain: String {
+		return NHRecoveryErrorDomain
+	}
+	
+	public var _code: Int {
+		return rawValue
+	}
 }
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 	@IBOutlet weak var window: NSWindow!
 	@IBOutlet weak var progress: NSProgressIndicator!
+	private var failedNums = 0
+	private var succeededNums = 0
+	dynamic private(set) var countNums = 0
 	
-	private var errorToReport: ConversionErrors?
+	private var recoveryErrors = [NSURL: NSError]()
+	
+	private var errorToReport: NHRecoveryErrors?
 	private let opQueue: NSOperationQueue = {
 		let aQueue = NSOperationQueue()
 		
@@ -26,8 +36,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		
 		if #available(OSX 10.10, *) {
 		    aQueue.qualityOfService = .UserInitiated
-		} else {
-		    // Fallback on earlier versions
 		}
 		
 		return aQueue
@@ -42,18 +50,85 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 			} catch let error as NSError {
 				let anAlert = NSAlert(error: error)
 				
+				anAlert.informativeText += "\n\nRecovery will now close."
+				
 				anAlert.runModal()
-				//NSApp.terminate(nil)
+				NSApp.terminate(nil)
 			}
 		}
+		
+		progress.startAnimation(nil)
 	}
 	
 	func addURL(url: NSURL) {
 		let saveRecover = SaveRecoveryOperation(saveFileURL: url)
 		
+		saveRecover.completionBlock = {
+			dispatch_async(dispatch_get_main_queue(), { () -> Void in
+				if saveRecover.success {
+					self.succeededNums += 1
+				} else {
+					self.failedNums += 1
+					self.recoveryErrors[url] = saveRecover.error!
+				}
+				if self.countNums == self.succeededNums + self.failedNums {
+					// we're done
+					
+					let alert = NSAlert()
+					alert.addButtonWithTitle("Relaunch NetHack")
+					
+					if self.failedNums != 0 {
+						alert.alertStyle = .WarningAlertStyle
+						alert.messageText = "Recovery unsuccessful"
+						alert.informativeText = "\(self.failedNums) file\(self.failedNums > 1 ? "s were" : " was") not successfully recovered."
+						alert.addButtonWithTitle("Quit")
+						alert.addButtonWithTitle("Show Errors")
+					} else {
+						alert.alertStyle = .InformationalAlertStyle
+						alert.messageText = "Recovery successful"
+						alert.informativeText = "\(self.succeededNums) file\(self.succeededNums > 1 ? "s were" : " was") successfully recovered."
+					}
+					
+					alert.beginSheetModalForWindow(self.window, completionHandler: { (response) -> Void in
+						let workspace = NSWorkspace.sharedWorkspace()
+						let parentBundleURL: NSURL = {
+							let selfBundleURL = NSBundle.mainBundle().bundleURL
+							return selfBundleURL.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!
+						}()
+
+						switch response {
+						case NSAlertFirstButtonReturn:
+							do {
+								try workspace.launchApplicationAtURL(parentBundleURL, options: .Default, configuration: [:])
+								NSApp.terminate(nil)
+							} catch _ {
+								NSBeep()
+								exit(EXIT_FAILURE)
+							}
+							
+						case NSAlertSecondButtonReturn:
+							NSApp.terminate(nil)
+							
+						case NSAlertThirdButtonReturn:
+							self.showErrorList()
+							
+						default:
+							NSBeep()
+							exit(EXIT_FAILURE)
+						}
+					})
+				}
+			})
+		}
+		
 		opQueue.addOperation(saveRecover)
+		countNums += 1
 	}
 
+	func showErrorList() {
+		
+	}
+	
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
 		// Insert code here to initialize your application
 		let selfBundleURL = NSBundle.mainBundle().bundleURL

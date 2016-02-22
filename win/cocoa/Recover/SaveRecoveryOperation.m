@@ -22,11 +22,9 @@
 NSString * const NHRecoveryErrorDomain = @"net.hack.cocoa.recover.error";
 
 @interface SaveRecoveryOperation ()
-
 - (void)setLevelFileName:(int)lev;
 - (int)openLevelFile:(int)lev;
 - (int)createSaveFile;
-
 @end
 
 #define set_levelfile_name(first) [self setLevelFileName: first ]
@@ -35,7 +33,6 @@ NSString * const NHRecoveryErrorDomain = @"net.hack.cocoa.recover.error";
 static BOOL copy_bytes(int ifd, int ofd);
 
 #define Fprintf	(void)fprintf
-
 #define Close	(void)close
 
 #ifdef UNIX
@@ -58,6 +55,39 @@ static BOOL copy_bytes(int ifd, int ofd);
 	char *savename;
 	char *lock;
 	NSURL *baseURL;
+}
+
++ (void)initialize
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		if ([NSError respondsToSelector:@selector(setUserInfoValueProviderForDomain:provider:)]) {
+			[NSError setUserInfoValueProviderForDomain:NHRecoveryErrorDomain provider:^id _Nullable(NSError * _Nonnull err, NSString * _Nonnull userInfoKey) {
+				
+				if ([userInfoKey isEqualToString:NSLocalizedFailureReasonErrorKey]) {
+					if (err.code == NHRecoveryErrorHostBundleNotFound) {
+						return @"The recovery app wasn't in Cocoa NetHack's resource directory.";
+					}
+				}
+				
+				if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+					switch (err.code) {
+						case NHRecoveryErrorHostBundleNotFound:
+							return @"The NetHack Cocoa application could not be found";
+							break;
+							
+						case NHRecoveryErrorFileCopy:
+							return @"Error copying data";
+							break;
+							
+						default:
+							break;
+					}
+				}
+				return nil;
+			}];
+		}
+	});
 }
 
 - (instancetype)init
@@ -110,9 +140,9 @@ static BOOL copy_bytes(int ifd, int ofd);
 		return;
 	}
 	if (read(gfd, (genericptr_t) &hpid, sizeof hpid) != sizeof hpid) {
-		errStr = [[NSString alloc] initWithFormat:@"%s\n%s%s%s",
-				"Checkpoint data incompletely written or subsequently clobbered;",
-				"recovery for \"", basename, "\" impossible."];
+		errStr = [[NSString alloc] initWithFormat:@"Checkpoint data incompletely "
+				  "written or subsequently clobbered;\n"
+				  "recovery for \"%s\" impossible.", basename];
 		_error = [[NSError alloc] initWithDomain:NHRecoveryErrorDomain code:NHRecoveryErrorIncompleteCheckpointData userInfo:@{NSLocalizedDescriptionKey: errStr}];
 
 		Close(gfd);
@@ -222,7 +252,8 @@ static BOOL copy_bytes(int ifd, int ofd);
 	char *tf;
 	
 	tf = rindex(lock, '.');
-	if (!tf) tf = lock + strlen(lock);
+	if (!tf)
+		tf = lock + strlen(lock);
 	(void) sprintf(tf, ".%d", lev);
 }
 
@@ -238,12 +269,9 @@ static BOOL copy_bytes(int ifd, int ofd);
 - (int)createSaveFile
 {
 	int fd;
-	
 	fd = creat(savename, FCMASK);
-	
 	return fd;
 }
-
 
 @end
 
