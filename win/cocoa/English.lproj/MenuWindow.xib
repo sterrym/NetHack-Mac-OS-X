@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MenuWindowController">
@@ -27,11 +27,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6">
-                        <rect key="frame" x="192" y="13" width="96" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="84" id="94i-nd-VI8"/>
-                        </constraints>
-                        <animations/>
+                        <rect key="frame" x="218" y="13" width="83" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="11">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -44,8 +40,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                        <rect key="frame" x="288" y="13" width="96" height="32"/>
-                        <animations/>
+                        <rect key="frame" x="301" y="13" width="83" height="32"/>
                         <buttonCell key="cell" type="push" title="Accept" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -65,7 +60,6 @@ DQ
                             <subviews>
                                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="8" customClass="FlippedView">
                                     <rect key="frame" x="0.0" y="0.0" width="398" height="177"/>
-                                    <animations/>
                                 </customView>
                             </subviews>
                             <constraints>
@@ -74,26 +68,18 @@ DQ
                                 <constraint firstItem="8" firstAttribute="top" secondItem="gKb-2B-4Rw" secondAttribute="top" id="Lz0-wD-dZH"/>
                                 <constraint firstAttribute="trailing" secondItem="8" secondAttribute="trailing" id="qpp-Cg-YEb"/>
                             </constraints>
-                            <animations/>
                         </clipView>
-                        <animations/>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="9">
                             <rect key="frame" x="0.0" y="163" width="383" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="10">
                             <rect key="frame" x="383" y="0.0" width="15" height="163"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                     </scrollView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                        <rect key="frame" x="14" y="13" width="96" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="84" id="pHb-8Z-EVo"/>
-                        </constraints>
-                        <animations/>
+                        <rect key="frame" x="14" y="13" width="83" height="32"/>
                         <buttonCell key="cell" type="push" title="All" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="31">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -106,7 +92,6 @@ DQ
                     </button>
                     <button toolTip="Show items alphabetically" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="38">
                         <rect key="frame" x="355" y="238" width="35" height="19"/>
-                        <animations/>
                         <buttonCell key="cell" type="recessed" title="Abc" alternateTitle="Abc" bezelStyle="recessed" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="39">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                             <font key="font" size="12" name="Helvetica-Oblique"/>
@@ -117,11 +102,13 @@ DQ
                     </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="30" secondAttribute="trailing" constant="12" symbolic="YES" id="4gO-Sv-0PM"/>
                     <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" constant="20" symbolic="YES" id="61j-CF-pVQ"/>
                     <constraint firstItem="5" firstAttribute="leading" secondItem="6" secondAttribute="trailing" constant="12" symbolic="YES" id="6d6-Aq-JmL"/>
                     <constraint firstItem="5" firstAttribute="width" secondItem="6" secondAttribute="width" id="LBC-hV-6yo"/>
                     <constraint firstItem="7" firstAttribute="leading" secondItem="4" secondAttribute="leading" id="MBG-uG-AXt"/>
                     <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="20" symbolic="YES" id="MgS-EX-Aea"/>
+                    <constraint firstItem="6" firstAttribute="width" secondItem="30" secondAttribute="width" id="Mw8-ms-laS"/>
                     <constraint firstItem="30" firstAttribute="leading" secondItem="4" secondAttribute="leading" constant="20" symbolic="YES" id="Por-TH-xYg"/>
                     <constraint firstItem="7" firstAttribute="top" secondItem="38" secondAttribute="bottom" constant="1" id="UqM-m6-zet"/>
                     <constraint firstItem="5" firstAttribute="top" secondItem="7" secondAttribute="bottom" constant="20" symbolic="YES" id="WsL-22-G34"/>
@@ -131,7 +118,6 @@ DQ
                     <constraint firstItem="6" firstAttribute="baseline" secondItem="30" secondAttribute="baseline" id="vyy-Et-Qmc"/>
                     <constraint firstAttribute="trailing" secondItem="38" secondAttribute="trailing" constant="8" id="y0z-Vv-nQ5"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="19"/>
