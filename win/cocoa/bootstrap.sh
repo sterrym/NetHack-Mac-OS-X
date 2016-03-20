@@ -11,7 +11,7 @@
 pushd ../../sys/unix
 
 # no symbolic links used to enable easier patching
-sh setup.sh
+sh setup.sh hints/macosx-cocoa
 
 cd ../..
 
@@ -21,7 +21,6 @@ cd src
 ../util/makedefs -p # pm.h
 ../util/makedefs -o # onames.h, dat/options?
 ../util/makedefs -m # monstr.c
-../util/makedefs -f # filename.h
 
 cd ..
 cd dat && make spotless all
