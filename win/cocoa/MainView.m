@@ -197,7 +197,7 @@ NSStringEncoding	codepage437encoding;
 		NSImage	*	image = [TileSet instance].image;
 		
 		// cursor can update asynchronously behind us so gets its location upfront
-		XCHAR_P	cursorX, cursorY;
+		xchar	cursorX, cursorY;
 		[map getCursX:&cursorX	y:&cursorY];
 		
 		

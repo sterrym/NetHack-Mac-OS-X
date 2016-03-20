@@ -1124,3 +1124,15 @@ void app_recover(const char* path)
 	
 	exit(EXIT_SUCCESS);
 }
+
+#ifdef USER_SOUNDS
+
+void
+play_usersound(const char *filename, int volume)
+{
+	NSURL *url = [NSURL fileURLWithFileSystemRepresentation:filename isDirectory:NO relativeToURL:nil];
+	
+	[WinCocoa playSoundAtURL:url volume:volume];
+}
+
+#endif
