@@ -67,7 +67,7 @@
 	if (self = [super initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]) {
 		self.delegate = self;
 		self.contentView = view;
-		[self setOpaque:YES];
+		[self setOpaque:NO];
 		[self setHasShadow:YES];
 		[self setReleasedWhenClosed:NO];
 		[self orderFront:nil];

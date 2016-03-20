@@ -121,6 +121,7 @@
 # define DEFAULT_WC_TILED_MAP   /* Default to tiles if users doesn't say wc_ascii_map */
 # define STORE_PLNAME_IN_FILE
 #define USER_SOUNDS /* Use sounds */
+#define ZLIB_COMP
 #endif
 
 #ifndef DEFAULT_WINDOW_SYS

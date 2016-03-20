@@ -681,6 +681,9 @@
 		559D02931C4EEBF60026B705 /* sysconf in Resources */ = {isa = PBXBuildFile; fileRef = 559D02911C4EEBF60026B705 /* sysconf */; };
 		55A9A44C1C2CA62700A0023E /* ZDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F515011B77FD4600DEC8F5 /* ZDirection.swift */; };
 		55A9A44D1C2CA62800A0023E /* ZDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F515011B77FD4600DEC8F5 /* ZDirection.swift */; };
+		55BCFCE81C9F66AC0076210F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BCFCE71C9F66AC0076210F /* libz.tbd */; };
+		55BCFCEB1C9F66F10076210F /* Recover.app in Resources */ = {isa = PBXBuildFile; fileRef = 557119961BD8203500959CD5 /* Recover.app */; };
+		55BCFCEC1C9F66FA0076210F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BCFCE71C9F66AC0076210F /* libz.tbd */; };
 		55DDEAA01C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
 		55DDEAA11C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
 		55DDEAA41C1A1853001F944B /* SaveRecoveryOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */; };
@@ -707,6 +710,13 @@
 			remoteInfo = Recover;
 		};
 		557119B01BD8203500959CD5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 557119951BD8203500959CD5;
+			remoteInfo = Recover;
+		};
+		55BCFCE91C9F66E10076210F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -1235,6 +1245,7 @@
 		559D028D1C4EE9E20026B705 /* unixtty.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = unixtty.c; sourceTree = "<group>"; };
 		559D028E1C4EE9E20026B705 /* uudecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uudecode.c; sourceTree = "<group>"; };
 		559D02911C4EEBF60026B705 /* sysconf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sysconf; sourceTree = "<group>"; };
+		55BCFCE71C9F66AC0076210F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
 		55BF8C6F1B77BEF10031A45A /* compat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = compat.m; sourceTree = "<group>"; };
@@ -1261,6 +1272,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55BCFCEC1C9F66FA0076210F /* libz.tbd in Frameworks */,
 				0212834A14F6E6240046D56F /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1290,6 +1302,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55BCFCE81C9F66AC0076210F /* libz.tbd in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1871,6 +1884,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				55BCFCE71C9F66AC0076210F /* libz.tbd */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
@@ -2052,6 +2066,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				55BCFCEA1C9F66E10076210F /* PBXTargetDependency */,
 			);
 			name = "NetHackCocoa-Sandboxed";
 			productInstallPath = "$(HOME)/Applications";
@@ -2191,6 +2206,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55BCFCEB1C9F66F10076210F /* Recover.app in Resources */,
 				0212820114F6E6240046D56F /* Arch.des in Resources */,
 				0212820214F6E6240046D56F /* Barb.des in Resources */,
 				0212820314F6E6240046D56F /* bigroom.des in Resources */,
@@ -2959,6 +2975,11 @@
 			isa = PBXTargetDependency;
 			target = 557119951BD8203500959CD5 /* Recover */;
 			targetProxy = 557119B01BD8203500959CD5 /* PBXContainerItemProxy */;
+		};
+		55BCFCEA1C9F66E10076210F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 557119951BD8203500959CD5 /* Recover */;
+			targetProxy = 55BCFCE91C9F66E10076210F /* PBXContainerItemProxy */;
 		};
 		55F819821BD8416D00FFE986 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
