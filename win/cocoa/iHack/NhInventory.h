@@ -32,7 +32,7 @@
 	NSMutableArray *classArray;
 }
 
-@property (nonatomic, readonly, copy) NSArray *objectClasses;
+@property (nonatomic, readonly, copy) NSArray<NSArray<NhObject*>*> *objectClasses;
 
 - (void)update;
 - (NhObject *)objectAtIndexPath:(NSIndexPath *)indexPath;
