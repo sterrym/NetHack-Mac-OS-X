@@ -255,7 +255,6 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	});
 }
 
-
 #pragma mark menu actions
 
 - (void)performMenuAction:(id)sender
@@ -330,6 +329,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		[userTiles addObject:path];
 	}
 }
+
 - (IBAction)selectTileSet:(id)sender
 {
 	NSMenuItem * item = sender;
@@ -400,13 +400,13 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		[menu addItem:item];
 	}
 }
+
 - (void)menuWillOpen:(NSMenu *)menu
 {
 	if ( menu == tileSetMenu ) {
 		[self createTileSetListInMenu:menu];
 	}
 }
-
 
 - (void)preferenceUpdate:(NSString *)pref
 {
@@ -417,7 +417,6 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		}
 	});
 }
-
 
 - (IBAction)terminateApplication:(id)sender
 {
@@ -810,6 +809,5 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		[voice startSpeakingString:text];
 	}
 }
-
 
 @end

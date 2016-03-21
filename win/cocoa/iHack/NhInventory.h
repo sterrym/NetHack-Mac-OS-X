@@ -28,7 +28,7 @@
 @class NhObject;
 
 @interface NhInventory : NSObject {
-	NSMutableArray *objectClasses;
+	NSMutableArray<NSArray<NhObject*>*> *objectClasses;
 	NSMutableArray *classArray;
 }
 

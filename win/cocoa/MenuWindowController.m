@@ -463,8 +463,7 @@ static NSString * skipPrefix( NSString * s, NSString * __strong list[] )
 			return [s substringFromIndex:list[i].length];
 	}
 	return s;
-};
-
+}
 
 static NSString * cleanAttributedString( NSString * s, BOOL decorated )
 {
