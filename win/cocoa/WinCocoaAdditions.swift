@@ -25,7 +25,8 @@ extension WinCocoa {
 	}
 	
 	@objc class func addWindow(window: NhWindow) -> winid {
-		let newID = ++currentWid
+		currentWid += 1
+		let newID = currentWid
 		windowDict[newID] = window
 		return newID
 	}

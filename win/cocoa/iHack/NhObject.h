@@ -27,7 +27,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NhObject : NSObject
+@interface NhObject : NSObject {
+	struct obj *object;
+	NSString *title;
+	NSString *detail;
+	char inventoryLetter;
+	char group_ch; 
+	int glyph;
+}
 
 @property (nonatomic, readonly) struct obj *object;
 @property (copy) NSString *title;
