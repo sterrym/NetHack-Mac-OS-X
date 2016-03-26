@@ -1,26 +1,62 @@
-build
-Build/
+# CVS default ignores begin
+tags
+TAGS
+.make.state
+.nse_depinfo
+*~
+\#*
+.#*
+,*
+_$*
+*$
+*.old
+*.bak
+*.BAK
+*.orig
+*.rej
+.del-*
+*.a
+*.olb
+*.o
+*.obj
+*.so
+*.exe
+*.Z
+*.elc
+*.ln
+core
+# CVS default ignores end
+.*.swp
+
+# We generate makefiles by shell script
+Makefile
+
+# Win32-specific ignores
+Debug/
+Release/
+binary/
+build/
+ipch/
+Nethack.sln
+Nethack.sdf
+Nethack.opensdf
+Makefile.bcc
+Makefile.gcc
+Makefile-orig
+Makefile.bcc-orig
+Makefile.gcc-orig
+*.suo
+*.pdb
+*.ilk
+# VS2013 extension to auto-whine about questionable code generates these
+*.lastcodeanalysissucceeded
+# Win32-specific ignores end
+
+# OS X ignores
+.DS_Store
 *.mode1v3
 *.pbxuser
-*.lev
-*.o
-Makefile
-include/date.h
-include/dgn_comp.h
-include/lev_comp.h
-include/onames.h
-include/pm.h
-src/monstr.c
-src/tile.c
-util/dgn_comp
-util/dgn_lex.c
-util/dgn_yacc.c
-util/lev_comp
-util/lev_lex.c
-util/lev_yacc.c
-util/makedefs
-util/tilemap
-util/recover
-.DS_Store
 project.xcworkspace/
 xcuserdata/
+build/
+# OS X ignores end
