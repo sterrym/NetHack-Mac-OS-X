@@ -1832,7 +1832,7 @@ create_object(object *o, struct mkroom *croom)
      * other contents, but that can be specified as an empty container.
      */
     if (o->id == STATUE && Is_medusa_level(&u.uz) && o->corpsenm == NON_PM) {
-        struct monst *was;
+        struct monst *was = NULL;
         struct obj *obj;
         int wastyp;
         int i = 0; /* prevent endless loop in case makemon always fails */

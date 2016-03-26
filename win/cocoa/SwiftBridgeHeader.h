@@ -17,7 +17,7 @@
 
 extern struct window_procs cocoa_procs;
 
-extern void NDECL((*decgraphics_mode_callback));
+extern void (*decgraphics_mode_callback)(void);
 
 static inline BOOL Swift_Invis() {
 	return ((HInvis || EInvis || \

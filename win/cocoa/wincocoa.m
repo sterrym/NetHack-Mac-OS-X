@@ -313,7 +313,7 @@ void cocoa_init_nhwindows(int* argc, char** argv) {
 	//switch_graphics(IBM_GRAPHICS);
 	
 	// if user switches to DEC graphics don't let them
-	extern void NDECL((*decgraphics_mode_callback));
+	extern void (*decgraphics_mode_callback)(void);
 	decgraphics_mode_callback = cocoa_decgraphics_mode_callback;
 	
 	// hardwire OPTIONS=time,showexp for issue 8
@@ -389,7 +389,7 @@ void cocoa_clear_nhwindow(winid wid)
 	[[WinCocoa windowForWindowID: wid] clear];
 }
 
-void cocoa_display_nhwindow(winid wid, BOOLEAN_P block)
+void cocoa_display_nhwindow(winid wid, boolean block)
 {
 	NhWindow *w = [WinCocoa windowForWindowID: wid];
 	//NSLog(@"display_nhwindow %x, %i, %i", wid, [WinCocoa windowForWindowID: wid].type, block);
@@ -429,7 +429,7 @@ void cocoa_putstr(winid wid, int attr, const char *text) {
 	}		
 }
 
-void cocoa_display_file(const char *filename, BOOLEAN_P must_exist) {
+void cocoa_display_file(const char *filename, boolean must_exist) {
 	char tmp[ PATH_MAX ];
 	NSFileManager *fm = [NSFileManager defaultManager];
 	[WinCocoa expandFilename:filename intoPath:tmp];
@@ -455,8 +455,8 @@ void cocoa_start_menu(winid wid) {
 }
 
 void cocoa_add_menu(winid wid, int glyph, const ANY_P *identifier,
-					 CHAR_P accelerator, CHAR_P group_accel, int attr, 
-					 const char *str, BOOLEAN_P presel)
+					 char accelerator, char group_accel, int attr, 
+					 const char *str, boolean presel)
 {
 	//NSLog(@"add_menu %x %s", wid, str);
 	NhMenuWindow *w = (NhMenuWindow *) [WinCocoa windowForWindowID: wid];
@@ -538,7 +538,7 @@ void cocoa_cliparound_window(winid wid, int x, int y)
 	}
 }
 
-void cocoa_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph)
+void cocoa_print_glyph(winid wid, xchar x, xchar y, int glyph, int bkglyph)
 {
 	//NSLog(@"print_glyph %x %d,%d", wid, x, y);
 	[(NhMapWindow *) [WinCocoa windowForWindowID: wid] printGlyph:glyph atX:x y:y backgroundGlyph:bkglyph];
@@ -591,7 +591,7 @@ int cocoa_doprev_message()
 
 #pragma mark yn_function 
 
-char cocoa_yn_function(const char *question, const char *choices, CHAR_P def)
+char cocoa_yn_function(const char *question, const char *choices, char def)
 {
 	//NSLog(@"yn_function %s", question);
 	static const char * AlwaysYes[] = {

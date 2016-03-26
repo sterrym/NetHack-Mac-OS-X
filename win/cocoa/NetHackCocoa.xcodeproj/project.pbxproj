@@ -6,52 +6,75 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		55285E861CA7049C00FAFDB1 /* makefiles */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 55285E891CA7049C00FAFDB1 /* Build configuration list for PBXAggregateTarget "makefiles" */;
+			buildPhases = (
+				55285E8A1CA704A900FAFDB1 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = makefiles;
+			productName = data;
+		};
+		55285E8B1CA7054E00FAFDB1 /* util */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 55285E8C1CA7054E00FAFDB1 /* Build configuration list for PBXAggregateTarget "util" */;
+			buildPhases = (
+				55285E8F1CA7055300FAFDB1 /* ShellScript */,
+			);
+			dependencies = (
+				55285E9F1CA7070300FAFDB1 /* PBXTargetDependency */,
+			);
+			name = util;
+			productName = util;
+		};
+		55285E901CA7057200FAFDB1 /* dat */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 55285E911CA7057200FAFDB1 /* Build configuration list for PBXAggregateTarget "dat" */;
+			buildPhases = (
+				55285E941CA7057700FAFDB1 /* ShellScript */,
+			);
+			dependencies = (
+				55285E9B1CA706F500FAFDB1 /* PBXTargetDependency */,
+			);
+			name = dat;
+			productName = dat;
+		};
+		55285E951CA7058C00FAFDB1 /* src */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 55285E961CA7058C00FAFDB1 /* Build configuration list for PBXAggregateTarget "src" */;
+			buildPhases = (
+				55285E991CA7059D00FAFDB1 /* ShellScript */,
+			);
+			dependencies = (
+				55285E9D1CA706FC00FAFDB1 /* PBXTargetDependency */,
+			);
+			name = src;
+			productName = src;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		021281F414F6E0250046D56F /* container-migration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 021281F214F6E0250046D56F /* container-migration.plist */; };
-		0212820114F6E6240046D56F /* Arch.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7B11B8A7BE00FC2199 /* Arch.des */; };
-		0212820214F6E6240046D56F /* Barb.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7C11B8A7BE00FC2199 /* Barb.des */; };
-		0212820314F6E6240046D56F /* bigroom.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7D11B8A7BE00FC2199 /* bigroom.des */; };
-		0212820414F6E6240046D56F /* castle.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7E11B8A7BE00FC2199 /* castle.des */; };
-		0212820514F6E6240046D56F /* Caveman.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7F11B8A7BE00FC2199 /* Caveman.des */; };
 		0212820614F6E6240046D56F /* cmdhelp in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8011B8A7BE00FC2199 /* cmdhelp */; };
 		0212820714F6E6240046D56F /* data in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8111B8A7BE00FC2199 /* data */; };
 		0212820814F6E6240046D56F /* data.base in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8211B8A7BE00FC2199 /* data.base */; };
 		0212820914F6E6240046D56F /* dungeon in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8311B8A7BE00FC2199 /* dungeon */; };
-		0212820A14F6E6240046D56F /* dungeon.def in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8411B8A7BE00FC2199 /* dungeon.def */; };
 		0212820B14F6E6240046D56F /* dungeon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8511B8A7BE00FC2199 /* dungeon.pdf */; };
-		0212820C14F6E6240046D56F /* endgame.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8611B8A7BE00FC2199 /* endgame.des */; };
-		0212820D14F6E6240046D56F /* gehennom.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8711B8A7BE00FC2199 /* gehennom.des */; };
-		0212820E14F6E6240046D56F /* Healer.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8811B8A7BE00FC2199 /* Healer.des */; };
 		0212820F14F6E6240046D56F /* help in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8911B8A7BE00FC2199 /* help */; };
 		0212821014F6E6240046D56F /* hh in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8A11B8A7BE00FC2199 /* hh */; };
 		0212821114F6E6240046D56F /* history in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8B11B8A7BE00FC2199 /* history */; };
-		0212821214F6E6240046D56F /* Knight.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8C11B8A7BE00FC2199 /* Knight.des */; };
-		0212821314F6E6240046D56F /* knox.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8D11B8A7BE00FC2199 /* knox.des */; };
 		0212821414F6E6240046D56F /* license in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8E11B8A7BE00FC2199 /* license */; };
-		0212821514F6E6240046D56F /* medusa.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8F11B8A7BE00FC2199 /* medusa.des */; };
-		0212821614F6E6240046D56F /* mines.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9011B8A7BE00FC2199 /* mines.des */; };
-		0212821714F6E6240046D56F /* Monk.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9111B8A7BE00FC2199 /* Monk.des */; };
 		0212821814F6E6240046D56F /* opthelp in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9211B8A7BE00FC2199 /* opthelp */; };
 		0212821914F6E6240046D56F /* options in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9311B8A7BE00FC2199 /* options */; };
-		0212821A14F6E6240046D56F /* oracle.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9411B8A7BE00FC2199 /* oracle.des */; };
 		0212821B14F6E6240046D56F /* oracles in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9511B8A7BE00FC2199 /* oracles */; };
-		0212821C14F6E6240046D56F /* oracles.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9611B8A7BE00FC2199 /* oracles.txt */; };
-		0212821D14F6E6240046D56F /* Priest.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9711B8A7BE00FC2199 /* Priest.des */; };
 		0212821E14F6E6240046D56F /* quest.dat in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9811B8A7BE00FC2199 /* quest.dat */; };
 		0212821F14F6E6240046D56F /* quest.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9911B8A7BE00FC2199 /* quest.txt */; };
 		0212822014F6E6240046D56F /* quest_levs in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9A11B8A7BE00FC2199 /* quest_levs */; };
-		0212822114F6E6240046D56F /* Ranger.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9B11B8A7BE00FC2199 /* Ranger.des */; };
-		0212822214F6E6240046D56F /* Rogue.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9C11B8A7BE00FC2199 /* Rogue.des */; };
 		0212822314F6E6240046D56F /* rumors in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9D11B8A7BE00FC2199 /* rumors */; };
-		0212822414F6E6240046D56F /* rumors.fal in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9E11B8A7BE00FC2199 /* rumors.fal */; };
-		0212822514F6E6240046D56F /* rumors.tru in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9F11B8A7BE00FC2199 /* rumors.tru */; };
-		0212822614F6E6240046D56F /* Samurai.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA011B8A7BE00FC2199 /* Samurai.des */; };
-		0212822714F6E6240046D56F /* sokoban.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA111B8A7BE00FC2199 /* sokoban.des */; };
 		0212822814F6E6240046D56F /* spec_levs in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA211B8A7BE00FC2199 /* spec_levs */; };
-		0212822914F6E6240046D56F /* Tourist.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA311B8A7BE00FC2199 /* Tourist.des */; };
-		0212822A14F6E6240046D56F /* tower.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA411B8A7BE00FC2199 /* tower.des */; };
-		0212822B14F6E6240046D56F /* Valkyrie.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA511B8A7BE00FC2199 /* Valkyrie.des */; };
-		0212822C14F6E6240046D56F /* Wizard.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA611B8A7BE00FC2199 /* Wizard.des */; };
 		0212822D14F6E6240046D56F /* wizhelp in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA711B8A7BE00FC2199 /* wizhelp */; };
 		0212822E14F6E6240046D56F /* yendor.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA811B8A7BE00FC2199 /* yendor.des */; };
 		0212822F14F6E6240046D56F /* absurd128.png in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBD811B8A82300FC2199 /* absurd128.png */; };
@@ -359,50 +382,23 @@
 		0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1911B8A73300FC2199 /* NSIndexPath+Z.m */; };
 		0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1B11B8A73300FC2199 /* NSString+NetHack.m */; };
 		0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */ = {isa = PBXBuildFile; fileRef = 0224CB1D11B8A73300FC2199 /* NSString+Z.m */; };
-		0224CBA911B8A7BE00FC2199 /* Arch.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7B11B8A7BE00FC2199 /* Arch.des */; };
-		0224CBAA11B8A7BE00FC2199 /* Barb.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7C11B8A7BE00FC2199 /* Barb.des */; };
-		0224CBAB11B8A7BE00FC2199 /* bigroom.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7D11B8A7BE00FC2199 /* bigroom.des */; };
-		0224CBAC11B8A7BE00FC2199 /* castle.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7E11B8A7BE00FC2199 /* castle.des */; };
-		0224CBAD11B8A7BE00FC2199 /* Caveman.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB7F11B8A7BE00FC2199 /* Caveman.des */; };
 		0224CBAE11B8A7BE00FC2199 /* cmdhelp in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8011B8A7BE00FC2199 /* cmdhelp */; };
 		0224CBAF11B8A7BE00FC2199 /* data in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8111B8A7BE00FC2199 /* data */; };
 		0224CBB011B8A7BE00FC2199 /* data.base in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8211B8A7BE00FC2199 /* data.base */; };
 		0224CBB111B8A7BE00FC2199 /* dungeon in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8311B8A7BE00FC2199 /* dungeon */; };
-		0224CBB211B8A7BE00FC2199 /* dungeon.def in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8411B8A7BE00FC2199 /* dungeon.def */; };
 		0224CBB311B8A7BE00FC2199 /* dungeon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8511B8A7BE00FC2199 /* dungeon.pdf */; };
-		0224CBB411B8A7BE00FC2199 /* endgame.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8611B8A7BE00FC2199 /* endgame.des */; };
-		0224CBB511B8A7BE00FC2199 /* gehennom.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8711B8A7BE00FC2199 /* gehennom.des */; };
-		0224CBB611B8A7BE00FC2199 /* Healer.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8811B8A7BE00FC2199 /* Healer.des */; };
 		0224CBB711B8A7BE00FC2199 /* help in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8911B8A7BE00FC2199 /* help */; };
 		0224CBB811B8A7BE00FC2199 /* hh in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8A11B8A7BE00FC2199 /* hh */; };
 		0224CBB911B8A7BE00FC2199 /* history in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8B11B8A7BE00FC2199 /* history */; };
-		0224CBBA11B8A7BE00FC2199 /* Knight.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8C11B8A7BE00FC2199 /* Knight.des */; };
-		0224CBBB11B8A7BE00FC2199 /* knox.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8D11B8A7BE00FC2199 /* knox.des */; };
 		0224CBBC11B8A7BE00FC2199 /* license in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8E11B8A7BE00FC2199 /* license */; };
-		0224CBBD11B8A7BE00FC2199 /* medusa.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB8F11B8A7BE00FC2199 /* medusa.des */; };
-		0224CBBE11B8A7BE00FC2199 /* mines.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9011B8A7BE00FC2199 /* mines.des */; };
-		0224CBBF11B8A7BE00FC2199 /* Monk.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9111B8A7BE00FC2199 /* Monk.des */; };
 		0224CBC011B8A7BE00FC2199 /* opthelp in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9211B8A7BE00FC2199 /* opthelp */; };
 		0224CBC111B8A7BE00FC2199 /* options in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9311B8A7BE00FC2199 /* options */; };
-		0224CBC211B8A7BE00FC2199 /* oracle.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9411B8A7BE00FC2199 /* oracle.des */; };
 		0224CBC311B8A7BE00FC2199 /* oracles in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9511B8A7BE00FC2199 /* oracles */; };
-		0224CBC411B8A7BE00FC2199 /* oracles.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9611B8A7BE00FC2199 /* oracles.txt */; };
-		0224CBC511B8A7BE00FC2199 /* Priest.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9711B8A7BE00FC2199 /* Priest.des */; };
 		0224CBC611B8A7BE00FC2199 /* quest.dat in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9811B8A7BE00FC2199 /* quest.dat */; };
 		0224CBC711B8A7BE00FC2199 /* quest.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9911B8A7BE00FC2199 /* quest.txt */; };
 		0224CBC811B8A7BE00FC2199 /* quest_levs in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9A11B8A7BE00FC2199 /* quest_levs */; };
-		0224CBC911B8A7BE00FC2199 /* Ranger.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9B11B8A7BE00FC2199 /* Ranger.des */; };
-		0224CBCA11B8A7BE00FC2199 /* Rogue.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9C11B8A7BE00FC2199 /* Rogue.des */; };
 		0224CBCB11B8A7BE00FC2199 /* rumors in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9D11B8A7BE00FC2199 /* rumors */; };
-		0224CBCC11B8A7BE00FC2199 /* rumors.fal in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9E11B8A7BE00FC2199 /* rumors.fal */; };
-		0224CBCD11B8A7BE00FC2199 /* rumors.tru in Resources */ = {isa = PBXBuildFile; fileRef = 0224CB9F11B8A7BE00FC2199 /* rumors.tru */; };
-		0224CBCE11B8A7BE00FC2199 /* Samurai.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA011B8A7BE00FC2199 /* Samurai.des */; };
-		0224CBCF11B8A7BE00FC2199 /* sokoban.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA111B8A7BE00FC2199 /* sokoban.des */; };
 		0224CBD011B8A7BE00FC2199 /* spec_levs in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA211B8A7BE00FC2199 /* spec_levs */; };
-		0224CBD111B8A7BE00FC2199 /* Tourist.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA311B8A7BE00FC2199 /* Tourist.des */; };
-		0224CBD211B8A7BE00FC2199 /* tower.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA411B8A7BE00FC2199 /* tower.des */; };
-		0224CBD311B8A7BE00FC2199 /* Valkyrie.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA511B8A7BE00FC2199 /* Valkyrie.des */; };
-		0224CBD411B8A7BE00FC2199 /* Wizard.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA611B8A7BE00FC2199 /* Wizard.des */; };
 		0224CBD511B8A7BE00FC2199 /* wizhelp in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA711B8A7BE00FC2199 /* wizhelp */; };
 		0224CBD611B8A7BE00FC2199 /* yendor.des in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBA811B8A7BE00FC2199 /* yendor.des */; };
 		0224CBE211B8A82300FC2199 /* absurd128.png in Resources */ = {isa = PBXBuildFile; fileRef = 0224CBD811B8A82300FC2199 /* absurd128.png */; };
@@ -702,6 +698,55 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		55285E9A1CA706F500FAFDB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55285E8B1CA7054E00FAFDB1;
+			remoteInfo = util;
+		};
+		55285E9C1CA706FC00FAFDB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55285E8B1CA7054E00FAFDB1;
+			remoteInfo = util;
+		};
+		55285E9E1CA7070300FAFDB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55285E861CA7049C00FAFDB1;
+			remoteInfo = makefiles;
+		};
+		55285EA41CA7088D00FAFDB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55285E901CA7057200FAFDB1;
+			remoteInfo = dat;
+		};
+		55285EA61CA7088D00FAFDB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55285E951CA7058C00FAFDB1;
+			remoteInfo = src;
+		};
+		55285EA81CA7089700FAFDB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55285E901CA7057200FAFDB1;
+			remoteInfo = dat;
+		};
+		55285EAA1CA7089700FAFDB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55285E951CA7058C00FAFDB1;
+			remoteInfo = src;
+		};
 		557119A51BD8203500959CD5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -809,7 +854,7 @@
 		0224CB8011B8A7BE00FC2199 /* cmdhelp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cmdhelp; sourceTree = "<group>"; };
 		0224CB8111B8A7BE00FC2199 /* data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = data; sourceTree = "<group>"; };
 		0224CB8211B8A7BE00FC2199 /* data.base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = data.base; sourceTree = "<group>"; };
-		0224CB8311B8A7BE00FC2199 /* dungeon */ = {isa = PBXFileReference; lastKnownFileType = file; path = dungeon; sourceTree = "<group>"; };
+		0224CB8311B8A7BE00FC2199 /* dungeon */ = {isa = PBXFileReference; lastKnownFileType = text; path = dungeon; sourceTree = "<group>"; };
 		0224CB8411B8A7BE00FC2199 /* dungeon.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dungeon.def; sourceTree = "<group>"; };
 		0224CB8511B8A7BE00FC2199 /* dungeon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = dungeon.pdf; sourceTree = "<group>"; };
 		0224CB8611B8A7BE00FC2199 /* endgame.des */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = endgame.des; sourceTree = "<group>"; };
@@ -2066,6 +2111,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				55285EA91CA7089700FAFDB1 /* PBXTargetDependency */,
+				55285EAB1CA7089700FAFDB1 /* PBXTargetDependency */,
 				55BCFCEA1C9F66E10076210F /* PBXTargetDependency */,
 			);
 			name = "NetHackCocoa-Sandboxed";
@@ -2138,6 +2185,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				55285EA51CA7088D00FAFDB1 /* PBXTargetDependency */,
+				55285EA71CA7088D00FAFDB1 /* PBXTargetDependency */,
 				55F819821BD8416D00FFE986 /* PBXTargetDependency */,
 			);
 			name = NetHackCocoa;
@@ -2158,6 +2207,18 @@
 				TargetAttributes = {
 					021281F514F6E6240046D56F = {
 						DevelopmentTeam = MKTTC6734C;
+					};
+					55285E861CA7049C00FAFDB1 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+					55285E8B1CA7054E00FAFDB1 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+					55285E901CA7057200FAFDB1 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+					55285E951CA7058C00FAFDB1 = {
+						CreatedOnToolsVersion = 7.3;
 					};
 					557119951BD8203500959CD5 = {
 						CreatedOnToolsVersion = 7.0.1;
@@ -2197,6 +2258,10 @@
 				557119951BD8203500959CD5 /* Recover */,
 				557119A31BD8203500959CD5 /* RecoverTests */,
 				557119AE1BD8203500959CD5 /* RecoverUITests */,
+				55285E861CA7049C00FAFDB1 /* makefiles */,
+				55285E8B1CA7054E00FAFDB1 /* util */,
+				55285E901CA7057200FAFDB1 /* dat */,
+				55285E951CA7058C00FAFDB1 /* src */,
 			);
 		};
 /* End PBXProject section */
@@ -2207,53 +2272,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				55BCFCEB1C9F66F10076210F /* Recover.app in Resources */,
-				0212820114F6E6240046D56F /* Arch.des in Resources */,
-				0212820214F6E6240046D56F /* Barb.des in Resources */,
-				0212820314F6E6240046D56F /* bigroom.des in Resources */,
 				555B7B651C18C1B700A24D24 /* engrave in Resources */,
-				0212820414F6E6240046D56F /* castle.des in Resources */,
-				0212820514F6E6240046D56F /* Caveman.des in Resources */,
 				0212820614F6E6240046D56F /* cmdhelp in Resources */,
 				0212820714F6E6240046D56F /* data in Resources */,
 				0212820814F6E6240046D56F /* data.base in Resources */,
 				0212820914F6E6240046D56F /* dungeon in Resources */,
-				0212820A14F6E6240046D56F /* dungeon.def in Resources */,
 				0212820B14F6E6240046D56F /* dungeon.pdf in Resources */,
-				0212820C14F6E6240046D56F /* endgame.des in Resources */,
-				0212820D14F6E6240046D56F /* gehennom.des in Resources */,
-				0212820E14F6E6240046D56F /* Healer.des in Resources */,
 				0212820F14F6E6240046D56F /* help in Resources */,
 				0212821014F6E6240046D56F /* hh in Resources */,
 				0212821114F6E6240046D56F /* history in Resources */,
-				0212821214F6E6240046D56F /* Knight.des in Resources */,
-				0212821314F6E6240046D56F /* knox.des in Resources */,
 				0212821414F6E6240046D56F /* license in Resources */,
-				0212821514F6E6240046D56F /* medusa.des in Resources */,
 				559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */,
-				0212821614F6E6240046D56F /* mines.des in Resources */,
-				0212821714F6E6240046D56F /* Monk.des in Resources */,
 				0212821814F6E6240046D56F /* opthelp in Resources */,
 				0212821914F6E6240046D56F /* options in Resources */,
-				0212821A14F6E6240046D56F /* oracle.des in Resources */,
 				0212821B14F6E6240046D56F /* oracles in Resources */,
-				0212821C14F6E6240046D56F /* oracles.txt in Resources */,
-				0212821D14F6E6240046D56F /* Priest.des in Resources */,
 				0212821E14F6E6240046D56F /* quest.dat in Resources */,
 				0212821F14F6E6240046D56F /* quest.txt in Resources */,
 				0212822014F6E6240046D56F /* quest_levs in Resources */,
-				0212822114F6E6240046D56F /* Ranger.des in Resources */,
-				0212822214F6E6240046D56F /* Rogue.des in Resources */,
 				0212822314F6E6240046D56F /* rumors in Resources */,
-				0212822414F6E6240046D56F /* rumors.fal in Resources */,
-				0212822514F6E6240046D56F /* rumors.tru in Resources */,
-				0212822614F6E6240046D56F /* Samurai.des in Resources */,
 				55DDEAA11C19084E001F944B /* tiles16.png in Resources */,
-				0212822714F6E6240046D56F /* sokoban.des in Resources */,
 				0212822814F6E6240046D56F /* spec_levs in Resources */,
-				0212822914F6E6240046D56F /* Tourist.des in Resources */,
-				0212822A14F6E6240046D56F /* tower.des in Resources */,
-				0212822B14F6E6240046D56F /* Valkyrie.des in Resources */,
-				0212822C14F6E6240046D56F /* Wizard.des in Resources */,
 				0212822D14F6E6240046D56F /* wizhelp in Resources */,
 				0212822E14F6E6240046D56F /* yendor.des in Resources */,
 				0212822F14F6E6240046D56F /* absurd128.png in Resources */,
@@ -2425,52 +2463,25 @@
 				55DDEAA01C19084E001F944B /* tiles16.png in Resources */,
 				55F819801BD8416D00FFE986 /* Recover.app in Resources */,
 				552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */,
-				0224CBA911B8A7BE00FC2199 /* Arch.des in Resources */,
 				550D8DBD1C7B942E00542FA8 /* geoduck20x12.png in Resources */,
-				0224CBAA11B8A7BE00FC2199 /* Barb.des in Resources */,
-				0224CBAB11B8A7BE00FC2199 /* bigroom.des in Resources */,
-				0224CBAC11B8A7BE00FC2199 /* castle.des in Resources */,
-				0224CBAD11B8A7BE00FC2199 /* Caveman.des in Resources */,
 				0224CBAE11B8A7BE00FC2199 /* cmdhelp in Resources */,
 				0224CBAF11B8A7BE00FC2199 /* data in Resources */,
 				0224CBB011B8A7BE00FC2199 /* data.base in Resources */,
 				0224CBB111B8A7BE00FC2199 /* dungeon in Resources */,
-				0224CBB211B8A7BE00FC2199 /* dungeon.def in Resources */,
 				0224CBB311B8A7BE00FC2199 /* dungeon.pdf in Resources */,
-				0224CBB411B8A7BE00FC2199 /* endgame.des in Resources */,
-				0224CBB511B8A7BE00FC2199 /* gehennom.des in Resources */,
-				0224CBB611B8A7BE00FC2199 /* Healer.des in Resources */,
 				0224CBB711B8A7BE00FC2199 /* help in Resources */,
 				0224CBB811B8A7BE00FC2199 /* hh in Resources */,
 				0224CBB911B8A7BE00FC2199 /* history in Resources */,
-				0224CBBA11B8A7BE00FC2199 /* Knight.des in Resources */,
-				0224CBBB11B8A7BE00FC2199 /* knox.des in Resources */,
 				0224CBBC11B8A7BE00FC2199 /* license in Resources */,
 				559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */,
-				0224CBBD11B8A7BE00FC2199 /* medusa.des in Resources */,
-				0224CBBE11B8A7BE00FC2199 /* mines.des in Resources */,
-				0224CBBF11B8A7BE00FC2199 /* Monk.des in Resources */,
 				0224CBC011B8A7BE00FC2199 /* opthelp in Resources */,
 				0224CBC111B8A7BE00FC2199 /* options in Resources */,
-				0224CBC211B8A7BE00FC2199 /* oracle.des in Resources */,
 				0224CBC311B8A7BE00FC2199 /* oracles in Resources */,
-				0224CBC411B8A7BE00FC2199 /* oracles.txt in Resources */,
-				0224CBC511B8A7BE00FC2199 /* Priest.des in Resources */,
 				0224CBC611B8A7BE00FC2199 /* quest.dat in Resources */,
 				0224CBC711B8A7BE00FC2199 /* quest.txt in Resources */,
 				0224CBC811B8A7BE00FC2199 /* quest_levs in Resources */,
-				0224CBC911B8A7BE00FC2199 /* Ranger.des in Resources */,
-				0224CBCA11B8A7BE00FC2199 /* Rogue.des in Resources */,
 				0224CBCB11B8A7BE00FC2199 /* rumors in Resources */,
-				0224CBCC11B8A7BE00FC2199 /* rumors.fal in Resources */,
-				0224CBCD11B8A7BE00FC2199 /* rumors.tru in Resources */,
-				0224CBCE11B8A7BE00FC2199 /* Samurai.des in Resources */,
-				0224CBCF11B8A7BE00FC2199 /* sokoban.des in Resources */,
 				0224CBD011B8A7BE00FC2199 /* spec_levs in Resources */,
-				0224CBD111B8A7BE00FC2199 /* Tourist.des in Resources */,
-				0224CBD211B8A7BE00FC2199 /* tower.des in Resources */,
-				0224CBD311B8A7BE00FC2199 /* Valkyrie.des in Resources */,
-				0224CBD411B8A7BE00FC2199 /* Wizard.des in Resources */,
 				0224CBD511B8A7BE00FC2199 /* wizhelp in Resources */,
 				0224CBD611B8A7BE00FC2199 /* yendor.des in Resources */,
 				0224CBE211B8A82300FC2199 /* absurd128.png in Resources */,
@@ -2612,6 +2623,264 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		55285E8A1CA704A900FAFDB1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../../sys/unix/Makefile.dat",
+				"$(SRCROOT)/../../sys/unix/Makefile.doc",
+				"$(SRCROOT)/../../sys/unix/Makefile.src",
+				"$(SRCROOT)/../../sys/unix/Makefile.top",
+				"$(SRCROOT)/../../sys/unix/Makefile.utl",
+				"$(SRCROOT)/../../sys/unix/setup.sh",
+				"$(SRCROOT)/../../sys/unix/hints/macosx-cocoa",
+			);
+			outputPaths = (
+				"$(SRCROOT)/../../dat/Makefile",
+				"$(SRCROOT)/../../doc/Makefile",
+				"$(SRCROOT)/../../src/Makefile",
+				"$(SRCROOT)/../../util/Makefile",
+				"$(SRCROOT)/../../Makefile",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SRCROOT}\"\ncd ../..\ncd sys/unix\nsh setup.sh hints/macosx-cocoa\n";
+		};
+		55285E8F1CA7055300FAFDB1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../../util/Makefile",
+				"$(SRCROOT)/../../include/permonst.h",
+				"$(SRCROOT)/../../include/objclass.h",
+				"$(SRCROOT)/../../include/monsym.h",
+				"$(SRCROOT)/../../include/artilist.h",
+				"$(SRCROOT)/../../include/dungeon.h",
+				"$(SRCROOT)/../../include/obj.h",
+				"$(SRCROOT)/../../include/monst.h",
+				"$(SRCROOT)/../../include/you.h",
+				"$(SRCROOT)/../../include/flag.h",
+				"$(SRCROOT)/../../include/dlb.h",
+				"$(SRCROOT)/../../include/patchlevel.h",
+				"$(SRCROOT)/../../include/qtext.h",
+				"$(SRCROOT)/../../util/dgn_comp.y",
+				"$(SRCROOT)/../../util/dgn_comp.l",
+				"$(SRCROOT)/../../util/lev_comp.y",
+				"$(SRCROOT)/../../util/lev_comp.l",
+				"$(SRCROOT)/../../util/mdgrep.h",
+				"$(SRCROOT)/../../util/makedefs.c",
+				"$(SRCROOT)/../../util/panic.c",
+				"$(SRCROOT)/../../src/alloc.c",
+				"$(SRCROOT)/../../include/config.h",
+			);
+			outputPaths = (
+				"$(SRCROOT)/../../include/lev_comp.h",
+				"$(SRCROOT)/../../include/dgn_comp.h",
+				"$(SRCROOT)/../../include/onames.h",
+				"$(SRCROOT)/../../include/pm.h",
+				"$(SRCROOT)/../../include/vis_tab.h",
+				"$(SRCROOT)/../../util/makedefs",
+				"$(SRCROOT)/../../util/lev_comp",
+				"$(SRCROOT)/../../util/dgn_comp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SRCROOT}\"\ncd ../..\ncd util\n# make headers first\nmake makedefs\nmake ../include/lev_comp.h ../include/dgn_comp.h ../include/onames.h ../include/pm.h ../include/vis_tab.h\nmake lev_comp\nmake dgn_comp\n";
+		};
+		55285E941CA7057700FAFDB1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../../dat/Makefile",
+				"$(SRCROOT)/../../include/permonst.h",
+				"$(SRCROOT)/../../include/objclass.h",
+				"$(SRCROOT)/../../include/monsym.h",
+				"$(SRCROOT)/../../include/artilist.h",
+				"$(SRCROOT)/../../include/dungeon.h",
+				"$(SRCROOT)/../../include/obj.h",
+				"$(SRCROOT)/../../include/monst.h",
+				"$(SRCROOT)/../../include/you.h",
+				"$(SRCROOT)/../../include/flag.h",
+				"$(SRCROOT)/../../include/dlb.h",
+				"$(SRCROOT)/../../include/patchlevel.h",
+				"$(SRCROOT)/../../include/qtext.h",
+				"$(SRCROOT)/../../util/makedefs",
+				"$(SRCROOT)/../../util/lev_comp",
+				"$(SRCROOT)/../../util/dgn_comp",
+				"$(SRCROOT)/../../include/config.h",
+			);
+			outputPaths = (
+				"$(SRCROOT)/../../dat/Arc-fila.lev",
+				"$(SRCROOT)/../../dat/Arc-filb.lev",
+				"$(SRCROOT)/../../dat/Arc-goal.lev",
+				"$(SRCROOT)/../../dat/Arc-loca.lev",
+				"$(SRCROOT)/../../dat/Arc-strt.lev",
+				"$(SRCROOT)/../../dat/Bar-fila.lev",
+				"$(SRCROOT)/../../dat/Bar-filb.lev",
+				"$(SRCROOT)/../../dat/Bar-goal.lev",
+				"$(SRCROOT)/../../dat/Bar-loca.lev",
+				"$(SRCROOT)/../../dat/Bar-strt.lev",
+				"$(SRCROOT)/../../dat/Cav-fila.lev",
+				"$(SRCROOT)/../../dat/Cav-filb.lev",
+				"$(SRCROOT)/../../dat/Cav-goal.lev",
+				"$(SRCROOT)/../../dat/Cav-loca.lev",
+				"$(SRCROOT)/../../dat/Cav-strt.lev",
+				"$(SRCROOT)/../../dat/Hea-fila.lev",
+				"$(SRCROOT)/../../dat/Hea-filb.lev",
+				"$(SRCROOT)/../../dat/Hea-goal.lev",
+				"$(SRCROOT)/../../dat/Hea-loca.lev",
+				"$(SRCROOT)/../../dat/Hea-strt.lev",
+				"$(SRCROOT)/../../dat/Kni-fila.lev",
+				"$(SRCROOT)/../../dat/Kni-filb.lev",
+				"$(SRCROOT)/../../dat/Kni-goal.lev",
+				"$(SRCROOT)/../../dat/Kni-loca.lev",
+				"$(SRCROOT)/../../dat/Kni-strt.lev",
+				"$(SRCROOT)/../../dat/Mon-fila.lev",
+				"$(SRCROOT)/../../dat/Mon-filb.lev",
+				"$(SRCROOT)/../../dat/Mon-goal.lev",
+				"$(SRCROOT)/../../dat/Mon-loca.lev",
+				"$(SRCROOT)/../../dat/Mon-strt.lev",
+				"$(SRCROOT)/../../dat/Pri-fila.lev",
+				"$(SRCROOT)/../../dat/Pri-filb.lev",
+				"$(SRCROOT)/../../dat/Pri-goal.lev",
+				"$(SRCROOT)/../../dat/Pri-loca.lev",
+				"$(SRCROOT)/../../dat/Pri-strt.lev",
+				"$(SRCROOT)/../../dat/Ran-fila.lev",
+				"$(SRCROOT)/../../dat/Ran-filb.lev",
+				"$(SRCROOT)/../../dat/Ran-goal.lev",
+				"$(SRCROOT)/../../dat/Ran-loca.lev",
+				"$(SRCROOT)/../../dat/Ran-strt.lev",
+				"$(SRCROOT)/../../dat/Rog-fila.lev",
+				"$(SRCROOT)/../../dat/Rog-filb.lev",
+				"$(SRCROOT)/../../dat/Rog-goal.lev",
+				"$(SRCROOT)/../../dat/Rog-loca.lev",
+				"$(SRCROOT)/../../dat/Rog-strt.lev",
+				"$(SRCROOT)/../../dat/Sam-fila.lev",
+				"$(SRCROOT)/../../dat/Sam-filb.lev",
+				"$(SRCROOT)/../../dat/Sam-goal.lev",
+				"$(SRCROOT)/../../dat/Sam-loca.lev",
+				"$(SRCROOT)/../../dat/Sam-strt.lev",
+				"$(SRCROOT)/../../dat/Tou-fila.lev",
+				"$(SRCROOT)/../../dat/Tou-filb.lev",
+				"$(SRCROOT)/../../dat/Tou-goal.lev",
+				"$(SRCROOT)/../../dat/Tou-loca.lev",
+				"$(SRCROOT)/../../dat/Tou-strt.lev",
+				"$(SRCROOT)/../../dat/Val-fila.lev",
+				"$(SRCROOT)/../../dat/Val-filb.lev",
+				"$(SRCROOT)/../../dat/Val-goal.lev",
+				"$(SRCROOT)/../../dat/Val-loca.lev",
+				"$(SRCROOT)/../../dat/Val-strt.lev",
+				"$(SRCROOT)/../../dat/Wiz-fila.lev",
+				"$(SRCROOT)/../../dat/Wiz-filb.lev",
+				"$(SRCROOT)/../../dat/Wiz-goal.lev",
+				"$(SRCROOT)/../../dat/Wiz-loca.lev",
+				"$(SRCROOT)/../../dat/Wiz-strt.lev",
+				"$(SRCROOT)/../../dat/air.lev",
+				"$(SRCROOT)/../../dat/asmodeus.lev",
+				"$(SRCROOT)/../../dat/astral.lev",
+				"$(SRCROOT)/../../dat/baalz.lev",
+				"$(SRCROOT)/../../dat/bigrm-1.lev",
+				"$(SRCROOT)/../../dat/bigrm-10.lev",
+				"$(SRCROOT)/../../dat/bigrm-2.lev",
+				"$(SRCROOT)/../../dat/bigrm-3.lev",
+				"$(SRCROOT)/../../dat/bigrm-4.lev",
+				"$(SRCROOT)/../../dat/bigrm-5.lev",
+				"$(SRCROOT)/../../dat/bigrm-6.lev",
+				"$(SRCROOT)/../../dat/bigrm-7.lev",
+				"$(SRCROOT)/../../dat/bigrm-8.lev",
+				"$(SRCROOT)/../../dat/bigrm-9.lev",
+				"$(SRCROOT)/../../dat/bogusmon",
+				"$(SRCROOT)/../../dat/castle.lev",
+				"$(SRCROOT)/../../dat/data",
+				"$(SRCROOT)/../../dat/dungeon",
+				"$(SRCROOT)/../../dat/dungeon.pdf",
+				"$(SRCROOT)/../../dat/earth.lev",
+				"$(SRCROOT)/../../dat/engrave",
+				"$(SRCROOT)/../../dat/epitaph",
+				"$(SRCROOT)/../../dat/fakewiz1.lev",
+				"$(SRCROOT)/../../dat/fakewiz2.lev",
+				"$(SRCROOT)/../../dat/fire.lev",
+				"$(SRCROOT)/../../dat/juiblex.lev",
+				"$(SRCROOT)/../../dat/knox.lev",
+				"$(SRCROOT)/../../dat/medusa-1.lev",
+				"$(SRCROOT)/../../dat/medusa-2.lev",
+				"$(SRCROOT)/../../dat/medusa-3.lev",
+				"$(SRCROOT)/../../dat/medusa-4.lev",
+				"$(SRCROOT)/../../dat/minefill.lev",
+				"$(SRCROOT)/../../dat/minend-1.lev",
+				"$(SRCROOT)/../../dat/minend-2.lev",
+				"$(SRCROOT)/../../dat/minend-3.lev",
+				"$(SRCROOT)/../../dat/minetn-1.lev",
+				"$(SRCROOT)/../../dat/minetn-2.lev",
+				"$(SRCROOT)/../../dat/minetn-3.lev",
+				"$(SRCROOT)/../../dat/minetn-4.lev",
+				"$(SRCROOT)/../../dat/minetn-5.lev",
+				"$(SRCROOT)/../../dat/minetn-6.lev",
+				"$(SRCROOT)/../../dat/minetn-7.lev",
+				"$(SRCROOT)/../../dat/options",
+				"$(SRCROOT)/../../dat/oracle.lev",
+				"$(SRCROOT)/../../dat/oracles",
+				"$(SRCROOT)/../../dat/orcus.lev",
+				"$(SRCROOT)/../../dat/quest.dat",
+				"$(SRCROOT)/../../dat/quest_levs",
+				"$(SRCROOT)/../../dat/rumors",
+				"$(SRCROOT)/../../dat/sanctum.lev",
+				"$(SRCROOT)/../../dat/soko1-1.lev",
+				"$(SRCROOT)/../../dat/soko1-2.lev",
+				"$(SRCROOT)/../../dat/soko2-1.lev",
+				"$(SRCROOT)/../../dat/soko2-2.lev",
+				"$(SRCROOT)/../../dat/soko3-1.lev",
+				"$(SRCROOT)/../../dat/soko3-2.lev",
+				"$(SRCROOT)/../../dat/soko4-1.lev",
+				"$(SRCROOT)/../../dat/soko4-2.lev",
+				"$(SRCROOT)/../../dat/spec_levs",
+				"$(SRCROOT)/../../dat/tower1.lev",
+				"$(SRCROOT)/../../dat/tower2.lev",
+				"$(SRCROOT)/../../dat/tower3.lev",
+				"$(SRCROOT)/../../dat/valley.lev",
+				"$(SRCROOT)/../../dat/water.lev",
+				"$(SRCROOT)/../../dat/wizard1.lev",
+				"$(SRCROOT)/../../dat/wizard2.lev",
+				"$(SRCROOT)/../../dat/wizard3.lev",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SRCROOT}\"\ncd ../..\ncd dat\nmake\n";
+		};
+		55285E991CA7059D00FAFDB1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../../src/Makefile",
+				"$(SRCROOT)/../../win/share/tilemap.c",
+				"$(SRCROOT)/../../include/lev_comp.h",
+				"$(SRCROOT)/../../include/dgn_comp.h",
+				"$(SRCROOT)/../../include/onames.h",
+				"$(SRCROOT)/../../include/pm.h",
+				"$(SRCROOT)/../../include/vis_tab.h",
+				"$(SRCROOT)/../../include/config.h",
+			);
+			outputPaths = (
+				"$(SRCROOT)/../../src/tile.c",
+				"$(SRCROOT)/../../src/vis_tab.c",
+				"$(SRCROOT)/../../src/monstr.c",
+				"$(SRCROOT)/../../include/date.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${SRCROOT}\"\ncd ../..\ncd src\n\nmake ../include/date.h\nmake tile.c vis_tab.c monstr.c\n#make everyone else happy\ntouch Sysunix\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		021282B214F6E6240046D56F /* Sources */ = {
@@ -2966,6 +3235,41 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		55285E9B1CA706F500FAFDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55285E8B1CA7054E00FAFDB1 /* util */;
+			targetProxy = 55285E9A1CA706F500FAFDB1 /* PBXContainerItemProxy */;
+		};
+		55285E9D1CA706FC00FAFDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55285E8B1CA7054E00FAFDB1 /* util */;
+			targetProxy = 55285E9C1CA706FC00FAFDB1 /* PBXContainerItemProxy */;
+		};
+		55285E9F1CA7070300FAFDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55285E861CA7049C00FAFDB1 /* makefiles */;
+			targetProxy = 55285E9E1CA7070300FAFDB1 /* PBXContainerItemProxy */;
+		};
+		55285EA51CA7088D00FAFDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55285E901CA7057200FAFDB1 /* dat */;
+			targetProxy = 55285EA41CA7088D00FAFDB1 /* PBXContainerItemProxy */;
+		};
+		55285EA71CA7088D00FAFDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55285E951CA7058C00FAFDB1 /* src */;
+			targetProxy = 55285EA61CA7088D00FAFDB1 /* PBXContainerItemProxy */;
+		};
+		55285EA91CA7089700FAFDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55285E901CA7057200FAFDB1 /* dat */;
+			targetProxy = 55285EA81CA7089700FAFDB1 /* PBXContainerItemProxy */;
+		};
+		55285EAB1CA7089700FAFDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55285E951CA7058C00FAFDB1 /* src */;
+			targetProxy = 55285EAA1CA7089700FAFDB1 /* PBXContainerItemProxy */;
+		};
 		557119A61BD8203500959CD5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 557119951BD8203500959CD5 /* Recover */;
@@ -3108,6 +3412,62 @@
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "NetHackCocoa-Swift.h";
 				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
+			};
+			name = Release;
+		};
+		55285E871CA7049C00FAFDB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		55285E881CA7049C00FAFDB1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		55285E8D1CA7054E00FAFDB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		55285E8E1CA7054E00FAFDB1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		55285E921CA7057200FAFDB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		55285E931CA7057200FAFDB1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		55285E971CA7058C00FAFDB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		55285E981CA7058C00FAFDB1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -3379,6 +3739,42 @@
 			buildConfigurations = (
 				0212834C14F6E6240046D56F /* Debug */,
 				0212834D14F6E6240046D56F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55285E891CA7049C00FAFDB1 /* Build configuration list for PBXAggregateTarget "makefiles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55285E871CA7049C00FAFDB1 /* Debug */,
+				55285E881CA7049C00FAFDB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55285E8C1CA7054E00FAFDB1 /* Build configuration list for PBXAggregateTarget "util" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55285E8D1CA7054E00FAFDB1 /* Debug */,
+				55285E8E1CA7054E00FAFDB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55285E911CA7057200FAFDB1 /* Build configuration list for PBXAggregateTarget "dat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55285E921CA7057200FAFDB1 /* Debug */,
+				55285E931CA7057200FAFDB1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55285E961CA7058C00FAFDB1 /* Build configuration list for PBXAggregateTarget "src" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55285E971CA7058C00FAFDB1 /* Debug */,
+				55285E981CA7058C00FAFDB1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
