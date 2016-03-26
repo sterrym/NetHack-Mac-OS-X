@@ -640,10 +640,10 @@
 		02447C5D11B8C821008CB9C7 /* wizard3.lev in Resources */ = {isa = PBXBuildFile; fileRef = 02447BEB11B8C821008CB9C7 /* wizard3.lev */; };
 		028E8B3319FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
 		028E8B3419FACD8E009DF54C /* unixunix.c in Sources */ = {isa = PBXBuildFile; fileRef = 0224CD6711B8A92600FC2199 /* unixunix.c */; };
-		550D8DBD1C7B942E00542FA8 /* geoduck20x12.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBB1C7B942E00542FA8 /* geoduck20x12.png */; };
-		550D8DBE1C7B942E00542FA8 /* geoduck20x12.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBB1C7B942E00542FA8 /* geoduck20x12.png */; };
-		550D8DBF1C7B942E00542FA8 /* geoduck40x24.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBC1C7B942E00542FA8 /* geoduck40x24.png */; };
-		550D8DC01C7B942E00542FA8 /* geoduck40x24.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBC1C7B942E00542FA8 /* geoduck40x24.png */; };
+		550D8DBD1C7B942E00542FA8 /* geoduck12x20.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */; };
+		550D8DBE1C7B942E00542FA8 /* geoduck12x20.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */; };
+		550D8DBF1C7B942E00542FA8 /* geoduck24x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */; };
+		550D8DC01C7B942E00542FA8 /* geoduck24x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */; };
 		5519D0AD1C264E0E001654FD /* NhYnQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */; };
 		5519D0AE1C264E0E001654FD /* NhYnQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */; };
 		552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 552E7D9F1A79DCA700D18C9E /* Images.xcassets */; };
@@ -1229,8 +1229,8 @@
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		550D8DBB1C7B942E00542FA8 /* geoduck20x12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = geoduck20x12.png; sourceTree = "<group>"; };
-		550D8DBC1C7B942E00542FA8 /* geoduck40x24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = geoduck40x24.png; sourceTree = "<group>"; };
+		550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = geoduck12x20.png; sourceTree = "<group>"; };
+		550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = geoduck24x40.png; sourceTree = "<group>"; };
 		5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhYnQuestion.swift; sourceTree = "<group>"; };
 		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		555B7B601C18C19A00A24D24 /* bogusmon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bogusmon; sourceTree = "<group>"; };
@@ -1534,8 +1534,8 @@
 				0224CBDB11B8A82300FC2199 /* chozo32b.png */,
 				559CDEE41BC1A53E008ED534 /* dawnhack32.png */,
 				0224CBDC11B8A82300FC2199 /* kins32.bmp */,
-				550D8DBB1C7B942E00542FA8 /* geoduck20x12.png */,
-				550D8DBC1C7B942E00542FA8 /* geoduck40x24.png */,
+				550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */,
+				550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */,
 				559CDEE51BC1A53E008ED534 /* nevanda32.png */,
 				559CDEE61BC1A53E008ED534 /* nevanda32black.png */,
 				559CDEE11BC1A4C5008ED534 /* nextstep10.png */,
@@ -2301,7 +2301,7 @@
 				0212823214F6E6240046D56F /* chozo32b.png in Resources */,
 				0212823314F6E6240046D56F /* kins32.bmp in Resources */,
 				0212823414F6E6240046D56F /* nh32.png in Resources */,
-				550D8DC01C7B942E00542FA8 /* geoduck40x24.png in Resources */,
+				550D8DC01C7B942E00542FA8 /* geoduck24x40.png in Resources */,
 				0212823814F6E6240046D56F /* tiles32.png in Resources */,
 				0212823914F6E6240046D56F /* Credits.rtf in Resources */,
 				0212823B14F6E6240046D56F /* hack.h-t in Resources */,
@@ -2358,7 +2358,7 @@
 				0212826E14F6E6240046D56F /* minend-3.lev in Resources */,
 				0212826F14F6E6240046D56F /* minetn-1.lev in Resources */,
 				0212827014F6E6240046D56F /* minetn-2.lev in Resources */,
-				550D8DBE1C7B942E00542FA8 /* geoduck20x12.png in Resources */,
+				550D8DBE1C7B942E00542FA8 /* geoduck12x20.png in Resources */,
 				0212827114F6E6240046D56F /* minetn-3.lev in Resources */,
 				559D02931C4EEBF60026B705 /* sysconf in Resources */,
 				0212827214F6E6240046D56F /* minetn-4.lev in Resources */,
@@ -2463,7 +2463,7 @@
 				55DDEAA01C19084E001F944B /* tiles16.png in Resources */,
 				55F819801BD8416D00FFE986 /* Recover.app in Resources */,
 				552E7DA01A79DCA700D18C9E /* Images.xcassets in Resources */,
-				550D8DBD1C7B942E00542FA8 /* geoduck20x12.png in Resources */,
+				550D8DBD1C7B942E00542FA8 /* geoduck12x20.png in Resources */,
 				0224CBAE11B8A7BE00FC2199 /* cmdhelp in Resources */,
 				0224CBAF11B8A7BE00FC2199 /* data in Resources */,
 				0224CBB011B8A7BE00FC2199 /* data.base in Resources */,
@@ -2498,7 +2498,7 @@
 				0224CF1011B8AB2200FC2199 /* MenuWindow.xib in Resources */,
 				0224CF1111B8AB2200FC2199 /* MessageWindow.xib in Resources */,
 				02447BEC11B8C821008CB9C7 /* air.lev in Resources */,
-				550D8DBF1C7B942E00542FA8 /* geoduck40x24.png in Resources */,
+				550D8DBF1C7B942E00542FA8 /* geoduck24x40.png in Resources */,
 				02447BED11B8C821008CB9C7 /* Arc-fila.lev in Resources */,
 				02447BEE11B8C821008CB9C7 /* Arc-filb.lev in Resources */,
 				02447BEF11B8C821008CB9C7 /* Arc-goal.lev in Resources */,
