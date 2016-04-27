@@ -446,7 +446,7 @@
 	// convert widths to tab stops
 	NSMutableArray * tabs = [NSMutableArray arrayWithCapacity:itemWidths.count];
 	CGFloat pos = 0.0;
-	CGFloat SPACE = 5.0;
+	static const CGFloat SPACE = 5.0;
 	for ( NSNumber * width in itemWidths ) {
 		pos += width.doubleValue + SPACE;
 		NSTextTab * tab = [[NSTextTab alloc] initWithType:NSLeftTabStopType location:pos];
