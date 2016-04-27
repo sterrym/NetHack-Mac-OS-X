@@ -18,15 +18,25 @@ extension NHRecoveryErrors: ErrorType {
 	}
 }
 
+/// NSTableViewDataSource url table column key
+private let locURLKey = "NHRecoverURL"
+
+/// NSTableViewDataSource error table column key
+private let recoverErrorKey = "NHRecoverError"
+
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDataSource {
 	@IBOutlet weak var window: NSWindow!
 	@IBOutlet weak var progress: NSProgressIndicator!
+	@IBOutlet weak var errorPanel: NSWindow!
+	@IBOutlet weak var errorTable: NSTableView!
+	
 	private var failedNums = 0
 	private var succeededNums = 0
 	dynamic private(set) var countNums = 0
 	
 	private var recoveryErrors = [NSURL: NSError]()
+	private var errorOrder = [NSURL]()
 	
 	private var errorToReport: NHRecoveryErrors?
 	private let opQueue: NSOperationQueue = {
@@ -79,7 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 					
 					if self.failedNums != 0 {
 						alert.alertStyle = .WarningAlertStyle
-						alert.messageText = "Recovery unsuccessful"
+						alert.messageText = "Recovery unsuccessful!"
 						alert.informativeText = "\(self.failedNums) file\(self.failedNums > 1 ? "s were" : " was") not successfully recovered."
 						alert.addButtonWithTitle("Quit")
 						alert.addButtonWithTitle("Show Errors")
@@ -93,7 +103,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 						let workspace = NSWorkspace.sharedWorkspace()
 						let parentBundleURL: NSURL = {
 							let selfBundleURL = NSBundle.mainBundle().bundleURL
-							return selfBundleURL.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!
+							return selfBundleURL.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!
 						}()
 
 						switch response {
@@ -101,8 +111,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 							do {
 								try workspace.launchApplicationAtURL(parentBundleURL, options: .Default, configuration: [:])
 								NSApp.terminate(nil)
-							} catch _ {
+							} catch let error as NSError {
 								NSBeep()
+								NSAlert(error: error).runModal()
 								exit(EXIT_FAILURE)
 							}
 							
@@ -126,7 +137,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 
 	func showErrorList() {
-		
+		//Created to make sure we have data in constant order.
+		errorOrder = Array(recoveryErrors.keys)
+		errorTable.reloadData()
+		NSApp.terminate(nil)
 	}
 	
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
@@ -151,5 +165,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		addURL(fileURL)
 		return true
 	}
+	
+	// MARK: - NSTableViewDataSource
+	
+	func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+		return recoveryErrors.count
+	}
+	
+	func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
+		guard let columnID = tableColumn?.identifier else {
+			return nil
+		}
+		switch columnID {
+		case locURLKey:
+			return errorOrder[row].lastPathComponent
+			
+		case recoverErrorKey:
+			return recoveryErrors[errorOrder[row]]?.localizedDescription
+			
+		default:
+			return nil
+		}
+	}
 }
-
