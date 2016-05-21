@@ -25,7 +25,7 @@ private let locURLKey = "NHRecoverURL"
 private let recoverErrorKey = "NHRecoverError"
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDataSource {
+class AppDelegate: NSObject {
 	@IBOutlet weak var window: NSWindow!
 	@IBOutlet weak var progress: NSProgressIndicator!
 	@IBOutlet weak var errorPanel: NSWindow!
@@ -54,20 +54,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDataSource {
 	override func awakeFromNib() {
 		super.awakeFromNib()
 		
-		if let errorToReport = errorToReport {
-			do {
-				throw errorToReport
-			} catch let error as NSError {
-				let anAlert = NSAlert(error: error)
-				
-				anAlert.informativeText += "\n\nRecovery will now close."
-				
-				anAlert.runModal()
-				NSApp.terminate(nil)
-			}
+		let selfBundleURL = NSBundle.mainBundle().bundleURL
+		guard let parentBundleURL = selfBundleURL.URLByDeletingLastPathComponent?.URLByDeletingLastPathComponent,
+			parentBundle = NSBundle(URL: parentBundleURL), parentBundleResources = parentBundle.resourcePath
+			where parentBundle.bundleURL.pathExtension == "app" else {
+				errorToReport = .HostBundleNotFound
+				return
 		}
 		
-		progress.startAnimation(nil)
+		//Change to the NetHack resource directory.
+		NSFileManager.defaultManager().changeCurrentDirectoryPath(parentBundleResources)
+	}
+	
+	private func launchNetHack() throws {
+		let workspace = NSWorkspace.sharedWorkspace()
+		let parentBundleURL: NSURL = {
+			let selfBundleURL = NSBundle.mainBundle().bundleURL
+			return selfBundleURL.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!
+		}()
+		try workspace.launchApplicationAtURL(parentBundleURL, options: .Default, configuration: [:])
+		NSApp.terminate(nil)
 	}
 	
 	func addURL(url: NSURL) {
@@ -100,17 +106,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDataSource {
 					}
 					
 					alert.beginSheetModalForWindow(self.window, completionHandler: { (response) -> Void in
-						let workspace = NSWorkspace.sharedWorkspace()
-						let parentBundleURL: NSURL = {
-							let selfBundleURL = NSBundle.mainBundle().bundleURL
-							return selfBundleURL.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!.URLByDeletingLastPathComponent!
-						}()
-
 						switch response {
 						case NSAlertFirstButtonReturn:
 							do {
-								try workspace.launchApplicationAtURL(parentBundleURL, options: .Default, configuration: [:])
-								NSApp.terminate(nil)
+								try self.launchNetHack()
 							} catch let error as NSError {
 								NSBeep()
 								NSAlert(error: error).runModal()
@@ -125,6 +124,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDataSource {
 							
 						default:
 							NSBeep()
+							sleep(1)
 							exit(EXIT_FAILURE)
 						}
 					})
@@ -140,20 +140,54 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDataSource {
 		//Created to make sure we have data in constant order.
 		errorOrder = Array(recoveryErrors.keys)
 		errorTable.reloadData()
-		NSApp.terminate(nil)
+		self.window.beginSheet(errorPanel) { (resp) in
+			if resp == -1 {
+				// Just quit
+				NSApp.terminate(nil)
+			} else if resp == 0 {
+				do {
+					try self.launchNetHack()
+				} catch let error as NSError {
+					NSBeep()
+					NSAlert(error: error).runModal()
+					exit(EXIT_FAILURE)
+				}
+			} else {
+				//Don't quit
+				NSBeep()
+			}
+		}
 	}
 	
+	@IBAction func tableButton(sender: NSButton) {
+		self.window.endSheet(errorPanel, returnCode: sender.tag)
+	}
+}
+
+//MARK: - NSApplicationDelegate
+
+extension AppDelegate: NSApplicationDelegate {
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
 		// Insert code here to initialize your application
-		let selfBundleURL = NSBundle.mainBundle().bundleURL
-		guard let parentBundleURL = selfBundleURL.URLByDeletingLastPathComponent?.URLByDeletingLastPathComponent,
-			parentBundle = NSBundle(URL: parentBundleURL), parentBundleResources = parentBundle.resourcePath else {
-			errorToReport = .HostBundleNotFound
-			return
+		
+		if let errorToReport = errorToReport {
+			do {
+				throw errorToReport
+			} catch let error as NSError {
+				// force loading of SaveRecoveryOperation class
+				SaveRecoveryOperation.load()
+
+				let anAlert = NSAlert(error: error)
+				anAlert.alertStyle = .CriticalAlertStyle
+				
+				anAlert.informativeText += "\n\nRecovery will now close."
+				
+				anAlert.runModal()
+				NSApp.terminate(nil)
+			}
 		}
 		
-		//Change to the NetHack resource directory.
-		NSFileManager.defaultManager().changeCurrentDirectoryPath(parentBundleResources)
+		progress.startAnimation(nil)
 	}
 
 	func applicationWillTerminate(aNotification: NSNotification) {
@@ -165,9 +199,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSTableViewDataSource {
 		addURL(fileURL)
 		return true
 	}
-	
-	// MARK: - NSTableViewDataSource
-	
+}
+
+// MARK: - NSTableViewDataSource
+
+extension AppDelegate: NSTableViewDataSource {
 	func numberOfRowsInTableView(tableView: NSTableView) -> Int {
 		return recoveryErrors.count
 	}

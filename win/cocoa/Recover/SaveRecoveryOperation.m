@@ -27,9 +27,6 @@ NSString * const NHRecoveryErrorDomain = @"net.hack.cocoa.recover.error";
 - (int)createSaveFile;
 @end
 
-#define set_levelfile_name(first) [self setLevelFileName: first ]
-#define open_levelfile(first) [self openLevelFile: first ]
-#define create_savefile() [self createSaveFile] 
 static BOOL copy_bytes(int ifd, int ofd);
 
 #define Fprintf	(void)fprintf
@@ -64,7 +61,6 @@ static BOOL copy_bytes(int ifd, int ofd);
 	dispatch_once(&onceToken, ^{
 		if ([NSError respondsToSelector:@selector(setUserInfoValueProviderForDomain:provider:)]) {
 			[NSError setUserInfoValueProviderForDomain:NHRecoveryErrorDomain provider:^id _Nullable(NSError * _Nonnull err, NSString * _Nonnull userInfoKey) {
-				
 				if ([userInfoKey isEqualToString:NSLocalizedFailureReasonErrorKey]) {
 					if (err.code == NHRecoveryErrorHostBundleNotFound) {
 						return @"The recovery app wasn't in NetHack's resource directory.";
@@ -74,7 +70,7 @@ static BOOL copy_bytes(int ifd, int ofd);
 				if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
 					switch (err.code) {
 						case NHRecoveryErrorHostBundleNotFound:
-							return @"The parent NetHack application could not be found";
+							return @"Parent NetHack application not found";
 							break;
 							
 						case NHRecoveryErrorFileCopy:
@@ -83,6 +79,12 @@ static BOOL copy_bytes(int ifd, int ofd);
 							
 						default:
 							break;
+					}
+				}
+				
+				if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey]) {
+					if (err.code == NHRecoveryErrorHostBundleNotFound) {
+						return @"Make sure that the Recovery app is in a NetHack application bundle.";
 					}
 				}
 				return nil;
@@ -126,7 +128,7 @@ static BOOL copy_bytes(int ifd, int ofd);
 	 *	and game state
 	 */
 	(void) strcpy(lock, basename);
-	gfd = open_levelfile(0);
+	gfd = [self openLevelFile:0];
 	if (gfd < 0) {
 		errStr = [[NSString alloc] initWithFormat:@"Cannot open level 0 for %s.", basename];
 		_error = [[NSError alloc] initWithDomain:NHRecoveryErrorDomain code:NHRecoveryErrorCannotOpenLevel0 userInfo:@{NSLocalizedDescriptionKey: errStr}];
@@ -171,7 +173,7 @@ static BOOL copy_bytes(int ifd, int ofd);
 	 *	(non-level-based) game state
 	 *	other levels
 	 */
-	sfd = create_savefile();
+	sfd = [self createSaveFile];
 	if (sfd < 0) {
 		errStr = [[NSString alloc] initWithFormat:@"Cannot create savefile %s.", savename];
 		Close(gfd);
@@ -179,7 +181,7 @@ static BOOL copy_bytes(int ifd, int ofd);
 		return;
 	}
 	
-	lfd = open_levelfile(savelev);
+	lfd = [self openLevelFile:savelev];
 	if (lfd < 0) {
 		errStr = [[NSString alloc] initWithFormat:@"Cannot open level of save for %s.", basename];
 		Close(gfd);
@@ -241,7 +243,7 @@ static BOOL copy_bytes(int ifd, int ofd);
 		return;
 	}
 	Close(gfd);
-	set_levelfile_name(0);
+	[self setLevelFileName:0];
 	(void) unlink(lock);
 	
 	for (lev = 1; lev < 256; lev++) {
@@ -249,7 +251,7 @@ static BOOL copy_bytes(int ifd, int ofd);
 		 * maximum level number (for the endlevel) must be < 256
 		 */
 		if (lev != savelev) {
-			lfd = open_levelfile(lev);
+			lfd = [self openLevelFile:lev];
 			if (lfd >= 0) {
 				/* any or all of these may not exist */
 				levc = (xchar) lev;
@@ -285,7 +287,7 @@ static BOOL copy_bytes(int ifd, int ofd);
 {
 	int fd;
 	
-	set_levelfile_name(lev);
+	[self setLevelFileName:lev];
 	fd = open(lock, O_RDONLY, 0);
 	return fd;
 }
