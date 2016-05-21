@@ -774,7 +774,7 @@ do_look(int mode, coord *click_cc)
     int i = '\0', ans = 0;
     int sym;              /* typed symbol or converted glyph */
     int found;            /* count of matching syms found */
-    coord cc;             /* screen pos of unknown glyph */
+    coord cc = {0,0};     /* screen pos of unknown glyph */
     boolean save_verbose; /* saved value of flags.verbose */
     boolean from_screen;  /* question from the screen */
 

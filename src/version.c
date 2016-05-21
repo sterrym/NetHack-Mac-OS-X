@@ -146,7 +146,7 @@ STATIC_OVL void
 insert_rtoptions(winid win, char *buf, const char *finalphrase)
 {
     char rtbuf[BUFSZ];
-    int l, i;
+    int l = 0, i;
     const char *s1 = 0, *s2 = 0, *s3 = 0, *s4 = 0;
 
     if ((int) strlen(buf) >= (BUFSZ - 1))
