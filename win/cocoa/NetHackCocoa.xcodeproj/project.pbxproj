@@ -1291,21 +1291,14 @@
 		559D028E1C4EE9E20026B705 /* uudecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uudecode.c; sourceTree = "<group>"; };
 		559D02911C4EEBF60026B705 /* sysconf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sysconf; sourceTree = "<group>"; };
 		55BCFCE71C9F66AC0076210F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
-		55BF8C6F1B77BEF10031A45A /* compat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = compat.m; sourceTree = "<group>"; };
 		55DDEA9F1C19084E001F944B /* tiles16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tiles16.png; sourceTree = "<group>"; };
 		55DDEAA21C1A1853001F944B /* SaveRecoveryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveRecoveryOperation.h; sourceTree = "<group>"; };
 		55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveRecoveryOperation.m; sourceTree = "<group>"; };
 		55E6B4871BC1D94000E8125A /* NhEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhEvent.swift; sourceTree = "<group>"; };
 		55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhTextInputEvent.swift; sourceTree = "<group>"; };
 		55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftNetHack bridge.swift"; sourceTree = "<group>"; };
-		55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		55F514F01B77E9D400DEC8F5 /* ARCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCBridge.h; sourceTree = "<group>"; };
-		55F514F41B77EFB000DEC8F5 /* WinSwiftBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinSwiftBridge.h; sourceTree = "<group>"; };
-		55F514F51B77EFB000DEC8F5 /* WinSwiftBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WinSwiftBridge.m; sourceTree = "<group>"; };
-		55F514F81B77F14400DEC8F5 /* NhObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhObject.swift; sourceTree = "<group>"; };
-		55F514FA1B77F69D00DEC8F5 /* NhItemGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhItemGroup.swift; sourceTree = "<group>"; };
 		55F515011B77FD4600DEC8F5 /* ZDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDirection.swift; sourceTree = "<group>"; };
 		55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WinCocoaAdditions.swift; sourceTree = "<group>"; };
 		55F516591B7831C700DEC8F5 /* TileSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileSet.swift; sourceTree = "<group>"; };
@@ -1888,7 +1881,6 @@
 				43153FFE114ABAE0003E9BF4 /* iHack */,
 				43F7AB321129551500CF5B3C /* nethack */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
-				55BF8B3E1B77BBB80031A45A /* NetHackSwift */,
 				557119971BD8203500959CD5 /* Recover */,
 				557119A71BD8203500959CD5 /* RecoverTests */,
 				557119B21BD8203500959CD5 /* RecoverUITests */,
@@ -2065,36 +2057,6 @@
 				559D028B1C4EE9E20026B705 /* wdnharp.uu */,
 			);
 			path = sounds;
-			sourceTree = "<group>";
-		};
-		55BF8B3E1B77BBB80031A45A /* NetHackSwift */ = {
-			isa = PBXGroup;
-			children = (
-				55BF8B521B77BC4B0031A45A /* Source */,
-			);
-			path = NetHackSwift;
-			sourceTree = "<group>";
-		};
-		55BF8B521B77BC4B0031A45A /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				55F514EB1B77E29100DEC8F5 /* Supporting Source code */,
-				55BF8B3F1B77BBB80031A45A /* AppDelegate.swift */,
-				55F514E91B77E0AF00DEC8F5 /* MainWindowController.swift */,
-				55F514F81B77F14400DEC8F5 /* NhObject.swift */,
-				55F514FA1B77F69D00DEC8F5 /* NhItemGroup.swift */,
-			);
-			name = Source;
-			sourceTree = "<group>";
-		};
-		55F514EB1B77E29100DEC8F5 /* Supporting Source code */ = {
-			isa = PBXGroup;
-			children = (
-				55BF8C6F1B77BEF10031A45A /* compat.m */,
-				55F514F41B77EFB000DEC8F5 /* WinSwiftBridge.h */,
-				55F514F51B77EFB000DEC8F5 /* WinSwiftBridge.m */,
-			);
-			name = "Supporting Source code";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
