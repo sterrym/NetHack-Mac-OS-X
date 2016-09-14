@@ -80,7 +80,7 @@ var NUMBER_OF_TILES_ROW: Int {
 }
 */
 
-@noreturn func panic(str: String) {
+func panic(_ str: String) -> Never  {
 	Swift_panic(str)
 }
 
@@ -92,8 +92,8 @@ var ESee_invisible: Int {
 	return u.uprops.12.extrinsic
 }
 
-private func perceives(ptr: UnsafePointer<permonst>) -> Bool {
-	return (ptr.memory.mflags1 & UInt(M1_SEE_INVIS)) != 0
+private func perceives(_ ptr: UnsafePointer<permonst>) -> Bool {
+	return (ptr.pointee.mflags1 & UInt(M1_SEE_INVIS)) != 0
 }
 
 var See_invisible: Bool {

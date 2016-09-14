@@ -33,7 +33,7 @@ final class NhYnQuestion : NSObject {
 	}
 	
 	init(question q: UnsafePointer<CChar>, choices ch: UnsafePointer<CChar>, defaultChoice c: CChar) {
-		question = String.fromCString(q)!
+		question = String(cString: q)
 		choices = ch
 		def = c
 		

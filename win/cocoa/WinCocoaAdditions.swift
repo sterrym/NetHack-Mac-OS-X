@@ -16,15 +16,15 @@ private var audioDict = [String: AVAudioPlayer]()
 
 extension WinCocoa {
 	
-	@objc class func windowForWindowID(wid: winid) -> NhWindow? {
+	@objc class func windowForWindowID(_ wid: winid) -> NhWindow? {
 		return windowDict[wid]
 	}
 	
-	@objc(setWindow:forID:) class func setWindow(window: NhWindow, id wid: winid) {
+	@objc(setWindow:forID:) class func setWindow(_ window: NhWindow, id wid: winid) {
 		windowDict[wid] = window
 	}
 	
-	@objc class func addWindow(window: NhWindow) -> winid {
+	@objc class func addWindow(_ window: NhWindow) -> winid {
 		currentWid += 1
 		let newID = currentWid
 		windowDict[newID] = window
@@ -32,34 +32,34 @@ extension WinCocoa {
 	}
 	
 	@objc(removeWindowWithID:) class func removeWindow(id wid: winid) {
-		windowDict.removeValueForKey(wid)
+		windowDict.removeValue(forKey: wid)
 	}
 	
-	@objc(playSoundAtURL:volume:) class func playSound(URL URL: NSURL, volume: Float) -> Bool {
+	@objc(playSoundAtURL:volume:) class func playSound(URL: Foundation.URL, volume: Float) -> Bool {
 		//guard !SOUND_MUTE else {
 		//	return false
 		//}
 		
-		func playAud(playSound: AVAudioPlayer) {
-			if playSound.playing {
+		func playAud(_ playSound: AVAudioPlayer) {
+			if playSound.isPlaying {
 				return
 			}
 			playSound.volume = volume * 0.01
 			playSound.play()
 		}
 		
-		if let playSound1 = audioDict[URL.path!] {
+		if let playSound1 = audioDict[URL.path] {
 			playAud(playSound1)
 			return true
 		}
-		guard URL.checkResourceIsReachableAndReturnError(nil) else {
+		guard (URL as NSURL).checkResourceIsReachableAndReturnError(nil) else {
 			return false
 		}
 		
-		guard let playSound = try? AVAudioPlayer(contentsOfURL: URL) else {
+		guard let playSound = try? AVAudioPlayer(contentsOf: URL) else {
 			return false
 		}
-		audioDict[URL.path!] = playSound
+		audioDict[URL.path] = playSound
 		playAud(playSound)
 		return true
 	}

@@ -27,14 +27,14 @@ final class TileSet: NSObject {
 	static var instance: TileSet?
 	let image: NSImage
 	let tileSize: NSSize
-	private let rows: Int
-	private let columns: Int
+	fileprivate let rows: Int
+	fileprivate let columns: Int
 
 	init(image img: NSImage, tileSize ts: NSSize) {
 		let rect = NSRect(origin: .zero, size: img.size)
 		image = NSImage(size: rect.size)
 		image.lockFocus()
-		img.drawInRect(rect, fromRect: rect, operation: .CompositeCopy, fraction: 1.0)
+		img.draw(in: rect, from: rect, operation: .copy, fraction: 1.0)
 		image.unlockFocus()
 		
 		tileSize = ts
@@ -44,12 +44,12 @@ final class TileSet: NSObject {
 		super.init()
 	}
 	
-	func sourceRectForGlyph(glyph: Int32) -> NSRect {
+	func sourceRectForGlyph(_ glyph: Int32) -> NSRect {
 		let tile = glyphToTile(glyph)
 		return sourceRectForTile(tile)
 	}
 	
-	private func sourceRectForTile(tile: Int32) -> NSRect {
+	fileprivate func sourceRectForTile(_ tile: Int32) -> NSRect {
 		let row = rows - 1 - Int(tile)/columns;
 		let col = Int(tile) % columns;
 
@@ -72,14 +72,14 @@ final class TileSet: NSObject {
 		return size
 	}
 	
-	func imageForGlyph(glyph: Int32, enabled: Bool = true) -> NSImage {
+	func imageForGlyph(_ glyph: Int32, enabled: Bool = true) -> NSImage {
 		// get image
 		let srcRect = sourceRectForGlyph(glyph)
 		let size = imageSize
 		let newImage = NSImage(size: size)
 		let dstRect = NSRect(origin: .zero, size: size)
 		newImage.lockFocus()
-		image.drawInRect(dstRect, fromRect: srcRect, operation: .CompositeCopy, fraction: enabled ? 1.0 : 0.5)
+		image.draw(in: dstRect, from: srcRect, operation: .copy, fraction: enabled ? 1.0 : 0.5)
 		newImage.unlockFocus()
 		return newImage
 	}
