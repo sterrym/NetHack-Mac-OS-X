@@ -35,7 +35,7 @@ extension WinCocoa {
 		windowDict.removeValue(forKey: wid)
 	}
 	
-	@objc(playSoundAtURL:volume:) class func playSound(URL: Foundation.URL, volume: Float) -> Bool {
+	@objc(playSoundAtURL:volume:) class func playSound(at url: URL, volume: Float) -> Bool {
 		//guard !SOUND_MUTE else {
 		//	return false
 		//}
@@ -48,18 +48,18 @@ extension WinCocoa {
 			playSound.play()
 		}
 		
-		if let playSound1 = audioDict[URL.path] {
+		if let playSound1 = audioDict[url.path] {
 			playAud(playSound1)
 			return true
 		}
-		guard (URL as NSURL).checkResourceIsReachableAndReturnError(nil) else {
+		guard let valid = try? url.checkResourceIsReachable(), valid else {
 			return false
 		}
 		
-		guard let playSound = try? AVAudioPlayer(contentsOf: URL) else {
+		guard let playSound = try? AVAudioPlayer(contentsOf: url) else {
 			return false
 		}
-		audioDict[URL.path] = playSound
+		audioDict[url.path] = playSound
 		playAud(playSound)
 		return true
 	}

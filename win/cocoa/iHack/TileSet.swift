@@ -44,12 +44,12 @@ final class TileSet: NSObject {
 		super.init()
 	}
 	
-	func sourceRectForGlyph(_ glyph: Int32) -> NSRect {
+	@objc(sourceRectForGlyph:) func sourceRect(forGlyph glyph: Int32) -> NSRect {
 		let tile = glyphToTile(glyph)
-		return sourceRectForTile(tile)
+		return sourceRect(forTile: tile)
 	}
 	
-	fileprivate func sourceRectForTile(_ tile: Int32) -> NSRect {
+	fileprivate func sourceRect(forTile tile: Int32) -> NSRect {
 		let row = rows - 1 - Int(tile)/columns;
 		let col = Int(tile) % columns;
 
@@ -72,9 +72,9 @@ final class TileSet: NSObject {
 		return size
 	}
 	
-	func imageForGlyph(_ glyph: Int32, enabled: Bool = true) -> NSImage {
+	@objc(imageForGlyph:enabled:) func image(for glyph: Int32, enabled: Bool = true) -> NSImage {
 		// get image
-		let srcRect = sourceRectForGlyph(glyph)
+		let srcRect = sourceRect(forGlyph: glyph)
 		let size = imageSize
 		let newImage = NSImage(size: size)
 		let dstRect = NSRect(origin: .zero, size: size)
