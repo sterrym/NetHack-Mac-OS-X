@@ -50,6 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// all commands possible at this stage
 + (NSArray<NhCommand *> *)currentCommands;
+#if __has_feature(objc_class_property)
+/// all commands possible at this stage
+@property (class, readonly, copy) NSArray<NhCommand*> *currentCommands;
+#endif
 
 /// all commands possible for an adjacent position
 + (NSArray<NhCommand*> *)commandsForAdjacentTile:(coord)tp;

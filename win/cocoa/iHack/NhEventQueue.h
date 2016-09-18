@@ -35,6 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NhEventQueue *)instance;
+#if __has_feature(objc_class_property)
+@property (class, readonly, retain) NhEventQueue *instance;
+#endif
 
 - (void)addEvent:(NhEvent *)e;
 - (void)addKey:(int)k;

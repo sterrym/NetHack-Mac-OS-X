@@ -71,7 +71,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 + (MainWindowController *) instance;
-
+#if __has_feature(objc_class_property)
+@property (class, readonly, strong) MainWindowController *instance;
+#endif
 
 // menu
 - (IBAction)performMenuAction:(id)sender;

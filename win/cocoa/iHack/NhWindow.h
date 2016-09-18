@@ -41,6 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (NhWindow *)messageWindow;
 + (NhWindow *)statusWindow;
 + (NhWindow *)mapWindow;
+#if __has_feature(objc_class_property)
+@property (class, readonly, strong) NhWindow *messageWindow;
+@property (class, readonly, strong) NhWindow *statusWindow;
+@property (class, readonly, strong) NhWindow *mapWindow;
+#endif
 
 - (instancetype)initWithType:(int)t;
 - (void)print:(const char *)str attr:(int)attr;

@@ -1231,6 +1231,19 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = geoduck12x20.png; sourceTree = "<group>"; };
 		550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = geoduck24x40.png; sourceTree = "<group>"; };
+		551980FE1D8F12DC008AA881 /* dgn_comp.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = dgn_comp.l; sourceTree = "<group>"; };
+		551980FF1D8F12DC008AA881 /* dgn_comp.y */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.yacc; path = dgn_comp.y; sourceTree = "<group>"; };
+		551981001D8F12DC008AA881 /* dgn_main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dgn_main.c; sourceTree = "<group>"; };
+		551981011D8F12DC008AA881 /* dlb_main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlb_main.c; sourceTree = "<group>"; };
+		551981021D8F12DC008AA881 /* lev_comp.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = lev_comp.l; sourceTree = "<group>"; };
+		551981031D8F12DC008AA881 /* lev_comp.y */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.yacc; path = lev_comp.y; sourceTree = "<group>"; };
+		551981041D8F12DC008AA881 /* lev_main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lev_main.c; sourceTree = "<group>"; };
+		551981051D8F12DC008AA881 /* makedefs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = makedefs.c; sourceTree = "<group>"; };
+		551981061D8F12DC008AA881 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		551981071D8F12DC008AA881 /* mdgrep.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mdgrep.h; sourceTree = "<group>"; };
+		551981081D8F12DC008AA881 /* mdgrep.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = mdgrep.pl; sourceTree = "<group>"; };
+		551981091D8F12DC008AA881 /* panic.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = panic.c; sourceTree = "<group>"; };
+		5519810A1D8F12DC008AA881 /* recover.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = recover.c; sourceTree = "<group>"; };
 		5519D0AC1C264E0E001654FD /* NhYnQuestion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhYnQuestion.swift; sourceTree = "<group>"; };
 		552E7D9F1A79DCA700D18C9E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		555B7B601C18C19A00A24D24 /* bogusmon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bogusmon; sourceTree = "<group>"; };
@@ -1972,6 +1985,7 @@
 		43F7AB321129551500CF5B3C /* nethack */ = {
 			isa = PBXGroup;
 			children = (
+				551980FD1D8F127A008AA881 /* util */,
 				0224CBF611B8A92500FC2199 /* include */,
 				0224CC5A11B8A92500FC2199 /* src */,
 				0224CCCA11B8A92500FC2199 /* sys */,
@@ -1980,6 +1994,26 @@
 			path = ../..;
 			sourceTree = "<group>";
 			usesTabs = 0;
+		};
+		551980FD1D8F127A008AA881 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				551980FE1D8F12DC008AA881 /* dgn_comp.l */,
+				551980FF1D8F12DC008AA881 /* dgn_comp.y */,
+				551981001D8F12DC008AA881 /* dgn_main.c */,
+				551981011D8F12DC008AA881 /* dlb_main.c */,
+				551981021D8F12DC008AA881 /* lev_comp.l */,
+				551981031D8F12DC008AA881 /* lev_comp.y */,
+				551981041D8F12DC008AA881 /* lev_main.c */,
+				551981051D8F12DC008AA881 /* makedefs.c */,
+				551981061D8F12DC008AA881 /* Makefile */,
+				551981071D8F12DC008AA881 /* mdgrep.h */,
+				551981081D8F12DC008AA881 /* mdgrep.pl */,
+				551981091D8F12DC008AA881 /* panic.c */,
+				5519810A1D8F12DC008AA881 /* recover.c */,
+			);
+			path = util;
+			sourceTree = "<group>";
 		};
 		555B7B6E1C18CDEC00A24D24 /* share */ = {
 			isa = PBXGroup;
