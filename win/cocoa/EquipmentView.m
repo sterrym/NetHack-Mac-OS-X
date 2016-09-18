@@ -53,6 +53,10 @@
 			text = [NSString stringWithFormat:@"(%c) %s", invent, description];
 			if ( [text hasSuffix:@" (being worn)"] )
 				text = [text substringToIndex:text.length - 13];
+			else if ( [text hasSuffix:@" (weapon in hands)"] )
+				text = [text substringToIndex:text.length - @" (weapon in hands)".length];
+			else if ( [text hasSuffix:@" (weapon in hand)"] )
+				text = [text substringToIndex:text.length - @" (weapon in hand)".length];
 		}
 	}
 	slot.image = image;

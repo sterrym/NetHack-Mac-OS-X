@@ -104,7 +104,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showDirectionWithPrompt:(NSString *)prompt;
 
 // touch handling
-- (void)handleMapTapTileX:(int)x y:(int)y forLocation:(CGPoint)p inView:(NSView *)view;
+- (void)handleMapTapTileX:(int)x y:(int)y forLocation:(CGPoint)p inView:(NSView *)view NS_SWIFT_NAME(handleMapTapTile(x:y:forLocation:in:));
 
 // speech
 - (void)speakString:(NSString *)text;
