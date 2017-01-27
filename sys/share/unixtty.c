@@ -298,6 +298,7 @@ setftty()
     start_screen();
 }
 
+#ifndef COCOA_GRAPHICS
 void intron() /* enable kbd interupts if enabled when game started */
 {
 #ifdef TTY_GRAPHICS
@@ -309,7 +310,9 @@ void intron() /* enable kbd interupts if enabled when game started */
     }
 #endif
 }
+#endif
 
+#ifndef COCOA_GRAPHICS
 void introff() /* disable kbd interrupts if required*/
 {
 #ifdef TTY_GRAPHICS
@@ -320,6 +323,7 @@ void introff() /* disable kbd interrupts if required*/
     }
 #endif
 }
+#endif
 
 #ifdef _M_UNIX /* SCO UNIX (3.2.4), from Andreas Arens */
 #include <sys/console.h>
@@ -448,7 +452,7 @@ init_linux_cons()
 }
 #endif /* __linux__ */
 
-#ifndef __begui__ /* the Be GUI will define its own error proc */
+#if !(defined(__begui__) || defined(COCOA_GRAPHICS))/* the Be GUI will define its own error proc */
 /* fatal error */
 /*VARARGS1*/
 void error(const char *s, ...)
