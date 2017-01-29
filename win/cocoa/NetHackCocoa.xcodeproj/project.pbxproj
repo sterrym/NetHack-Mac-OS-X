@@ -667,8 +667,6 @@
 		559CDEE31BC1A4C5008ED534 /* nextstep10.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE11BC1A4C5008ED534 /* nextstep10.png */; };
 		559CDEE71BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; };
 		559CDEE81BC1A53E008ED534 /* dawnhack32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE41BC1A53E008ED534 /* dawnhack32.png */; };
-		559CDEE91BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; };
-		559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE51BC1A53E008ED534 /* nevanda32.png */; };
 		559CDEEB1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
 		559CDEEC1BC1A53E008ED534 /* nevanda32black.png in Resources */ = {isa = PBXBuildFile; fileRef = 559CDEE61BC1A53E008ED534 /* nevanda32black.png */; };
 		559D028F1C4EEA2A0026B705 /* ioctl.c in Sources */ = {isa = PBXBuildFile; fileRef = 559D02741C4EE9E20026B705 /* ioctl.c */; };
@@ -680,6 +678,8 @@
 		55BCFCE81C9F66AC0076210F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BCFCE71C9F66AC0076210F /* libz.tbd */; };
 		55BCFCEB1C9F66F10076210F /* Recover.app in Resources */ = {isa = PBXBuildFile; fileRef = 557119961BD8203500959CD5 /* Recover.app */; };
 		55BCFCEC1C9F66FA0076210F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BCFCE71C9F66AC0076210F /* libz.tbd */; };
+		55D9F6991E3EA96E0040C7CA /* nevanda32.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */; };
+		55D9F69A1E3EA96E0040C7CA /* nevanda32.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */; };
 		55DDEAA01C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
 		55DDEAA11C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
 		55DDEAA41C1A1853001F944B /* SaveRecoveryOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */; };
@@ -1270,7 +1270,6 @@
 		557119BF1BD8205F00959CD5 /* Recover-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Recover-Bridging-Header.h"; sourceTree = "<group>"; };
 		559CDEE11BC1A4C5008ED534 /* nextstep10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nextstep10.png; sourceTree = "<group>"; };
 		559CDEE41BC1A53E008ED534 /* dawnhack32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dawnhack32.png; sourceTree = "<group>"; };
-		559CDEE51BC1A53E008ED534 /* nevanda32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32.png; sourceTree = "<group>"; };
 		559CDEE61BC1A53E008ED534 /* nevanda32black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32black.png; sourceTree = "<group>"; };
 		559D02701C4EE9E20026B705 /* cppregex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cppregex.cpp; sourceTree = "<group>"; };
 		559D02711C4EE9E20026B705 /* dgn_comp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dgn_comp.h; sourceTree = "<group>"; };
@@ -1305,6 +1304,7 @@
 		559D02911C4EEBF60026B705 /* sysconf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sysconf; sourceTree = "<group>"; };
 		55BCFCE71C9F66AC0076210F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
+		55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = nevanda32.jpg; sourceTree = "<group>"; };
 		55DDEA9F1C19084E001F944B /* tiles16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tiles16.png; sourceTree = "<group>"; };
 		55DDEAA21C1A1853001F944B /* SaveRecoveryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveRecoveryOperation.h; sourceTree = "<group>"; };
 		55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveRecoveryOperation.m; sourceTree = "<group>"; };
@@ -1542,7 +1542,7 @@
 				0224CBDC11B8A82300FC2199 /* kins32.bmp */,
 				550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */,
 				550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */,
-				559CDEE51BC1A53E008ED534 /* nevanda32.png */,
+				55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */,
 				559CDEE61BC1A53E008ED534 /* nevanda32black.png */,
 				559CDEE11BC1A4C5008ED534 /* nextstep10.png */,
 				0224CBDD11B8A82300FC2199 /* nh32.png */,
@@ -2330,6 +2330,7 @@
 				0212825514F6E6240046D56F /* Cav-filb.lev in Resources */,
 				0212825614F6E6240046D56F /* Cav-goal.lev in Resources */,
 				0212825714F6E6240046D56F /* Cav-loca.lev in Resources */,
+				55D9F69A1E3EA96E0040C7CA /* nevanda32.jpg in Resources */,
 				0212825814F6E6240046D56F /* Cav-strt.lev in Resources */,
 				0212825914F6E6240046D56F /* earth.lev in Resources */,
 				0212825A14F6E6240046D56F /* fakewiz1.lev in Resources */,
@@ -2369,7 +2370,6 @@
 				0212827A14F6E6240046D56F /* Mon-strt.lev in Resources */,
 				555B7B621C18C19A00A24D24 /* bogusmon in Resources */,
 				0212827B14F6E6240046D56F /* oracle.lev in Resources */,
-				559CDEEA1BC1A53E008ED534 /* nevanda32.png in Resources */,
 				5579FE7D1AC9125F0020E53C /* Images.xcassets in Resources */,
 				0212827C14F6E6240046D56F /* orcus.lev in Resources */,
 				0212827D14F6E6240046D56F /* Pri-fila.lev in Resources */,
@@ -2519,6 +2519,7 @@
 				02447C0011B8C821008CB9C7 /* Cav-fila.lev in Resources */,
 				02447C0111B8C821008CB9C7 /* Cav-filb.lev in Resources */,
 				555B7B641C18C1B700A24D24 /* engrave in Resources */,
+				55D9F6991E3EA96E0040C7CA /* nevanda32.jpg in Resources */,
 				02447C0211B8C821008CB9C7 /* Cav-goal.lev in Resources */,
 				02447C0311B8C821008CB9C7 /* Cav-loca.lev in Resources */,
 				555B7B611C18C19A00A24D24 /* bogusmon in Resources */,
@@ -2558,7 +2559,6 @@
 				02447C2611B8C821008CB9C7 /* Mon-loca.lev in Resources */,
 				559D02921C4EEBF60026B705 /* sysconf in Resources */,
 				02447C2711B8C821008CB9C7 /* Mon-strt.lev in Resources */,
-				559CDEE91BC1A53E008ED534 /* nevanda32.png in Resources */,
 				02447C2811B8C821008CB9C7 /* oracle.lev in Resources */,
 				02447C2911B8C821008CB9C7 /* orcus.lev in Resources */,
 				02447C2A11B8C821008CB9C7 /* Pri-fila.lev in Resources */,
