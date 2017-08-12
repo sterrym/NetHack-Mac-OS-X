@@ -76,7 +76,7 @@ func directionFromEuclideanPoint(delta delta1: CGPoint) -> EuclideanDirection {
 }
 
 final class ZDirection: NSObject {
-	class func directionFromEuclideanPointDelta(_ delta: CGPoint) -> EuclideanDirection {
+	@objc class func directionFromEuclideanPointDelta(_ delta: CGPoint) -> EuclideanDirection {
 		return directionFromEuclideanPoint(delta: delta)
 	}
 }

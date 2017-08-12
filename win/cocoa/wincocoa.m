@@ -791,12 +791,12 @@ static int cocoa_role_select(char *pbuf, char *plbuf)
 		
 	/* Process the choice */
 		if (n != 1 || selected[0].item.a_int == any.a_int) {
-			free((genericptr_t) selected),	selected = 0;	
+			free((genericptr_t) selected);	selected = 0;
 			return (-1);		/* Selected quit */
 		}
 	
 	flags.initrole = selected[0].item.a_int - 1;
-	free((genericptr_t) selected),	selected = 0;
+	free((genericptr_t) selected);	selected = 0;
 	return (flags.initrole);
 }
 
@@ -862,7 +862,7 @@ static int cocoa_race_select(char * pbuf, char * plbuf)
 			return(-1);		/* Selected quit */
 		
 	    k = selected[0].item.a_int - 1;
-	    free((genericptr_t) selected),	selected = 0;
+		free((genericptr_t) selected);	selected = 0;
 	}
 	
 	flags.initrace = k;

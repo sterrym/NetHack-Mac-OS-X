@@ -26,11 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import Foundation
 
 class NhEvent : NSObject {
-	let key: Int32
-	let mod: Int32
-	let x: Int32
-	let y: Int32
-	final var keyEvent: Bool {
+	@objc let key: Int32
+	@objc let mod: Int32
+	@objc let x: Int32
+	@objc let y: Int32
+	@objc final var keyEvent: Bool {
 		return key != 0
 	}
 
@@ -42,11 +42,11 @@ class NhEvent : NSObject {
 		super.init()
 	}
 	
-	convenience init(x i: Int32, y j: Int32) {
+	@objc convenience init(x i: Int32, y j: Int32) {
 		self.init(key: 0, mod: CLICK_1, x: i, y: j)
 	}
 	
-	convenience init(key k: Int32) {
+	@objc convenience init(key k: Int32) {
 		self.init(key: k, mod:-1, x:-1, y:-1)
 	}
 }

@@ -24,13 +24,13 @@ import Cocoa
 
 
 final class TileSet: NSObject {
-	static var instance: TileSet?
-	let image: NSImage
-	let tileSize: NSSize
-	fileprivate let rows: Int
-	fileprivate let columns: Int
+	@objc static var instance: TileSet?
+	@objc let image: NSImage
+	@objc let tileSize: NSSize
+	@objc fileprivate let rows: Int
+	@objc fileprivate let columns: Int
 
-	init(image img: NSImage, tileSize ts: NSSize) {
+	@objc init(image img: NSImage, tileSize ts: NSSize) {
 		let rect = NSRect(origin: .zero, size: img.size)
 		image = NSImage(size: rect.size)
 		image.lockFocus()
@@ -59,7 +59,7 @@ final class TileSet: NSObject {
 		return r
 	}
 	
-	var imageSize: NSSize {
+	@objc var imageSize: NSSize {
 		var size = tileSize
 		if size.width > 32.0 || size.height > 32.0 {
 			// since these images are used in menus we want to scale them down

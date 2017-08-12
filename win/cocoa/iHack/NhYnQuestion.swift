@@ -23,16 +23,16 @@
 import Foundation
 
 final class NhYnQuestion : NSObject {
-	let question: String
-	let choices: UnsafePointer<CChar>
-	let def: CChar
-	var chosen = 0
+	@objc let question: String
+	@objc let choices: UnsafePointer<CChar>
+	@objc let def: CChar
+	@objc var chosen = 0
 	
-	var choice: CChar {
+	@objc var choice: CChar {
 		return choices[chosen];
 	}
 	
-	init(question q: UnsafePointer<CChar>, choices ch: UnsafePointer<CChar>, defaultChoice c: CChar) {
+	@objc init(question q: UnsafePointer<CChar>, choices ch: UnsafePointer<CChar>, defaultChoice c: CChar) {
 		question = String(cString: q)
 		choices = ch
 		def = c
