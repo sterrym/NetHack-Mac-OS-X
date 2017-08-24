@@ -3376,6 +3376,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "NetHackCocoa-Swift.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Debug;
@@ -3408,6 +3409,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "NetHackCocoa-Swift.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Release;
@@ -3621,7 +3623,7 @@
 				PRODUCT_NAME = NetHackCocoa;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Debug;
@@ -3651,7 +3653,7 @@
 				PRODUCT_NAME = NetHackCocoa;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = SwiftBridgeHeader.h;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) ../../include";
 			};
 			name = Release;

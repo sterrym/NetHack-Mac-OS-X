@@ -34,8 +34,8 @@ import Foundation
 	case max
 }
 
-private let kCos45: CGFloat = 0.707106781186548
-private let kCos30: CGFloat = 0.866025403784439
+private let kCos45: CGFloat = cos(CGFloat(45) * .pi / 180)
+private let kCos30: CGFloat = cos(CGFloat(30) * .pi / 180)
 
 private let s_directionVectors: [CGPoint] = [
 	CGPoint(x: 0, y: 1),

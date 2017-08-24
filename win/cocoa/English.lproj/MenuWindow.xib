@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13189.4"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -21,7 +21,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="157" y="203" width="398" height="258"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <value key="minSize" type="size" width="250" height="100"/>
             <view key="contentView" id="4">
                 <rect key="frame" x="0.0" y="0.0" width="398" height="258"/>
@@ -102,6 +102,7 @@ DQ
                     <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" constant="20" symbolic="YES" id="61j-CF-pVQ"/>
                     <constraint firstItem="5" firstAttribute="leading" secondItem="6" secondAttribute="trailing" constant="12" symbolic="YES" id="6d6-Aq-JmL"/>
                     <constraint firstItem="5" firstAttribute="width" secondItem="6" secondAttribute="width" id="LBC-hV-6yo"/>
+                    <constraint firstItem="38" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="4" secondAttribute="leading" constant="20" symbolic="YES" id="LoT-zM-jQq"/>
                     <constraint firstItem="7" firstAttribute="leading" secondItem="4" secondAttribute="leading" id="MBG-uG-AXt"/>
                     <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="20" symbolic="YES" id="MgS-EX-Aea"/>
                     <constraint firstItem="6" firstAttribute="width" secondItem="30" secondAttribute="width" id="Mw8-ms-laS"/>
