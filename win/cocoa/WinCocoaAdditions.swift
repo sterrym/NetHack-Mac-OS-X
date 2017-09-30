@@ -35,7 +35,8 @@ extension WinCocoa {
 		windowDict.removeValue(forKey: wid)
 	}
 	
-	@objc(playSoundAtURL:volume:) class func playSound(at url: URL, volume: Float) -> Bool {
+	@objc(playSoundAtURL:volume:) @discardableResult
+	class func playSound(at url: URL, volume: Float) -> Bool {
 		//guard !SOUND_MUTE else {
 		//	return false
 		//}
