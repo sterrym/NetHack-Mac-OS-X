@@ -678,8 +678,8 @@
 		55BCFCE81C9F66AC0076210F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BCFCE71C9F66AC0076210F /* libz.tbd */; };
 		55BCFCEB1C9F66F10076210F /* Recover.app in Resources */ = {isa = PBXBuildFile; fileRef = 557119961BD8203500959CD5 /* Recover.app */; };
 		55BCFCEC1C9F66FA0076210F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BCFCE71C9F66AC0076210F /* libz.tbd */; };
-		55D9F6991E3EA96E0040C7CA /* nevanda32.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */; };
-		55D9F69A1E3EA96E0040C7CA /* nevanda32.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */; };
+		55D9F6991E3EA96E0040C7CA /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 55D9F6981E3EA96E0040C7CA /* nevanda32.png */; };
+		55D9F69A1E3EA96E0040C7CA /* nevanda32.png in Resources */ = {isa = PBXBuildFile; fileRef = 55D9F6981E3EA96E0040C7CA /* nevanda32.png */; };
 		55DDEAA01C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
 		55DDEAA11C19084E001F944B /* tiles16.png in Resources */ = {isa = PBXBuildFile; fileRef = 55DDEA9F1C19084E001F944B /* tiles16.png */; };
 		55DDEAA41C1A1853001F944B /* SaveRecoveryOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */; };
@@ -1308,7 +1308,7 @@
 		559D02911C4EEBF60026B705 /* sysconf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sysconf; sourceTree = "<group>"; };
 		55BCFCE71C9F66AC0076210F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftBridgeHeader.h; sourceTree = "<group>"; };
-		55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = nevanda32.jpg; sourceTree = "<group>"; };
+		55D9F6981E3EA96E0040C7CA /* nevanda32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nevanda32.png; sourceTree = "<group>"; };
 		55DDEA9F1C19084E001F944B /* tiles16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tiles16.png; sourceTree = "<group>"; };
 		55DDEAA21C1A1853001F944B /* SaveRecoveryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveRecoveryOperation.h; sourceTree = "<group>"; };
 		55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveRecoveryOperation.m; sourceTree = "<group>"; };
@@ -1549,7 +1549,7 @@
 				550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */,
 				55EC0C5F1F8028D600D1CB7B /* geoduck12x20@2x.png */,
 				550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */,
-				55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */,
+				55D9F6981E3EA96E0040C7CA /* nevanda32.png */,
 				559CDEE61BC1A53E008ED534 /* nevanda32black.png */,
 				559CDEE11BC1A4C5008ED534 /* nextstep10.png */,
 				0224CBDD11B8A82300FC2199 /* nh32.png */,
@@ -2339,7 +2339,7 @@
 				0212825514F6E6240046D56F /* Cav-filb.lev in Resources */,
 				0212825614F6E6240046D56F /* Cav-goal.lev in Resources */,
 				0212825714F6E6240046D56F /* Cav-loca.lev in Resources */,
-				55D9F69A1E3EA96E0040C7CA /* nevanda32.jpg in Resources */,
+				55D9F69A1E3EA96E0040C7CA /* nevanda32.png in Resources */,
 				0212825814F6E6240046D56F /* Cav-strt.lev in Resources */,
 				0212825914F6E6240046D56F /* earth.lev in Resources */,
 				0212825A14F6E6240046D56F /* fakewiz1.lev in Resources */,
@@ -2529,7 +2529,7 @@
 				02447C0011B8C821008CB9C7 /* Cav-fila.lev in Resources */,
 				02447C0111B8C821008CB9C7 /* Cav-filb.lev in Resources */,
 				555B7B641C18C1B700A24D24 /* engrave in Resources */,
-				55D9F6991E3EA96E0040C7CA /* nevanda32.jpg in Resources */,
+				55D9F6991E3EA96E0040C7CA /* nevanda32.png in Resources */,
 				02447C0211B8C821008CB9C7 /* Cav-goal.lev in Resources */,
 				02447C0311B8C821008CB9C7 /* Cav-loca.lev in Resources */,
 				555B7B611C18C19A00A24D24 /* bogusmon in Resources */,
