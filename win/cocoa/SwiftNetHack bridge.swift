@@ -11,18 +11,66 @@ import Foundation
 
 //#define GLYPH_MON_OFF		0
 
-let GLYPH_PET_OFF: Int32 =		(NUMMONS	+ GLYPH_MON_OFF)
-let GLYPH_INVIS_OFF: Int32 =	(NUMMONS	+ GLYPH_PET_OFF)
-let GLYPH_DETECT_OFF: Int32 =	(1		+ GLYPH_INVIS_OFF)
-let GLYPH_BODY_OFF: Int32 =		(NUMMONS	+ GLYPH_DETECT_OFF)
-let GLYPH_RIDDEN_OFF: Int32 =	(NUMMONS	+ GLYPH_BODY_OFF)
-let GLYPH_OBJ_OFF: Int32 =		(NUMMONS	+ GLYPH_RIDDEN_OFF)
-let GLYPH_CMAP_OFF: Int32 =		(NUM_OBJECTS	+ GLYPH_OBJ_OFF)
-let GLYPH_EXPLODE_OFF: Int32 =	((MAXPCHARS - MAXEXPCHARS) + GLYPH_CMAP_OFF)
-let GLYPH_ZAP_OFF: Int32 =		((MAXEXPCHARS * EXPL_MAX) + GLYPH_EXPLODE_OFF)
-let GLYPH_SWALLOW_OFF: Int32 =	((NUM_ZAP << 2) + GLYPH_ZAP_OFF)
-let GLYPH_WARNING_OFF: Int32 =	((NUMMONS << 3) + GLYPH_SWALLOW_OFF)
-let MAX_GLYPH: Int32 =			(WARNCOUNT      + GLYPH_WARNING_OFF)
+@available(*, unavailable, renamed: "NetHackGlyphPetOffset")
+var GLYPH_PET_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphInvisibleOffset")
+var GLYPH_INVIS_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphDetectOffset")
+var GLYPH_DETECT_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphBodyOffset")
+var GLYPH_BODY_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphRiddenOffset")
+var GLYPH_RIDDEN_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphObjectOffset")
+var GLYPH_OBJ_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphCMapOffset")
+var GLYPH_CMAP_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphExplodeOffset")
+var GLYPH_EXPLODE_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphZapOffset")
+var GLYPH_ZAP_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphSwallowOffset")
+var GLYPH_SWALLOW_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphWarningOffset")
+var GLYPH_WARNING_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphStatueOffset")
+var GLYPH_STATUE_OFF: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphMaxGlyph")
+var MAX_GLYPH: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphNoGlyph")
+var NO_GLYPH: Int32 {
+	fatalError()
+}
+@available(*, unavailable, renamed: "NetHackGlyphInvisible")
+var GLYPH_INVISIBLE: Int32 {
+	fatalError()
+}
 
 //MARK: for font
 /*
@@ -79,10 +127,6 @@ var NUMBER_OF_TILES_ROW: Int {
 	return NSUserDefaults.standardUserDefaults().integerForKey(NH3DNumberOfTilesRowKey)
 }
 */
-
-func panic(_ str: String) -> Never  {
-	Swift_panic(str)
-}
 
 var HSee_invisible: Int {
 	return u.uprops.12.intrinsic

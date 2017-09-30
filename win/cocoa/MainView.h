@@ -38,8 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 	NSPoint		tooltipPoint;
 	NSWindow *	tooltipWindow;
 	
-	NSArray	*	asciiColors;
-	NSFont	*	asciiFont;
+	NSArray<NSColor*> 	*asciiColors;
+	NSFont				*asciiFont;
 	
 	NSString *	contextMenuObject;
 }

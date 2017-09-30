@@ -687,6 +687,10 @@
 		55E6B4891BC1D94000E8125A /* NhEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B4871BC1D94000E8125A /* NhEvent.swift */; };
 		55E6B48B1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; };
 		55E6B48C1BC1DAF800E8125A /* NhTextInputEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */; };
+		55EC0C5D1F8027A400D1CB7B /* SwiftAdditionsSmall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EC0C5C1F8027A400D1CB7B /* SwiftAdditionsSmall.swift */; };
+		55EC0C5E1F8027A400D1CB7B /* SwiftAdditionsSmall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EC0C5C1F8027A400D1CB7B /* SwiftAdditionsSmall.swift */; };
+		55EC0C601F802EF500D1CB7B /* geoduck12x20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 55EC0C5F1F8028D600D1CB7B /* geoduck12x20@2x.png */; };
+		55EC0C611F802EF600D1CB7B /* geoduck12x20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 55EC0C5F1F8028D600D1CB7B /* geoduck12x20@2x.png */; };
 		55F5165B1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
 		55F5165C1B783C9500DEC8F5 /* WinCocoaAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F516551B781AC100DEC8F5 /* WinCocoaAdditions.swift */; };
 		55F5165D1B783C9500DEC8F5 /* SwiftNetHack bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */; };
@@ -1310,6 +1314,8 @@
 		55DDEAA31C1A1853001F944B /* SaveRecoveryOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveRecoveryOperation.m; sourceTree = "<group>"; };
 		55E6B4871BC1D94000E8125A /* NhEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhEvent.swift; sourceTree = "<group>"; };
 		55E6B48A1BC1DAF800E8125A /* NhTextInputEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NhTextInputEvent.swift; sourceTree = "<group>"; };
+		55EC0C5C1F8027A400D1CB7B /* SwiftAdditionsSmall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftAdditionsSmall.swift; sourceTree = "<group>"; };
+		55EC0C5F1F8028D600D1CB7B /* geoduck12x20@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "geoduck12x20@2x.png"; sourceTree = "<group>"; };
 		55F514E71B77E00900DEC8F5 /* SwiftNetHack bridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftNetHack bridge.swift"; sourceTree = "<group>"; };
 		55F514F01B77E9D400DEC8F5 /* ARCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCBridge.h; sourceTree = "<group>"; };
 		55F515011B77FD4600DEC8F5 /* ZDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDirection.swift; sourceTree = "<group>"; };
@@ -1541,6 +1547,7 @@
 				559CDEE41BC1A53E008ED534 /* dawnhack32.png */,
 				0224CBDC11B8A82300FC2199 /* kins32.bmp */,
 				550D8DBB1C7B942E00542FA8 /* geoduck12x20.png */,
+				55EC0C5F1F8028D600D1CB7B /* geoduck12x20@2x.png */,
 				550D8DBC1C7B942E00542FA8 /* geoduck24x40.png */,
 				55D9F6981E3EA96E0040C7CA /* nevanda32.jpg */,
 				559CDEE61BC1A53E008ED534 /* nevanda32black.png */,
@@ -1909,6 +1916,7 @@
 				55BF8C6E1B77BD490031A45A /* SwiftBridgeHeader.h */,
 				0224CF2911B8AEE500FC2199 /* NetHackCocoa_Prefix.pch */,
 				0224CABD11B8A5E800FC2199 /* main.m */,
+				55EC0C5C1F8027A400D1CB7B /* SwiftAdditionsSmall.swift */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -2315,6 +2323,7 @@
 				0212824614F6E6240046D56F /* asmodeus.lev in Resources */,
 				0212824714F6E6240046D56F /* astral.lev in Resources */,
 				0212824814F6E6240046D56F /* baalz.lev in Resources */,
+				55EC0C611F802EF600D1CB7B /* geoduck12x20@2x.png in Resources */,
 				0212824914F6E6240046D56F /* Bar-fila.lev in Resources */,
 				0212824A14F6E6240046D56F /* Bar-filb.lev in Resources */,
 				0212824B14F6E6240046D56F /* Bar-goal.lev in Resources */,
@@ -2504,6 +2513,7 @@
 				02447BF211B8C821008CB9C7 /* asmodeus.lev in Resources */,
 				02447BF311B8C821008CB9C7 /* astral.lev in Resources */,
 				02447BF411B8C821008CB9C7 /* baalz.lev in Resources */,
+				55EC0C601F802EF500D1CB7B /* geoduck12x20@2x.png in Resources */,
 				02447BF511B8C821008CB9C7 /* Bar-fila.lev in Resources */,
 				02447BF611B8C821008CB9C7 /* Bar-filb.lev in Resources */,
 				02447BF711B8C821008CB9C7 /* Bar-goal.lev in Resources */,
@@ -2917,6 +2927,7 @@
 				021282D214F6E6240046D56F /* NhWindow.m in Sources */,
 				021282D414F6E6240046D56F /* NSIndexPath+Z.m in Sources */,
 				555B7B741C18D00100A24D24 /* sys.c in Sources */,
+				55EC0C5E1F8027A400D1CB7B /* SwiftAdditionsSmall.swift in Sources */,
 				021282D514F6E6240046D56F /* NSString+NetHack.m in Sources */,
 				021282D614F6E6240046D56F /* NSString+Z.m in Sources */,
 				021282D914F6E6240046D56F /* allmain.c in Sources */,
@@ -3104,6 +3115,7 @@
 				0224CB2E11B8A73300FC2199 /* NhWindow.m in Sources */,
 				0224CB3011B8A73300FC2199 /* NSIndexPath+Z.m in Sources */,
 				555B7B731C18D00100A24D24 /* sys.c in Sources */,
+				55EC0C5D1F8027A400D1CB7B /* SwiftAdditionsSmall.swift in Sources */,
 				0224CB3111B8A73300FC2199 /* NSString+NetHack.m in Sources */,
 				0224CB3211B8A73300FC2199 /* NSString+Z.m in Sources */,
 				0224CDC211B8A92600FC2199 /* allmain.c in Sources */,
@@ -3700,7 +3712,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -3749,7 +3761,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
