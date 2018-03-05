@@ -1,0 +1,5 @@
+- Install XCode from the App Store
+- Open `win/cocoa/NetHackCocoa.xcodeproj` in Xcode
+- Make sure "NetHackCocoa" and not "NetHackCocoa-Sandboxed" is selected
+- Select "Product -> Archive" from the menu bar.
+- After it's done building, a window will pop up. Click on "Export…" on the right-hand side, "Export App"
