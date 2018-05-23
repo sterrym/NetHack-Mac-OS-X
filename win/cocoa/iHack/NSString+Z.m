@@ -39,10 +39,10 @@
 	return r.location == 0;
 }
 
-- (BOOL) containsChar:(char)c {
+- (BOOL) containsChar:(unichar)c {
 	NSInteger length = self.length;
 	for (int i = 0; i < length; ++i) {
-		char ct = [self characterAtIndex:i];
+		unichar ct = [self characterAtIndex:i];
 		if (ct == c) {
 			return YES;
 		}
@@ -59,14 +59,14 @@
 }
 
 - (NSString *) substringBetweenDelimiters:(NSString *)del {
-	char c = [del characterAtIndex:0];
-	NSString *s = [NSString stringWithFormat:@"%c", c];
+	unichar c = [del characterAtIndex:0];
+	NSString *s = [NSString stringWithFormat:@"%C", c];
 	NSRange r1 = [self rangeOfString:s];
 	if (r1.location == NSNotFound) {
 		return nil;
 	}
 	c = [del characterAtIndex:1];
-	s = [NSString stringWithFormat:@"%c", c];
+	s = [NSString stringWithFormat:@"%C", c];
 	NSRange r2 = [self rangeOfString:s];
 	if (r2.location == NSNotFound) {
 		return nil;
@@ -110,7 +110,7 @@
 #else
 	NSMutableString *s1 = [[NSMutableString alloc] initWithString:self];
 	CFStringTrimWhitespace((CFMutableStringRef)s1);
-	return [[self.class alloc] initWithString:s1];
+	return [s1 copy];
 #endif
 }
 

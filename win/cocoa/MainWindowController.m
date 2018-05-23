@@ -192,29 +192,29 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		}
 		
 		NSSize size = [self tileSetSizeFromName:tileSetName];
-		[mainView setTileSet:tileSetName size:size];
+		[self->mainView setTileSet:tileSetName size:size];
 		
 		NSFont * font = [NSFont fontWithName:asciiFontName size:asciiFontSize];
 		if ( font == nil ) {
 			font = [NSFont systemFontOfSize:14.0];
 		}
-		mainView.asciiFont = font;
+		self->mainView.asciiFont = font;
 		
 		// place check mark on ASCII menu item
-		asciiModeMenuItem.state = iflags.wc_ascii_map ? NSOnState : NSOffState;
+		self->asciiModeMenuItem.state = iflags.wc_ascii_map ? NSOnState : NSOffState;
 		
 		// select ascii mode in map view
-		[mainView enableAsciiMode:iflags.wc_ascii_map];
+		[self->mainView enableAsciiMode:iflags.wc_ascii_map];
 		
 		// set table row spacing to zero in messages window
-		messagesView.intercellSpacing = NSMakeSize(0,0);
+		self->messagesView.intercellSpacing = NSMakeSize(0,0);
 		
 		// initialize speech engine
-		voice = [[NSSpeechSynthesizer alloc] initWithVoice:@"com.apple.speech.synthesis.voice.Alex"];
-		float r = voice.rate;
-		voice.rate = 1.5*r;
-		voice.delegate = self;
-		voiceQueue = [[NSMutableArray alloc] init];
+		self->voice = [[NSSpeechSynthesizer alloc] initWithVoice:@"com.apple.speech.synthesis.voice.Alex"];
+		float r = self->voice.rate;
+		self->voice.rate = 1.5*r;
+		self->voice.delegate = self;
+		self->voiceQueue = [[NSMutableArray alloc] init];
 	});
 }
 
@@ -247,7 +247,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 -(void)nethackExited
 {
 	RunOnMainThreadAsync(^{
-		if ( terminatedByUser ) {
+		if ( self->terminatedByUser ) {
 			[[NSApplication sharedApplication] terminate:self];
 		} else {
 			// nethack exited, but let user close the app manually 
@@ -412,8 +412,8 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 {
 	RunOnMainThreadSync(^{
 		if ( [pref isEqualToString:@"ascii_map"] ) {
-			asciiModeMenuItem.state = iflags.wc_ascii_map ? NSOnState : NSOffState;
-			[mainView enableAsciiMode:iflags.wc_ascii_map];
+			self->asciiModeMenuItem.state = iflags.wc_ascii_map ? NSOnState : NSOffState;
+			[self->mainView enableAsciiMode:iflags.wc_ascii_map];
 		}
 	});
 }
@@ -452,14 +452,14 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (void)refreshMessages {
 	RunOnMainThreadAsync(^{
 		// update message window
-		[messagesView reloadData];
-		NSInteger rows = messagesView.numberOfRows;
+		[self->messagesView reloadData];
+		NSInteger rows = self->messagesView.numberOfRows;
 		if (rows > 0) {
-			[messagesView scrollRowToVisible:rows-1];
+			[self->messagesView scrollRowToVisible:rows-1];
 		}
 		// update status window
 		for ( NSString * text in [NhWindow statusWindow].messages ) {
-			[statsView setItems:text];
+			[self->statsView setItems:text];
 		}
 	});
 }
@@ -468,7 +468,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (void)showExtendedCommands
 {
 	RunOnMainThreadAsync(^{
-		[extCommandWindow runModal];
+		[self->extCommandWindow runModal];
 	});
 }
 
@@ -478,7 +478,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 		[appDelegate unlockNethackCore];
 		dispatch_sync(dispatch_get_main_queue(), ^{
-			[showPlayerSelection runModal];
+			[self->showPlayerSelection runModal];
 		});
 		[appDelegate lockNethackCore];
 	} else {
@@ -563,7 +563,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 - (void)showDirectionWithPrompt:(NSString *)prompt
 {
 	RunOnMainThreadAsync(^{
-		[directionWindow runModalWithPrompt:prompt];
+		[self->directionWindow runModalWithPrompt:prompt];
 	});
 }
 
@@ -587,9 +587,9 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 				
 				if ( strcmp( q.choices, "yn" ) == 0 || strcmp( q.choices, "ynq" ) == 0 ) {
 					char cancelChar = q.choices[2];
-					[yesNoWindow runModalWithQuestion:text choice1:@"Yes" choice2:@"No" defaultAnswer:q.def onCancelSend:cancelChar];
+					[self->yesNoWindow runModalWithQuestion:text choice1:@"Yes" choice2:@"No" defaultAnswer:q.def onCancelSend:cancelChar];
 				} else if ( strcmp( q.choices, "rl" ) == 0 ) {
-					[yesNoWindow runModalWithQuestion:text choice1:@"Right" choice2:@"Left" defaultAnswer:q.def onCancelSend:0];
+					[self->yesNoWindow runModalWithQuestion:text choice1:@"Right" choice2:@"Left" defaultAnswer:q.def onCancelSend:0];
 				} else {
 					assert(NO);
 				}
@@ -639,10 +639,10 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		if (w == [NhWindow messageWindow]) {
 			[self refreshMessages];
 		} else if (w.type == NHW_MAP) {
-			[mainView setNeedsDisplay:YES];
+			[self->mainView setNeedsDisplay:YES];
 		} else if ( w.type == NHW_STATUS ) {
 			for ( NSString * text in w.messages ) {
-				[statsView setItems:text];
+				[self->statsView setItems:text];
 			}
 		} else {
 			NSString * text = w.text;
@@ -695,7 +695,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 		NetHackCocoaAppDelegate * appDelegate = [NSApplication sharedApplication].delegate;
 		[appDelegate unlockNethackCore];
 		dispatch_sync(dispatch_get_main_queue(), ^{
-			[mainView cliparoundX:x y:y];
+			[self->mainView cliparoundX:x y:y];
 		});
 		[appDelegate lockNethackCore];
 	} else {
@@ -705,7 +705,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 
 - (void)updateInventory {
 	RunOnMainThreadAsync(^{
-		[equipmentView updateInventory];
+		[self->equipmentView updateInventory];
 	});
 }
 
@@ -713,7 +713,7 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	RunOnMainThreadAsync(^{
 		NSAttributedString * attrPrompt = [NhWindow messageWindow].messages.lastObject;
 		NSString * prompt = attrPrompt.string;
-		[inputWindow runModalWithPrompt:prompt];
+		[self->inputWindow runModalWithPrompt:prompt];
 	});
 }
 
@@ -786,17 +786,17 @@ static inline void RunOnMainThreadAsync(dispatch_block_t block)
 	
 	// add text to queue
 	RunOnMainThreadAsync(^{
-		if ( voice.speaking ) {
+		if ( self->voice.speaking ) {
 			// don't be too redundant for messages repeated many times
 			int cnt = 0;
-			for ( NSString * s in voiceQueue ) {
+			for ( NSString * s in self->voiceQueue ) {
 				if ( [text isEqualToString:s] )
 					if ( ++cnt >= 3 )
 						return;
 			}
-			[voiceQueue addObject:text];
+			[self->voiceQueue addObject:text];
 		} else {
-			[voice startSpeakingString:text];
+			[self->voice startSpeakingString:text];
 		}
 	});
 }

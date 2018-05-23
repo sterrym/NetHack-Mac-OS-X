@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL) containsString:(NSString *)s;
 - (BOOL) startsWithString:(NSString *)s;
-- (BOOL) containsChar:(char)c;
+- (BOOL) containsChar:(unichar)c;
 - (BOOL) endsWithString:(NSString *)s;
 - (nullable NSString *) substringBetweenDelimiters:(NSString *)del;
 - (nullable NSString *) substringStartingWithString:(NSString *)start;

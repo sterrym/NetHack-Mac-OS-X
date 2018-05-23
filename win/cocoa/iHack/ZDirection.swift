@@ -65,8 +65,8 @@ private func normalize(_ v: inout CGPoint) {
 func directionFromEuclideanPoint(delta delta1: CGPoint) -> EuclideanDirection {
 	var delta = delta1
 	normalize(&delta)
-	for i in 0 ..< EuclideanDirection.max.rawValue {
-		let dotP = dotProduct(delta, s_directionVectors[i])
+	for (i, directionVector) in s_directionVectors.enumerated() {
+		let dotP = dotProduct(delta, directionVector)
 		if dotP >= kCos30 {
 			return EuclideanDirection(rawValue: i)!
 		}
