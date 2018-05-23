@@ -661,6 +661,18 @@
 		556C935220B5B30C009B21BE /* medusa-3.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C934F20B5B30C009B21BE /* medusa-3.lev */; };
 		556C935320B5B30C009B21BE /* medusa-4.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935020B5B30C009B21BE /* medusa-4.lev */; };
 		556C935420B5B30C009B21BE /* medusa-4.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935020B5B30C009B21BE /* medusa-4.lev */; };
+		556C935A20B5B3BF009B21BE /* bigrm-6.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935520B5B3BE009B21BE /* bigrm-6.lev */; };
+		556C935B20B5B3BF009B21BE /* bigrm-6.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935520B5B3BE009B21BE /* bigrm-6.lev */; };
+		556C935C20B5B3BF009B21BE /* bigrm-9.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935620B5B3BE009B21BE /* bigrm-9.lev */; };
+		556C935D20B5B3BF009B21BE /* bigrm-9.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935620B5B3BE009B21BE /* bigrm-9.lev */; };
+		556C935E20B5B3BF009B21BE /* bigrm-10.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935720B5B3BF009B21BE /* bigrm-10.lev */; };
+		556C935F20B5B3BF009B21BE /* bigrm-10.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935720B5B3BF009B21BE /* bigrm-10.lev */; };
+		556C936020B5B3BF009B21BE /* bigrm-7.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935820B5B3BF009B21BE /* bigrm-7.lev */; };
+		556C936120B5B3BF009B21BE /* bigrm-7.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935820B5B3BF009B21BE /* bigrm-7.lev */; };
+		556C936220B5B3BF009B21BE /* bigrm-8.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935920B5B3BF009B21BE /* bigrm-8.lev */; };
+		556C936320B5B3BF009B21BE /* bigrm-8.lev in Resources */ = {isa = PBXBuildFile; fileRef = 556C935920B5B3BF009B21BE /* bigrm-8.lev */; };
+		556C936520B5B435009B21BE /* tribute in Resources */ = {isa = PBXBuildFile; fileRef = 556C936420B5B435009B21BE /* tribute */; };
+		556C936620B5B435009B21BE /* tribute in Resources */ = {isa = PBXBuildFile; fileRef = 556C936420B5B435009B21BE /* tribute */; };
 		557119991BD8203500959CD5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557119981BD8203500959CD5 /* AppDelegate.swift */; };
 		5571199B1BD8203500959CD5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5571199A1BD8203500959CD5 /* Assets.xcassets */; };
 		5571199E1BD8203500959CD5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5571199C1BD8203500959CD5 /* MainMenu.xib */; };
@@ -1266,6 +1278,12 @@
 		555B7B721C18D00100A24D24 /* sys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sys.c; sourceTree = "<group>"; };
 		556C934F20B5B30C009B21BE /* medusa-3.lev */ = {isa = PBXFileReference; lastKnownFileType = file; path = "medusa-3.lev"; sourceTree = "<group>"; };
 		556C935020B5B30C009B21BE /* medusa-4.lev */ = {isa = PBXFileReference; lastKnownFileType = file; path = "medusa-4.lev"; sourceTree = "<group>"; };
+		556C935520B5B3BE009B21BE /* bigrm-6.lev */ = {isa = PBXFileReference; lastKnownFileType = file; path = "bigrm-6.lev"; sourceTree = "<group>"; };
+		556C935620B5B3BE009B21BE /* bigrm-9.lev */ = {isa = PBXFileReference; lastKnownFileType = file; path = "bigrm-9.lev"; sourceTree = "<group>"; };
+		556C935720B5B3BF009B21BE /* bigrm-10.lev */ = {isa = PBXFileReference; lastKnownFileType = file; path = "bigrm-10.lev"; sourceTree = "<group>"; };
+		556C935820B5B3BF009B21BE /* bigrm-7.lev */ = {isa = PBXFileReference; lastKnownFileType = file; path = "bigrm-7.lev"; sourceTree = "<group>"; };
+		556C935920B5B3BF009B21BE /* bigrm-8.lev */ = {isa = PBXFileReference; lastKnownFileType = file; path = "bigrm-8.lev"; sourceTree = "<group>"; };
+		556C936420B5B435009B21BE /* tribute */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tribute; sourceTree = "<group>"; };
 		557119961BD8203500959CD5 /* Recover.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Recover.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		557119981BD8203500959CD5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5571199A1BD8203500959CD5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -1397,6 +1415,11 @@
 				02447B8A11B8C821008CB9C7 /* bigrm-3.lev */,
 				02447B8B11B8C821008CB9C7 /* bigrm-4.lev */,
 				02447B8C11B8C821008CB9C7 /* bigrm-5.lev */,
+				556C935520B5B3BE009B21BE /* bigrm-6.lev */,
+				556C935820B5B3BF009B21BE /* bigrm-7.lev */,
+				556C935920B5B3BF009B21BE /* bigrm-8.lev */,
+				556C935620B5B3BE009B21BE /* bigrm-9.lev */,
+				556C935720B5B3BF009B21BE /* bigrm-10.lev */,
 				0224CB7D11B8A7BE00FC2199 /* bigroom.des */,
 				555B7B601C18C19A00A24D24 /* bogusmon */,
 				0224CB7E11B8A7BE00FC2199 /* castle.des */,
@@ -1521,6 +1544,7 @@
 				02447BDA11B8C821008CB9C7 /* tower1.lev */,
 				02447BDB11B8C821008CB9C7 /* tower2.lev */,
 				02447BDC11B8C821008CB9C7 /* tower3.lev */,
+				556C936420B5B435009B21BE /* tribute */,
 				02447BDD11B8C821008CB9C7 /* Val-fila.lev */,
 				02447BDE11B8C821008CB9C7 /* Val-filb.lev */,
 				02447BDF11B8C821008CB9C7 /* Val-goal.lev */,
@@ -2309,6 +2333,7 @@
 				0212822E14F6E6240046D56F /* yendor.des in Resources */,
 				0212822F14F6E6240046D56F /* absurd128.png in Resources */,
 				0212823014F6E6240046D56F /* absurd32.png in Resources */,
+				556C935B20B5B3BF009B21BE /* bigrm-6.lev in Resources */,
 				555B7B681C18C1C500A24D24 /* epitaph in Resources */,
 				0212823114F6E6240046D56F /* chozo32.png in Resources */,
 				0212823214F6E6240046D56F /* chozo32b.png in Resources */,
@@ -2337,6 +2362,7 @@
 				0212824B14F6E6240046D56F /* Bar-goal.lev in Resources */,
 				0212824C14F6E6240046D56F /* Bar-loca.lev in Resources */,
 				0212824D14F6E6240046D56F /* Bar-strt.lev in Resources */,
+				556C936620B5B435009B21BE /* tribute in Resources */,
 				0212824E14F6E6240046D56F /* bigrm-1.lev in Resources */,
 				0212824F14F6E6240046D56F /* bigrm-2.lev in Resources */,
 				0212825014F6E6240046D56F /* bigrm-3.lev in Resources */,
@@ -2357,6 +2383,7 @@
 				0212825E14F6E6240046D56F /* Hea-filb.lev in Resources */,
 				0212825F14F6E6240046D56F /* Hea-goal.lev in Resources */,
 				0212826014F6E6240046D56F /* Hea-loca.lev in Resources */,
+				556C935F20B5B3BF009B21BE /* bigrm-10.lev in Resources */,
 				0212826114F6E6240046D56F /* Hea-strt.lev in Resources */,
 				0212826214F6E6240046D56F /* juiblex.lev in Resources */,
 				0212826314F6E6240046D56F /* Kni-fila.lev in Resources */,
@@ -2379,6 +2406,7 @@
 				0212827214F6E6240046D56F /* minetn-4.lev in Resources */,
 				0212827314F6E6240046D56F /* minetn-5.lev in Resources */,
 				0212827414F6E6240046D56F /* minetn-6.lev in Resources */,
+				556C936320B5B3BF009B21BE /* bigrm-8.lev in Resources */,
 				0212827514F6E6240046D56F /* minetn-7.lev in Resources */,
 				0212827614F6E6240046D56F /* Mon-fila.lev in Resources */,
 				0212827714F6E6240046D56F /* Mon-filb.lev in Resources */,
@@ -2401,6 +2429,7 @@
 				0212828614F6E6240046D56F /* Ran-strt.lev in Resources */,
 				0212828714F6E6240046D56F /* Rog-fila.lev in Resources */,
 				0212828814F6E6240046D56F /* Rog-filb.lev in Resources */,
+				556C936120B5B3BF009B21BE /* bigrm-7.lev in Resources */,
 				556C935420B5B30C009B21BE /* medusa-4.lev in Resources */,
 				0212828914F6E6240046D56F /* Rog-goal.lev in Resources */,
 				0212828A14F6E6240046D56F /* Rog-loca.lev in Resources */,
@@ -2414,6 +2443,7 @@
 				0212829214F6E6240046D56F /* soko1-1.lev in Resources */,
 				0212829314F6E6240046D56F /* soko1-2.lev in Resources */,
 				0212829414F6E6240046D56F /* soko2-1.lev in Resources */,
+				556C935D20B5B3BF009B21BE /* bigrm-9.lev in Resources */,
 				0212829514F6E6240046D56F /* soko2-2.lev in Resources */,
 				0212829614F6E6240046D56F /* soko3-1.lev in Resources */,
 				0212829714F6E6240046D56F /* soko3-2.lev in Resources */,
@@ -2501,6 +2531,7 @@
 				0224CBD511B8A7BE00FC2199 /* wizhelp in Resources */,
 				0224CBD611B8A7BE00FC2199 /* yendor.des in Resources */,
 				0224CBE211B8A82300FC2199 /* absurd128.png in Resources */,
+				556C935A20B5B3BF009B21BE /* bigrm-6.lev in Resources */,
 				0224CBE311B8A82300FC2199 /* absurd32.png in Resources */,
 				0224CBE411B8A82300FC2199 /* chozo32.png in Resources */,
 				0224CBE511B8A82300FC2199 /* chozo32b.png in Resources */,
@@ -2529,6 +2560,7 @@
 				02447BF711B8C821008CB9C7 /* Bar-goal.lev in Resources */,
 				02447BF811B8C821008CB9C7 /* Bar-loca.lev in Resources */,
 				555B7B671C18C1C500A24D24 /* epitaph in Resources */,
+				556C936520B5B435009B21BE /* tribute in Resources */,
 				02447BF911B8C821008CB9C7 /* Bar-strt.lev in Resources */,
 				02447BFA11B8C821008CB9C7 /* bigrm-1.lev in Resources */,
 				02447BFB11B8C821008CB9C7 /* bigrm-2.lev in Resources */,
@@ -2549,6 +2581,7 @@
 				02447C0711B8C821008CB9C7 /* fakewiz2.lev in Resources */,
 				02447C0811B8C821008CB9C7 /* fire.lev in Resources */,
 				02447C0911B8C821008CB9C7 /* Hea-fila.lev in Resources */,
+				556C935E20B5B3BF009B21BE /* bigrm-10.lev in Resources */,
 				02447C0A11B8C821008CB9C7 /* Hea-filb.lev in Resources */,
 				02447C0B11B8C821008CB9C7 /* Hea-goal.lev in Resources */,
 				02447C0C11B8C821008CB9C7 /* Hea-loca.lev in Resources */,
@@ -2571,6 +2604,7 @@
 				02447C1E11B8C821008CB9C7 /* minetn-3.lev in Resources */,
 				02447C1F11B8C821008CB9C7 /* minetn-4.lev in Resources */,
 				02447C2011B8C821008CB9C7 /* minetn-5.lev in Resources */,
+				556C936220B5B3BF009B21BE /* bigrm-8.lev in Resources */,
 				02447C2111B8C821008CB9C7 /* minetn-6.lev in Resources */,
 				02447C2211B8C821008CB9C7 /* minetn-7.lev in Resources */,
 				02447C2311B8C821008CB9C7 /* Mon-fila.lev in Resources */,
@@ -2593,6 +2627,7 @@
 				02447C3311B8C821008CB9C7 /* Ran-strt.lev in Resources */,
 				02447C3411B8C821008CB9C7 /* Rog-fila.lev in Resources */,
 				02447C3511B8C821008CB9C7 /* Rog-filb.lev in Resources */,
+				556C936020B5B3BF009B21BE /* bigrm-7.lev in Resources */,
 				556C935320B5B30C009B21BE /* medusa-4.lev in Resources */,
 				02447C3611B8C821008CB9C7 /* Rog-goal.lev in Resources */,
 				02447C3711B8C821008CB9C7 /* Rog-loca.lev in Resources */,
@@ -2606,6 +2641,7 @@
 				02447C3F11B8C821008CB9C7 /* soko1-1.lev in Resources */,
 				02447C4011B8C821008CB9C7 /* soko1-2.lev in Resources */,
 				02447C4111B8C821008CB9C7 /* soko2-1.lev in Resources */,
+				556C935C20B5B3BF009B21BE /* bigrm-9.lev in Resources */,
 				02447C4211B8C821008CB9C7 /* soko2-2.lev in Resources */,
 				02447C4311B8C821008CB9C7 /* soko3-1.lev in Resources */,
 				02447C4411B8C821008CB9C7 /* soko3-2.lev in Resources */,
