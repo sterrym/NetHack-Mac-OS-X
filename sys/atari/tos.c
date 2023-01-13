@@ -1,4 +1,4 @@
-/* NetHack 3.6	tos.c	$NHDT-Date: 1432512796 2015/05/25 00:13:16 $  $NHDT-Branch: master $:$NHDT-Revision: 1.7 $ */
+/* NetHack 3.6	tos.c	$NHDT-Date: 1501979358 2017/08/06 00:29:18 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.8 $ */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
@@ -24,9 +24,9 @@ static char *nh_HE = "\033q";
 
 #include <ctype.h>
 
-static char DOSgetch(void);
-static char BIOSgetch(void);
-static void init_aline(void);
+static char NDECL(DOSgetch);
+static char NDECL(BIOSgetch);
+static void NDECL(init_aline);
 char *_a_line; /* for Line A variables */
 #ifdef TEXTCOLOR
 boolean colors_changed = FALSE;
@@ -170,7 +170,8 @@ DOSgetch()
 }
 
 long
-freediskspace(char *path)
+freediskspace(path)
+char *path;
 {
     int drive = 0;
     struct {
@@ -190,7 +191,8 @@ freediskspace(char *path)
  * Functions to get filenames using wildcards
  */
 int
-findfirst(char *path)
+findfirst(path)
+char *path;
 {
     return (Fsfirst(path, 0) == 0);
 }
@@ -208,7 +210,8 @@ foundfile_buffer()
 }
 
 long
-filesize(char *path)
+filesize(file)
+char *file;
 {
     if (findfirst(file))
         return (*(long *) ((char *) Fgetdta() + 26));
@@ -220,7 +223,8 @@ filesize(char *path)
  * Chdrive() changes the default drive.
  */
 void
-chdrive(char *path)
+chdrive(str)
+char *str;
 {
     char *ptr;
     char drive;
@@ -261,22 +265,26 @@ get_scr_size()
 #define BIGBUF 8192
 
 int
-_copyfile(char *from, char *to)
+_copyfile(from, to)
+char *from, *to;
 {
     int fromfd, tofd, r;
     char *buf;
 
-    if ((fromfd = open(from, O_RDONLY | O_BINARY, 0)) < 0)
+    fromfd = open(from, O_RDONLY | O_BINARY, 0);
+    if (fromfd < 0)
         return -1;
-    if ((tofd = open(to, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, FCMASK))
-        < 0)
+    tofd = open(to, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, FCMASK);
+    if (tofd < 0) {
+        close(fromfd);
         return -1;
-    buf = (char *) alloc((size_t) BIGBUF);
+    }
+    buf = (char *) alloc((unsigned) BIGBUF);
     while ((r = read(fromfd, buf, BIGBUF)) > 0)
         write(tofd, buf, r);
     close(fromfd);
     close(tofd);
-    free(buf);
+    free((genericptr_t) buf);
     return 0; /* successful */
 }
 

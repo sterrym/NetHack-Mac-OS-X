@@ -1,5 +1,6 @@
-/* NetHack 3.6	global.h	$NHDT-Date: 1449116298 2015/12/03 04:18:18 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.46 $ */
+/* NetHack 3.6	global.h	$NHDT-Date: 1557510460 2019/05/10 17:47:40 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.72 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Michael Allison, 2006. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #ifndef GLOBAL_H
@@ -7,9 +8,22 @@
 
 #include <stdio.h>
 
-/* #define BETA */ /* development or beta testing [MRS] */
+/*
+ * Development status possibilities.
+ */
+#define NH_STATUS_RELEASED    0         /* Released */
+#define NH_STATUS_WIP         1         /* Work in progress */
+#define NH_STATUS_BETA        2         /* BETA testing */
+#define NH_STATUS_POSTRELEASE 3         /* patch commit point only */
 
-/* #define DEBUG */
+/*
+ * Development status of this NetHack version.
+ */
+#define NH_DEVEL_STATUS NH_STATUS_RELEASED
+
+#ifndef DEBUG  /* allow tool chains to define without causing warnings */
+#define DEBUG
+#endif
 
 /*
  * Files expected to exist in the playground directory.
@@ -18,6 +32,7 @@
 #define RECORD "record"         /* file containing list of topscorers */
 #define HELP "help"             /* file containing command descriptions */
 #define SHELP "hh"              /* abbreviated form of the same */
+#define KEYHELP "keyhelp"       /* explanatory text for 'whatdoes' command */
 #define DEBUGHELP "wizhelp"     /* file containing debug mode cmds */
 #define RUMORFILE "rumors"      /* file with fortune cookies */
 #define ORACLEFILE "oracles"    /* file with oracular information */
@@ -56,8 +71,14 @@
  * since otherwise comparisons with signed quantities are done incorrectly
  */
 typedef schar xchar;
+
+#ifdef __MINGW32__
+/* Resolve conflict with Qt 5 and MinGW-w32 */
+typedef unsigned char boolean; /* 0 or 1 */
+#else
 #ifndef SKIP_BOOLEAN
 typedef xchar boolean; /* 0 or 1 */
+#endif
 #endif
 
 #ifndef TRUE /* defined in some systems' native include files */
@@ -222,7 +243,7 @@ typedef uchar nhsym;
 #endif
 
 #if defined(X11_GRAPHICS) || defined(QT_GRAPHICS) || defined(GNOME_GRAPHICS) \
-    || defined(WIN32) || defined(COCOA_GRAPHICS)
+    || defined(WIN32)
 #ifndef USE_TILES
 #define USE_TILES /* glyph2tile[] will be available */
 #endif
@@ -252,9 +273,9 @@ typedef uchar nhsym;
 
 /* primitive memory leak debugging; see alloc.c */
 #ifdef MONITOR_HEAP
-extern long *nhalloc(unsigned int, const char *, int);
-extern void nhfree(genericptr_t, const char *, int);
-extern char *nhdupstr(const char *, const char *, int);
+extern long *FDECL(nhalloc, (unsigned int, const char *, int));
+extern void FDECL(nhfree, (genericptr_t, const char *, int));
+extern char *FDECL(nhdupstr, (const char *, const char *, int));
 #ifndef __FILE__
 #define __FILE__ ""
 #endif
@@ -265,8 +286,8 @@ extern char *nhdupstr(const char *, const char *, int);
 #define free(a) nhfree(a, __FILE__, (int) __LINE__)
 #define dupstr(s) nhdupstr(s, __FILE__, (int) __LINE__)
 #else /* !MONITOR_HEAP */
-extern long *alloc(unsigned int);  /* alloc.c */
-extern char *dupstr(const char *); /* ditto */
+extern long *FDECL(alloc, (unsigned int));  /* alloc.c */
+extern char *FDECL(dupstr, (const char *)); /* ditto */
 #endif
 
 /* Used for consistency checks of various data files; declare it here so
@@ -318,9 +339,7 @@ struct savefile_info {
 #define PL_NSIZ 32 /* name of player, ghost, shopkeeper */
 #define PL_CSIZ 32 /* sizeof pl_character */
 #define PL_FSIZ 32 /* fruit name */
-#define PL_PSIZ                              \
-    63 /* player-given names for pets, other \
-        * monsters, objects */
+#define PL_PSIZ 63 /* player-given names for pets, other monsters, objects */
 
 #define MAXDUNGEON 16 /* current maximum number of dungeons */
 #define MAXLEVEL 32   /* max number of levels in one dungeon */
@@ -332,9 +351,10 @@ struct savefile_info {
 #define MAXMONNO 120 /* extinct monst after this number created */
 #define MHPMAX 500   /* maximum monster hp */
 
-/* PANICTRACE: Always defined for BETA but only for supported platforms. */
+/* PANICTRACE: Always defined for NH_DEVEL_STATUS != NH_STATUS_RELEASED
+   but only for supported platforms. */
 #ifdef UNIX
-#ifdef BETA
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
 /* see end.c */
 #ifndef PANICTRACE
 #define PANICTRACE
@@ -351,5 +371,11 @@ struct savefile_info {
 #ifdef UNIX
 #define PANICTRACE_GDB
 #endif
+
+/* Supply nethack_enter macro if not supplied by port */
+#ifndef nethack_enter
+#define nethack_enter(argc, argv) ((void) 0)
+#endif
+
 
 #endif /* GLOBAL_H */

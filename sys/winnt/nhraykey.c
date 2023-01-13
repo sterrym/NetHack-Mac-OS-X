@@ -1,4 +1,4 @@
-/* NetHack 3.6	nhraykey.c	$NHDT-Date: 1432512794 2015/05/25 00:13:14 $  $NHDT-Branch: master $:$NHDT-Revision: 1.15 $ */
+/* NetHack 3.6	nhraykey.c	$NHDT-Date: 1457207047 2016/03/05 19:44:07 $  $NHDT-Branch: chasonr $:$NHDT-Revision: 1.16 $ */
 /* Copyright (c) NetHack PC Development Team 2003                      */
 /* NetHack may be freely redistributed.  See license for details.      */
 
@@ -160,18 +160,18 @@
 static char where_to_get_source[] = "http://www.nethack.org/";
 static char author[] = "Ray Chason";
 
+#include "win32api.h"
 #include "hack.h"
 #include "wintty.h"
-#include "win32api.h"
 
 extern HANDLE hConIn;
 extern INPUT_RECORD ir;
 char dllname[512];
 char *shortdllname;
 
-int __declspec(dllexport) __stdcall ProcessKeystroke
+int FDECL(__declspec(dllexport) __stdcall ProcessKeystroke,
           (HANDLE hConIn, INPUT_RECORD *ir, boolean *valid,
-           boolean numberpad, int portdebug);
+           BOOLEAN_P numberpad, int portdebug));
 
 static INPUT_RECORD bogus_key;
 
@@ -211,6 +211,13 @@ DllMain(HINSTANCE hInstance, DWORD fdwReason, PVOID pvReserved)
 #define iskeypad(x) (KEYPADLO <= (x) && (x) <= KEYPADHI)
 #define isnumkeypad(x) \
     (KEYPADLO <= (x) && (x) <= 0x51 && (x) != 0x4A && (x) != 0x4E)
+
+#ifdef QWERTZ_SUPPORT
+/* when 'numberpad' is 0 and Cmd.swap_yz is True
+   (signaled by setting 0x10 on boolean numpad argument)
+   treat keypress of numpad 7 as 'z' rather than 'y' */
+static boolean qwertz = FALSE;
+#endif
 
 /*
  * Keypad keys are translated to the normal values below.
@@ -255,13 +262,14 @@ static const struct pad {
 #define inmap(x, vk) (((x) > 'A' && (x) < 'Z') || (vk) == 0xBF || (x) == '2')
 
 /* Use process_keystroke for key commands, process_keystroke2 for prompts */
-/* int process_keystroke(INPUT_RECORD *ir, boolean *valid, int
- * portdebug); */
-int process_keystroke2(HANDLE, INPUT_RECORD *ir, boolean *valid);
-static int is_altseq(unsigned long shiftstate);
+/* int FDECL(process_keystroke, (INPUT_RECORD *ir, boolean *valid, int
+ * portdebug)); */
+int FDECL(process_keystroke2, (HANDLE, INPUT_RECORD *ir, boolean *valid));
+static int FDECL(is_altseq, (unsigned long shiftstate));
 
 static int
-is_altseq(unsigned long shiftstate)
+is_altseq(shiftstate)
+unsigned long shiftstate;
 {
     /* We need to distinguish the Alt keys from the AltGr key.
      * On NT-based Windows, AltGr signals as right Alt and left Ctrl together;
@@ -283,8 +291,13 @@ is_altseq(unsigned long shiftstate)
     }
 }
 
-int __declspec(dllexport) __stdcall ProcessKeystroke(HANDLE hConIn, INPUT_RECORD *ir, boolean *valid,
-                                                     boolean numberpad, int portdebug)
+int __declspec(dllexport) __stdcall ProcessKeystroke(hConIn, ir, valid,
+                                                     numberpad, portdebug)
+HANDLE hConIn;
+INPUT_RECORD *ir;
+boolean *valid;
+boolean numberpad;
+int portdebug;
 {
     int metaflags = 0, k = 0;
     int keycode, vk;
@@ -295,6 +308,14 @@ int __declspec(dllexport) __stdcall ProcessKeystroke(HANDLE hConIn, INPUT_RECORD
     const struct pad *kpad;
     DWORD count;
 
+#ifdef QWERTZ_SUPPORT
+    if (numberpad & 0x10) {
+        numberpad &= ~0x10;
+        qwertz = TRUE;
+    } else {
+        qwertz = FALSE;
+    }
+#endif
     shiftstate = 0L;
     ch = pre_ch = ir->Event.KeyEvent.uChar.AsciiChar;
     scan = ir->Event.KeyEvent.wVirtualScanCode;
@@ -341,12 +362,20 @@ int __declspec(dllexport) __stdcall ProcessKeystroke(HANDLE hConIn, INPUT_RECORD
         } else {
             ch = kpad[scan - KEYPADLO].normal;
         }
+#ifdef QWERTZ_SUPPORT
+        /* OPTIONS=number_pad:-1 is for qwertz keyboard; for that setting,
+           'numberpad' will be 0; core swaps y to zap, z to move northwest;
+           we want numpad 7 to move northwest, so when qwertz is set,
+           tell core that user who types numpad 7 typed z rather than y */
+        if (qwertz && kpad[scan - KEYPADLO].normal == 'y')
+            ch += 1; /* changes y to z, Y to Z, ^Y to ^Z */
+#endif /*QWERTZ_SUPPORT*/
     } else if (altseq > 0) { /* ALT sequence */
         ReadConsoleInput(hConIn, ir, 1, &count);
         if (vk == 0xBF)
             ch = M('?');
         else
-            ch = M(tolower(keycode));
+            ch = M(tolower((uchar) keycode));
     } else if (ch < 32 && !isnumkeypad(scan)) {
         /* Control code; ReadConsole seems to filter some of these,
          * including ESC */
@@ -384,7 +413,10 @@ int __declspec(dllexport) __stdcall ProcessKeystroke(HANDLE hConIn, INPUT_RECORD
 }
 
 int
-process_keystroke2(HANDLE hConIn, INPUT_RECORD *ir, boolean *valid)
+process_keystroke2(hConIn, ir, valid)
+HANDLE hConIn;
+INPUT_RECORD *ir;
+boolean *valid;
 {
     /* Use these values for the numeric keypad */
     static const char keypad_nums[] = "789-456+1230.";
@@ -447,14 +479,30 @@ process_keystroke2(HANDLE hConIn, INPUT_RECORD *ir, boolean *valid)
     return ch;
 }
 
-int __declspec(dllexport) __stdcall CheckInput(HANDLE hConIn, INPUT_RECORD *ir, DWORD *count, boolean numpad,
-                                               int mode, int *mod, coord *cc)
+int __declspec(dllexport) __stdcall CheckInput(hConIn, ir, count, numpad,
+                                               mode, mod, cc)
+HANDLE hConIn;
+INPUT_RECORD *ir;
+DWORD *count;
+int mode;
+int *mod;
+boolean numpad;
+coord *cc;
 {
 #if defined(SAFERHANGUP)
     DWORD dwWait;
 #endif
     int ch;
     boolean valid = 0, done = 0;
+
+#ifdef QWERTZ_SUPPORT
+    if (numpad & 0x10) {
+        numpad &= ~0x10;
+        qwertz = TRUE;
+    } else {
+        qwertz = FALSE;
+    }
+#endif
     while (!done) {
         *count = 0;
         dwWait = WaitForSingleObject(hConIn, INFINITE);
@@ -474,12 +522,19 @@ int __declspec(dllexport) __stdcall CheckInput(HANDLE hConIn, INPUT_RECORD *ir, 
             if (count > 0) {
                 if (ir->EventType == KEY_EVENT
                     && ir->Event.KeyEvent.bKeyDown) {
+#ifdef QWERTZ_SUPPORT
+                    if (qwertz)
+                        numpad |= 0x10;
+#endif
                     ch = ProcessKeystroke(hConIn, ir, &valid, numpad,
 #ifdef PORTDEBUG
                                           1);
 #else
                                           0);
 #endif
+#ifdef QWERTZ_SUPPORT
+                    numpad &= ~0x10;
+#endif                    
                     if (valid)
                         return ch;
                 } else {
@@ -522,7 +577,9 @@ int __declspec(dllexport) __stdcall CheckInput(HANDLE hConIn, INPUT_RECORD *ir, 
     return ch;
 }
 
-int __declspec(dllexport) __stdcall NHkbhit(HANDLE hConIn, INPUT_RECORD *ir)
+int __declspec(dllexport) __stdcall NHkbhit(hConIn, ir)
+HANDLE hConIn;
+INPUT_RECORD *ir;
 {
     int done = 0; /* true =  "stop searching"        */
     int retval;   /* true =  "we had a match"        */
@@ -531,6 +588,7 @@ int __declspec(dllexport) __stdcall NHkbhit(HANDLE hConIn, INPUT_RECORD *ir)
     unsigned char ch;
     unsigned long shiftstate;
     int altseq = 0, keycode, vk;
+
     done = 0;
     retval = 0;
     while (!done) {
@@ -542,19 +600,24 @@ int __declspec(dllexport) __stdcall NHkbhit(HANDLE hConIn, INPUT_RECORD *ir)
                 scan = ir->Event.KeyEvent.wVirtualScanCode;
                 shiftstate = ir->Event.KeyEvent.dwControlKeyState;
                 vk = ir->Event.KeyEvent.wVirtualKeyCode;
-                keycode = MapVirtualKey(vk, 2);
-                if (is_altseq(shiftstate)) {
-                    if (ch || inmap(keycode, vk))
-                        altseq = 1;
-                    else
-                        altseq = -1; /* invalid altseq */
-                }
-                if (ch || iskeypad(scan) || altseq) {
-                    done = 1;   /* Stop looking         */
-                    retval = 1; /* Found what we sought */
+                if (scan == 0 && vk == 0) {
+                    /* It's the bogus_key.  Discard it */
+                    ReadConsoleInput(hConIn,ir,1,&count);
                 } else {
-                    /* Strange Key event; let's purge it to avoid trouble */
-                    ReadConsoleInput(hConIn, ir, 1, &count);
+                    keycode = MapVirtualKey(vk, 2);
+                    if (is_altseq(shiftstate)) {
+                        if (ch || inmap(keycode, vk))
+                            altseq = 1;
+                        else
+                            altseq = -1; /* invalid altseq */
+                    }
+                    if (ch || iskeypad(scan) || altseq) {
+                        done = 1;   /* Stop looking         */
+                        retval = 1; /* Found what we sought */
+                    } else {
+                        /* Strange Key event; let's purge it to avoid trouble */
+                        ReadConsoleInput(hConIn, ir, 1, &count);
+                    }
                 }
 
             } else if ((ir->EventType == MOUSE_EVENT
@@ -574,7 +637,8 @@ int __declspec(dllexport) __stdcall NHkbhit(HANDLE hConIn, INPUT_RECORD *ir)
     return retval;
 }
 
-int __declspec(dllexport) __stdcall SourceWhere(char **buf)
+int __declspec(dllexport) __stdcall SourceWhere(buf)
+char **buf;
 {
     if (!buf)
         return 0;
@@ -582,7 +646,8 @@ int __declspec(dllexport) __stdcall SourceWhere(char **buf)
     return 1;
 }
 
-int __declspec(dllexport) __stdcall SourceAuthor(char **buf)
+int __declspec(dllexport) __stdcall SourceAuthor(buf)
+char **buf;
 {
     if (!buf)
         return 0;
@@ -590,7 +655,9 @@ int __declspec(dllexport) __stdcall SourceAuthor(char **buf)
     return 1;
 }
 
-int __declspec(dllexport) __stdcall KeyHandlerName(char **buf, int full)
+int __declspec(dllexport) __stdcall KeyHandlerName(buf, full)
+char **buf;
+int full;
 {
     if (!buf)
         return 0;

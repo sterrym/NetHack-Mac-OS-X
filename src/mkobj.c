@@ -1,22 +1,25 @@
-/* NetHack 3.6	mkobj.c	$NHDT-Date: 1447475943 2015/11/14 04:39:03 $  $NHDT-Branch: master $:$NHDT-Revision: 1.113 $ */
+/* NetHack 3.6	mkobj.c	$NHDT-Date: 1571531889 2019/10/20 00:38:09 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.157 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Derek S. Ray, 2015. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
-STATIC_DCL void mkbox_cnts(struct obj *);
-STATIC_DCL void maybe_adjust_light(struct obj *, int);
-STATIC_DCL void obj_timer_checks(struct obj *,
-                                         xchar, xchar, int);
-STATIC_DCL void container_weight(struct obj *);
-STATIC_DCL struct obj *save_mtraits(struct obj *, struct monst *);
-STATIC_DCL void objlist_sanity(struct obj *, int, const char *);
-STATIC_DCL void mon_obj_sanity(struct monst *, const char *);
-STATIC_DCL const char *where_name(struct obj *);
-STATIC_DCL void insane_object(struct obj *, const char *,
-                                      const char *, struct monst *);
-STATIC_DCL void check_contained(struct obj *, const char *);
-STATIC_DCL void sanity_check_worn(struct obj *);
+STATIC_DCL void FDECL(mkbox_cnts, (struct obj *));
+STATIC_DCL unsigned FDECL(nextoid, (struct obj *, struct obj *));
+STATIC_DCL void FDECL(maybe_adjust_light, (struct obj *, int));
+STATIC_DCL void FDECL(obj_timer_checks, (struct obj *,
+                                         XCHAR_P, XCHAR_P, int));
+STATIC_DCL void FDECL(container_weight, (struct obj *));
+STATIC_DCL struct obj *FDECL(save_mtraits, (struct obj *, struct monst *));
+STATIC_DCL void FDECL(objlist_sanity, (struct obj *, int, const char *));
+STATIC_DCL void FDECL(mon_obj_sanity, (struct monst *, const char *));
+STATIC_DCL const char *FDECL(where_name, (struct obj *));
+STATIC_DCL void FDECL(insane_object, (struct obj *, const char *,
+                                      const char *, struct monst *));
+STATIC_DCL void FDECL(check_contained, (struct obj *, const char *));
+STATIC_DCL void FDECL(check_glob, (struct obj *, const char *));
+STATIC_DCL void FDECL(sanity_check_worn, (struct obj *));
 
 struct icp {
     int iprob;   /* probability of an item type */
@@ -69,7 +72,7 @@ newoextra()
 {
     struct oextra *oextra;
 
-    oextra = (struct oextra *) alloc(sizeof(struct oextra));
+    oextra = (struct oextra *) alloc(sizeof (struct oextra));
     oextra->oname = 0;
     oextra->omonst = 0;
     oextra->omid = 0;
@@ -79,7 +82,8 @@ newoextra()
 }
 
 void
-dealloc_oextra(struct obj *o)
+dealloc_oextra(o)
+struct obj *o;
 {
     struct oextra *x = o->oextra;
 
@@ -101,23 +105,23 @@ dealloc_oextra(struct obj *o)
 }
 
 void
-newomonst(struct obj *otmp)
+newomonst(otmp)
+struct obj *otmp;
 {
     if (!otmp->oextra)
         otmp->oextra = newoextra();
+
     if (!OMONST(otmp)) {
         struct monst *m = newmonst();
 
-        /* newmonst() allocates memory but doesn't initialize anything */
-        (void) memset((genericptr_t) m, 0, sizeof (struct monst));
-        m->mextra = (struct mextra *) 0;
-        m->nmon = (struct monst *) 0;
+        *m = zeromonst;
         OMONST(otmp) = m;
     }
 }
 
 void
-free_omonst(struct obj *otmp)
+free_omonst(otmp)
+struct obj *otmp;
 {
     if (otmp->oextra) {
         struct monst *m = OMONST(otmp);
@@ -132,7 +136,8 @@ free_omonst(struct obj *otmp)
 }
 
 void
-newomid(struct obj *otmp)
+newomid(otmp)
+struct obj *otmp;
 {
     if (!otmp->oextra)
         otmp->oextra = newoextra();
@@ -143,7 +148,8 @@ newomid(struct obj *otmp)
 }
 
 void
-free_omid(struct obj *otmp)
+free_omid(otmp)
+struct obj *otmp;
 {
     if (otmp->oextra && OMID(otmp)) {
         free((genericptr_t) OMID(otmp));
@@ -152,7 +158,8 @@ free_omid(struct obj *otmp)
 }
 
 void
-newolong(struct obj *otmp)
+newolong(otmp)
+struct obj *otmp;
 {
     if (!otmp->oextra)
         otmp->oextra = newoextra();
@@ -163,7 +170,8 @@ newolong(struct obj *otmp)
 }
 
 void
-free_olong(struct obj *otmp)
+free_olong(otmp)
+struct obj *otmp;
 {
     if (otmp->oextra && OLONG(otmp)) {
         free((genericptr_t) OLONG(otmp));
@@ -172,7 +180,9 @@ free_olong(struct obj *otmp)
 }
 
 void
-new_omailcmd(struct obj *otmp, const char *response_cmd)
+new_omailcmd(otmp, response_cmd)
+struct obj *otmp;
+const char *response_cmd;
 {
     if (!otmp->oextra)
         otmp->oextra = newoextra();
@@ -182,7 +192,8 @@ new_omailcmd(struct obj *otmp, const char *response_cmd)
 }
 
 void
-free_omailcmd(struct obj *otmp)
+free_omailcmd(otmp)
+struct obj *otmp;
 {
     if (otmp->oextra && OMAILCMD(otmp)) {
         free((genericptr_t) OMAILCMD(otmp));
@@ -191,7 +202,10 @@ free_omailcmd(struct obj *otmp)
 }
 
 struct obj *
-mkobj_at(char let, int x, int y, boolean artif)
+mkobj_at(let, x, y, artif)
+char let;
+int x, y;
+boolean artif;
 {
     struct obj *otmp;
 
@@ -201,7 +215,9 @@ mkobj_at(char let, int x, int y, boolean artif)
 }
 
 struct obj *
-mksobj_at(int otyp, int x, int y, boolean init, boolean artif)
+mksobj_at(otyp, x, y, init, artif)
+int otyp, x, y;
+boolean init, artif;
 {
     struct obj *otmp;
 
@@ -211,7 +227,26 @@ mksobj_at(int otyp, int x, int y, boolean init, boolean artif)
 }
 
 struct obj *
-mkobj(char oclass, boolean artif)
+mksobj_migr_to_species(otyp, mflags2, init, artif)
+int otyp;
+unsigned mflags2;
+boolean init, artif;
+{
+    struct obj *otmp;
+
+    otmp = mksobj(otyp, init, artif);
+    add_to_migration(otmp);
+    otmp->owornmask = (long) MIGR_TO_SPECIES;
+    otmp->corpsenm = mflags2;
+    return otmp;
+}
+
+/* mkobj(): select a type of item from a class, use mksobj() to create it;
+   result is always non-Null */
+struct obj *
+mkobj(oclass, artif)
+char oclass;
+boolean artif;
 {
     int tprob, i, prob = rnd(1000);
 
@@ -237,7 +272,8 @@ mkobj(char oclass, boolean artif)
 }
 
 STATIC_OVL void
-mkbox_cnts(struct obj *box)
+mkbox_cnts(box)
+struct obj *box;
 {
     register int n;
     register struct obj *otmp;
@@ -249,10 +285,10 @@ mkbox_cnts(struct obj *box)
         n = 20;
         break;
     case CHEST:
-        n = 5;
+        n = box->olocked ? 7 : 5;
         break;
     case LARGE_BOX:
-        n = 3;
+        n = box->olocked ? 5 : 3;
         break;
     case SACK:
     case OILSKIN_SACK:
@@ -261,7 +297,7 @@ mkbox_cnts(struct obj *box)
             n = 0;
             break;
         }
-    /*else FALLTHRU*/
+        /*FALLTHRU*/
     case BAG_OF_HOLDING:
         n = 1;
         break;
@@ -272,8 +308,7 @@ mkbox_cnts(struct obj *box)
 
     for (n = rn2(n + 1); n > 0; n--) {
         if (box->otyp == ICE_BOX) {
-            if (!(otmp = mksobj(CORPSE, TRUE, TRUE)))
-                continue;
+            otmp = mksobj(CORPSE, TRUE, TRUE);
             /* Note: setting age to 0 is correct.  Age has a different
              * from usual meaning for objects stored in ice boxes. -KAA
              */
@@ -341,7 +376,8 @@ rndmonnum()
 }
 
 void
-copy_oextra(struct obj *obj2, struct obj *obj1)
+copy_oextra(obj2, obj1)
+struct obj *obj2, *obj1;
 {
     if (!obj2 || !obj1 || !obj1->oextra)
         return;
@@ -354,7 +390,7 @@ copy_oextra(struct obj *obj2, struct obj *obj1)
         if (!OMONST(obj2))
             newomonst(obj2);
         (void) memcpy((genericptr_t) OMONST(obj2),
-                      (genericptr_t) OMONST(obj1), sizeof(struct monst));
+                      (genericptr_t) OMONST(obj1), sizeof (struct monst));
         OMONST(obj2)->mextra = (struct mextra *) 0;
         OMONST(obj2)->nmon = (struct monst *) 0;
 #if 0
@@ -369,13 +405,13 @@ copy_oextra(struct obj *obj2, struct obj *obj1)
         if (!OMID(obj2))
             newomid(obj2);
         (void) memcpy((genericptr_t) OMID(obj2), (genericptr_t) OMID(obj1),
-                      sizeof(unsigned));
+                      sizeof (unsigned));
     }
     if (has_olong(obj1)) {
         if (!OLONG(obj2))
             newolong(obj2);
         (void) memcpy((genericptr_t) OLONG(obj2), (genericptr_t) OLONG(obj1),
-                      sizeof(long));
+                      sizeof (long));
     }
     if (has_omailcmd(obj1)) {
         new_omailcmd(obj2, OMAILCMD(obj1));
@@ -389,7 +425,9 @@ copy_oextra(struct obj *obj2, struct obj *obj1)
  * in the nobj chain (and nexthere chain when on the floor).
  */
 struct obj *
-splitobj(struct obj *obj, long num)
+splitobj(obj, num)
+struct obj *obj;
+long num;
 {
     struct obj *otmp;
 
@@ -398,9 +436,7 @@ splitobj(struct obj *obj, long num)
     otmp = newobj();
     *otmp = *obj; /* copies whole structure */
     otmp->oextra = (struct oextra *) 0;
-    otmp->o_id = context.ident++;
-    if (!otmp->o_id)
-        otmp->o_id = context.ident++; /* ident overflowed */
+    otmp->o_id = nextoid(obj, otmp);
     otmp->timed = 0;                  /* not timed, yet */
     otmp->lamplit = 0;                /* ditto */
     otmp->owornmask = 0L;             /* new object isn't worn */
@@ -428,10 +464,31 @@ splitobj(struct obj *obj, long num)
     return otmp;
 }
 
+/* when splitting a stack that has o_id-based shop prices, pick an
+   o_id value for the new stack that will maintain the same price */
+STATIC_OVL unsigned
+nextoid(oldobj, newobj)
+struct obj *oldobj, *newobj;
+{
+    int olddif, newdif, trylimit = 256; /* limit of 4 suffices at present */
+    unsigned oid = context.ident - 1; /* loop increment will reverse -1 */
+
+    olddif = oid_price_adjustment(oldobj, oldobj->o_id);
+    do {
+        ++oid;
+        if (!oid) /* avoid using 0 (in case value wrapped) */
+            ++oid;
+        newdif = oid_price_adjustment(newobj, oid);
+    } while (newdif != olddif && --trylimit >= 0);
+    context.ident = oid + 1; /* ready for next new object */
+    return oid;
+}
+
 /* try to find the stack obj was split from, then merge them back together;
    returns the combined object if unsplit is successful, null otherwise */
 struct obj *
-unsplitobj(struct obj *obj)
+unsplitobj(obj)
+struct obj *obj;
 {
     unsigned target_oid = 0;
     struct obj *oparent = 0, *ochild = 0, *list = 0;
@@ -516,7 +573,9 @@ clear_splitobjs()
  * not actually moving something.
  */
 void
-replace_object(struct obj *obj, struct obj *otmp)
+replace_object(obj, otmp)
+struct obj *obj;
+struct obj *otmp;
 {
     otmp->where = obj->where;
     switch (obj->where) {
@@ -556,6 +615,23 @@ replace_object(struct obj *obj, struct obj *otmp)
     }
 }
 
+/* is 'obj' inside a container whose contents aren't known?
+   if so, return the outermost container meeting that criterium */
+struct obj *
+unknwn_contnr_contents(obj)
+struct obj *obj;
+{
+    struct obj *result = 0, *parent;
+
+    while (obj->where == OBJ_CONTAINED) {
+        parent = obj->ocontainer;
+        if (!parent->cknown)
+            result = parent;
+        obj = parent;
+    }
+    return result;
+}
+
 /*
  * Create a dummy duplicate to put on shop bill.  The duplicate exists
  * only in the billobjs chain.  This function is used when a shop object
@@ -571,7 +647,8 @@ replace_object(struct obj *obj, struct obj *otmp)
  * usage of an object.
  */
 void
-bill_dummy_object(register struct obj *otmp)
+bill_dummy_object(otmp)
+register struct obj *otmp;
 {
     register struct obj *dummy;
     long cost = 0L;
@@ -613,11 +690,13 @@ static const char *const alteration_verbs[] = {
 
 /* possibly bill for an object which the player has just modified */
 void
-costly_alteration(struct obj *obj, int alter_type)
+costly_alteration(obj, alter_type)
+struct obj *obj;
+int alter_type;
 {
     xchar ox, oy;
     char objroom;
-    boolean set_bknown;
+    boolean learn_bknown;
     const char *those, *them;
     struct monst *shkp = 0;
 
@@ -639,9 +718,8 @@ costly_alteration(struct obj *obj, int alter_type)
     } else {
         /* this get_obj_location shouldn't fail, but if it does,
            use hero's location */
-        if (!get_obj_location(obj, &ox, &oy, CONTAINED_TOO)) {
-            ox = u.ux; oy = u.uy;
-        }
+        if (!get_obj_location(obj, &ox, &oy, CONTAINED_TOO))
+            ox = u.ux, oy = u.uy;
         if (!costly_spot(ox, oy))
             return;
         objroom = *in_rooms(ox, oy, SHOPBASE);
@@ -650,30 +728,29 @@ costly_alteration(struct obj *obj, int alter_type)
             return;
     }
 
-    if (obj->quan == 1L) {
-        those = "that"; them = "it";
-    } else {
-        those = "those"; them = "them";
-    }
+    if (obj->quan == 1L)
+        those = "that", them = "it";
+    else
+        those = "those", them = "them";
 
     /* when shopkeeper describes the object as being uncursed or unblessed
        hero will know that it is now uncursed; will also make the feedback
        from `I x' after bill_dummy_object() be more specific for this item */
-    set_bknown = (alter_type == COST_UNCURS || alter_type == COST_UNBLSS);
+    learn_bknown = (alter_type == COST_UNCURS || alter_type == COST_UNBLSS);
 
     switch (obj->where) {
     case OBJ_FREE: /* obj_no_longer_held() */
     case OBJ_INVENT:
-        if (set_bknown)
-            obj->bknown = 1;
+        if (learn_bknown)
+            set_bknown(obj, 1);
         verbalize("You %s %s %s, you pay for %s!",
                   alteration_verbs[alter_type], those, simpleonames(obj),
                   them);
         bill_dummy_object(obj);
         break;
     case OBJ_FLOOR:
-        if (set_bknown)
-            obj->bknown = 1;
+        if (learn_bknown)
+            obj->bknown = 1; /* ok to bypass set_bknown() here */
         if (costly_spot(u.ux, u.uy) && objroom == *u.ushops) {
             verbalize("You %s %s, you pay for %s!",
                       alteration_verbs[alter_type], those, them);
@@ -689,8 +766,12 @@ static const char dknowns[] = { WAND_CLASS,   RING_CLASS, POTION_CLASS,
                                 SCROLL_CLASS, GEM_CLASS,  SPBOOK_CLASS,
                                 WEAPON_CLASS, TOOL_CLASS, 0 };
 
+/* mksobj(): create a specific type of object; result it always non-Null */
 struct obj *
-mksobj(int otyp, boolean init, boolean artif)
+mksobj(otyp, init, artif)
+int otyp;
+boolean init;
+boolean artif;
 {
     int mndx, tryct;
     struct obj *otmp;
@@ -708,7 +789,8 @@ mksobj(int otyp, boolean init, boolean artif)
     otmp->where = OBJ_FREE;
     otmp->dknown = index(dknowns, let) ? 0 : 1;
     if ((otmp->otyp >= ELVEN_SHIELD && otmp->otyp <= ORCISH_SHIELD)
-        || otmp->otyp == SHIELD_OF_REFLECTION)
+        || otmp->otyp == SHIELD_OF_REFLECTION
+        || objects[otmp->otyp].oc_merge)
         otmp->dknown = 0;
     if (!objects[otmp->otyp].oc_uses_known)
         otmp->known = 1;
@@ -716,7 +798,7 @@ mksobj(int otyp, boolean init, boolean artif)
     otmp->cknown = 0;
     otmp->corpsenm = NON_PM;
 
-    if (init)
+    if (init) {
         switch (let) {
         case WEAPON_CLASS:
             otmp->quan = is_multigen(otmp) ? (long) rn1(6, 6) : 1L;
@@ -746,9 +828,8 @@ mksobj(int otyp, boolean init, boolean artif)
                        && (--tryct > 0));
                 if (tryct == 0) {
                     /* perhaps rndmonnum() only wants to make G_NOCORPSE
-                       monsters on
-                       this level; let's create an adventurer's corpse
-                       instead, then */
+                       monsters on this level; create an adventurer's
+                       corpse instead, then */
                     otmp->corpsenm = PM_HUMAN;
                 }
                 /* timer set below */
@@ -790,12 +871,11 @@ mksobj(int otyp, boolean init, boolean artif)
                 break;
             }
             if (Is_pudding(otmp)) {
+                otmp->quan = 1L; /* for emphasis; glob quantity is always 1 */
                 otmp->globby = 1;
-                otmp->known = otmp->bknown = otmp->rknown = otmp->dknown = 1;
-                otmp->corpsenm =
-                    PM_GRAY_OOZE + (otmp->otyp - GLOB_OF_GRAY_OOZE);
-                /* this ensures that they don't fail merging because of
-                 * BUC status or other irrelevancies */
+                otmp->known = otmp->dknown = 1;
+                otmp->corpsenm = PM_GRAY_OOZE
+                                 + (otmp->otyp - GLOB_OF_GRAY_OOZE);
             } else {
                 if (otmp->otyp != CORPSE && otmp->otyp != MEAT_RING
                     && otmp->otyp != KELP_FROND && !rn2(6)) {
@@ -841,14 +921,12 @@ mksobj(int otyp, boolean init, boolean artif)
             case LARGE_BOX:
                 otmp->olocked = !!(rn2(5));
                 otmp->otrapped = !(rn2(10));
+                /*FALLTHRU*/
             case ICE_BOX:
             case SACK:
             case OILSKIN_SACK:
             case BAG_OF_HOLDING:
                 mkbox_cnts(otmp);
-                break;
-            case LEASH:
-                otmp->leashmon = 0;
                 break;
             case EXPENSIVE_CAMERA:
             case TINNING_KIT:
@@ -867,14 +945,13 @@ mksobj(int otyp, boolean init, boolean artif)
             case BAG_OF_TRICKS:
                 otmp->spe = rnd(20);
                 break;
-            case FIGURINE: {
-                int tryct2 = 0;
+            case FIGURINE:
+                tryct = 0;
                 do
                     otmp->corpsenm = rndmonnum();
-                while (is_human(&mons[otmp->corpsenm]) && tryct2++ < 30);
+                while (is_human(&mons[otmp->corpsenm]) && tryct++ < 30);
                 blessorcurse(otmp, 4);
                 break;
-            }
             case BELL_OF_OPENING:
                 otmp->spe = 3;
                 break;
@@ -896,15 +973,12 @@ mksobj(int otyp, boolean init, boolean artif)
                 curse(otmp);
             } else
                 blessorcurse(otmp, 10);
+            break;
         case VENOM_CLASS:
         case CHAIN_CLASS:
         case BALL_CLASS:
             break;
-        case POTION_CLASS:
-            otmp->fromsink = 0;
-            if (otmp->otyp == POT_OIL)
-                otmp->age = MAX_OIL_IN_FLASK; /* amount of oil */
-        /* fall through */
+        case POTION_CLASS: /* note: potions get some additional init below */
         case SCROLL_CLASS:
 #ifdef MAIL
             if (otmp->otyp != SCR_MAIL)
@@ -986,28 +1060,43 @@ mksobj(int otyp, boolean init, boolean artif)
         case COIN_CLASS:
             break; /* do nothing */
         default:
-            impossible("impossible mkobj %d, sym '%c'.", otmp->otyp,
-                       objects[otmp->otyp].oc_class);
-            return (struct obj *) 0;
+            /* 3.6.3: this used to be impossible() followed by return 0
+               but most callers aren't prepared to deal with Null result
+               and cluttering them up to do so is pointless */
+            panic("mksobj tried to make type %d, class %d.",
+                  (int) otmp->otyp, (int) objects[otmp->otyp].oc_class);
+            /*NOTREACHED*/
         }
+    }
 
     /* some things must get done (corpsenm, timers) even if init = 0 */
-    switch (otmp->otyp) {
+    switch ((otmp->oclass == POTION_CLASS && otmp->otyp != POT_OIL)
+            ? POT_WATER
+            : otmp->otyp) {
     case CORPSE:
         if (otmp->corpsenm == NON_PM) {
             otmp->corpsenm = undead_to_corpse(rndmonnum());
             if (mvitals[otmp->corpsenm].mvflags & (G_NOCORPSE | G_GONE))
                 otmp->corpsenm = urole.malenum;
         }
-    /*FALLTHRU*/
+        /*FALLTHRU*/
     case STATUE:
     case FIGURINE:
         if (otmp->corpsenm == NON_PM)
             otmp->corpsenm = rndmonnum();
-    /*FALLTHRU*/
+        /*FALLTHRU*/
     case EGG:
-        /* case TIN: */
+    /* case TIN: */
         set_corpsenm(otmp, otmp->corpsenm);
+        break;
+    case POT_OIL:
+        otmp->age = MAX_OIL_IN_FLASK; /* amount of oil */
+        /*FALLTHRU*/
+    case POT_WATER: /* POTION_CLASS */
+        otmp->fromsink = 0; /* overloads corpsenm, which was set to NON_PM */
+        break;
+    case LEASH:
+        otmp->leashmon = 0; /* overloads corpsenm, which was set to NON_PM */
         break;
     case SPE_NOVEL:
         otmp->novelidx = -1; /* "none of the above"; will be changed */
@@ -1043,7 +1132,9 @@ mksobj(int otyp, boolean init, boolean artif)
  *
  */
 void
-set_corpsenm(struct obj *obj, int id)
+set_corpsenm(obj, id)
+struct obj *obj;
+int id;
 {
     long when = 0L;
 
@@ -1082,7 +1173,8 @@ set_corpsenm(struct obj *obj, int id)
  * This takes the age of the corpse into consideration as of 3.4.0.
  */
 void
-start_corpse_timeout(struct obj *body)
+start_corpse_timeout(body)
+struct obj *body;
 {
     long when;       /* rot away when this old */
     long corpse_age; /* age of corpse          */
@@ -1132,7 +1224,9 @@ start_corpse_timeout(struct obj *body)
 }
 
 STATIC_OVL void
-maybe_adjust_light(struct obj *obj, int old_range)
+maybe_adjust_light(obj, old_range)
+struct obj *obj;
+int old_range;
 {
     char buf[BUFSZ];
     xchar ox, oy;
@@ -1173,7 +1267,8 @@ maybe_adjust_light(struct obj *obj, int old_range)
  */
 
 void
-bless(register struct obj *otmp)
+bless(otmp)
+register struct obj *otmp;
 {
     int old_light = 0;
 
@@ -1195,7 +1290,8 @@ bless(register struct obj *otmp)
 }
 
 void
-unbless(register struct obj *otmp)
+unbless(otmp)
+register struct obj *otmp;
 {
     int old_light = 0;
 
@@ -1211,14 +1307,17 @@ unbless(register struct obj *otmp)
 }
 
 void
-curse(register struct obj *otmp)
+curse(otmp)
+register struct obj *otmp;
 {
+    unsigned already_cursed;
     int old_light = 0;
 
     if (otmp->oclass == COIN_CLASS)
         return;
     if (otmp->lamplit)
         old_light = arti_light_radius(otmp);
+    already_cursed = otmp->cursed;
     otmp->blessed = 0;
     otmp->cursed = 1;
     /* welded two-handed weapon interferes with some armor removal */
@@ -1229,14 +1328,18 @@ curse(register struct obj *otmp)
     if (otmp == uswapwep && u.twoweap)
         drop_uswapwep();
     /* some cursed items need immediate updating */
-    if (carried(otmp) && confers_luck(otmp))
+    if (carried(otmp) && confers_luck(otmp)) {
         set_moreluck();
-    else if (otmp->otyp == BAG_OF_HOLDING)
+    } else if (otmp->otyp == BAG_OF_HOLDING) {
         otmp->owt = weight(otmp);
-    else if (otmp->otyp == FIGURINE) {
+    } else if (otmp->otyp == FIGURINE) {
         if (otmp->corpsenm != NON_PM && !dead_species(otmp->corpsenm, TRUE)
             && (carried(otmp) || mcarried(otmp)))
             attach_fig_transform_timeout(otmp);
+    } else if (otmp->oclass == SPBOOK_CLASS) {
+        /* if book hero is reading becomes cursed, interrupt */
+        if (!already_cursed)
+            book_cursed(otmp);
     }
     if (otmp->lamplit)
         maybe_adjust_light(otmp, old_light);
@@ -1244,7 +1347,8 @@ curse(register struct obj *otmp)
 }
 
 void
-uncurse(register struct obj *otmp)
+uncurse(otmp)
+register struct obj *otmp;
 {
     int old_light = 0;
 
@@ -1263,7 +1367,9 @@ uncurse(register struct obj *otmp)
 }
 
 void
-blessorcurse(register struct obj *otmp, register int chance)
+blessorcurse(otmp, chance)
+register struct obj *otmp;
+register int chance;
 {
     if (otmp->blessed || otmp->cursed)
         return;
@@ -1279,9 +1385,23 @@ blessorcurse(register struct obj *otmp, register int chance)
 }
 
 int
-bcsign(register struct obj *otmp)
+bcsign(otmp)
+register struct obj *otmp;
 {
     return (!!otmp->blessed - !!otmp->cursed);
+}
+
+/* set the object's bless/curse-state known flag */
+void
+set_bknown(obj, onoff)
+struct obj *obj;
+unsigned onoff; /* 1 or 0 */
+{
+    if (obj->bknown != onoff) {
+        obj->bknown = onoff;
+        if (obj->where == OBJ_INVENT && moves > 1L)
+            update_inventory();
+    }
 }
 
 /*
@@ -1293,12 +1413,16 @@ bcsign(register struct obj *otmp)
  *         container's weight.
  */
 int
-weight(register struct obj *obj)
+weight(obj)
+register struct obj *obj;
 {
-    int wt = objects[obj->otyp].oc_weight;
+    int wt = (int) objects[obj->otyp].oc_weight;
 
-    if (SchroedingersBox(obj))
-        wt += mons[PM_HOUSECAT].cwt;
+    /* glob absorpsion means that merging globs accumulates weight while
+       quantity stays 1, so update 'wt' to reflect that, unless owt is 0,
+       when we assume this is a brand new glob so use objects[].oc_weight */
+    if (obj->globby && obj->owt > 0)
+        wt = obj->owt;
     if (Is_container(obj) || obj->otyp == STATUE) {
         struct obj *contents;
         register int cwt = 0;
@@ -1341,25 +1465,35 @@ weight(register struct obj *obj)
         return (int) ((obj->quan + 50L) / 100L);
     } else if (obj->otyp == HEAVY_IRON_BALL && obj->owt != 0) {
         return (int) obj->owt; /* kludge for "very" heavy iron ball */
+    } else if (obj->otyp == CANDELABRUM_OF_INVOCATION && obj->spe) {
+        return wt + obj->spe * (int) objects[TALLOW_CANDLE].oc_weight;
     }
     return (wt ? wt * (int) obj->quan : ((int) obj->quan + 1) >> 1);
 }
 
 static int treefruits[] = { APPLE, ORANGE, PEAR, BANANA, EUCALYPTUS_LEAF };
 
+/* called when a tree is kicked; never returns Null */
 struct obj *
-rnd_treefruit_at(int x, int y)
+rnd_treefruit_at(x, y)
+int x, y;
 {
     return mksobj_at(treefruits[rn2(SIZE(treefruits))], x, y, TRUE, FALSE);
 }
 
+/* create a stack of N gold pieces; never returns Null */
 struct obj *
-mkgold(long amount, int x, int y)
+mkgold(amount, x, y)
+long amount;
+int x, y;
 {
-    register struct obj *gold = g_at(x, y);
+    struct obj *gold = g_at(x, y);
 
-    if (amount <= 0L)
-        amount = (long) (1 + rnd(level_difficulty() + 2) * rnd(30));
+    if (amount <= 0L) {
+        long mul = rnd(30 / max(12-depth(&u.uz), 2));
+
+        amount = (long) (1 + rnd(level_difficulty() + 2) * mul);
+    }
     if (gold) {
         gold->quan += amount;
     } else {
@@ -1370,12 +1504,14 @@ mkgold(long amount, int x, int y)
     return gold;
 }
 
-/* return TRUE if the corpse has special timing */
-#define special_corpse(num)                                                 \
-    (((num) == PM_LIZARD) || ((num) == PM_LICHEN) || (is_rider(&mons[num])) \
-     || (mons[num].mlet == S_TROLL))
+/* return TRUE if the corpse has special timing;
+   lizards and lichen don't rot, trolls and Riders auto-revive */
+#define special_corpse(num) \
+    (((num) == PM_LIZARD || (num) == PM_LICHEN)                 \
+     || (mons[num].mlet == S_TROLL || is_rider(&mons[num])))
 
-/*
+/* mkcorpstat: make a corpse or statue; never returns Null.
+ *
  * OEXTRA note: Passing mtmp causes mtraits to be saved
  * even if ptr passed as well, but ptr is always used for
  * the corpse type (corpsenm). That allows the corpse type
@@ -1385,46 +1521,46 @@ mkgold(long amount, int x, int y)
  * resurrection.
  */
 struct obj *
-mkcorpstat(int objtype, /* CORPSE or STATUE */
-           struct monst *mtmp,
-           struct permonst *ptr,
-           int x, int y,
-           unsigned corpstatflags)
+mkcorpstat(objtype, mtmp, ptr, x, y, corpstatflags)
+int objtype; /* CORPSE or STATUE */
+struct monst *mtmp;
+struct permonst *ptr;
+int x, y;
+unsigned corpstatflags;
 {
-    register struct obj *otmp;
+    struct obj *otmp;
     boolean init = ((corpstatflags & CORPSTAT_INIT) != 0);
 
     if (objtype != CORPSE && objtype != STATUE)
         impossible("making corpstat type %d", objtype);
     if (x == 0 && y == 0) { /* special case - random placement */
         otmp = mksobj(objtype, init, FALSE);
-        if (otmp)
-            (void) rloco(otmp);
-    } else
+        (void) rloco(otmp);
+    } else {
         otmp = mksobj_at(objtype, x, y, init, FALSE);
-    if (otmp) {
-        if (mtmp) {
-            struct obj *otmp2;
+    }
 
-            if (!ptr)
-                ptr = mtmp->data;
-            /* save_mtraits frees original data pointed to by otmp */
-            otmp2 = save_mtraits(otmp, mtmp);
-            if (otmp2)
-                otmp = otmp2;
-        }
-        /* use the corpse or statue produced by mksobj() as-is
-           unless `ptr' is non-null */
-        if (ptr) {
-            int old_corpsenm = otmp->corpsenm;
+    /* when 'mtmp' is non-null save the monster's details with the
+       corpse or statue; it will also force the 'ptr' override below */
+    if (mtmp) {
+        /* save_mtraits updates otmp->oextra->omonst in place */
+        (void) save_mtraits(otmp, mtmp);
 
-            otmp->corpsenm = monsndx(ptr);
-            otmp->owt = weight(otmp);
-            if (otmp->otyp == CORPSE && (special_corpse(old_corpsenm)
-                                         || special_corpse(otmp->corpsenm))) {
-                obj_stop_timers(otmp);
-                start_corpse_timeout(otmp);
-            }
+        if (!ptr)
+            ptr = mtmp->data;
+    }
+
+    /* when 'ptr' is non-null it comes from our caller or from 'mtmp';
+       override mkobjs()'s initialization of a random monster type */
+    if (ptr) {
+        int old_corpsenm = otmp->corpsenm;
+
+        otmp->corpsenm = monsndx(ptr);
+        otmp->owt = weight(otmp);
+        if (otmp->otyp == CORPSE && (special_corpse(old_corpsenm)
+                                     || special_corpse(otmp->corpsenm))) {
+            obj_stop_timers(otmp);
+            start_corpse_timeout(otmp);
         }
     }
     return otmp;
@@ -1439,17 +1575,17 @@ mkcorpstat(int objtype, /* CORPSE or STATUE */
  * The return value is an index into mons[].
  */
 int
-corpse_revive_type(struct obj *obj)
+corpse_revive_type(obj)
+struct obj *obj;
 {
-    int revivetype;
+    int revivetype = obj->corpsenm;
     struct monst *mtmp;
-    if (has_omonst(obj)
-        && ((mtmp = get_mtraits(obj, FALSE)) != (struct monst *) 0)) {
+
+    if (has_omonst(obj) && ((mtmp = get_mtraits(obj, FALSE)) != 0)) {
         /* mtmp is a temporary pointer to a monster's stored
         attributes, not a real monster */
         revivetype = mtmp->mnum;
-    } else
-        revivetype = obj->corpsenm;
+    }
     return revivetype;
 }
 
@@ -1458,7 +1594,9 @@ corpse_revive_type(struct obj *obj)
  * a lasting association between the two.
  */
 struct obj *
-obj_attach_mid(struct obj *obj, unsigned mid)
+obj_attach_mid(obj, mid)
+struct obj *obj;
+unsigned mid;
 {
     if (!mid || !obj)
         return (struct obj *) 0;
@@ -1468,7 +1606,9 @@ obj_attach_mid(struct obj *obj, unsigned mid)
 }
 
 static struct obj *
-save_mtraits(struct obj *obj, struct monst *mtmp)
+save_mtraits(obj, mtmp)
+struct obj *obj;
+struct monst *mtmp;
 {
     if (mtmp->ispriest)
         forget_temple_entry(mtmp); /* EPRI() */
@@ -1497,7 +1637,9 @@ save_mtraits(struct obj *obj, struct monst *mtmp)
  * the one contained within the obj.
  */
 struct monst *
-get_mtraits(struct obj *obj, boolean copyof)
+get_mtraits(obj, copyof)
+struct obj *obj;
+boolean copyof;
 {
     struct monst *mtmp = (struct monst *) 0;
     struct monst *mnew = (struct monst *) 0;
@@ -1519,34 +1661,39 @@ get_mtraits(struct obj *obj, boolean copyof)
     return mnew;
 }
 
-/* make an object named after someone listed in the scoreboard file */
+/* make an object named after someone listed in the scoreboard file;
+   never returns Null */
 struct obj *
-mk_tt_object(int objtype, /* CORPSE or STATUE */
-             register int x, register int y)
+mk_tt_object(objtype, x, y)
+int objtype; /* CORPSE or STATUE */
+int x, y;
 {
-    register struct obj *otmp, *otmp2;
+    struct obj *otmp;
     boolean initialize_it;
 
     /* player statues never contain books */
     initialize_it = (objtype != STATUE);
-    if ((otmp = mksobj_at(objtype, x, y, initialize_it, FALSE)) != 0) {
-        /* tt_oname will return null if the scoreboard is empty */
-        if ((otmp2 = tt_oname(otmp)) != 0)
-            otmp = otmp2;
-    }
+    otmp = mksobj_at(objtype, x, y, initialize_it, FALSE);
+    /* tt_oname() will return null if the scoreboard is empty;
+       assigning an object name used to allocate a new obj but
+       doesn't any more so we can safely ignore the return value */
+    (void) tt_oname(otmp);
+
     return otmp;
 }
 
-/* make a new corpse or statue, uninitialized if a statue (i.e. no books) */
+/* make a new corpse or statue, uninitialized if a statue (i.e. no books);
+   never returns Null */
 struct obj *
-mk_named_object(int objtype, /* CORPSE or STATUE */
-                struct permonst *ptr,
-                int x, int y,
-                const char *nm)
+mk_named_object(objtype, ptr, x, y, nm)
+int objtype; /* CORPSE or STATUE */
+struct permonst *ptr;
+int x, y;
+const char *nm;
 {
     struct obj *otmp;
-    unsigned corpstatflags =
-        (objtype != STATUE) ? CORPSTAT_INIT : CORPSTAT_NONE;
+    unsigned corpstatflags = (objtype != STATUE) ? CORPSTAT_INIT
+                                                 : CORPSTAT_NONE;
 
     otmp = mkcorpstat(objtype, (struct monst *) 0, ptr, x, y, corpstatflags);
     if (nm)
@@ -1555,7 +1702,8 @@ mk_named_object(int objtype, /* CORPSE or STATUE */
 }
 
 boolean
-is_flammable(register struct obj *otmp)
+is_flammable(otmp)
+register struct obj *otmp;
 {
     int otyp = otmp->otyp;
     int omat = objects[otyp].oc_material;
@@ -1574,7 +1722,8 @@ is_flammable(register struct obj *otmp)
 }
 
 boolean
-is_rottable(register struct obj *otmp)
+is_rottable(otmp)
+register struct obj *otmp;
 {
     int otyp = otmp->otyp;
 
@@ -1589,23 +1738,44 @@ is_rottable(register struct obj *otmp)
 
 /* put the object at the given location */
 void
-place_object(register struct obj *otmp, int x, int y)
+place_object(otmp, x, y)
+register struct obj *otmp;
+int x, y;
 {
     register struct obj *otmp2 = level.objects[x][y];
 
+    if (!isok(x, y)) { /* validate location */
+        void VDECL((*func), (const char *, ...)) PRINTF_F(1, 2);
+
+        func = (x < 0 || y < 0 || x > COLNO - 1 || y > ROWNO - 1) ? panic
+               : impossible;
+        (*func)("place_object: \"%s\" [%d] off map <%d,%d>",
+                safe_typename(otmp->otyp), otmp->where, x, y);
+    }
     if (otmp->where != OBJ_FREE)
-        panic("place_object: obj not free");
+        panic("place_object: obj \"%s\" [%d] not free",
+              safe_typename(otmp->otyp), otmp->where);
 
     obj_no_longer_held(otmp);
-    /* (could bypass this vision update if there is already a boulder here) */
-    if (otmp->otyp == BOULDER)
-        block_point(x, y); /* vision */
+    if (otmp->otyp == BOULDER) {
+        if (!otmp2 || otmp2->otyp != BOULDER)
+            block_point(x, y); /* vision */
+    }
 
-    /* obj goes under boulders */
-    if (otmp2 && (otmp2->otyp == BOULDER)) {
+    /* non-boulder object goes under boulders so that map will show boulder
+       here without display code needing to traverse pile chain to find one */
+    if (otmp2 && otmp2->otyp == BOULDER && otmp->otyp != BOULDER) {
+        /* 3.6.3: put otmp under last consecutive boulder rather than under
+           just the first one; multiple boulders at same spot in new games
+           will be consecutive due to this, ones in old games saved before
+           this change might not be; can affect the map display if the top
+           boulder is moved/removed by some means other than pushing */
+        while (otmp2->nexthere && otmp2->nexthere->otyp == BOULDER)
+            otmp2 = otmp2->nexthere;
         otmp->nexthere = otmp2->nexthere;
         otmp2->nexthere = otmp;
     } else {
+        /* put on top of current pile */
         otmp->nexthere = otmp2;
         level.objects[x][y] = otmp;
     }
@@ -1613,7 +1783,6 @@ place_object(register struct obj *otmp, int x, int y)
     /* set the new object's location */
     otmp->ox = x;
     otmp->oy = y;
-
     otmp->where = OBJ_FLOOR;
 
     /* add to floor chain */
@@ -1629,7 +1798,9 @@ place_object(register struct obj *otmp, int x, int y)
  * Also used for starting ice effects too. [zap.c]
  */
 void
-obj_ice_effects(int x, int y, boolean do_buried)
+obj_ice_effects(x, y, do_buried)
+int x, y;
+boolean do_buried;
 {
     struct obj *otmp;
 
@@ -1655,7 +1826,8 @@ obj_ice_effects(int x, int y, boolean do_buried)
  * restarted etc.
  */
 long
-peek_at_iced_corpse_age(struct obj *otmp)
+peek_at_iced_corpse_age(otmp)
+struct obj *otmp;
 {
     long age, retval = otmp->age;
 
@@ -1672,9 +1844,10 @@ peek_at_iced_corpse_age(struct obj *otmp)
 }
 
 STATIC_OVL void
-obj_timer_checks(struct obj *otmp,
-                 xchar x, xchar y,
-                 int force) /* 0 = no force so do checks, <0 = force off, >0 force on */
+obj_timer_checks(otmp, x, y, force)
+struct obj *otmp;
+xchar x, y;
+int force; /* 0 = no force so do checks, <0 = force off, >0 force on */
 {
     long tleft = 0L;
     short action = ROT_CORPSE;
@@ -1739,7 +1912,8 @@ obj_timer_checks(struct obj *otmp,
 #undef ROT_ICE_ADJUSTMENT
 
 void
-remove_object(register struct obj *otmp)
+remove_object(otmp)
+register struct obj *otmp;
 {
     xchar x = otmp->ox;
     xchar y = otmp->oy;
@@ -1757,19 +1931,19 @@ remove_object(register struct obj *otmp)
 
 /* throw away all of a monster's inventory */
 void
-discard_minvent(struct monst *mtmp)
+discard_minvent(mtmp)
+struct monst *mtmp;
 {
     struct obj *otmp, *mwep = MON_WEP(mtmp);
-    boolean keeping_mon = (mtmp->mhp > 0);
+    boolean keeping_mon = (!DEADMONSTER(mtmp));
 
     while ((otmp = mtmp->minvent) != 0) {
         /* this has now become very similar to m_useupall()... */
         obj_extract_self(otmp);
         if (otmp->owornmask) {
             if (keeping_mon) {
-                if (otmp == mwep) {
-                    mwepgone(mtmp); mwep = 0;
-                }
+                if (otmp == mwep)
+                    mwepgone(mtmp), mwep = 0;
                 mtmp->misc_worn_check &= ~otmp->owornmask;
                 update_mon_intrinsics(mtmp, otmp, FALSE, TRUE);
             }
@@ -1795,7 +1969,8 @@ discard_minvent(struct monst *mtmp)
  *      OBJ_ONBILL      on billobjs chain
  */
 void
-obj_extract_self(struct obj *obj)
+obj_extract_self(obj)
+struct obj *obj;
 {
     switch (obj->where) {
     case OBJ_FREE:
@@ -1806,12 +1981,14 @@ obj_extract_self(struct obj *obj)
     case OBJ_CONTAINED:
         extract_nobj(obj, &obj->ocontainer->cobj);
         container_weight(obj->ocontainer);
+        obj->ocontainer = (struct obj *) 0; /* clear stale back-link */
         break;
     case OBJ_INVENT:
         freeinv(obj);
         break;
     case OBJ_MINVENT:
         extract_nobj(obj, &obj->ocarry->minvent);
+        obj->ocarry = (struct monst *) 0; /* clear stale back-link */
         break;
     case OBJ_MIGRATING:
         extract_nobj(obj, &migrating_objs);
@@ -1830,7 +2007,8 @@ obj_extract_self(struct obj *obj)
 
 /* Extract the given object from the chain, following nobj chain. */
 void
-extract_nobj(struct obj *obj, struct obj **head_ptr)
+extract_nobj(obj, head_ptr)
+struct obj *obj, **head_ptr;
 {
     struct obj *curr, *prev;
 
@@ -1847,7 +2025,7 @@ extract_nobj(struct obj *obj, struct obj **head_ptr)
     if (!curr)
         panic("extract_nobj: object lost");
     obj->where = OBJ_FREE;
-    obj->nobj = NULL;
+    obj->nobj = (struct obj *) 0;
 }
 
 /*
@@ -1857,7 +2035,8 @@ extract_nobj(struct obj *obj, struct obj **head_ptr)
  * in tandem with extract_nobj, which does set it.
  */
 void
-extract_nexthere(struct obj *obj, struct obj **head_ptr)
+extract_nexthere(obj, head_ptr)
+struct obj *obj, **head_ptr;
 {
     struct obj *curr, *prev;
 
@@ -1873,6 +2052,7 @@ extract_nexthere(struct obj *obj, struct obj **head_ptr)
     }
     if (!curr)
         panic("extract_nexthere: object lost");
+    obj->nexthere = (struct obj *) 0;
 }
 
 /*
@@ -1881,7 +2061,9 @@ extract_nexthere(struct obj *obj, struct obj **head_ptr)
  * Otherwise 0 is returned.
  */
 int
-add_to_minv(struct monst *mon, struct obj *obj)
+add_to_minv(mon, obj)
+struct monst *mon;
+struct obj *obj;
 {
     struct obj *otmp;
 
@@ -1905,7 +2087,8 @@ add_to_minv(struct monst *mon, struct obj *obj)
  * The input obj may be deleted in the process.
  */
 struct obj *
-add_to_container(struct obj *container, struct obj *obj)
+add_to_container(container, obj)
+struct obj *container, *obj;
 {
     struct obj *otmp;
 
@@ -1927,10 +2110,15 @@ add_to_container(struct obj *container, struct obj *obj)
 }
 
 void
-add_to_migration(struct obj *obj)
+add_to_migration(obj)
+struct obj *obj;
 {
     if (obj->where != OBJ_FREE)
         panic("add_to_migration: obj not free");
+
+    /* lock picking context becomes stale if it's for this object */
+    if (Is_container(obj))
+        maybe_reset_pick(obj);
 
     obj->where = OBJ_MIGRATING;
     obj->nobj = migrating_objs;
@@ -1938,7 +2126,8 @@ add_to_migration(struct obj *obj)
 }
 
 void
-add_to_buried(struct obj *obj)
+add_to_buried(obj)
+struct obj *obj;
 {
     if (obj->where != OBJ_FREE)
         panic("add_to_buried: obj not free");
@@ -1950,7 +2139,8 @@ add_to_buried(struct obj *obj)
 
 /* Recalculate the weight of this container and all of _its_ containers. */
 STATIC_OVL void
-container_weight(struct obj *container)
+container_weight(container)
+struct obj *container;
 {
     container->owt = weight(container);
     if (container->where == OBJ_CONTAINED)
@@ -1966,7 +2156,8 @@ container_weight(struct obj *container)
  * them to be deallocated.
  */
 void
-dealloc_obj(struct obj *obj)
+dealloc_obj(obj)
+struct obj *obj;
 {
     if (obj->where != OBJ_FREE)
         panic("dealloc_obj: obj not free");
@@ -2002,8 +2193,9 @@ dealloc_obj(struct obj *obj)
 
 /* create an object from a horn of plenty; mirrors bagotricks(makemon.c) */
 int
-hornoplenty(struct obj *horn,
-            boolean tipping)/* caller emptying entire contents; affects shop handling */
+hornoplenty(horn, tipping)
+struct obj *horn;
+boolean tipping; /* caller emptying entire contents; affects shop handling */
 {
     int objcount = 0;
 
@@ -2042,18 +2234,21 @@ hornoplenty(struct obj *horn,
            being included in its formatted name during next message */
         iflags.suppress_price++;
         if (!tipping) {
-            obj = hold_another_object(
-                obj, u.uswallow ? "Oops!  %s out of your reach!"
-                                : (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz)
-                                   || levl[u.ux][u.uy].typ < IRONBARS
-                                   || levl[u.ux][u.uy].typ >= ICE)
-                                      ? "Oops!  %s away from you!"
-                                      : "Oops!  %s to the floor!",
-                The(aobjnam(obj, "slip")), (const char *) 0);
+            obj = hold_another_object(obj,
+                                      u.uswallow
+                                        ? "Oops!  %s out of your reach!"
+                                        : (Is_airlevel(&u.uz)
+                                           || Is_waterlevel(&u.uz)
+                                           || levl[u.ux][u.uy].typ < IRONBARS
+                                           || levl[u.ux][u.uy].typ >= ICE)
+                                          ? "Oops!  %s away from you!"
+                                          : "Oops!  %s to the floor!",
+                                      The(aobjnam(obj, "slip")), (char *) 0);
+            nhUse(obj);
         } else {
             /* assumes this is taking place at hero's location */
             if (!can_reach_floor(TRUE)) {
-                hitfloor(obj); /* does altar check, message, drop */
+                hitfloor(obj, TRUE); /* does altar check, message, drop */
             } else {
                 if (IS_ALTAR(levl[u.ux][u.uy].typ))
                     doaltarobj(obj); /* does its own drop message */
@@ -2076,7 +2271,8 @@ static const char NEARDATA /* pline formats for insane_object() */
     ofmt0[] = "%s obj %s %s: %s",
     ofmt3[] = "%s [not null] %s %s: %s",
     /* " held by mon %p (%s)" will be appended, filled by M,mon_nam(M) */
-    mfmt1[] = "%s obj %s %s (%s)", mfmt2[] = "%s obj %s %s (%s) *not*";
+    mfmt1[] = "%s obj %s %s (%s)",
+    mfmt2[] = "%s obj %s %s (%s) *not*";
 
 /* Check all object lists for consistency. */
 void
@@ -2084,6 +2280,13 @@ obj_sanity_check()
 {
     int x, y;
     struct obj *obj;
+
+    /*
+     * TODO:
+     *  Should check whether the obj->bypass and/or obj->nomerge bits
+     *  are set.  Those are both used for temporary purposes and should
+     *  be clear between moves.
+     */
 
     objlist_sanity(fobj, OBJ_FLOOR, "floor sanity");
 
@@ -2094,12 +2297,12 @@ obj_sanity_check()
         for (y = 0; y < ROWNO; y++)
             for (obj = level.objects[x][y]; obj; obj = obj->nexthere) {
                 /* <ox,oy> should match <x,y>; <0,*> should always be empty */
-                if (obj->where != OBJ_FLOOR || x == 0 || obj->ox != x
-                    || obj->oy != y) {
+                if (obj->where != OBJ_FLOOR || x == 0
+                    || obj->ox != x || obj->oy != y) {
                     char at_fmt[BUFSZ];
 
-                    Sprintf(at_fmt, "%%s obj@<%d,%d> %%s %%s: %%s@<%d,%d>", x,
-                            y, obj->ox, obj->oy);
+                    Sprintf(at_fmt, "%%s obj@<%d,%d> %%s %%s: %%s@<%d,%d>",
+                            x, y, obj->ox, obj->oy);
                     insane_object(obj, at_fmt, "location sanity",
                                   (struct monst *) 0);
                 }
@@ -2115,7 +2318,7 @@ obj_sanity_check()
     /* monsters temporarily in transit;
        they should have arrived with hero by the time we get called */
     if (mydogs) {
-        pline("mydogs sanity [not empty]");
+        impossible("mydogs sanity [not empty]");
         mon_obj_sanity(mydogs, "mydogs minvent sanity");
     }
 
@@ -2127,12 +2330,19 @@ obj_sanity_check()
     if (kickedobj)
         insane_object(kickedobj, ofmt3, "kickedobj sanity",
                       (struct monst *) 0);
-    /* [how about current_wand too?] */
+    /* current_wand isn't removed from invent while in use, but should
+       be Null between moves when we're called */
+    if (current_wand)
+        insane_object(current_wand, ofmt3, "current_wand sanity",
+                      (struct monst *) 0);
 }
 
 /* sanity check for objects on specified list (fobj, &c) */
 STATIC_OVL void
-objlist_sanity(struct obj *objlist, int wheretype, const char *mesg)
+objlist_sanity(objlist, wheretype, mesg)
+struct obj *objlist;
+int wheretype;
+const char *mesg;
 {
     struct obj *obj;
 
@@ -2173,19 +2383,24 @@ objlist_sanity(struct obj *objlist, int wheretype, const char *mesg)
                 }
                 break;
             }
+            if (obj->globby)
+                check_glob(obj, mesg);
         }
     }
 }
 
 /* sanity check for objects carried by all monsters in specified list */
 STATIC_OVL void
-mon_obj_sanity(struct monst *monlist, const char *mesg)
+mon_obj_sanity(monlist, mesg)
+struct monst *monlist;
+const char *mesg;
 {
     struct monst *mon;
     struct obj *obj, *mwep;
 
     for (mon = monlist; mon; mon = mon->nmon) {
-        if (DEADMONSTER(mon)) continue;
+        if (DEADMONSTER(mon))
+            continue;
         mwep = MON_WEP(mon);
         if (mwep) {
             if (!mcarried(mwep))
@@ -2198,6 +2413,8 @@ mon_obj_sanity(struct monst *monlist, const char *mesg)
                 insane_object(obj, mfmt1, mesg, mon);
             if (obj->ocarry != mon)
                 insane_object(obj, mfmt2, mesg, mon);
+            if (obj->globby)
+                check_glob(obj, mesg);
             check_contained(obj, mesg);
         }
     }
@@ -2210,7 +2427,8 @@ static const char *obj_state_names[NOBJ_STATES] = { "free",      "floor",
                                                     "buried",    "onbill" };
 
 STATIC_OVL const char *
-where_name(struct obj *obj)
+where_name(obj)
+struct obj *obj;
 {
     static char unknown[32]; /* big enough to handle rogue 64-bit int */
     int where;
@@ -2226,7 +2444,10 @@ where_name(struct obj *obj)
 }
 
 STATIC_OVL void
-insane_object(struct obj *obj, const char *fmt, const char *mesg, struct monst *mon)
+insane_object(obj, fmt, mesg, mon)
+struct obj *obj;
+const char *fmt, *mesg;
+struct monst *mon;
 {
     const char *objnm, *monnm;
     char altfmt[BUFSZ];
@@ -2241,16 +2462,49 @@ insane_object(struct obj *obj, const char *fmt, const char *mesg, struct monst *
         Strcat(strcpy(altfmt, fmt), " held by mon %s (%s)");
         if (mon)
             monnm = x_monnam(mon, ARTICLE_A, (char *) 0, EXACT_NAME, TRUE);
-        pline(altfmt, mesg, fmt_ptr((genericptr_t) obj), where_name(obj),
+        impossible(altfmt, mesg, fmt_ptr((genericptr_t) obj), where_name(obj),
               objnm, fmt_ptr((genericptr_t) mon), monnm);
     } else {
-        pline(fmt, mesg, fmt_ptr((genericptr_t) obj), where_name(obj), objnm);
+        impossible(fmt, mesg, fmt_ptr((genericptr_t) obj), where_name(obj),
+                   objnm);
     }
+}
+
+/*
+ * Initialize a dummy obj with just enough info
+ * to allow some of the tests in obj.h that
+ * take an obj pointer to work.
+ */
+struct obj *
+init_dummyobj(obj, otyp, oquan)
+struct obj *obj;
+short otyp;
+long oquan;
+{
+     if (obj) {
+         *obj = zeroobj;
+         obj->otyp = otyp;
+         obj->oclass = objects[otyp].oc_class;
+         /* obj->dknown = 0; */
+         /* suppress known except for amulets (needed for fakes & real AoY) */
+         obj->known = (obj->oclass == AMULET_CLASS)
+                       ? obj->known
+                         /* default is "on" for types which don't use it */
+                         : !objects[otyp].oc_uses_known;
+         obj->quan = oquan ? oquan : 1L;
+         obj->corpsenm = NON_PM; /* suppress statue and figurine details */
+         /* but suppressing fruit details leads to "bad fruit #0" */
+         if (obj->otyp == SLIME_MOLD)
+             obj->spe = context.current_fruit;
+     }
+     return obj;
 }
 
 /* obj sanity check: check objects inside container */
 STATIC_OVL void
-check_contained(struct obj *container, const char *mesg)
+check_contained(container, mesg)
+struct obj *container;
+const char *mesg;
 {
     struct obj *obj;
     /* big enough to work with, not too big to blow out stack in recursion */
@@ -2270,10 +2524,12 @@ check_contained(struct obj *container, const char *mesg)
         if (obj->where != OBJ_CONTAINED)
             insane_object(obj, "%s obj %s %s: %s", mesg, (struct monst *) 0);
         else if (obj->ocontainer != container)
-            pline("%s obj %s in container %s, not %s", mesg,
+            impossible("%s obj %s in container %s, not %s", mesg,
                   fmt_ptr((genericptr_t) obj),
                   fmt_ptr((genericptr_t) obj->ocontainer),
                   fmt_ptr((genericptr_t) container));
+        if (obj->globby)
+            check_glob(obj, mesg);
 
         if (Has_contents(obj)) {
             /* catch most likely indirect cycle; we won't notice if
@@ -2285,19 +2541,42 @@ check_contained(struct obj *container, const char *mesg)
                and "nested contained..." to "nested nested contained..." */
             Strcpy(nestedmesg, "nested ");
             copynchars(eos(nestedmesg), mesg, (int) sizeof nestedmesg
-                                                  - (int) strlen(nestedmesg)
-                                                  - 1);
+                                              - (int) strlen(nestedmesg) - 1);
             /* recursively check contents */
             check_contained(obj, nestedmesg);
         }
     }
 }
 
+/* called when 'obj->globby' is set so we don't recheck it here */
+STATIC_OVL void
+check_glob(obj, mesg)
+struct obj *obj;
+const char *mesg;
+{
+#define LOWEST_GLOB GLOB_OF_GRAY_OOZE
+#define HIGHEST_GLOB GLOB_OF_BLACK_PUDDING
+    if (obj->quan != 1L || obj->owt == 0
+        || obj->otyp < LOWEST_GLOB || obj->otyp > HIGHEST_GLOB
+        /* a partially eaten glob could have any non-zero weight but an
+           intact one should weigh an exact multiple of base weight (20) */
+        || ((obj->owt % objects[obj->otyp].oc_weight) != 0 && !obj->oeaten)) {
+        char mesgbuf[BUFSZ], globbuf[QBUFSZ];
+
+        Sprintf(globbuf, " glob %d,quan=%ld,owt=%u ",
+                obj->otyp, obj->quan, obj->owt);
+        mesg = strsubst(strcpy(mesgbuf, mesg), " obj ", globbuf);
+        insane_object(obj, ofmt0, mesg,
+                      (obj->where == OBJ_MINVENT) ? obj->ocarry : 0);
+    }
+}
+
 /* check an object in hero's or monster's inventory which has worn mask set */
 STATIC_OVL void
-sanity_check_worn(struct obj *obj)
+sanity_check_worn(obj)
+struct obj *obj;
 {
-#if defined(BETA) || defined(DEBUG)
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED) || defined(DEBUG)
     static unsigned long wearbits[] = {
         W_ARM,    W_ARMC,   W_ARMH,    W_ARMS, W_ARMG,  W_ARMF,  W_ARMU,
         W_WEP,    W_QUIVER, W_SWAPWEP, W_AMUL, W_RINGL, W_RINGR, W_TOOL,
@@ -2330,7 +2609,7 @@ sanity_check_worn(struct obj *obj)
     }
     if (n == 2 && carried(obj)
         && obj == uball && (owornmask & W_BALL) != 0L
-        && (owornmask & W_WEAPON) != 0L) {
+        && (owornmask & W_WEAPONS) != 0L) {
         /* chained ball can be wielded/alt-wielded/quivered; if so,
           pretend it's not chained in order to check the weapon pointer
           (we've already verified the ball pointer by successfully passing
@@ -2439,7 +2718,7 @@ sanity_check_worn(struct obj *obj)
                becoming embedded in poly'd hero's skin */
             if (embedded && !Is_dragon_scales(obj))
                 what = "skin";
-        } else if (owornmask & W_WEAPON) {
+        } else if (owornmask & W_WEAPONS) {
             /* monsters don't maintain alternate weapon or quiver */
             if (mcarried(obj) && (owornmask & (W_SWAPWEP | W_QUIVER)) != 0L)
                 what = (owornmask & W_SWAPWEP) != 0L ? "monst alt weapon?"
@@ -2480,7 +2759,7 @@ sanity_check_worn(struct obj *obj)
             insane_object(obj, ofmt0, maskbuf, mon);
         }
     }
-#else /* not (BETA || DEBUG) */
+#else /* not (NH_DEVEL_STATUS != NH_STATUS_RELEASED) || DEBUG) */
     /* dummy use of obj to avoid "arg not used" complaint */
     if (!obj)
         insane_object(obj, ofmt0, "<null>", (struct monst *) 0);
@@ -2491,17 +2770,14 @@ sanity_check_worn(struct obj *obj)
  * wrapper to make "near this object" convenient
  */
 struct obj *
-obj_nexto(struct obj *otmp)
+obj_nexto(otmp)
+struct obj *otmp;
 {
-    struct obj *otmp2 = (struct obj *) 0;
-
-    if (otmp) {
-        otmp2 = obj_nexto_xy(otmp->otyp, otmp->ox, otmp->oy, otmp->o_id);
-    } else {
+    if (!otmp) {
         impossible("obj_nexto: wasn't given an object to check");
+        return (struct obj *) 0;
     }
-
-    return otmp2;
+    return obj_nexto_xy(otmp, otmp->ox, otmp->oy, TRUE);
 }
 
 /*
@@ -2513,21 +2789,26 @@ obj_nexto(struct obj *otmp)
  * reliably predict which one we want to 'find' first
  */
 struct obj *
-obj_nexto_xy(int otyp, int x, int y, unsigned oid)
+obj_nexto_xy(obj, x, y, recurs)
+struct obj *obj;
+int x, y;
+boolean recurs;
 {
     struct obj *otmp;
-    int fx, fy, ex, ey;
+    int fx, fy, ex, ey, otyp = obj->otyp;
     short dx, dy;
 
     /* check under our "feet" first */
     otmp = sobj_at(otyp, x, y);
     while (otmp) {
         /* don't be clever and find ourselves */
-        if (otmp->o_id != oid) {
+        if (otmp != obj && mergable(otmp, obj))
             return otmp;
-        }
         otmp = nxtobj(otmp, otyp, TRUE);
     }
+
+    if (!recurs)
+        return (struct obj *) 0;
 
     /* search in a random order */
     dx = (rn2(2) ? -1 : 1);
@@ -2539,9 +2820,8 @@ obj_nexto_xy(int otyp, int x, int y, unsigned oid)
         for (fy = ey; abs(fy - ey) < 3; fy += dy) {
             /* 0, 0 was checked above */
             if (isok(fx, fy) && (fx != x || fy != y)) {
-                if ((otmp = sobj_at(otyp, fx, fy)) != 0) {
+                if ((otmp = obj_nexto_xy(obj, fx, fy, FALSE)) != 0)
                     return otmp;
-                }
             }
         }
     }
@@ -2554,22 +2834,40 @@ obj_nexto_xy(int otyp, int x, int y, unsigned oid)
  * is returned.
  */
 struct obj *
-obj_absorb(struct obj **obj1, struct obj **obj2)
+obj_absorb(obj1, obj2)
+struct obj **obj1, **obj2;
 {
-    struct obj *otmp1 = (struct obj *) 0, *otmp2 = (struct obj *) 0;
-    int extrawt = 0;
+    struct obj *otmp1, *otmp2;
+    int o1wt, o2wt;
+    long agetmp;
 
     /* don't let people dumb it up */
     if (obj1 && obj2) {
         otmp1 = *obj1;
         otmp2 = *obj2;
-        if (otmp1 && otmp2) {
-            extrawt = otmp2->oeaten ? otmp2->oeaten : otmp2->owt;
-            otmp1->owt += extrawt;
-            otmp1->oeaten += otmp1->oeaten ? extrawt : 0;
-            otmp1->quan = 1;
+        if (otmp1 && otmp2 && otmp1 != otmp2) {
+            globby_bill_fixup(otmp1, otmp2);
+            if (otmp1->bknown != otmp2->bknown)
+                otmp1->bknown = otmp2->bknown = 0;
+            if (otmp1->rknown != otmp2->rknown)
+                otmp1->rknown = otmp2->rknown = 0;
+            if (otmp1->greased != otmp2->greased)
+                otmp1->greased = otmp2->greased = 0;
+            if (otmp1->orotten || otmp2->orotten)
+                otmp1->orotten = otmp2->orotten = 1;
+            o1wt = otmp1->oeaten ? otmp1->oeaten : otmp1->owt;
+            o2wt = otmp2->oeaten ? otmp2->oeaten : otmp2->owt;
+            /* averaging the relative ages is less likely to overflow
+               than averaging the absolute ages directly */
+            agetmp = (((moves - otmp1->age) * o1wt
+                       + (moves - otmp2->age) * o2wt)
+                      / (o1wt + o2wt));
+            otmp1->age = moves - agetmp; /* conv. relative back to absolute */
+            otmp1->owt += o2wt;
+            if (otmp1->oeaten || otmp2->oeaten)
+                otmp1->oeaten = o1wt + o2wt;
+            otmp1->quan = 1L;
             obj_extract_self(otmp2);
-            newsym(otmp2->ox, otmp2->oy); /* in case of floor */
             dealloc_obj(otmp2);
             *obj2 = (struct obj *) 0;
             return otmp1;
@@ -2581,28 +2879,91 @@ obj_absorb(struct obj **obj1, struct obj **obj2)
 }
 
 /*
- * Causes the heavier object to absorb the lighter object;
+ * Causes the heavier object to absorb the lighter object in
+ * most cases, but if one object is OBJ_FREE and the other is
+ * on the floor, the floor object goes first.
+ *
  * wrapper for obj_absorb so that floor_effects works more
  * cleanly (since we don't know which we want to stay around)
  */
 struct obj *
-obj_meld(struct obj **obj1, struct obj **obj2)
+obj_meld(obj1, obj2)
+struct obj **obj1, **obj2;
 {
-    struct obj *otmp1 = (struct obj *) 0, *otmp2 = (struct obj *) 0;
+    struct obj *otmp1, *otmp2, *result = 0;
+    int ox, oy;
 
     if (obj1 && obj2) {
         otmp1 = *obj1;
         otmp2 = *obj2;
-        if (otmp1 && otmp2) {
-            if (otmp1->owt > otmp2->owt || rn2(2)) {
-                return obj_absorb(obj1, obj2);
+        if (otmp1 && otmp2 && otmp1 != otmp2) {
+            ox = oy = 0;
+            /*
+             * FIXME?
+             *  If one of the objects is free because it's being dropped,
+             *  we should really finish a full drop and then absorb/meld
+             *  if it survives the flooreffects().  Then lighter-melds-into-
+             *  heavier will be true even when heavier is the one dropped.
+             *
+             *  [Also, what about when one of the globs is on the shore
+             *  and we drop the other into adjacent pool or vice versa?]
+             */
+            if (!(otmp2->where == OBJ_FLOOR && otmp1->where == OBJ_FREE)
+                && (otmp1->owt > otmp2->owt
+                    || (otmp1->owt == otmp2->owt && rn2(2)))) {
+                if (otmp2->where == OBJ_FLOOR)
+                    ox = otmp2->ox, oy = otmp2->oy;
+                result = obj_absorb(obj1, obj2);
+            } else {
+                if (otmp1->where == OBJ_FLOOR)
+                    ox = otmp1->ox, oy = otmp1->oy;
+                result = obj_absorb(obj2, obj1);
             }
-            return obj_absorb(obj2, obj1);
+            /* callers really ought to take care of this; glob melding is
+               a bookkeeping issue rather than a display one */
+            if (ox && cansee(ox, oy))
+                newsym(ox, oy);
         }
+    } else {
+        impossible("obj_meld: not called with two actual objects");
     }
+    return result;
+}
 
-    impossible("obj_meld: not called with two actual objects");
-    return (struct obj *) 0;
+/* give a message if hero notices two globs merging [used to be in pline.c] */
+void
+pudding_merge_message(otmp, otmp2)
+struct obj *otmp;
+struct obj *otmp2;
+{
+    boolean visible = (cansee(otmp->ox, otmp->oy)
+                       || cansee(otmp2->ox, otmp2->oy)),
+            onfloor = (otmp->where == OBJ_FLOOR || otmp2->where == OBJ_FLOOR),
+            inpack = (carried(otmp) || carried(otmp2));
+
+    /* the player will know something happened inside his own inventory */
+    if ((!Blind && visible) || inpack) {
+        if (Hallucination) {
+            if (onfloor) {
+                You_see("parts of the floor melting!");
+            } else if (inpack) {
+                Your("pack reaches out and grabs something!");
+            }
+            /* even though we can see where they should be,
+             * they'll be out of our view (minvent or container)
+             * so don't actually show anything */
+        } else if (onfloor || inpack) {
+            boolean adj = ((otmp->ox != u.ux || otmp->oy != u.uy)
+                           && (otmp2->ox != u.ux || otmp2->oy != u.uy));
+
+            pline("The %s%s coalesce%s.",
+                  (onfloor && adj) ? "adjacent " : "",
+                  makeplural(obj_typename(otmp->otyp)),
+                  inpack ? " inside your pack" : "");
+        }
+    } else {
+        You_hear("a faint sloshing sound.");
+    }
 }
 
 /*mkobj.c*/

@@ -1,5 +1,6 @@
-/* NetHack 3.6	vmsmain.c	$NHDT-Date: 1432512790 2015/05/25 00:13:10 $  $NHDT-Branch: master $:$NHDT-Revision: 1.31 $ */
+/* NetHack 3.6	vmsmain.c	$NHDT-Date: 1449801742 2015/12/11 02:42:22 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.32 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2011. */
 /* NetHack may be freely redistributed.  See license for details. */
 /* main.c - VMS NetHack */
 
@@ -8,9 +9,9 @@
 
 #include <signal.h>
 
-static void whoami(void);
-static void process_options(int, char **);
-static void byebye(void);
+static void NDECL(whoami);
+static void FDECL(process_options, (int, char **));
+static void NDECL(byebye);
 #ifndef SAVE_ON_FATAL_ERROR
 #ifndef __DECC
 #define vms_handler_type int
@@ -18,16 +19,18 @@ static void byebye(void);
 #define vms_handler_type unsigned int
 #endif
 extern void FDECL(VAXC$ESTABLISH,
-                  (vms_handler_type (*) (genericptr_t, genericptr_t)));
-static vms_handler_type vms_handler(genericptr_t, genericptr_t);
+                         (vms_handler_type (*) (genericptr_t, genericptr_t)));
+static vms_handler_type FDECL(vms_handler, (genericptr_t, genericptr_t));
 #include <ssdef.h> /* system service status codes */
 #endif
 
-static void wd_message(void);
+static void NDECL(wd_message);
 static boolean wiz_error_flag = FALSE;
 
 int
-main(int argc, char *argv[])
+main(argc, argv)
+int argc;
+char *argv[];
 {
     register int fd;
 #ifdef CHDIR
@@ -52,13 +55,13 @@ main(int argc, char *argv[])
     choose_windows(DEFAULT_WINDOW_SYS);
 
 #ifdef CHDIR /* otherwise no chdir() */
-             /*
-              * See if we must change directory to the playground.
-              * (Perhaps hack is installed with privs and playground is
-              *  inaccessible for the player.)
-              * The logical name HACKDIR is overridden by a
-              *  -d command line option (must be the first option given)
-              */
+    /*
+     * See if we must change directory to the playground.
+     * (Perhaps hack is installed with privs and playground is
+     *  inaccessible for the player.)
+     * The logical name HACKDIR is overridden by a
+     *  -d command line option (must be the first option given)
+     */
     dir = nh_getenv("NETHACKDIR");
     if (!dir)
         dir = nh_getenv("HACKDIR");
@@ -223,11 +226,13 @@ attempt_restore:
     moveloop(resuming);
     exit(EXIT_SUCCESS);
     /*NOTREACHED*/
-    return (0);
+    return 0;
 }
 
 static void
-process_options(int argc, char *argv[])
+process_options(argc, argv)
+int argc;
+char *argv[];
 {
     int i;
 
@@ -319,7 +324,9 @@ process_options(int argc, char *argv[])
 
 #ifdef CHDIR
 void
-chdirx(const char *dir, boolean wr)
+chdirx(dir, wr)
+const char *dir;
+boolean wr;
 {
 #ifndef HACKDIR
     static const char *defdir = ".";
@@ -351,8 +358,8 @@ static void
 whoami()
 {
     /*
-     * Who am i? Algorithm: 1. Use name as specified in NETHACKOPTIONS
-     *			2. Use lowercase of $USER  (if 1. fails)
+     * Who am i? Algorithm: 1. Use name as specified in NETHACKOPTIONS;
+     *                      2. Use lowercase of $USER (if 1. fails).
      * The resulting name is overridden by command line options.
      * If everything fails, or if the resulting name is some generic
      * account like "games" then eventually we'll ask him.
@@ -368,7 +375,7 @@ whoami()
 static void
 byebye()
 {
-    void (*hup)(int) );
+    void FDECL((*hup), (int) );
 #ifdef SHELL
     extern unsigned long dosh_pid, mail_pid;
     extern unsigned long FDECL(sys$delprc,
@@ -398,9 +405,9 @@ byebye()
 /* Condition handler to prevent byebye's hangup simulation
    from saving the game after a fatal error has occurred.  */
 /*ARGSUSED*/
-static vms_handler_type                /* should be `unsigned long', but the -*/
-    vms_handler(genericptr_t sigargs,  /*+ prototype in <signal.h> is screwed */
-                genericptr_t mechargs) /* [0] is argc, [1..argc] are the real args */
+static vms_handler_type         /* should be `unsigned long', but the -*/
+vms_handler(sigargs, mechargs)  /*+ prototype in <signal.h> is screwed */
+genericptr_t sigargs, mechargs; /* [0] is argc, [1..argc] are the real args */
 {
     unsigned long condition = ((unsigned long *) sigargs)[1];
 
@@ -408,9 +415,9 @@ static vms_handler_type                /* should be `unsigned long', but the -*/
         || (condition >= SS$_ASTFLT && condition <= SS$_TBIT)
         || (condition >= SS$_ARTRES && condition <= SS$_INHCHME)) {
         program_state.done_hup = TRUE; /* pretend hangup has been attempted */
-#ifndef BETA
+#if (NH_DEVEL_STATUS == NH_STATUS_RELEASED)
         if (wizard)
-#endif               /* !BETA */
+#endif
             abort(); /* enter the debugger */
     }
     return SS$_RESIGNAL;
@@ -418,7 +425,8 @@ static vms_handler_type                /* should be `unsigned long', but the -*/
 #endif
 
 void
-sethanguphandler(void (*handler)(int))
+sethanguphandler(handler)
+void FDECL((*handler), (int));
 {
     (void) signal(SIGHUP, (SIG_RET_TYPE) handler);
 }
@@ -434,10 +442,6 @@ port_help()
     display_file(PORT_HELP, TRUE);
 }
 #endif /* PORT_HELP */
-
-/* for KR1ED config, WIZARD is 0 or 1 and WIZARD_NAME is a string;
-   for usual config, WIZARD is the string and vmsconf.h forces WIZARD_NAME
-   to match it, avoiding need to test which one to use in string ops */
 
 /* validate wizard mode if player has requested access to it */
 boolean
@@ -459,6 +463,22 @@ wd_message()
         wizard = 0, discover = 1; /* (paranoia) */
     } else if (discover)
         You("are in non-scoring explore/discovery mode.");
+}
+
+unsigned long
+sys_random_seed()
+{
+    unsigned long seed;
+    unsigned long pid = (unsigned long) getpid();
+
+    seed = (unsigned long) getnow(); /* time((TIME_type) 0) */
+    /* Quick dirty band-aid to prevent PRNG prediction */
+    if (pid) {
+        if (!(pid & 3L))
+            pid -= 1L;
+        seed *= pid;
+    }
+    return seed;
 }
 
 /*vmsmain.c*/

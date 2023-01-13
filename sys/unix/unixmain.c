@@ -1,5 +1,6 @@
-/* NetHack 3.6	unixmain.c	$NHDT-Date: 1432512788 2015/05/25 00:13:08 $  $NHDT-Branch: master $:$NHDT-Revision: 1.52 $ */
+/* NetHack 3.6	unixmain.c	$NHDT-Date: 1570408210 2019/10/07 00:30:10 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.70 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2011. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* main.c - Unix NetHack */
@@ -18,38 +19,36 @@
 #if !defined(_BULL_SOURCE) && !defined(__sgi) && !defined(_M_UNIX)
 #if !defined(SUNOS4) && !(defined(ULTRIX) && defined(__GNUC__))
 #if defined(POSIX_TYPES) || defined(SVR4) || defined(HPUX)
-extern struct passwd *getpwuid(uid_t);
+extern struct passwd *FDECL(getpwuid, (uid_t));
 #else
-extern struct passwd *getpwuid(int);
+extern struct passwd *FDECL(getpwuid, (int));
 #endif
 #endif
 #endif
-extern struct passwd *getpwnam(const char *);
+extern struct passwd *FDECL(getpwnam, (const char *));
 #ifdef CHDIR
-static void chdirx(const char *, boolean);
+static void FDECL(chdirx, (const char *, BOOLEAN_P));
 #endif /* CHDIR */
-static boolean whoami(void);
-static void process_options(int, char **);
+static boolean NDECL(whoami);
+static void FDECL(process_options, (int, char **));
 
 #ifdef _M_UNIX
-extern void check_sco_console(void);
-extern void init_sco_cons(void);
+extern void NDECL(check_sco_console);
+extern void NDECL(init_sco_cons);
 #endif
 #ifdef __linux__
-extern void check_linux_console(void);
-extern void init_linux_cons(void);
+extern void NDECL(check_linux_console);
+extern void NDECL(init_linux_cons);
 #endif
 
-static void wd_message(void);
+static void NDECL(wd_message);
 static boolean wiz_error_flag = FALSE;
-static struct passwd *get_unix_pw(void);
+static struct passwd *NDECL(get_unix_pw);
 
 int
-#if TARGET_OS_MAC
-unixmain(int argc, char *argv[])
-#else
-main(int argc, char *argv[])
-#endif /* TARGET_OS_MAC */
+main(argc, argv)
+int argc;
+char *argv[];
 {
     register int fd;
 #ifdef CHDIR
@@ -57,6 +56,7 @@ main(int argc, char *argv[])
 #endif
     boolean exact_username;
     boolean resuming = FALSE; /* assume new game */
+    boolean plsel_once = FALSE;
 
     sys_early_init();
 
@@ -99,20 +99,36 @@ main(int argc, char *argv[])
     choose_windows(DEFAULT_WINDOW_SYS);
 
 #ifdef CHDIR /* otherwise no chdir() */
-             /*
-              * See if we must change directory to the playground.
-              * (Perhaps hack runs suid and playground is inaccessible
-              *  for the player.)
-              * The environment variable HACKDIR is overridden by a
-              *  -d command line option (must be the first option given)
-              */
+    /*
+     * See if we must change directory to the playground.
+     * (Perhaps hack runs suid and playground is inaccessible
+     *  for the player.)
+     * The environment variable HACKDIR is overridden by a
+     *  -d command line option (must be the first option given).
+     */
     dir = nh_getenv("NETHACKDIR");
     if (!dir)
         dir = nh_getenv("HACKDIR");
-#endif
+
     if (argc > 1) {
+        if (argcheck(argc, argv, ARG_VERSION) == 2)
+            exit(EXIT_SUCCESS);
+
+        if (argcheck(argc, argv, ARG_SHOWPATHS) == 2) {
 #ifdef CHDIR
-        if (!strncmp(argv[1], "-d", 2) && argv[1][2] != 'e') {
+            chdirx((char *) 0, 0);
+#endif
+            iflags.initoptions_noterminate = TRUE;
+            initoptions();
+            iflags.initoptions_noterminate = FALSE;
+            reveal_paths();
+            exit(EXIT_SUCCESS);
+        }
+        if (argcheck(argc, argv, ARG_DEBUG) == 1) {
+            argc--;
+            argv++;
+        }
+        if (argc > 1 && !strncmp(argv[1], "-d", 2) && argv[1][2] != 'e') {
             /* avoid matching "-dec" for DECgraphics; since the man page
              * says -d directory, hope nobody's using -desomething_else
              */
@@ -129,30 +145,33 @@ main(int argc, char *argv[])
             if (!*dir)
                 error("Flag -d must be followed by a directory name.");
         }
-        if (argc > 1)
+    }
 #endif /* CHDIR */
 
-            /*
-             * Now we know the directory containing 'record' and
-             * may do a prscore().  Exclude `-style' - it's a Qt option.
-             */
-            if (!strncmp(argv[1], "-s", 2) && strncmp(argv[1], "-style", 6)) {
+    if (argc > 1) {
+        /*
+         * Now we know the directory containing 'record' and
+         * may do a prscore().  Exclude `-style' - it's a Qt option.
+         */
+        if (!strncmp(argv[1], "-s", 2) && strncmp(argv[1], "-style", 6)) {
 #ifdef CHDIR
-                chdirx(dir, 0);
+            chdirx(dir, 0);
 #endif
 #ifdef SYSCF
-                initoptions();
+            initoptions();
 #endif
 #ifdef PANICTRACE
-                ARGV0 = argv[0]; /* save for possible stack trace */
+            ARGV0 = hname; /* save for possible stack trace */
 #ifndef NO_SIGNAL
-                panictrace_setsignals(TRUE);
+            panictrace_setsignals(TRUE);
 #endif
 #endif
-                prscore(argc, argv);
-                exit(EXIT_SUCCESS);
-            }
-    }
+            prscore(argc, argv);
+            /* FIXME: shouldn't this be using nh_terminate() to free
+               up any memory allocated by initoptions() */
+            exit(EXIT_SUCCESS);
+        }
+    } /* argc > 1 */
 
 /*
  * Change directories before we initialize the window system so
@@ -170,7 +189,7 @@ main(int argc, char *argv[])
 #endif
     initoptions();
 #ifdef PANICTRACE
-    ARGV0 = argv[0]; /* save for possible stack trace */
+    ARGV0 = hname; /* save for possible stack trace */
 #ifndef NO_SIGNAL
     panictrace_setsignals(TRUE);
 #endif
@@ -219,7 +238,7 @@ main(int argc, char *argv[])
          * dash matches role, race, gender, or alignment.
          */
         /* guard against user names with hyphens in them */
-        int len = strlen(plname);
+        int len = (int) strlen(plname);
         /* append the current role, if any, so that last dash is ours */
         if (++len < (int) sizeof plname)
             (void) strncat(strcat(plname, "-"), pl_character,
@@ -237,6 +256,23 @@ main(int argc, char *argv[])
         (void) signal(SIGQUIT, SIG_IGN);
         (void) signal(SIGINT, SIG_IGN);
     }
+
+    dlb_init(); /* must be before newgame() */
+
+    /*
+     * Initialize the vision system.  This must be before mklev() on a
+     * new game or before a level restore on a saved game.
+     */
+    vision_init();
+
+    display_gamewindows();
+
+    /*
+     * First, try to find and restore a save file for specified character.
+     * We'll return here if new game player_selection() renames the hero.
+     */
+ attempt_restore:
+
     /*
      * getlock() complains and quits if there is already a game
      * in progress for current character name (when locknum == 0)
@@ -248,25 +284,12 @@ main(int argc, char *argv[])
      * clock, &c not currently in use in the playground directory
      * (for locknum > 0).
      */
-    getlock();
-    program_state.preserve_locks = 0; /* after getlock() */
+    if (*plname) {
+        getlock();
+        program_state.preserve_locks = 0; /* after getlock() */
+    }
 
-    dlb_init(); /* must be before newgame() */
-
-    /*
-     *  Initialize the vision system.  This must be before mklev() on a
-     *  new game or before a level restore on a saved game.
-     */
-    vision_init();
-
-    display_gamewindows();
-
-/*
- * First, try to find and restore a save file for specified character.
- * We'll return here if new game player_selection() renames the hero.
- */
-attempt_restore:
-    if ((fd = restore_saved_game()) >= 0) {
+    if (*plname && (fd = restore_saved_game()) >= 0) {
         const char *fq_save = fqname(SAVEF, SAVEPREFIX, 1);
 
         (void) chmod(fq_save, 0); /* disallow parallel restores */
@@ -285,9 +308,10 @@ attempt_restore:
             resuming = TRUE; /* not starting new game */
             wd_message();
             if (discover || wizard) {
-                if (yn("Do you want to keep the save file?") == 'n')
+                /* this seems like a candidate for paranoid_confirmation... */
+                if (yn("Do you want to keep the save file?") == 'n') {
                     (void) delete_savefile();
-                else {
+                } else {
                     (void) chmod(fq_save, FCMASK); /* back to readable */
                     nh_compress(fq_save);
                 }
@@ -296,12 +320,17 @@ attempt_restore:
     }
 
     if (!resuming) {
+        boolean neednewlock = (!*plname);
         /* new game:  start by choosing role, race, etc;
            player might change the hero's name while doing that,
            in which case we try to restore under the new name
            and skip selection this time if that didn't succeed */
-        if (!iflags.renameinprogress) {
-            player_selection();
+        if (!iflags.renameinprogress || iflags.defer_plname || neednewlock) {
+            if (!plsel_once)
+                player_selection();
+            plsel_once = TRUE;
+            if (neednewlock && *plname)
+                goto attempt_restore;
             if (iflags.renameinprogress) {
                 /* player has renamed the hero while selecting role;
                    if locking alphabetically, the existing lock file
@@ -318,14 +347,19 @@ attempt_restore:
         wd_message();
     }
 
+    /* moveloop() never returns but isn't flagged NORETURN */
     moveloop(resuming);
+
     exit(EXIT_SUCCESS);
     /*NOTREACHED*/
-    return (0);
+    return 0;
 }
 
+/* caveat: argv elements might be arbitrary long */
 static void
-process_options(int argc, char *argv[])
+process_options(argc, argv)
+int argc;
+char *argv[];
 {
     int i, l;
 
@@ -345,17 +379,16 @@ process_options(int argc, char *argv[])
         case 'd':
             if ((argv[0][1] == 'D' && !argv[0][2])
                 || !strcmpi(*argv, "-debug")) {
-                wizard = TRUE; discover = FALSE;
+                wizard = TRUE, discover = FALSE;
             } else if (!strncmpi(*argv, "-DECgraphics", l)) {
                 load_symset("DECGraphics", PRIMARY);
                 switch_symbols(TRUE);
             } else {
-                raw_printf("Unknown option: %s", *argv);
+                raw_printf("Unknown option: %.60s", *argv);
             }
             break;
         case 'X':
-
-            discover = TRUE; wizard = FALSE;
+            discover = TRUE, wizard = FALSE;
             break;
 #ifdef NEWS
         case 'n':
@@ -363,14 +396,15 @@ process_options(int argc, char *argv[])
             break;
 #endif
         case 'u':
-            if (argv[0][2])
-                (void) strncpy(plname, argv[0] + 2, sizeof(plname) - 1);
-            else if (argc > 1) {
+            if (argv[0][2]) {
+                (void) strncpy(plname, argv[0] + 2, sizeof plname - 1);
+            } else if (argc > 1) {
                 argc--;
                 argv++;
-                (void) strncpy(plname, argv[0], sizeof(plname) - 1);
-            } else
+                (void) strncpy(plname, argv[0], sizeof plname - 1);
+            } else {
                 raw_print("Player name expected after -u");
+            }
             break;
         case 'I':
         case 'i':
@@ -379,7 +413,7 @@ process_options(int argc, char *argv[])
                 load_symset("RogueIBM", ROGUESET);
                 switch_symbols(TRUE);
             } else {
-                raw_printf("Unknown option: %s", *argv);
+                raw_printf("Unknown option: %.60s", *argv);
             }
             break;
         case 'p': /* profession (role) */
@@ -405,7 +439,9 @@ process_options(int argc, char *argv[])
             }
             break;
         case 'w': /* windowtype */
+            config_error_init(FALSE, "command line", FALSE);
             choose_windows(&argv[0][2]);
+            config_error_done();
             break;
         case '@':
             flags.randomall = 1;
@@ -415,14 +451,18 @@ process_options(int argc, char *argv[])
                 flags.initrole = i;
                 break;
             }
-            /* else raw_printf("Unknown option: %s", *argv); */
+            /* else raw_printf("Unknown option: %.60s", *argv); */
         }
     }
 
-    /* XXX This is deprecated in favor of SYSCF with MAXPLAYERS.  Make
-     * an error in next release. */
+#ifdef SYSCF
+    if (argc > 1)
+        raw_printf("MAXPLAYERS are set in sysconf file.\n");
+#else
+    /* XXX This is deprecated in favor of SYSCF with MAXPLAYERS */
     if (argc > 1)
         locknum = atoi(argv[1]);
+#endif
 #ifdef MAX_NR_OF_PLAYERS
     /* limit to compile-time limit */
     if (!locknum || locknum > MAX_NR_OF_PLAYERS)
@@ -437,7 +477,9 @@ process_options(int argc, char *argv[])
 
 #ifdef CHDIR
 static void
-chdirx(const char *dir, boolean wr)
+chdirx(dir, wr)
+const char *dir;
+boolean wr;
 {
     if (dir /* User specified directory? */
 #ifdef HACKDIR
@@ -449,10 +491,10 @@ chdirx(const char *dir, boolean wr)
         (void) setuid(getuid()); /* Ron Wessels */
 #endif
     } else {
-/* non-default data files is a sign that scores may not be
- * compatible, or perhaps that a binary not fitting this
- * system's layout is being used.
- */
+        /* non-default data files is a sign that scores may not be
+         * compatible, or perhaps that a binary not fitting this
+         * system's layout is being used.
+         */
 #ifdef VAR_PLAYGROUND
         int len = strlen(VAR_PLAYGROUND);
 
@@ -475,9 +517,10 @@ chdirx(const char *dir, boolean wr)
         error("Cannot chdir to %s.", dir);
     }
 
-    /* warn the player if we can't write the record file */
-    /* perhaps we should also test whether . is writable */
-    /* unfortunately the access system-call is worthless */
+    /* warn the player if we can't write the record file
+     * perhaps we should also test whether . is writable
+     * unfortunately the access system-call is worthless.
+     */
     if (wr) {
 #ifdef VAR_PLAYGROUND
         fqn_prefix[LEVELPREFIX] = fqn_prefix[SCOREPREFIX];
@@ -497,8 +540,8 @@ whoami()
 {
     /*
      * Who am i? Algorithm: 1. Use name as specified in NETHACKOPTIONS
-     *			2. Use $USER or $LOGNAME	(if 1. fails)
-     *			3. Use getlogin()		(if 2. fails)
+     *                      2. Use $USER or $LOGNAME    (if 1. fails)
+     *                      3. Use getlogin()           (if 2. fails)
      * The resulting name is overridden by command line options.
      * If everything fails, or if the resulting name is some generic
      * account like "games", "play", "player", "hack" then eventually
@@ -525,7 +568,8 @@ whoami()
 }
 
 void
-sethanguphandler(void (*handler)(int))
+sethanguphandler(handler)
+void FDECL((*handler), (int));
 {
 #ifdef SA_RESTART
     /* don't want reads to restart.  If SA_RESTART is defined, we know
@@ -567,6 +611,7 @@ boolean
 authorize_wizard_mode()
 {
     struct passwd *pw = get_unix_pw();
+
     if (pw && sysopt.wizards && sysopt.wizards[0]) {
         if (check_user_string(sysopt.wizards))
             return TRUE;
@@ -586,7 +631,7 @@ wd_message()
             free(tmp);
         } else
             pline("Entering explore/discovery mode instead.");
-        wizard = 0; discover = 1; /* (paranoia) */
+        wizard = 0, discover = 1; /* (paranoia) */
     } else if (discover)
         You("are in non-scoring explore/discovery mode.");
 }
@@ -596,7 +641,8 @@ wd_message()
  * be room for the /
  */
 void
-append_slash(char *name)
+append_slash(name)
+char *name;
 {
     char *ptr;
 
@@ -611,16 +657,23 @@ append_slash(char *name)
 }
 
 boolean
-check_user_string(char *optstr)
+check_user_string(optstr)
+char *optstr;
 {
-    struct passwd *pw = get_unix_pw();
+    struct passwd *pw;
     int pwlen;
     char *eop, *w;
+    char *pwname = 0;
+
     if (optstr[0] == '*')
         return TRUE; /* allow any user */
-    if (!pw)
+    if (sysopt.check_plname)
+        pwname = plname;
+    else if ((pw = get_unix_pw()) != 0)
+        pwname = pw->pw_name;
+    if (!pwname || !*pwname)
         return FALSE;
-    pwlen = strlen(pw->pw_name);
+    pwlen = (int) strlen(pwname);
     eop = eos(optstr);
     w = optstr;
     while (w + pwlen <= eop) {
@@ -630,7 +683,7 @@ check_user_string(char *optstr)
             w++;
             continue;
         }
-        if (!strncmp(w, pw->pw_name, pwlen)) {
+        if (!strncmp(w, pwname, pwlen)) {
             if (!w[pwlen] || isspace(w[pwlen]))
                 return TRUE;
         }
@@ -669,6 +722,89 @@ get_unix_pw()
         }
     }
     return pw;
+}
+
+char *
+get_login_name()
+{
+    static char buf[BUFSZ];
+    struct passwd *pw = get_unix_pw();
+
+    buf[0] = '\0';
+    if (pw)
+        (void)strcpy(buf, pw->pw_name);
+
+    return buf;
+}
+
+#ifdef __APPLE__
+extern int errno;
+
+void
+port_insert_pastebuf(buf)
+char *buf;
+{
+    /* This should be replaced when there is a Cocoa port. */
+    const char *errfmt;
+    size_t len;
+    FILE *PB = popen("/usr/bin/pbcopy", "w");
+
+    if (!PB) {
+        errfmt = "Unable to start pbcopy (%d)\n";
+        goto error;
+    }
+
+    len = strlen(buf);
+    /* Remove the trailing \n, carefully. */
+    if (buf[len - 1] == '\n')
+        len--;
+
+    /* XXX Sorry, I'm too lazy to write a loop for output this short. */
+    if (len != fwrite(buf, 1, len, PB)) {
+        errfmt = "Error sending data to pbcopy (%d)\n";
+        goto error;
+    }
+
+    if (pclose(PB) != -1) {
+        return;
+    }
+    errfmt = "Error finishing pbcopy (%d)\n";
+
+ error:
+    raw_printf(errfmt, strerror(errno));
+}
+#endif /* __APPLE__ */
+
+unsigned long
+sys_random_seed()
+{
+    unsigned long seed = 0L;
+    unsigned long pid = (unsigned long) getpid();
+    boolean no_seed = TRUE;
+#ifdef DEV_RANDOM
+    FILE *fptr;
+
+    fptr = fopen(DEV_RANDOM, "r");
+    if (fptr) {
+        fread(&seed, sizeof (long), 1, fptr);
+        has_strong_rngseed = TRUE;  /* decl.c */
+        no_seed = FALSE;
+        (void) fclose(fptr);
+    } else {
+        /* leaves clue, doesn't exit */
+        paniclog("sys_random_seed", "falling back to weak seed");
+    }
+#endif
+    if (no_seed) {
+        seed = (unsigned long) getnow(); /* time((TIME_type) 0) */
+        /* Quick dirty band-aid to prevent PRNG prediction */
+        if (pid) {
+            if (!(pid & 3L))
+                pid -= 1L;
+            seed *= pid;
+        }
+    }
+    return seed;
 }
 
 /*unixmain.c*/

@@ -9,7 +9,10 @@
 /* Put a string into the indicated window using the indicated attribute */
 
 void
-amii_putstr(winid window, int attr, const char *str)
+amii_putstr(window, attr, str)
+winid window;
+int attr;
+const char *str;
 {
     int fudge;
     int len;
@@ -183,7 +186,7 @@ amii_putstr(winid window, int attr, const char *str)
         if (cw->data[cw->cury] == NULL)
             panic("NULL pointer for status window");
         ob = &cw->data[cw->cury][j = cw->curx];
-        if (flags.botlx)
+        if (context.botlx)
             *ob = 0;
 
         /* Display when beam at top to avoid flicker... */
@@ -278,7 +281,9 @@ amii_putstr(winid window, int attr, const char *str)
 }
 
 void
-amii_scrollmsg(register struct Window *w, register struct amii_WinDesc *cw)
+amii_scrollmsg(w, cw)
+register struct Window *w;
+register struct amii_WinDesc *cw;
 {
     int bottom, wheight;
 
@@ -301,7 +306,8 @@ amii_scrollmsg(register struct Window *w, register struct amii_WinDesc *cw)
 }
 
 int
-amii_msgborder(struct Window *w)
+amii_msgborder(w)
+struct Window *w;
 {
     register int bottom;
 
@@ -314,7 +320,8 @@ amii_msgborder(struct Window *w)
 }
 
 void
-outmore(register struct amii_WinDesc *cw)
+outmore(cw)
+register struct amii_WinDesc *cw;
 {
     struct Window *w = cw->win;
 
@@ -347,7 +354,11 @@ outmore(register struct amii_WinDesc *cw)
 }
 
 void
-outsubstr(register struct amii_WinDesc *cw, char *str, int len, int fudge)
+outsubstr(cw, str, len, fudge)
+register struct amii_WinDesc *cw;
+char *str;
+int len;
+int fudge;
 {
     struct Window *w = cw->win;
 
@@ -371,7 +382,10 @@ outsubstr(register struct amii_WinDesc *cw, char *str, int len, int fudge)
 /* Put a graphics character onto the screen */
 
 void
-amii_putsym(winid st, int i, int y, char c)
+amii_putsym(st, i, y, c)
+winid st;
+int i, y;
+CHAR_P c;
 {
     amii_curs(st, i, y);
     Text(amii_wins[st]->win->RPort, &c, 1);
@@ -380,7 +394,8 @@ amii_putsym(winid st, int i, int y, char c)
 /* Add to the last line in the message window */
 
 void
-amii_addtopl(const char *s)
+amii_addtopl(s)
+const char *s;
 {
     register struct amii_WinDesc *cw = amii_wins[WIN_MESSAGE];
 
@@ -393,7 +408,9 @@ amii_addtopl(const char *s)
 }
 
 void
-TextSpaces(struct RastPort *rp, int nr)
+TextSpaces(rp, nr)
+struct RastPort *rp;
+int nr;
 {
     if (nr < 1)
         return;

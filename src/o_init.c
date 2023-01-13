@@ -1,20 +1,21 @@
-/* NetHack 3.6	o_init.c	$NHDT-Date: 1446892449 2015/11/07 10:34:09 $  $NHDT-Branch: master $:$NHDT-Revision: 1.20 $ */
+/* NetHack 3.6	o_init.c	$NHDT-Date: 1545383615 2018/12/21 09:13:35 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.25 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2011. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "lev.h" /* save & restore info */
 
-STATIC_DCL void setgemprobs(d_level *);
-STATIC_DCL void shuffle(int, int, boolean);
-STATIC_DCL void shuffle_all(void);
-STATIC_DCL boolean interesting_to_discover(int);
-STATIC_DCL char *oclass_to_name(char, char *);
+STATIC_DCL void FDECL(setgemprobs, (d_level *));
+STATIC_DCL void FDECL(shuffle, (int, int, BOOLEAN_P));
+STATIC_DCL void NDECL(shuffle_all);
+STATIC_DCL boolean FDECL(interesting_to_discover, (int));
+STATIC_DCL char *FDECL(oclass_to_name, (CHAR_P, char *));
 
 static NEARDATA short disco[NUM_OBJECTS] = DUMMY;
 
 #ifdef USE_TILES
-STATIC_DCL void shuffle_tiles(void);
+STATIC_DCL void NDECL(shuffle_tiles);
 extern short glyph2tile[]; /* from tile.c */
 
 /* Shuffle tile assignments to match descriptions, so a red potion isn't
@@ -41,7 +42,8 @@ shuffle_tiles()
 #endif /* USE_TILES */
 
 STATIC_OVL void
-setgemprobs(d_level *dlev)
+setgemprobs(dlev)
+d_level *dlev;
 {
     int j, first, lev;
 
@@ -67,7 +69,9 @@ setgemprobs(d_level *dlev)
 
 /* shuffle descriptions on objects o_low to o_high */
 STATIC_OVL void
-shuffle(int o_low, int o_high, boolean domaterial)
+shuffle(o_low, o_high, domaterial)
+int o_low, o_high;
+boolean domaterial;
 {
     int i, j, num_to_shuffle;
     short sw;
@@ -180,8 +184,9 @@ init_objects()
 
 /* retrieve the range of objects that otyp shares descriptions with */
 void
-obj_shuffle_range(int otyp,             /* input: representative item */
-                  int *lo_p, int *hi_p) /* output: range that item belongs among */
+obj_shuffle_range(otyp, lo_p, hi_p)
+int otyp;         /* input: representative item */
+int *lo_p, *hi_p; /* output: range that item belongs among */
 {
     int i, ocls = objects[otyp].oc_class;
 
@@ -190,15 +195,14 @@ obj_shuffle_range(int otyp,             /* input: representative item */
 
     switch (ocls) {
     case ARMOR_CLASS:
-        if (otyp >= HELMET && otyp <= HELM_OF_TELEPATHY) {
-            *lo_p = HELMET; *hi_p = HELM_OF_TELEPATHY;
-        } else if (otyp >= LEATHER_GLOVES && otyp <= GAUNTLETS_OF_DEXTERITY) {
-            *lo_p = LEATHER_GLOVES; *hi_p = GAUNTLETS_OF_DEXTERITY;
-        } else if (otyp >= CLOAK_OF_PROTECTION && otyp <= CLOAK_OF_DISPLACEMENT) {
-            *lo_p = CLOAK_OF_PROTECTION; *hi_p = CLOAK_OF_DISPLACEMENT;
-        } else if (otyp >= SPEED_BOOTS && otyp <= LEVITATION_BOOTS) {
-            *lo_p = SPEED_BOOTS; *hi_p = LEVITATION_BOOTS;
-        }
+        if (otyp >= HELMET && otyp <= HELM_OF_TELEPATHY)
+            *lo_p = HELMET, *hi_p = HELM_OF_TELEPATHY;
+        else if (otyp >= LEATHER_GLOVES && otyp <= GAUNTLETS_OF_DEXTERITY)
+            *lo_p = LEATHER_GLOVES, *hi_p = GAUNTLETS_OF_DEXTERITY;
+        else if (otyp >= CLOAK_OF_PROTECTION && otyp <= CLOAK_OF_DISPLACEMENT)
+            *lo_p = CLOAK_OF_PROTECTION, *hi_p = CLOAK_OF_DISPLACEMENT;
+        else if (otyp >= SPEED_BOOTS && otyp <= LEVITATION_BOOTS)
+            *lo_p = SPEED_BOOTS, *hi_p = LEVITATION_BOOTS;
         break;
     case POTION_CLASS:
         /* potion of water has the only fixed description */
@@ -284,7 +288,8 @@ oinit()
 }
 
 void
-savenames(int fd, int mode)
+savenames(fd, mode)
+int fd, mode;
 {
     register int i;
     unsigned int len;
@@ -313,7 +318,8 @@ savenames(int fd, int mode)
 }
 
 void
-restnames(register int fd)
+restnames(fd)
+register int fd;
 {
     register int i;
     unsigned int len;
@@ -333,7 +339,10 @@ restnames(register int fd)
 }
 
 void
-discover_object(register int oindx, boolean mark_as_known, boolean credit_hero)
+discover_object(oindx, mark_as_known, credit_hero)
+register int oindx;
+boolean mark_as_known;
+boolean credit_hero;
 {
     if (!objects[oindx].oc_name_known) {
         register int dindx, acls = objects[oindx].oc_class;
@@ -352,14 +361,19 @@ discover_object(register int oindx, boolean mark_as_known, boolean credit_hero)
             if (credit_hero)
                 exercise(A_WIS, TRUE);
         }
-        if (moves > 1L)
+        /* moves==1L => initial inventory, gameover => final disclosure */
+        if (moves > 1L && !program_state.gameover) {
+            if (objects[oindx].oc_class == GEM_CLASS)
+                gem_learned(oindx); /* could affect price of unpaid gems */
             update_inventory();
+        }
     }
 }
 
 /* if a class name has been cleared, we may need to purge it from disco[] */
 void
-undiscover_object(register int oindx)
+undiscover_object(oindx)
+register int oindx;
 {
     if (!objects[oindx].oc_name_known) {
         register int dindx, acls = objects[oindx].oc_class;
@@ -379,12 +393,16 @@ undiscover_object(register int oindx)
             disco[dindx - 1] = 0;
         else
             impossible("named object not in disco");
+
+        if (objects[oindx].oc_class == GEM_CLASS)
+            gem_learned(oindx); /* ok, it's actually been unlearned */
         update_inventory();
     }
 }
 
 STATIC_OVL boolean
-interesting_to_discover(register int i)
+interesting_to_discover(i)
+register int i;
 {
     /* Pre-discovered objects are now printed with a '*' */
     return (boolean) (objects[i].oc_uname != (char *) 0
@@ -426,11 +444,8 @@ dodiscovered() /* free after Robert Viduya */
 
     /* several classes are omitted from packorder; one is of interest here */
     Strcpy(classes, flags.inv_order);
-    if (!index(classes, VENOM_CLASS)) {
-        s = eos(classes);
-        *s++ = VENOM_CLASS;
-        *s = '\0';
-    }
+    if (!index(classes, VENOM_CLASS))
+        (void) strkitten(classes, VENOM_CLASS); /* append char to string */
 
     for (s = classes; *s; s++) {
         oclass = *s;
@@ -462,7 +477,9 @@ dodiscovered() /* free after Robert Viduya */
 
 /* lower case let_to_name() output, which differs from def_oc_syms[].name */
 STATIC_OVL char *
-oclass_to_name(char oclass, char *buf)
+oclass_to_name(oclass, buf)
+char oclass;
+char *buf;
 {
     char *s;
 
@@ -485,14 +502,17 @@ doclassdisco()
         discosyms[2 + MAXOCLASSES + 1], buf[BUFSZ];
     int i, ct, dis, xtras;
     boolean traditional;
-    winid tmpwin;
+    winid tmpwin = WIN_ERR;
     anything any;
     menu_item *pick_list = 0;
 
     discosyms[0] = '\0';
     traditional = (flags.menu_style == MENU_TRADITIONAL
                    || flags.menu_style == MENU_COMBINATION);
-    tmpwin = !traditional ? create_nhwindow(NHW_MENU) : WIN_ERR;
+    if (!traditional) {
+        tmpwin = create_nhwindow(NHW_MENU);
+        start_menu(tmpwin);
+    }
     any = zeroany;
     menulet = 'a';
 
@@ -522,7 +542,7 @@ doclassdisco()
        classes are omitted from packorder and one is of interest here */
     Strcpy(allclasses, flags.inv_order);
     if (!index(allclasses, VENOM_CLASS))
-        Sprintf(eos(allclasses), "%c", VENOM_CLASS);
+        (void) strkitten(allclasses, VENOM_CLASS); /* append char to string */
     /* construct discosyms[] */
     for (s = allclasses; *s; ++s) {
         oclass = *s;
@@ -560,8 +580,8 @@ doclassdisco()
             c = def_oc_syms[(int) *s].sym;
             if (!index(discosyms, c)) {
                 if (!xtras++)
-                    Sprintf(eos(discosyms), "%c", '\033');
-                Sprintf(eos(discosyms), "%c", c);
+                    (void) strkitten(discosyms, '\033');
+                (void) strkitten(discosyms, c);
             }
         }
         /* get the class (via its symbol character) */
@@ -676,8 +696,8 @@ rename_disco()
 
             if (oclass != prev_class) {
                 any.a_int = 0;
-                add_menu(tmpwin, NO_GLYPH, &any, ' ', iflags.menu_headings,
-                         ATR_NONE, let_to_name(oclass, FALSE, FALSE),
+                add_menu(tmpwin, NO_GLYPH, &any, 0, 0, iflags.menu_headings,
+                         let_to_name(oclass, FALSE, FALSE),
                          MENU_UNSELECTED);
                 prev_class = oclass;
             }

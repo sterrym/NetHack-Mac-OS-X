@@ -1,5 +1,6 @@
-/* NetHack 3.6	sit.c	$NHDT-Date: 1445906863 2015/10/27 00:47:43 $  $NHDT-Branch: master $:$NHDT-Revision: 1.51 $ */
+/* NetHack 3.6	sit.c	$NHDT-Date: 1559670609 2019/06/04 17:50:09 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.61 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2012. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
@@ -66,7 +67,7 @@ dosit()
 
     if (OBJ_AT(u.ux, u.uy)
         /* ensure we're not standing on the precipice */
-        && !uteetering_at_seen_pit(trap)) {
+        && !(uteetering_at_seen_pit(trap) || uescaped_shaft(trap))) {
         register struct obj *obj;
 
         obj = level.objects[u.ux][u.uy];
@@ -100,7 +101,7 @@ dosit()
                 u.utrap += rn1(10, 5);
             } else if (u.utraptype == TT_LAVA) {
                 /* Must have fire resistance or they'd be dead already */
-                You("sit in the lava!");
+                You("sit in the %s!", hliquid("lava"));
                 if (Slimed)
                     burn_away_slime();
                 u.utrap += rnd(4);
@@ -113,16 +114,17 @@ dosit()
             }
         } else {
             You("sit down.");
-            dotrap(trap, 0);
+            dotrap(trap, VIASITTING);
         }
-    } else if (Underwater || Is_waterlevel(&u.uz)) {
+    } else if ((Underwater || Is_waterlevel(&u.uz))
+                && !eggs_in_water(youmonst.data)) {
         if (Is_waterlevel(&u.uz))
             There("are no cushions floating nearby.");
         else
             You("sit down on the muddy bottom.");
-    } else if (is_pool(u.ux, u.uy)) {
+    } else if (is_pool(u.ux, u.uy) && !eggs_in_water(youmonst.data)) {
     in_water:
-        You("sit in the water.");
+        You("sit in the %s.", hliquid("water"));
         if (!rn2(10) && uarm)
             (void) water_damage(uarm, "armor", TRUE);
         if (!rn2(10) && uarmf && uarmf->otyp != WATER_WALKING_BOOTS)
@@ -141,13 +143,13 @@ dosit()
         You(sit_message, "ladder");
     } else if (is_lava(u.ux, u.uy)) {
         /* must be WWalking */
-        You(sit_message, "lava");
+        You(sit_message, hliquid("lava"));
         burn_away_slime();
         if (likes_lava(youmonst.data)) {
-            pline_The("lava feels warm.");
+            pline_The("%s feels warm.", hliquid("lava"));
             return 1;
         }
-        pline_The("lava burns you!");
+        pline_The("%s burns you!", hliquid("lava"));
         losehp(d((Fire_resistance ? 2 : 10), 10), /* lava damage */
                "sitting on lava", KILLED_BY);
     } else if (is_ice(u.ux, u.uy)) {
@@ -184,9 +186,10 @@ dosit()
                 if (u.uhp >= (u.uhpmax - 5))
                     u.uhpmax += 4;
                 u.uhp = u.uhpmax;
+                u.ucreamed = 0;
                 make_blinded(0L, TRUE);
                 make_sick(0L, (char *) 0, FALSE, SICK_ALL);
-                heal_legs();
+                heal_legs(0);
                 context.botl = 1;
                 break;
             case 5:
@@ -225,6 +228,7 @@ dosit()
                  "A curse upon thee for sitting upon this most holy throne!");
                 if (Luck > 0) {
                     make_blinded(Blinded + rn1(100, 250), TRUE);
+                    change_luck((Luck > 1) ? -rnd(2) : -1);
                 } else
                     rndcurse();
                 break;
@@ -278,7 +282,7 @@ dosit()
 
         if (!rn2(3) && IS_THRONE(levl[u.ux][u.uy].typ)) {
             /* may have teleported */
-            levl[u.ux][u.uy].typ = ROOM;
+            levl[u.ux][u.uy].typ = ROOM, levl[u.ux][u.uy].flags = 0;
             pline_The("throne vanishes in a puff of logic.");
             newsym(u.ux, u.uy);
         }
@@ -294,8 +298,18 @@ dosit()
         } else if (u.uhunger < (int) objects[EGG].oc_nutrition) {
             You("don't have enough energy to lay an egg.");
             return 0;
+        } else if (eggs_in_water(youmonst.data)) {
+            if (!(Underwater || Is_waterlevel(&u.uz))) {
+                pline("A splash tetra you are not.");
+                return 0;
+            }
+            if (Upolyd &&
+                (youmonst.data == &mons[PM_GIANT_EEL]
+                 || youmonst.data == &mons[PM_ELECTRIC_EEL])) {
+                You("yearn for the Sargasso Sea.");
+                return 0;
+            }
         }
-
         uegg = mksobj(EGG, FALSE, FALSE);
         uegg->spe = 1;
         uegg->quan = 1L;
@@ -303,7 +317,7 @@ dosit()
         /* this sets hatch timers if appropriate */
         set_corpsenm(uegg, egg_type_from_parent(u.umonnum, FALSE));
         uegg->known = uegg->dknown = 1;
-        You("lay an egg.");
+        You("%s an egg.", eggs_in_water(youmonst.data) ? "spawn" : "lay");
         dropy(uegg);
         stackobj(uegg);
         morehungry((int) objects[EGG].oc_nutrition);
@@ -378,7 +392,7 @@ rndcurse()
         if (!Blind) {
             pline("%s %s.", Yobjnam2(otmp, "glow"),
                   hcolor(otmp->cursed ? NH_BLACK : (const char *) "brown"));
-            otmp->bknown = TRUE;
+            otmp->bknown = 1; /* ok to bypass set_bknown() here */
         }
     }
 }
@@ -394,18 +408,21 @@ attrcurse()
             You_feel("warmer.");
             break;
         }
+        /*FALLTHRU*/
     case 2:
         if (HTeleportation & INTRINSIC) {
             HTeleportation &= ~INTRINSIC;
             You_feel("less jumpy.");
             break;
         }
+        /*FALLTHRU*/
     case 3:
         if (HPoison_resistance & INTRINSIC) {
             HPoison_resistance &= ~INTRINSIC;
             You_feel("a little sick!");
             break;
         }
+        /*FALLTHRU*/
     case 4:
         if (HTelepat & INTRINSIC) {
             HTelepat &= ~INTRINSIC;
@@ -414,18 +431,21 @@ attrcurse()
             Your("senses fail!");
             break;
         }
+        /*FALLTHRU*/
     case 5:
         if (HCold_resistance & INTRINSIC) {
             HCold_resistance &= ~INTRINSIC;
             You_feel("cooler.");
             break;
         }
+        /*FALLTHRU*/
     case 6:
         if (HInvis & INTRINSIC) {
             HInvis &= ~INTRINSIC;
             You_feel("paranoid.");
             break;
         }
+        /*FALLTHRU*/
     case 7:
         if (HSee_invisible & INTRINSIC) {
             HSee_invisible &= ~INTRINSIC;
@@ -433,18 +453,21 @@ attrcurse()
                                      : "thought you saw something");
             break;
         }
+        /*FALLTHRU*/
     case 8:
         if (HFast & INTRINSIC) {
             HFast &= ~INTRINSIC;
             You_feel("slower.");
             break;
         }
+        /*FALLTHRU*/
     case 9:
         if (HStealth & INTRINSIC) {
             HStealth &= ~INTRINSIC;
             You_feel("clumsy.");
             break;
         }
+        /*FALLTHRU*/
     case 10:
         /* intrinsic protection is just disabled, not set back to 0 */
         if (HProtection & INTRINSIC) {
@@ -452,12 +475,14 @@ attrcurse()
             You_feel("vulnerable.");
             break;
         }
+        /*FALLTHRU*/
     case 11:
         if (HAggravate_monster & INTRINSIC) {
             HAggravate_monster &= ~INTRINSIC;
             You_feel("less attractive.");
             break;
         }
+        /*FALLTHRU*/
     default:
         break;
     }

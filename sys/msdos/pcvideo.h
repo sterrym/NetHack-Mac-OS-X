@@ -1,4 +1,4 @@
-/* NetHack 3.6	pcvideo.h	$NHDT-Date: 1432512792 2015/05/25 00:13:12 $  $NHDT-Branch: master $:$NHDT-Revision: 1.8 $ */
+/* NetHack 3.6	pcvideo.h	$NHDT-Date: 1457207040 2016/03/05 19:44:00 $  $NHDT-Branch: chasonr $:$NHDT-Revision: 1.9 $ */
 /*   Copyright (c) NetHack PC Development Team 1993, 1994           */
 /*   NetHack may be freely redistributed.  See license for details. */
 /*                                                                  */
@@ -166,7 +166,7 @@ struct overview_planar_cell_struct {
 #define M_BRIGHTCYAN 11
 
 #define M_TEXT M_GRAY
-#define BACKGROUND_COLOR 0
+#define BACKGROUND_COLOR 1
 #define ATTRIB_NORMAL M_TEXT       /* Normal attribute */
 #define ATTRIB_INTENSE M_WHITE     /* Intense White */
 #define ATTRIB_MONO_NORMAL 0x01    /* Underlined,white */
@@ -176,9 +176,9 @@ struct overview_planar_cell_struct {
 #endif                             /*SCREEN_BIOS || SCREEN_DJGPPFAST */
 
 #if defined(SCREEN_VGA) || defined(SCREEN_8514)
-#define BACKGROUND_VGA_COLOR 0
+#define BACKGROUND_VGA_COLOR 1
 #define ATTRIB_VGA_NORMAL CLR_GRAY /* Normal attribute */
-#define ATTRIB_VGA_INTENSE 13      /* Intense White 94/06/07 palette chg*/
+#define ATTRIB_VGA_INTENSE 14      /* Intense White 94/06/07 palette chg*/
 #endif                             /*SCREEN_VGA || SCREEN_8514*/
 
 #if defined(PC9800)
@@ -228,63 +228,86 @@ extern int cursor_color;
 /* ### video.c ### */
 
 #ifdef SIMULATE_CURSOR
-E void DrawCursor(void);
-E void HideCursor(void);
+E void NDECL(DrawCursor);
+E void NDECL(HideCursor);
 #endif
 
 /* ### vidtxt.c ### */
 
 #ifdef NO_TERMS
-E void txt_backsp(void);
-E void txt_clear_screen(void);
-E void txt_cl_end(int, int);
-E void txt_cl_eos(void);
-E void txt_get_scr_size(void);
-E void txt_gotoxy(int, int);
-E int txt_monoadapt_check(void);
-E void txt_nhbell(void);
-E void txt_startup(int *, int *);
-E void txt_xputs(const char *, int, int);
-E void txt_xputc(char, int);
+E void NDECL(txt_backsp);
+E void NDECL(txt_clear_screen);
+E void FDECL(txt_cl_end, (int, int));
+E void NDECL(txt_cl_eos);
+E void NDECL(txt_get_scr_size);
+E void FDECL(txt_gotoxy, (int, int));
+E int NDECL(txt_monoadapt_check);
+E void NDECL(txt_nhbell);
+E void FDECL(txt_startup, (int *, int *));
+E void FDECL(txt_xputs, (const char *, int, int));
+E void FDECL(txt_xputc, (CHAR_P, int));
 
 /* ### vidvga.c ### */
 
 #ifdef SCREEN_VGA
-E void vga_backsp(void);
-E void vga_clear_screen(int);
-E void vga_cl_end(int, int);
-E void vga_cl_eos(int);
-E int vga_detect(void);
+E void NDECL(vga_backsp);
+E void FDECL(vga_clear_screen, (int));
+E void FDECL(vga_cl_end, (int, int));
+E void FDECL(vga_cl_eos, (int));
+E int NDECL(vga_detect);
 #ifdef SIMULATE_CURSOR
-E void vga_DrawCursor(void);
+E void NDECL(vga_DrawCursor);
 #endif
-E void vga_DisplayCell(struct planar_cell_struct *, int, int);
-E void vga_DisplayCell_O(struct overview_planar_cell_struct *, int, int);
-E void vga_Finish(void);
-E char __far *vga_FontPtrs(void);
-E void vga_get_scr_size(void);
-E void vga_gotoloc(int, int);
+E void NDECL(vga_Finish);
+E char __far *NDECL(vga_FontPtrs);
+E void NDECL(vga_get_scr_size);
+E void FDECL(vga_gotoloc, (int, int));
 #ifdef POSITIONBAR
-E void vga_update_positionbar(char *);
+E void FDECL(vga_update_positionbar, (char *));
 #endif
 #ifdef SIMULATE_CURSOR
-E void vga_HideCursor(void);
+E void NDECL(vga_HideCursor);
 #endif
-E void vga_Init(void);
-E void vga_SwitchMode(unsigned int);
-E void vga_SetPalette(char *);
-E void vga_tty_end_screen(void);
-E void vga_tty_startup(int *, int *);
-E void vga_WriteChar(int, int, int, int);
-E void vga_WriteStr(char *, int, int, int, int);
-E void vga_xputs(const char *, int, int);
-E void vga_xputc(char, int);
-E void vga_xputg(int, int, unsigned);
-E void vga_userpan(boolean);
-E void vga_overview(boolean);
-E void vga_traditional(boolean);
-E void vga_refresh(void);
+E void NDECL(vga_Init);
+E void NDECL(vga_tty_end_screen);
+E void FDECL(vga_tty_startup, (int *, int *));
+E void FDECL(vga_xputs, (const char *, int, int));
+E void FDECL(vga_xputc, (CHAR_P, int));
+E void FDECL(vga_xputg, (int, int, unsigned));
+E void FDECL(vga_userpan, (BOOLEAN_P));
+E void FDECL(vga_overview, (BOOLEAN_P));
+E void FDECL(vga_traditional, (BOOLEAN_P));
+E void NDECL(vga_refresh);
 #endif /* SCREEN_VGA */
+#ifdef SCREEN_VESA
+E void NDECL(vesa_backsp);
+E void FDECL(vesa_clear_screen, (int));
+E void FDECL(vesa_cl_end, (int, int));
+E void FDECL(vesa_cl_eos, (int));
+E int NDECL(vesa_detect);
+#ifdef SIMULATE_CURSOR
+E void NDECL(vesa_DrawCursor);
+#endif
+E void NDECL(vesa_Finish);
+E void NDECL(vesa_get_scr_size);
+E void FDECL(vesa_gotoloc, (int, int));
+#ifdef POSITIONBAR
+E void FDECL(vesa_update_positionbar, (char *));
+#endif
+#ifdef SIMULATE_CURSOR
+E void NDECL(vesa_HideCursor);
+#endif
+E void NDECL(vesa_Init);
+E void NDECL(vesa_tty_end_screen);
+E void FDECL(vesa_tty_startup, (int *, int *));
+E void FDECL(vesa_xputs, (const char *, int, int));
+E void FDECL(vesa_xputc, (CHAR_P, int));
+E void FDECL(vesa_xputg, (int, int, unsigned));
+E void FDECL(vesa_userpan, (BOOLEAN_P));
+E void FDECL(vesa_overview, (BOOLEAN_P));
+E void FDECL(vesa_traditional, (BOOLEAN_P));
+E void NDECL(vesa_refresh);
+#endif /* SCREEN_VESA */
 #endif /* NO_TERMS   */
 
 #undef E

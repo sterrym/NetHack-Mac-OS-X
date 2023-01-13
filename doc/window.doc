@@ -177,7 +177,7 @@ int nhgetch()	-- Returns a single character input from the user.
 		   changed and also return ASCII 033 in this case.
 int nh_poskey(int *x, int *y, int *mod)
 		-- Returns a single character input from the user or a
-		   a positioning event (perhaps from a mouse).  If the
+		   positioning event (perhaps from a mouse).  If the
 		   return value is non-zero, a character was typed, else,
 		   a position in the MAP window is returned in x, y and mod.
 		   mod may be one of
@@ -334,7 +334,7 @@ add_menu(windid window, int glyph, const anything identifier,
 		   outside of the standard accelerator (see above) or a
 		   number.  If 0, the item is unaffected by any group
 		   accelerator.  If this accelerator conflicts with
-		   the menu command (or their user defined alises), it loses.
+		   the menu command (or their user defined aliases), it loses.
 		   The menu commands and aliases take care not to interfere
 		   with the default object class symbols.
 		-- If you want this choice to be preselected when the
@@ -401,7 +401,7 @@ status_enablefield(int fldindex, char fldname, char fieldfmt, boolean enable)
 		   BL_XP, BL_AC, BL_HD, BL_TIME, BL_HUNGER, BL_HP, BL_HPMAX, 
 		   BL_LEVELDESC, BL_EXP, BL_CONDITION
 		-- There are MAXBLSTATS status fields (from botl.h)
-status_update(int fldindex, genericptr_t ptr, int chg, int percentage)
+status_update(int fldindex, genericptr_t ptr, int chg, int percentage, int color, long *colormasks)
 		-- update the value of a status field.
 		-- the fldindex identifies which field is changing and
 		   is an integer index value from botl.h
@@ -412,63 +412,133 @@ status_update(int fldindex, genericptr_t ptr, int chg, int percentage)
 		   BL_LEVELDESC, BL_EXP, BL_CONDITION
 		-- fldindex could also be BL_FLUSH (-1), which is not really
 		   a field index, but is a special trigger to tell the 
+		   windowport that it should output all changes received
+                   to this point. It marks the end of a bot() cycle.
+		-- fldindex could also be BL_RESET (-2), which is not really
+		   a field index, but is a special advisory to to tell the 
 		   windowport that it should redisplay all its status fields,
 		   even if no changes have been presented to it.
 		-- ptr is usually a "char *", unless fldindex is BL_CONDITION.
 		   If fldindex is BL_CONDITION, then ptr is a long value with
 		   any or none of the following bits set (from botl.h):
-			BL_MASK_BLIND		0x00000001L
-			BL_MASK_CONF		0x00000002L
-			BL_MASK_FOODPOIS	0x00000004L
-			BL_MASK_ILL		0x00000008L
-			BL_MASK_HALLU		0x00000010L
-			BL_MASK_STUNNED		0x00000020L
-			BL_MASK_SLIMED		0x00000040L
+                        BL_MASK_STONE           0x00000001L
+                        BL_MASK_SLIME           0x00000002L
+                        BL_MASK_STRNGL          0x00000004L
+                        BL_MASK_FOODPOIS        0x00000008L
+                        BL_MASK_TERMILL         0x00000010L
+                        BL_MASK_BLIND           0x00000020L
+                        BL_MASK_DEAF            0x00000040L
+                        BL_MASK_STUN            0x00000080L
+                        BL_MASK_CONF            0x00000100L
+                        BL_MASK_HALLU           0x00000200L
+                        BL_MASK_LEV             0x00000400L
+                        BL_MASK_FLY             0x00000800L
+                        BL_MASK_RIDE            0x00001000L
 		-- The value passed for BL_GOLD includes a leading
 		   symbol for GOLD "$:nnn". If the window port needs to use 
 		   the textual gold amount without the leading "$:" the port 
 		   will have to add 2 to the passed "ptr" for the BL_GOLD case.
+                -- color is an unsigned int.
+                   int & 0x00FF = color CLR_*
+                   int >> 8 = attribute (if any)
+
+                   This contains the color and attribute that the field should
+                   be displayed in.
+
+                   This is relevant for everything except BL_CONDITION fldindex.
+                   If fldindex is BL_CONDITION, this parameter should be ignored,
+                   as condition hilighting is done via the next colormasks
+                   parameter instead.
+
+                -- colormasks - pointer to cond_hilites[] array of colormasks.
+
+                   Only relevant for BL_CONDITION fldindex. The window port
+                   should ignore this parameter for other fldindex values.
+
+                   Each condition bit must only ever appear in one of the
+                   CLR_ array members, but can appear in multiple HL_ATTCLR_
+                   offsets (because more than one attribute can co-exist).
+
+                   For the user's chosen set of BL_MASK_ condition bits,
+                   They are stored internally in the cond_hilites[] array,
+                   at the array offset aligned to the color those condition
+                   bits should display in.
+
+                   For example, if the user has chosen to display strngl
+                   and stone and termill in red and inverse,
+
+                        BL_MASK_SLIME           0x00000002
+                        BL_MASK_STRNGL          0x00000004
+                        BL_MASK_TERMILL         0x00000010
+
+                   The bitmask corresponding to those conditions is
+                   0x00000016 (or 00010110 in binary) and the color
+                   is at offset 1 (CLR_RED).
+
+                   Here is how that is stored in the cond_hilites[] array:
+
+                   +------+----------------------+--------------------+
+                   |array |                      |                    |
+                   |offset| macro for indexing   |   bitmask          |
+                   |------+----------------------+--------------------+
+                   |   0  |   CLR_BLACK          |                    |
+                   +------+----------------------+--------------------+
+                   |   1  |   CLR_RED            |   00010110         |
+                   +------+----------------------+--------------------+
+                   |   2  |   CLR_GREEN          |                    |
+                   +------+----------------------+--------------------+
+                   |   3  |   CLR_BROWN          |                    |
+                   +------+----------------------+--------------------+
+                   |   4  |   CLR_BLUE           |                    |
+                   +------+----------------------+--------------------+
+                   |   5  |   CLR_MAGENTA        |                    |
+                   +------+----------------------+--------------------+
+                   |   6  |   CLR_CYAN           |                    |
+                   +------+----------------------+--------------------+
+                   |   7  |   CLR_GRAY           |                    |
+                   +------+----------------------+--------------------+
+                   |   8  |   NO_COLOR           |                    |
+                   +------+----------------------+--------------------+
+                   |   9  |   CLR_ORANGE         |                    |
+                   +------+----------------------+--------------------+
+                   |  10  |   CLR_BRIGHT_GREEN   |                    |
+                   +------+----------------------+--------------------+
+                   |  11  |   CLR_BRIGHT_YELLOW  |                    |
+                   +------+----------------------+--------------------+
+                   |  12  |   CLR_BRIGHT_BLUE    |                    |
+                   +------+----------------------+--------------------+
+                   |  13  |   CLR_BRIGHT_MAGENTA |                    |
+                   +------+----------------------+--------------------+
+                   |  14  |   CLR_BRIGHT_CYAN    |                    |
+                   +------+----------------------+--------------------+
+                   |  15  |   CLR_WHITE          |                    |
+                   +------+----------------------+--------------------+
+                   |  16  |   HL_ATTCLR_DIM      |                    | CLR_MAX
+                   +------+----------------------+--------------------+
+                   |  17  |   HL_ATTCLR_BLINK    |                    |
+                   +------+----------------------+--------------------+
+                   |  18  |   HL_ATTCLR_ULINE    |                    |
+                   +------+----------------------+--------------------+
+                   |  19  |   HL_ATTCLR_INVERSE  |   00010110         |
+                   +------+----------------------+--------------------+
+                   |  20  |   HL_ATTCLR_BOLD     |                    |
+                   +------+----------------------+--------------------+
+                   |  21  |  beyond array boundary                    | BL_ATTCLR_MAX
+
+                   The window port can AND (&) the bits passed in the
+                   ptr argument to status_update() with any non-zero
+                   entries in the cond_hilites[] array to determine
+                   the color and attributes for displaying the
+                   condition on the screen for the user.
+
+                   If the bit for a particular condition does not
+                   appear in any of the cond_hilites[] array offsets,
+                   that condition should be displayed in the default
+                   color and attributes.
 
 status_finish() -- called when it is time for the window port to tear down
 		   the status display and free allocated memory, etc.
 
-status_threshold(int fldidx, int threshholdtype, anything threshold, 
-					int behavior, int under, int over)
-		-- called when a hiliting preference is added, changed, or
-		   removed.
-		-- the fldindex identifies which field is having its hiliting
-		   preference set. It is an integer index value from botl.h
-		-- fldindex could be any one of the following from botl.h:
-		   BL_TITLE, BL_STR, BL_DX, BL_CO, BL_IN, BL_WI, BL_CH, 
-		   BL_ALIGN, BL_SCORE, BL_CAP, BL_GOLD, BL_ENE, BL_ENEMAX, 
-		   BL_XP, BL_AC, BL_HD, BL_TIME, BL_HUNGER, BL_HP, BL_HPMAX, 
-		   BL_LEVELDESC, BL_EXP, BL_CONDITION
-		-- datatype is P_INT, P_UINT, P_LONG, or P_MASK.
-		-- threshold is an "anything" union which can contain the 
-		   datatype value.
-		-- behavior is used to define how threshold is used and can
-		   be BL_TH_NONE, BL_TH_VAL_PERCENTAGE, BL_TH_VAL_ABSOLUTE,
-		   or BL_TH_UPDOWN. BL_TH_NONE means don't do anything above
-		   or below the threshold.  BL_TH_VAL_PERCENTAGE treats the
-		   threshold value as a precentage of the maximum possible
-		   value. BL_TH_VAL_ABSOLUTE means that the threshold is an
-		   actual value. BL_TH_UPDOWN means that threshold is not
-		   used, and the two below/above hilite values indicate how
-		   to display something going down (under) or rising (over).		    
-		-- under is the hilite attribute used if value is below the 
-		   threshold. The attribute can be BL_HILITE_NONE, 
-		   BL_HILITE_INVERSE, BL_HILITE_BOLD (-1, -2, or -3), or one 
-		   of the color indexes of CLR_BLACK, CLR_RED, CLR_GREEN, 
-		   CLR_BROWN, CLR_BLUE, CLR_MAGENTA, CLR_CYAN, CLR_GRAY, 
-		   CLR_ORANGE, CLR_BRIGHT_GREEN, CLR_YELLOW, CLR_BRIGHT_BLUE, 
-		   CLR_BRIGHT_MAGENTA, CLR_BRIGHT_CYAN, or CLR_WHITE (0 - 15).
-		-- over is the hilite attribute used if value is at or above 
-		   the threshold. The attribute can be BL_HILITE_NONE, 
-		   BL_HILITE_INVERSE, BL_HILITE_BOLD (-1, -2, or -3), or one 
-		   of the color indexes of CLR_BLACK, CLR_RED, CLR_GREEN, 
-		   CLR_BROWN, CLR_BLUE, CLR_MAGENTA, CLR_CYAN, CLR_GRAY, 
-		   CLR_ORANGE, CLR_BRIGHT_GREEN, CLR_YELLOW, CLR_BRIGHT_BLUE, 
-		   CLR_BRIGHT_MAGENTA, CLR_BRIGHT_CYAN, or CLR_WHITE (0 - 15).
 
 E.  Misc. Routines
 
@@ -532,7 +602,7 @@ getmsghistory(init)
 		   If init is TRUE, start over again from most recent message.
 
 putmsghistory(msg)
-		-- The is the counterpart to getmsghistory() for restores
+		-- This is the counterpart to getmsghistory() for restores
 		   used to reload the port's message recall buffer.
 		   The routine is called repeatedly from the core restore 
 		   routine, starting with the oldest message first, and
@@ -593,6 +663,10 @@ port can access the fields directly.
 
 Your window port identifies what options it will react to and support
 by setting bits in the window_procs wincap mask and/or wincap2 mask. 
+Your window port can also fill in the color-availability table for
+the window port, has_color[CLR_MAX] to flag the colors it supports 
+1 it does, or 0 it doesn't. [CLR_MAX is 16 as of 3.6.3.]
+
 See section IX for details of where the wincap masks reside. 
 
 Two things control whether any preference setting appears in the 
@@ -623,7 +697,7 @@ when processing options, either in the config file, or by the 'O' command.
 
 You may be wondering what values your window port will find in the 
 iflags.wc_* and iflags.wc2_* fields for options that the user has not 
-specified in his/her config file. Put another way, how does you port code
+specified in his/her config file. Put another way, how does your port code
 tell if an option has not been set? The next paragraph explains that.
 
 If the core does not set an option, it will still be initialized 
@@ -703,7 +777,25 @@ to support:
   |  softkeyboard      | WC2_SOFTKEYBOARD   | wc2_softkeyboard   |boolean |
   |  wraptext          | WC2_WRAPTEXT       | wc2_wraptext       |boolean |
   |  selectsaved       | WC2_SELECTSAVED    | wc2_selectsaved    |boolean |
+  |  hitpointbar       | WC2_HITPOINTBAR    | wc2_hitpointbar    |boolean |
+  |  term_cols         | WC2_TERM_COLS      | wc2_term_cols      |int     |
+  |  term_rows         | WC2_TERM_ROWS      | wc2_term_rows      |int     |
+  |  windowborders     | WC2_WINDOWBORDERS  | wc2_windowborders  |int     |
   +--------------------+--------------------+--------------------+--------+
+
+  more wincap2 for STATUS_HILITES support and control
+  +--------------------------------- +---------------------------+
+  | To inform the game engine        |                           |
+  | that the window port is equipped | bit to set in wincap mask |
+  | to receive the following in its  |                           |
+  | x_status_update() routine        |                           |
+  |----------------------------------+---------------------------+
+  | BL_FLUSH to render buffered      | WC2_FLUSH_STATUS          |
+  |          field changes now       |                           |
+  |----------------------------------+---------------------------+
+  | BL_RESET to indicate that all    | WC2_RESET_STATUS          |
+  |          fields should be redone |                           |
+  +----------------------------------+---------------------------+
 
 align_message	-- where to place message window (top, bottom, left, right)
 align_status	-- where to place status display (top, bottom, left, right).
@@ -723,6 +815,7 @@ font_status	-- port should use a font by this name for status display.
 font_text	-- port should use a font by this name for text windows.
 fullscreen      -- port should try to use the whole screen.
 hilite_pet	-- port should mark pets in some special way on the map.
+hitpointbar	-- port should show a graphical bar representing hit points
 map_mode	-- port should display the map in the manner specified.
 player_selection
 		-- dialog or prompts for choosing character.
@@ -734,6 +827,8 @@ scroll_margin	-- port should scroll the display when the hero or cursor
 selectsaved     -- if port can display a menu of the user's saved games do so.
 softkeyboard    -- handhelds should display an on-screen keyboard if possible.
 splash_screen   -- port should/should not display an opening splashscreen.
+term_cols       -- Terminal should size itself to specified width, if possible.
+term_rows       -- Terminal should size itself to specified height, if possible.
 tiled_map	-- port should display a tiled map if it can.
 tile_width	-- port should display tiles with this width or round to closest
 		   if it can.
@@ -744,6 +839,8 @@ tile_file	-- open this alternative tile file. The file name is likely to be
 use_inverse	-- port should display inverse when NetHack asks for it.
 vary_msgcount	-- port should display this number of messages at a time in
 		   the message window.
+windowborders   -- port should display borders around main NetHack windows.
+                Can be set to (1) on, (2) off, or (3) auto.
 windowcolors
 		-- port should use these colors for window foreground/background
 		   colors.  Syntax:
@@ -833,7 +930,8 @@ These are not part of the interface. They may be called by your
 window port routines to perform the desired task, instead of duplicating
 the necessary code in each window port.
 
-int mapglyph(int glyph, int *ochar, int *ocolor, unsigned *special, int x, int y)
+int mapglyph(int glyph, int *ochar, int *ocolor, unsigned *special, 
+             int x, int y, unsigned mgflags)
 		-- Maps glyph at x,y to NetHack ascii character and color.
 		   The return value is an index into the showsyms[] array, in
 		   case a port wants to index into its own alternative 
@@ -996,7 +1094,7 @@ When writing a new window-port, you need to follow the following guidelines:
    WINOBJ (if you want the NetHack binary to include them, that is).
 
 9) Look at your port's portmain.c (the file containing main()) and make
-   sure that all of the calls match the the requirements laid out in
+   sure that all of the calls match the requirements laid out in
    Section VII.
 
 Now, proceed with compilation and installation as usual.  Don't forget

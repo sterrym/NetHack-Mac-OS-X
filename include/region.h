@@ -7,7 +7,7 @@
 
 /* generic callback function */
 
-typedef boolean (*callback_proc)(genericptr_t, genericptr_t);
+typedef boolean FDECL((*callback_proc), (genericptr_t, genericptr_t));
 
 /*
  * player_flags

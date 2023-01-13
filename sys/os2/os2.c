@@ -30,8 +30,8 @@
 
 #include <ctype.h>
 
-static char DOSgetch(void);
-static char BIOSgetch(void);
+static char NDECL(DOSgetch);
+static char NDECL(BIOSgetch);
 
 int
 tgetch()
@@ -187,7 +187,8 @@ kbhit()
 }
 
 long
-freediskspace(char *path)
+freediskspace(path)
+char *path;
 {
     FSALLOCATE FSInfoBuf;
 #ifdef OS2_32BITAPI
@@ -228,7 +229,8 @@ static FILEFINDBUF ResultBuf;
 static HDIR DirHandle;
 
 int
-findfirst(char *path)
+findfirst(path)
+char *path;
 {
 #ifdef OS2_32BITAPI
     ULONG
@@ -277,7 +279,8 @@ foundfile_buffer()
 }
 
 long
-filesize(char *file)
+filesize(file)
+char *file;
 {
     if (findfirst(file)) {
         return (*(long *) (ResultBuf.cbFileAlloc));
@@ -289,7 +292,8 @@ filesize(char *file)
  * Chdrive() changes the default drive.
  */
 void
-chdrive(char *str)
+chdrive(str)
+char *str;
 {
     char *ptr;
     char drive;
@@ -349,7 +353,8 @@ get_scr_size()
 }
 
 void
-gotoxy(int x, int y)
+gotoxy(x, y)
+int x, y;
 {
     HVIO VideoHandle = 0;
 
@@ -360,7 +365,8 @@ gotoxy(int x, int y)
 }
 
 char *
-get_username(int *lan_username_size)
+get_username(lan_username_size)
+int *lan_username_size;
 {
     return (char *) 0;
 }

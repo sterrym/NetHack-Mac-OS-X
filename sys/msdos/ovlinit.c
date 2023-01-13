@@ -17,7 +17,8 @@
  *
  */
 unsigned
-memavail(unsigned minovl) /* minimum size of overlay heap */
+memavail(minovl)
+unsigned minovl; /* minimum size of overlay heap */
 {
     unsigned available;
 
@@ -65,7 +66,7 @@ signed long tmpbuffer;
 int emsstatus;
 int xmsstatus;
 
-void _resizeOvrBuffer(void);
+void NDECL(_resizeOvrBuffer);
 
 void
 _resizeOvrBuffer()
@@ -115,7 +116,8 @@ startup()
 }
 
 void
-show_borlandc_stats(winid win)
+show_borlandc_stats(win)
+winid win;
 {
     char buf[BUFSZ];
 

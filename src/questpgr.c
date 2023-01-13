@@ -1,4 +1,4 @@
-/* NetHack 3.6	questpgr.c	$NHDT-Date: 1448541043 2015/11/26 12:30:43 $  $NHDT-Branch: master $:$NHDT-Revision: 1.36 $ */
+/* NetHack 3.6	questpgr.c	$NHDT-Date: 1505172128 2017/09/11 23:22:08 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.38 $ */
 /*      Copyright 1991, M. Stephenson                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -18,20 +18,21 @@
 /* from sp_lev.c, for deliver_splev_message() */
 extern char *lev_message;
 
-static void dump_qtlist(void);
-static void Fread(genericptr_t, int, int, dlb *);
-STATIC_DCL struct qtmsg *construct_qtlist(long);
-STATIC_DCL const char *intermed(void);
-STATIC_DCL const char *neminame(void);
-STATIC_DCL const char *guardname(void);
-STATIC_DCL const char *homebase(void);
-STATIC_DCL void qtext_pronoun(char, char);
-STATIC_DCL struct qtmsg *msg_in(struct qtmsg *, int);
-STATIC_DCL void convert_arg(char);
-STATIC_DCL void convert_line(char *,char *);
-STATIC_DCL void deliver_by_pline(struct qtmsg *);
-STATIC_DCL void deliver_by_window(struct qtmsg *, int);
-STATIC_DCL boolean skip_pager(boolean);
+static void NDECL(dump_qtlist);
+static void FDECL(Fread, (genericptr_t, int, int, dlb *));
+STATIC_DCL struct qtmsg *FDECL(construct_qtlist, (long));
+STATIC_DCL const char *NDECL(intermed);
+STATIC_DCL struct obj *FDECL(find_qarti, (struct obj *));
+STATIC_DCL const char *NDECL(neminame);
+STATIC_DCL const char *NDECL(guardname);
+STATIC_DCL const char *NDECL(homebase);
+STATIC_DCL void FDECL(qtext_pronoun, (CHAR_P, CHAR_P));
+STATIC_DCL struct qtmsg *FDECL(msg_in, (struct qtmsg *, int));
+STATIC_DCL void FDECL(convert_arg, (CHAR_P));
+STATIC_DCL void FDECL(convert_line, (char *,char *));
+STATIC_DCL void FDECL(deliver_by_pline, (struct qtmsg *));
+STATIC_DCL void FDECL(deliver_by_window, (struct qtmsg *, int));
+STATIC_DCL boolean FDECL(skip_pager, (BOOLEAN_P));
 
 static char cvt_buf[64];
 static struct qtlists qt_list;
@@ -60,7 +61,10 @@ dump_qtlist()
 }
 
 static void
-Fread(genericptr_t ptr, int size, int nitems, dlb *stream)
+Fread(ptr, size, nitems, stream)
+genericptr_t ptr;
+int size, nitems;
+dlb *stream;
 {
     int cnt;
 
@@ -71,7 +75,8 @@ Fread(genericptr_t ptr, int size, int nitems, dlb *stream)
 }
 
 STATIC_OVL struct qtmsg *
-construct_qtlist(long hdr_offset)
+construct_qtlist(hdr_offset)
+long hdr_offset;
 {
     struct qtmsg *msg_list;
     int n_msgs;
@@ -139,20 +144,18 @@ load_qtlist()
 void
 unload_qtlist()
 {
-    if (msg_file) {
-        (void) dlb_fclose(msg_file); msg_file = 0;
-    }
-    if (qt_list.common) {
-        free((genericptr_t) qt_list.common); qt_list.common = 0;
-    }
-    if (qt_list.chrole) {
-        free((genericptr_t) qt_list.chrole); qt_list.chrole = 0;
-    }
+    if (msg_file)
+        (void) dlb_fclose(msg_file), msg_file = 0;
+    if (qt_list.common)
+        free((genericptr_t) qt_list.common), qt_list.common = 0;
+    if (qt_list.chrole)
+        free((genericptr_t) qt_list.chrole), qt_list.chrole = 0;
     return;
 }
 
 short
-quest_info(int typ)
+quest_info(typ)
+int typ;
 {
     switch (typ) {
     case 0:
@@ -188,9 +191,62 @@ intermed()
 }
 
 boolean
-is_quest_artifact(struct obj *otmp)
+is_quest_artifact(otmp)
+struct obj *otmp;
 {
     return (boolean) (otmp->oartifact == urole.questarti);
+}
+
+STATIC_OVL struct obj *
+find_qarti(ochain)
+struct obj *ochain;
+{
+    struct obj *otmp, *qarti;
+
+    for (otmp = ochain; otmp; otmp = otmp->nobj) {
+        if (is_quest_artifact(otmp))
+            return otmp;
+        if (Has_contents(otmp) && (qarti = find_qarti(otmp->cobj)) != 0)
+            return qarti;
+    }
+    return (struct obj *) 0;
+}
+
+/* check several object chains for the quest artifact to determine
+   whether it is present on the current level */
+struct obj *
+find_quest_artifact(whichchains)
+unsigned whichchains;
+{
+    struct monst *mtmp;
+    struct obj *qarti = 0;
+
+    if ((whichchains & (1 << OBJ_INVENT)) != 0)
+        qarti = find_qarti(invent);
+    if (!qarti && (whichchains & (1 << OBJ_FLOOR)) != 0)
+        qarti = find_qarti(fobj);
+    if (!qarti && (whichchains & (1 << OBJ_MINVENT)) != 0)
+        for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
+            if (DEADMONSTER(mtmp))
+                continue;
+            if ((qarti = find_qarti(mtmp->minvent)) != 0)
+                break;
+        }
+    if (!qarti && (whichchains & (1 << OBJ_MIGRATING)) != 0) {
+        /* check migrating objects and minvent of migrating monsters */
+        for (mtmp = migrating_mons; mtmp; mtmp = mtmp->nmon) {
+            if (DEADMONSTER(mtmp))
+                continue;
+            if ((qarti = find_qarti(mtmp->minvent)) != 0)
+                break;
+        }
+        if (!qarti)
+            qarti = find_qarti(migrating_objs);
+    }
+    if (!qarti && (whichchains & (1 << OBJ_BURIED)) != 0)
+        qarti = find_qarti(level.buriedobjlist);
+
+    return qarti;
 }
 
 /* return your role nemesis' name */
@@ -221,8 +277,9 @@ homebase() /* return your role leader's location */
 /* replace deity, leader, nemesis, or artifact name with pronoun;
    overwrites cvt_buf[] */
 STATIC_OVL void
-qtext_pronoun(char who,     /* 'd' => deity, 'l' => leader, 'n' => nemesis, 'o' => artifact */
-              char which)   /* 'h'|'H'|'i'|'I'|'j'|'J' */
+qtext_pronoun(who, which)
+char who,  /* 'd' => deity, 'l' => leader, 'n' => nemesis, 'o' => artifact */
+    which; /* 'h'|'H'|'i'|'I'|'j'|'J' */
 {
     const char *pnoun;
     int g;
@@ -257,7 +314,9 @@ qtext_pronoun(char who,     /* 'd' => deity, 'l' => leader, 'n' => nemesis, 'o' 
 }
 
 STATIC_OVL struct qtmsg *
-msg_in(struct qtmsg *qtm_list, int msgnum)
+msg_in(qtm_list, msgnum)
+struct qtmsg *qtm_list;
+int msgnum;
 {
     struct qtmsg *qt_msg;
 
@@ -269,7 +328,8 @@ msg_in(struct qtmsg *qtm_list, int msgnum)
 }
 
 STATIC_OVL void
-convert_arg(char c)
+convert_arg(c)
+char c;
 {
     register const char *str;
 
@@ -360,7 +420,8 @@ convert_arg(char c)
 }
 
 STATIC_OVL void
-convert_line(char *in_line, char *out_line)
+convert_line(in_line, out_line)
+char *in_line, *out_line;
 {
     char *c, *cc;
     char xbuf[BUFSZ];
@@ -410,6 +471,7 @@ convert_line(char *in_line, char *out_line)
                 /* pluralize */
                 case 'P':
                     cvt_buf[0] = highc(cvt_buf[0]);
+                    /*FALLTHRU*/
                 case 'p':
                     Strcpy(cvt_buf, makeplural(cvt_buf));
                     break;
@@ -417,6 +479,7 @@ convert_line(char *in_line, char *out_line)
                 /* append possessive suffix */
                 case 'S':
                     cvt_buf[0] = highc(cvt_buf[0]);
+                    /*FALLTHRU*/
                 case 's':
                     Strcpy(cvt_buf, s_suffix(cvt_buf));
                     break;
@@ -451,7 +514,8 @@ convert_line(char *in_line, char *out_line)
 }
 
 STATIC_OVL void
-deliver_by_pline(struct qtmsg *qt_msg)
+deliver_by_pline(qt_msg)
+struct qtmsg *qt_msg;
 {
     long size;
     char in_line[BUFSZ], out_line[BUFSZ];
@@ -465,7 +529,9 @@ deliver_by_pline(struct qtmsg *qt_msg)
 }
 
 STATIC_OVL void
-deliver_by_window(struct qtmsg *qt_msg, int how)
+deliver_by_window(qt_msg, how)
+struct qtmsg *qt_msg;
+int how;
 {
     long size;
     char in_line[BUFSZ], out_line[BUFSZ];
@@ -499,7 +565,7 @@ deliver_by_window(struct qtmsg *qt_msg, int how)
     if (qt_msg->summary_size) {
         (void) dlb_fgets(in_line, sizeof in_line, msg_file);
         convert_line(in_line, out_line);
-#ifdef BETA
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
     } else if (qt_msg->delivery == 'c') { /* skip for 'qtdump' of 'p' */
         /* delivery 'c' and !summary_size, summary expected but not present;
            this doesn't prefix the number with role code vs 'general'
@@ -512,8 +578,9 @@ deliver_by_window(struct qtmsg *qt_msg, int how)
         putmsghistory(out_line, FALSE);
 }
 
-boolean
-skip_pager(boolean common)
+STATIC_OVL boolean
+skip_pager(common)
+boolean common;
 {
     /* WIZKIT: suppress plot feedback if starting with quest artifact */
     if (program_state.wizkit_wishing)
@@ -529,7 +596,8 @@ skip_pager(boolean common)
 }
 
 void
-com_pager(int msgnum)
+com_pager(msgnum)
+int msgnum;
 {
     struct qtmsg *qt_msg;
 
@@ -552,14 +620,26 @@ com_pager(int msgnum)
 }
 
 void
-qt_pager(int msgnum)
+qt_pager(msgnum)
+int msgnum;
 {
     struct qtmsg *qt_msg;
 
     if (skip_pager(FALSE))
         return;
 
-    if (!(qt_msg = msg_in(qt_list.chrole, msgnum))) {
+    qt_msg = msg_in(qt_list.chrole, msgnum);
+    if (!qt_msg) {
+        /* some roles have an alternate message for return to the goal
+           level when the quest artifact is absent (handled by caller)
+           but some don't; for the latter, use the normal goal message;
+           note: for first visit, artifact is assumed to always be
+           present which might not be true for wizard mode but we don't
+           worry about quest message references in that situation */
+        if (msgnum == QT_ALTGOAL)
+            qt_msg = msg_in(qt_list.chrole, QT_NEXTGOAL);
+    }
+    if (!qt_msg) {
         impossible("qt_pager: message %d not found.", msgnum);
         return;
     }

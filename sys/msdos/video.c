@@ -1,4 +1,4 @@
-/* NetHack 3.6	video.c	$NHDT-Date: 1432512791 2015/05/25 00:13:11 $  $NHDT-Branch: master $:$NHDT-Revision: 1.10 $ */
+/* NetHack 3.6	video.c	$NHDT-Date: 1554215931 2019/04/02 14:38:51 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.12 $ */
 /*   Copyright (c) NetHack PC Development Team 1993, 1994, 2001	    */
 /*   NetHack may be freely redistributed.  See license for details. */
 /*								    */
@@ -80,6 +80,11 @@ get_scr_size()
         vga_get_scr_size();
     } else
 #endif
+#ifdef SCREEN_VESA
+    if (iflags.usevesa) {
+        vesa_get_scr_size();
+    } else
+#endif
         txt_get_scr_size();
 }
 
@@ -111,13 +116,13 @@ typedef long clock_t;
 #endif
 
 #ifdef SCREEN_BIOS
-void get_cursor(int *, int *);
+void FDECL(get_cursor, (int *, int *));
 #endif
 
-void adjust_cursor_flags(struct WinDesc *);
-void cmov(int, int);
-void nocmov(int, int);
-STATIC_DCL void init_ttycolor(void);
+void FDECL(adjust_cursor_flags, (struct WinDesc *));
+void FDECL(cmov, (int, int));
+void FDECL(nocmov, (int, int));
+STATIC_DCL void NDECL(init_ttycolor);
 
 int savevmode;               /* store the original video mode in here */
 int curcol, currow;          /* graphics mode current cursor locations */
@@ -142,6 +147,10 @@ backsp()
     } else if (iflags.usevga) {
         vga_backsp();
 #endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_backsp();
+#endif
     }
 }
 
@@ -153,6 +162,10 @@ clear_screen()
 #ifdef SCREEN_VGA
     } else if (iflags.usevga) {
         vga_clear_screen(BACKGROUND_VGA_COLOR);
+#endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_clear_screen(BACKGROUND_VGA_COLOR);
 #endif
     }
 }
@@ -169,6 +182,10 @@ void cl_end() /* clear to end of line */
     } else if (iflags.usevga) {
         vga_cl_end(col, row);
 #endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_cl_end(col, row);
+#endif
     }
     tty_curs(BASE_WINDOW, (int) ttyDisplay->curx + 1, (int) ttyDisplay->cury);
 }
@@ -183,12 +200,17 @@ void cl_eos() /* clear to end of screen */
     } else if (iflags.usevga) {
         vga_cl_eos(cy);
 #endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_cl_eos(cy);
+#endif
     }
     tty_curs(BASE_WINDOW, (int) ttyDisplay->curx + 1, (int) ttyDisplay->cury);
 }
 
 void
-cmov(register int col, register int row)
+cmov(col, row)
+register int col, row;
 {
     ttyDisplay->cury = (uchar) row;
     ttyDisplay->curx = (uchar) col;
@@ -198,9 +220,14 @@ cmov(register int col, register int row)
     } else if (iflags.usevga) {
         vga_gotoloc(col, row);
 #endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_gotoloc(col, row);
+#endif
     }
 }
 
+#if 0
 int
 has_color(int color)
 {
@@ -211,6 +238,7 @@ has_color(int color)
     return 0;
 #endif
 }
+#endif
 
 void
 home()
@@ -223,17 +251,26 @@ home()
     } else if (iflags.usevga) {
         vga_gotoloc(0, 0);
 #endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_gotoloc(0, 0);
+#endif
     }
 }
 
 void
-nocmov(int col, int row)
+nocmov(col, row)
+int col, row;
 {
     if (!iflags.grmode) {
         txt_gotoxy(col, row);
 #ifdef SCREEN_VGA
     } else if (iflags.usevga) {
         vga_gotoloc(col, row);
+#endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_gotoloc(col, row);
 #endif
     }
 }
@@ -248,6 +285,12 @@ void
 standoutend()
 {
     g_attribute = iflags.grmode ? attrib_gr_normal : attrib_text_normal;
+}
+
+int
+term_attr_fixup(int attrmask)
+{
+    return attrmask;
 }
 
 void
@@ -359,6 +402,10 @@ tty_end_screen()
     } else if (iflags.usevga) {
         vga_tty_end_screen();
 #endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_tty_end_screen();
+#endif
     }
 }
 
@@ -369,13 +416,15 @@ tty_nhbell()
 }
 
 void
-tty_number_pad(int state)
+tty_number_pad(state)
+int state;
 {
     ++state; /* prevents compiler warning (unref. param) */
 }
 
 void
-tty_startup(int *wid, int *hgt)
+tty_startup(wid, hgt)
+int *wid, *hgt;
 {
     /* code to sense display adapter is required here - MJA */
 
@@ -390,6 +439,11 @@ tty_startup(int *wid, int *hgt)
 #ifdef SCREEN_VGA
     if (iflags.usevga) {
         vga_tty_startup(wid, hgt);
+    } else
+#endif
+#ifdef SCREEN_VESA
+    if (iflags.usevesa) {
+        vesa_tty_startup(wid, hgt);
     } else
 #endif
         txt_startup(wid, hgt);
@@ -426,39 +480,44 @@ tty_start_screen()
 void
 gr_init()
 {
-    if (iflags.usevga) {
 #ifdef SCREEN_VGA
+    if (iflags.usevga) {
         vga_Init();
+    } else
 #endif
 #ifdef SCREEN_VESA
-    } else if (iflags.usevesa) {
+    if (iflags.usevesa) {
         vesa_Init();
-
+    } else
 #endif
 #ifdef SCREEN_8514
-    } else if (iflags.use8514) {
+    if (iflags.use8514) {
         v8514_Init();
+    } else
 #endif
-    }
+    {}
 }
 
 void
 gr_finish()
 {
     if (iflags.grmode) {
-        if (iflags.usevga) {
 #ifdef SCREEN_VGA
+        if (iflags.usevga) {
             vga_Finish();
+        } else
 #endif
 #ifdef SCREEN_VESA
-        } else if (iflags.usevesa) {
+        if (iflags.usevesa) {
             vesa_Finish();
+        } else
 #endif
 #ifdef SCREEN_8514
-        } else if (iflags.use8514) {
+        if (iflags.use8514) {
             v8514_Finish();
+        } else
 #endif
-        }
+        {}
     }
 }
 
@@ -493,7 +552,8 @@ gr_finish()
  */
 
 void
-xputs(const char *s)
+xputs(s)
+const char *s;
 {
     int col, row;
 
@@ -506,10 +566,17 @@ xputs(const char *s)
     } else if (iflags.usevga) {
         vga_xputs(s, col, row);
 #endif
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_xputs(s, col, row);
+#endif
     }
 }
 
-void xputc(char ch) /* write out character (and attribute) */
+/* same signature as 'putchar()' with potential failure result ignored */
+int
+xputc(ch) /* write out character (and attribute) */
+int ch;
 {
     int i;
     char attribute;
@@ -523,37 +590,54 @@ void xputc(char ch) /* write out character (and attribute) */
     } else if (iflags.usevga) {
         vga_xputc(ch, attribute);
 #endif /*SCREEN_VGA*/
+#ifdef SCREEN_VESA
+    } else if (iflags.usevesa) {
+        vesa_xputc(ch, attribute);
+#endif /*SCREEN_VESA*/
     }
+    return 0;
 }
 
-void xputg(int glyphnum,
-           int ch,
-           unsigned special) /* write out a glyph picture at current location */
+/* write out a glyph picture at current location */
+void xputg(glyphnum, ch, special)
+int glyphnum;
+int ch;
+unsigned special;
 {
     if (!iflags.grmode || !iflags.tile_view) {
-        xputc((char) ch);
+        (void) xputc((char) ch);
 #ifdef SCREEN_VGA
-    } else {
+    } else if (iflags.grmode && iflags.usevga) {
         vga_xputg(glyphnum, ch, special);
+#endif
+#ifdef SCREEN_VESA
+    } else if (iflags.grmode && iflags.usevesa) {
+        vesa_xputg(glyphnum, ch, special);
 #endif
     }
 }
 
 #ifdef POSITIONBAR
 void
-video_update_positionbar(char *posbar)
+video_update_positionbar(posbar)
+char *posbar;
 {
     if (!iflags.grmode)
         return;
 #ifdef SCREEN_VGA
-    else
+    else if (iflags.usevga)
         vga_update_positionbar(posbar);
+#endif
+#ifdef SCREEN_VESA
+    else if (iflags.usevesa)
+        vesa_update_positionbar(posbar);
 #endif
 }
 #endif
 
 void
-adjust_cursor_flags(struct WinDesc *cw)
+adjust_cursor_flags(cw)
+struct WinDesc *cw;
 {
 #ifdef SIMULATE_CURSOR
 #if 0
@@ -583,7 +667,12 @@ void
 DrawCursor()
 {
 #ifdef SCREEN_VGA
-    vga_DrawCursor();
+    if (iflags.usevga)
+        vga_DrawCursor();
+#endif
+#ifdef SCREEN_VESA
+    if (iflags.usevesa)
+        vesa_DrawCursor();
 #endif
 }
 
@@ -591,7 +680,12 @@ void
 HideCursor()
 {
 #ifdef SCREEN_VGA
-    vga_HideCursor();
+    if (iflags.usevga)
+        vga_HideCursor();
+#endif
+#ifdef SCREEN_VESA
+    if (iflags.usevesa)
+        vesa_HideCursor();
 #endif
 }
 
@@ -669,7 +763,7 @@ init_ttycolor()
 #endif
 }
 
-static int convert_uchars(char *, uchar *, int);
+static int FDECL(convert_uchars, (char *, uchar *, int));
 #ifdef VIDEOSHADES
 int
 assign_videoshades(char *choiceptr)
@@ -778,9 +872,10 @@ assign_videocolors(char *colorvals)
 }
 
 static int
-convert_uchars(char *bufp,  /* current pointer */
-               uchar *list, /* return list */
-               int size)
+convert_uchars(bufp, list, size)
+char *bufp;  /* current pointer */
+uchar *list; /* return list */
+int size;
 {
     unsigned int num = 0;
     int count = 0;
@@ -833,7 +928,8 @@ convert_uchars(char *bufp,  /* current pointer */
  *    vga	 (use vga adapter code)
  */
 int
-assign_video(char *sopt)
+assign_video(sopt)
+char *sopt;
 {
     /*
      * debug
@@ -842,7 +938,9 @@ assign_video(char *sopt)
      *	getch();
      */
     iflags.grmode = 0;
+    iflags.hasvesa = 0;
     iflags.hasvga = 0;
+    iflags.usevesa = 0;
     iflags.usevga = 0;
 
     if (strncmpi(sopt, "def", 3) == 0) { /* default */
@@ -880,9 +978,10 @@ assign_video(char *sopt)
 #endif
         /*
          * Auto-detect Priorities (arbitrary for now):
-         *	VGA
+         *	VESA, VGA
          */
-        if (iflags.hasvga) {
+        if (iflags.hasvesa) iflags.usevesa = 1;
+        else if (iflags.hasvga) {
             iflags.usevga = 1;
             /* VGA depends on BIOS to enable function keys*/
             iflags.BIOS = 1;
@@ -895,11 +994,16 @@ assign_video(char *sopt)
 }
 
 void
-tileview(boolean enable)
+tileview(enable)
+boolean enable;
 {
 #ifdef SCREEN_VGA
-    if (iflags.grmode)
+    if (iflags.grmode && iflags.usevga)
         vga_traditional(enable ? FALSE : TRUE);
+#endif
+#ifdef SCREEN_VESA
+    if (iflags.grmode && iflags.usevesa)
+        vesa_traditional(enable ? FALSE : TRUE);
 #endif
 }
 #endif /* NO_TERMS  */
@@ -907,7 +1011,8 @@ tileview(boolean enable)
 #else  /* STUBVIDEO */
 
 void
-tileview(boolean enable)
+tileview(enable)
+boolean enable;
 {
 }
 #endif /* STUBVIDEO */

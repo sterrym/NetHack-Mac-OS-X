@@ -1,13 +1,15 @@
-/* NetHack 3.6	dog.c	$NHDT-Date: 1446808440 2015/11/06 11:14:00 $  $NHDT-Branch: master $:$NHDT-Revision: 1.52 $ */
+/* NetHack 3.6	dog.c	$NHDT-Date: 1554580624 2019/04/06 19:57:04 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.85 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2011. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
-STATIC_DCL int pet_type(void);
+STATIC_DCL int NDECL(pet_type);
 
 void
-newedog(struct monst *mtmp)
+newedog(mtmp)
+struct monst *mtmp;
 {
     if (!mtmp->mextra)
         mtmp->mextra = newmextra();
@@ -18,7 +20,8 @@ newedog(struct monst *mtmp)
 }
 
 void
-free_edog(struct monst *mtmp)
+free_edog(mtmp)
+struct monst *mtmp;
 {
     if (mtmp->mextra && EDOG(mtmp)) {
         free((genericptr_t) EDOG(mtmp));
@@ -28,7 +31,8 @@ free_edog(struct monst *mtmp)
 }
 
 void
-initedog(register struct monst *mtmp)
+initedog(mtmp)
+register struct monst *mtmp;
 {
     mtmp->mtame = is_domestic(mtmp->data) ? 10 : 5;
     mtmp->mpeaceful = 1;
@@ -38,7 +42,7 @@ initedog(register struct monst *mtmp)
     mtmp->meating = 0;
     EDOG(mtmp)->droptime = 0;
     EDOG(mtmp)->dropdist = 10000;
-    EDOG(mtmp)->apport = 10;
+    EDOG(mtmp)->apport = ACURR(A_CHA);
     EDOG(mtmp)->whistletime = 0;
     EDOG(mtmp)->hungrytime = 1000 + monstermoves;
     EDOG(mtmp)->ogoal.x = -1; /* force error if used before set */
@@ -63,7 +67,10 @@ pet_type()
 }
 
 struct monst *
-make_familiar(register struct obj *otmp, xchar x, xchar y, boolean quietly)
+make_familiar(otmp, x, y, quietly)
+register struct obj *otmp;
+xchar x, y;
+boolean quietly;
 {
     struct permonst *pm;
     struct monst *mtmp = 0;
@@ -72,6 +79,7 @@ make_familiar(register struct obj *otmp, xchar x, xchar y, boolean quietly)
     do {
         if (otmp) { /* figurine; otherwise spell */
             int mndx = otmp->corpsenm;
+
             pm = &mons[mndx];
             /* activating a figurine provides one way to exceed the
                maximum number of the target critter created--unless
@@ -181,13 +189,8 @@ makedog()
     context.startingpet_mid = mtmp->m_id;
     /* Horses already wear a saddle */
     if (pettype == PM_PONY && !!(otmp = mksobj(SADDLE, TRUE, FALSE))) {
-        if (mpickobj(mtmp, otmp))
-            panic("merged saddle?");
-        mtmp->misc_worn_check |= W_SADDLE;
         otmp->dknown = otmp->bknown = otmp->rknown = 1;
-        otmp->owornmask = W_SADDLE;
-        otmp->leashmon = mtmp->m_id;
-        update_mon_intrinsics(mtmp, otmp, TRUE, TRUE);
+        put_saddle_on_mon(otmp, mtmp);
     }
 
     if (!petname_used++ && *petname)
@@ -216,7 +219,7 @@ update_mlstmv()
 void
 losedogs()
 {
-    register struct monst *mtmp, *mtmp0 = 0, *mtmp2;
+    register struct monst *mtmp, *mtmp0, *mtmp2;
     int dismissKops = 0;
 
     /*
@@ -271,27 +274,39 @@ losedogs()
         mon_arrive(mtmp, TRUE);
     }
 
-    /* time for migrating monsters to arrive */
+    /* time for migrating monsters to arrive;
+       monsters who belong on this level but fail to arrive get put
+       back onto the list (at head), so traversing it is tricky */
     for (mtmp = migrating_mons; mtmp; mtmp = mtmp2) {
         mtmp2 = mtmp->nmon;
         if (mtmp->mux == u.uz.dnum && mtmp->muy == u.uz.dlevel) {
-            if (mtmp == migrating_mons)
+            /* remove mtmp from migrating_mons list */
+            if (mtmp == migrating_mons) {
                 migrating_mons = mtmp->nmon;
-            else
-                mtmp0->nmon = mtmp->nmon;
+            } else {
+                for (mtmp0 = migrating_mons; mtmp0; mtmp0 = mtmp0->nmon)
+                    if (mtmp0->nmon == mtmp) {
+                        mtmp0->nmon = mtmp->nmon;
+                        break;
+                    }
+                if (!mtmp0)
+                    panic("losedogs: can't find migrating mon");
+            }
             mon_arrive(mtmp, FALSE);
-        } else
-            mtmp0 = mtmp;
+        }
     }
 }
 
 /* called from resurrect() in addition to losedogs() */
 void
-mon_arrive(struct monst *mtmp, boolean with_you)
+mon_arrive(mtmp, with_you)
+struct monst *mtmp;
+boolean with_you;
 {
     struct trap *t;
     xchar xlocale, ylocale, xyloc, xyflags, wander;
     int num_segs;
+    boolean failed_to_place = FALSE;
 
     mtmp->nmon = fmon;
     fmon = mtmp;
@@ -312,13 +327,12 @@ mon_arrive(struct monst *mtmp, boolean with_you)
     mtmp->mstrategy |= STRAT_ARRIVE;
 
     /* make sure mnexto(rloc_to(set_apparxy())) doesn't use stale data */
-    mtmp->mux = u.ux; mtmp->muy = u.uy;
+    mtmp->mux = u.ux, mtmp->muy = u.uy;
     xyloc = mtmp->mtrack[0].x;
     xyflags = mtmp->mtrack[0].y;
     xlocale = mtmp->mtrack[1].x;
     ylocale = mtmp->mtrack[1].y;
-    mtmp->mtrack[0].x = mtmp->mtrack[0].y = 0;
-    mtmp->mtrack[1].x = mtmp->mtrack[1].y = 0;
+    memset(mtmp->mtrack, 0, sizeof mtmp->mtrack);
 
     if (mtmp == u.usteed)
         return; /* don't place steed on the map */
@@ -360,22 +374,22 @@ mon_arrive(struct monst *mtmp, boolean with_you)
         wander = 0;
         break;
     case MIGR_WITH_HERO:
-        xlocale = u.ux; ylocale = u.uy;
+        xlocale = u.ux, ylocale = u.uy;
         break;
     case MIGR_STAIRS_UP:
-        xlocale = xupstair; ylocale = yupstair;
+        xlocale = xupstair, ylocale = yupstair;
         break;
     case MIGR_STAIRS_DOWN:
-        xlocale = xdnstair; ylocale = ydnstair;
+        xlocale = xdnstair, ylocale = ydnstair;
         break;
     case MIGR_LADDER_UP:
-        xlocale = xupladder; ylocale = yupladder;
+        xlocale = xupladder, ylocale = yupladder;
         break;
     case MIGR_LADDER_DOWN:
-        xlocale = xdnladder; ylocale = ydnladder;
+        xlocale = xdnladder, ylocale = ydnladder;
         break;
     case MIGR_SSTAIRS:
-        xlocale = sstairs.sx; ylocale = sstairs.sy;
+        xlocale = sstairs.sx, ylocale = sstairs.sy;
         break;
     case MIGR_PORTAL:
         if (In_endgame(&u.uz)) {
@@ -393,7 +407,7 @@ mon_arrive(struct monst *mtmp, boolean with_you)
             if (t->ttyp == MAGIC_PORTAL)
                 break;
         if (t) {
-            xlocale = t->tx; ylocale = t->ty;
+            xlocale = t->tx, ylocale = t->ty;
             break;
         } else {
             impossible("mon_arrive: no corresponding portal?");
@@ -404,19 +418,28 @@ mon_arrive(struct monst *mtmp, boolean with_you)
         break;
     }
 
+    if ((mtmp->mspare1 & MIGR_LEFTOVERS) != 0L) {
+        /* Pick up the rest of the MIGR_TO_SPECIES objects */
+        if (migrating_objs)
+            deliver_obj_to_mon(mtmp, 0, DF_ALL);
+    }
+
     if (xlocale && wander) {
         /* monster moved a bit; pick a nearby location */
         /* mnearto() deals w/stone, et al */
         char *r = in_rooms(xlocale, ylocale, 0);
+
         if (r && *r) {
             coord c;
+
             /* somexy() handles irregular rooms */
-            if (somexy(&rooms[*r - ROOMOFFSET], &c)) {
-                xlocale = c.x; ylocale = c.y;
-            } else
+            if (somexy(&rooms[*r - ROOMOFFSET], &c))
+                xlocale = c.x, ylocale = c.y;
+            else
                 xlocale = ylocale = 0;
         } else { /* not in a room */
             int i, j;
+
             i = max(1, xlocale - wander);
             j = min(COLNO - 1, xlocale + wander);
             xlocale = rn1(j - i, i);
@@ -429,43 +452,24 @@ mon_arrive(struct monst *mtmp, boolean with_you)
     mtmp->mx = 0; /*(already is 0)*/
     mtmp->my = xyflags;
     if (xlocale)
-        (void) mnearto(mtmp, xlocale, ylocale, FALSE);
-    else {
-        if (!rloc(mtmp, TRUE)) {
-            /*
-             * Failed to place migrating monster,
-             * probably because the level is full.
-             * Dump the monster's cargo and leave the monster dead.
-             */
-            struct obj *obj;
-            while ((obj = mtmp->minvent) != 0) {
-                obj_extract_self(obj);
-                obj_no_longer_held(obj);
-                if (obj->owornmask & W_WEP)
-                    setmnotwielded(mtmp, obj);
-                obj->owornmask = 0L;
-                if (xlocale && ylocale)
-                    place_object(obj, xlocale, ylocale);
-                else if (rloco(obj)) {
-                    if (!get_obj_location(obj, &xlocale, &ylocale, 0))
-                        impossible("Can't find relocated object.");
-                }
-            }
-            (void) mkcorpstat(CORPSE, (struct monst *) 0, mtmp->data, xlocale,
-                              ylocale, CORPSTAT_NONE);
-            mongone(mtmp);
-        }
-    }
+        failed_to_place = !mnearto(mtmp, xlocale, ylocale, FALSE);
+    else
+        failed_to_place = !rloc(mtmp, TRUE);
+
+    if (failed_to_place)
+        m_into_limbo(mtmp); /* try again next time hero comes to this level */
 }
 
 /* heal monster for time spent elsewhere */
 void
-mon_catchup_elapsed_time(struct monst *mtmp,
-                         long nmv)/* number of moves */
+mon_catchup_elapsed_time(mtmp, nmv)
+struct monst *mtmp;
+long nmv; /* number of moves */
 {
     int imv = 0; /* avoid zillions of casts and lint warnings */
 
-#if defined(DEBUG) || defined(BETA)
+#if defined(DEBUG) || (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
+
     if (nmv < 0L) { /* crash likely... */
         panic("catchup from future time?");
         /*NOTREACHED*/
@@ -557,9 +561,9 @@ mon_catchup_elapsed_time(struct monst *mtmp,
 }
 
 /* called when you move to another level */
-/* true for ascension or final escape */
 void
-keepdogs(boolean pets_only)
+keepdogs(pets_only)
+boolean pets_only; /* true for ascension or final escape */
 {
     register struct monst *mtmp, *mtmp2;
     register struct obj *obj;
@@ -638,6 +642,7 @@ keepdogs(boolean pets_only)
                 cnt = count_wsegs(mtmp);
                 num_segs = min(cnt, MAX_NUM_WORMS - 1);
                 wormgone(mtmp);
+                place_monster(mtmp, mtmp->mx, mtmp->my);
             } else
                 num_segs = 0;
 
@@ -667,13 +672,14 @@ keepdogs(boolean pets_only)
     }
 }
 
-/* destination level */
-/* MIGR_xxx destination xy location: */
-/* optional destination coordinates */
 void
-migrate_to_level(register struct monst *mtmp, xchar tolev, xchar xyloc, coord *cc)
+migrate_to_level(mtmp, tolev, xyloc, cc)
+register struct monst *mtmp;
+xchar tolev; /* destination level */
+xchar xyloc; /* MIGR_xxx destination xy location: */
+coord *cc;   /* optional destination coordinates */
 {
-    register struct obj *obj;
+    struct obj *obj;
     d_level new_lev;
     xchar xyflags;
     int num_segs = 0; /* count of worm segments */
@@ -682,11 +688,13 @@ migrate_to_level(register struct monst *mtmp, xchar tolev, xchar xyloc, coord *c
         set_residency(mtmp, TRUE);
 
     if (mtmp->wormno) {
-        register int cnt;
+        int cnt = count_wsegs(mtmp);
+
         /* **** NOTE: worm is truncated to # segs = max wormno size **** */
-        cnt = count_wsegs(mtmp);
-        num_segs = min(cnt, MAX_NUM_WORMS - 1);
-        wormgone(mtmp);
+        num_segs = min(cnt, MAX_NUM_WORMS - 1); /* used below */
+        wormgone(mtmp); /* destroys tail and takes head off map */
+        /* there used to be a place_monster() here for the relmon() below,
+           but it doesn't require the monster to be on the map anymore */
     }
 
     /* set minvent's obj->no_charge to 0 */
@@ -719,16 +727,19 @@ migrate_to_level(register struct monst *mtmp, xchar tolev, xchar xyloc, coord *c
     mtmp->muy = new_lev.dlevel;
     mtmp->mx = mtmp->my = 0; /* this implies migration */
     if (mtmp == context.polearm.hitmon)
-        context.polearm.hitmon = NULL;
+        context.polearm.hitmon = (struct monst *) 0;
 }
 
 /* return quality of food; the lower the better */
 /* fungi will eat even tainted food */
 int
-dogfood(struct monst *mon, register struct obj *obj)
+dogfood(mon, obj)
+struct monst *mon;
+register struct obj *obj;
 {
     struct permonst *mptr = mon->data, *fptr = 0;
-    boolean carni = carnivorous(mptr), herbi = herbivorous(mptr), starving;
+    boolean carni = carnivorous(mptr), herbi = herbivorous(mptr),
+            starving, mblind;
 
     if (is_quest_artifact(obj) || obj_resists(obj, 0, 95))
         return obj->cursed ? TABU : APPORT;
@@ -747,8 +758,10 @@ dogfood(struct monst *mon, register struct obj *obj)
             return obj->cursed ? UNDEF : APPORT;
 
         /* a starving pet will eat almost anything */
-        starving =
-            (mon->mtame && !mon->isminion && EDOG(mon)->mhpmax_penalty);
+        starving = (mon->mtame && !mon->isminion
+                    && EDOG(mon)->mhpmax_penalty);
+        /* even carnivores will eat carrots if they're temporarily blind */
+        mblind = (!mon->mcansee && haseyes(mon->data));
 
         /* ghouls prefer old corpses and unhatchable eggs, yum!
            they'll eat fresh non-veggy corpses and hatchable eggs
@@ -805,11 +818,12 @@ dogfood(struct monst *mon, register struct obj *obj)
         case TIN:
             return metallivorous(mptr) ? ACCFOOD : MANFOOD;
         case APPLE:
-        case CARROT:
             return herbi ? DOGFOOD : starving ? ACCFOOD : MANFOOD;
+        case CARROT:
+            return (herbi || mblind) ? DOGFOOD : starving ? ACCFOOD : MANFOOD;
         case BANANA:
-            return (mptr->mlet == S_YETI)
-                      ? DOGFOOD
+            return (mptr->mlet == S_YETI && herbi)
+                      ? DOGFOOD /* for monkey and ape (tameable), sasquatch */
                       : (herbi || starving)
                          ? ACCFOOD
                          : MANFOOD;
@@ -849,7 +863,9 @@ dogfood(struct monst *mon, register struct obj *obj)
  * succeeded.
  */
 boolean
-tamedog(register struct monst *mtmp, register struct obj *obj)
+tamedog(mtmp, obj)
+register struct monst *mtmp;
+register struct obj *obj;
 {
     /* The Wiz, Medusa and the quest nemeses aren't even made peaceful. */
     if (mtmp->iswiz || mtmp->data == &mons[PM_MEDUSA]
@@ -943,7 +959,9 @@ tamedog(register struct monst *mtmp, register struct obj *obj)
  * If the pet wasn't abused and was very tame, it might revive tame.
  */
 void
-wary_dog(struct monst *mtmp, boolean was_dead)
+wary_dog(mtmp, was_dead)
+struct monst *mtmp;
+boolean was_dead;
 {
     struct edog *edog;
     boolean quietly = was_dead;
@@ -1012,7 +1030,8 @@ wary_dog(struct monst *mtmp, boolean was_dead)
 }
 
 void
-abuse_dog(struct monst *mtmp)
+abuse_dog(mtmp)
+struct monst *mtmp;
 {
     if (!mtmp->mtame)
         return;

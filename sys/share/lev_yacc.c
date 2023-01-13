@@ -11,8 +11,8 @@
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
 #define YYPREFIX "yy"
-/* NetHack 3.6  lev_comp.y	$NHDT-Date: 1449233826 2015/12/04 12:57:06 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.19 $ */
-/*	Copyright (c) 1989 by Jean-Christophe Collet */
+/* NetHack 3.6  lev_comp.y	$NHDT-Date: 1551901401 2019/03/06 19:43:21 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.26 $ */
+/*      Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
@@ -30,78 +30,81 @@
  * and AIX will still see the directive.
  */
 #ifdef _AIX
- #pragma alloca		/* keep leading space! */
+ #pragma alloca         /* keep leading space! */
 #endif
 
 #define SPEC_LEV    /* for USE_OLDARGS (sp_lev.h) */
 #include "hack.h"
 #include "sp_lev.h"
 
-#define ERR		(-1)
+#define ERR             (-1)
 /* many types of things are put in chars for transference to NetHack.
  * since some systems will use signed chars, limit everybody to the
  * same number for portability.
  */
-#define MAX_OF_TYPE	128
+#define MAX_OF_TYPE     128
 
-#define MAX_NESTED_IFS	20
+#define MAX_NESTED_IFS   20
 #define MAX_SWITCH_CASES 20
 
-#define New(type)		\
-	(type *) memset((genericptr_t)alloc(sizeof(type)), 0, sizeof(type))
-#define NewTab(type, size)	(type **) alloc(sizeof(type *) * size)
-#define Free(ptr)		free((genericptr_t)ptr)
+#define New(type) \
+        (type *) memset((genericptr_t) alloc(sizeof (type)), 0, sizeof (type))
+#define NewTab(type, size)      (type **) alloc(sizeof (type *) * size)
+#define Free(ptr)               free((genericptr_t) ptr)
 
-extern void lc_error(const char *, ...);
-extern void lc_warning(const char *, ...);
-extern void yyerror(const char *);
-extern void yywarning(const char *);
-extern int yylex(void);
-int yyparse(void);
+extern void VDECL(lc_error, (const char *, ...));
+extern void VDECL(lc_warning, (const char *, ...));
+extern void FDECL(yyerror, (const char *));
+extern void FDECL(yywarning, (const char *));
+extern int NDECL(yylex);
+int NDECL(yyparse);
 
-extern int get_floor_type(char);
-extern int get_room_type(char *);
-extern int get_trap_type(char *);
-extern int get_monster_id(char *,char);
-extern int get_object_id(char *,char);
-extern boolean check_monster_char(char);
-extern boolean check_object_char(char);
-extern char what_map_char(char);
-extern void scan_map(char *, sp_lev *);
-extern void add_opcode(sp_lev *, int, genericptr_t);
-extern genericptr_t get_last_opcode_data1(sp_lev *, int);
-extern genericptr_t get_last_opcode_data2(sp_lev *, int,int);
-extern boolean check_subrooms(sp_lev *);
-extern boolean write_level_file(char *,sp_lev *);
-extern struct opvar *set_opvar_int(struct opvar *, long);
-extern void add_opvars(sp_lev *, const char *, ...);
-extern void start_level_def(sp_lev * *, char *);
+extern int FDECL(get_floor_type, (CHAR_P));
+extern int FDECL(get_room_type, (char *));
+extern int FDECL(get_trap_type, (char *));
+extern int FDECL(get_monster_id, (char *,CHAR_P));
+extern int FDECL(get_object_id, (char *,CHAR_P));
+extern boolean FDECL(check_monster_char, (CHAR_P));
+extern boolean FDECL(check_object_char, (CHAR_P));
+extern char FDECL(what_map_char, (CHAR_P));
+extern void FDECL(scan_map, (char *, sp_lev *));
+extern void FDECL(add_opcode, (sp_lev *, int, genericptr_t));
+extern genericptr_t FDECL(get_last_opcode_data1, (sp_lev *, int));
+extern genericptr_t FDECL(get_last_opcode_data2, (sp_lev *, int, int));
+extern boolean FDECL(check_subrooms, (sp_lev *));
+extern boolean FDECL(write_level_file, (char *,sp_lev *));
+extern struct opvar *FDECL(set_opvar_int, (struct opvar *, long));
+extern void VDECL(add_opvars, (sp_lev *, const char *, ...));
+extern void FDECL(start_level_def, (sp_lev * *, char *));
 
-extern struct lc_funcdefs *funcdef_new(long,char *);
-extern void funcdef_free_all(struct lc_funcdefs *);
-extern struct lc_funcdefs *funcdef_defined(struct lc_funcdefs *,char *, int);
-extern char *funcdef_paramtypes(struct lc_funcdefs *);
-extern char *decode_parm_str(char *);
+extern struct lc_funcdefs *FDECL(funcdef_new, (long,char *));
+extern void FDECL(funcdef_free_all, (struct lc_funcdefs *));
+extern struct lc_funcdefs *FDECL(funcdef_defined, (struct lc_funcdefs *,
+                                                   char *, int));
+extern char *FDECL(funcdef_paramtypes, (struct lc_funcdefs *));
+extern char *FDECL(decode_parm_str, (char *));
 
-extern struct lc_vardefs *vardef_new(long,char *);
-extern void vardef_free_all(struct lc_vardefs *);
-extern struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *, int);
+extern struct lc_vardefs *FDECL(vardef_new, (long,char *));
+extern void FDECL(vardef_free_all, (struct lc_vardefs *));
+extern struct lc_vardefs *FDECL(vardef_defined, (struct lc_vardefs *,
+                                                 char *, int));
 
-extern void break_stmt_start(void);
-extern void break_stmt_end(sp_lev *);
-extern void break_stmt_new(sp_lev *, long);
+extern void NDECL(break_stmt_start);
+extern void FDECL(break_stmt_end, (sp_lev *));
+extern void FDECL(break_stmt_new, (sp_lev *, long));
 
-extern void splev_add_from(sp_lev *, sp_lev *);
+extern void FDECL(splev_add_from, (sp_lev *, sp_lev *));
 
-extern void check_vardef_type(struct lc_vardefs *, char *, long);
-extern void vardef_used(struct lc_vardefs *, char *);
-extern struct lc_vardefs *add_vardef_type(struct lc_vardefs *, char *, long);
+extern void FDECL(check_vardef_type, (struct lc_vardefs *, char *, long));
+extern void FDECL(vardef_used, (struct lc_vardefs *, char *));
+extern struct lc_vardefs *FDECL(add_vardef_type, (struct lc_vardefs *,
+                                                  char *, long));
 
-extern int reverse_jmp_opcode(int);
+extern int FDECL(reverse_jmp_opcode, (int));
 
 struct coord {
-	long x;
-	long y;
+    long x;
+    long y;
 };
 
 struct forloopdef {
@@ -123,7 +126,8 @@ int obj_containment = 0;
 
 int in_container_obj = 0;
 
-/* integer value is possibly an inconstant value (eg. dice notation or a variable) */
+/* integer value is possibly an inconstant value (eg. dice notation
+   or a variable) */
 int is_inconstant_number = 0;
 
 int in_switch_statement = 0;
@@ -136,7 +140,7 @@ int n_switch_case_list = 0;
 int allow_break_statements = 0;
 struct lc_breakdef *break_list = NULL;
 
-extern struct lc_vardefs *variable_definitions;
+extern struct lc_vardefs *vardefs; /* variable definitions */
 
 
 struct lc_vardefs *function_tmp_var_defs = NULL;
@@ -155,39 +159,39 @@ extern char curr_token[512];
 
 typedef union
 {
-	long	i;
-	char*	map;
-	struct {
-		long room;
-		long wall;
-		long door;
-	} corpos;
+    long    i;
+    char    *map;
     struct {
-	long area;
-	long x1;
-	long y1;
-	long x2;
-	long y2;
+        long room;
+        long wall;
+        long door;
+    } corpos;
+    struct {
+        long area;
+        long x1;
+        long y1;
+        long x2;
+        long y2;
     } lregn;
     struct {
-	long x;
-	long y;
+        long x;
+        long y;
     } crd;
     struct {
-	long ter;
-	long lit;
+        long ter;
+        long lit;
     } terr;
     struct {
-	long height;
-	long width;
+        long height;
+        long width;
     } sze;
     struct {
-	long die;
-	long num;
+        long die;
+        long num;
     } dice;
     struct {
-	long cfunc;
-	char *varstr;
+        long cfunc;
+        char *varstr;
     } meth;
 } YYSTYPE;
 #define CHAR 257
@@ -2602,21 +2606,22 @@ case 5:
 {
 			if (fatal_error > 0) {
 				(void) fprintf(stderr,
-				"%s: %d errors detected for level \"%s\". No output created!\n",
+              "%s: %d errors detected for level \"%s\". No output created!\n",
 					       fname, fatal_error, yyvsp[-2].map);
 				fatal_error = 0;
 				got_errors++;
 			} else if (!got_errors) {
 				if (!write_level_file(yyvsp[-2].map, splev)) {
-				    lc_error("Can't write output file for '%s'!", yyvsp[-2].map);
+                                    lc_error("Can't write output file for '%s'!",
+                                             yyvsp[-2].map);
 				    exit(EXIT_FAILURE);
 				}
 			}
 			Free(yyvsp[-2].map);
 			Free(splev);
 			splev = NULL;
-			vardef_free_all(variable_definitions);
-			variable_definitions = NULL;
+			vardef_free_all(vardefs);
+			vardefs = NULL;
 		  }
 break;
 case 6:
@@ -2630,10 +2635,11 @@ case 7:
 		      start_level_def(&splev, yyvsp[-2].map);
 		      if (yyvsp[0].i == -1) {
 			  add_opvars(splev, "iiiiiiiio",
-				     VA_PASS9(LVLINIT_MAZEGRID,HWALL,0,0,
+				     VA_PASS9(LVLINIT_MAZEGRID, HWALL, 0,0,
 					      0,0,0,0, SPO_INITLEVEL));
 		      } else {
-			  long bg = what_map_char((char) yyvsp[0].i);
+			  int bg = (int) what_map_char((char) yyvsp[0].i);
+
 			  add_opvars(splev, "iiiiiiiio",
 				     VA_PASS9(LVLINIT_SOLIDFILL, bg, 0,0,
 					      0,0,0,0, SPO_INITLEVEL));
@@ -2657,22 +2663,26 @@ case 9:
 break;
 case 10:
 {
-		      long filling = yyvsp[0].terr.ter;
+		      int filling = (int) yyvsp[0].terr.ter;
+
 		      if (filling == INVALID_TYPE || filling >= MAX_TYPE)
 			  lc_error("INIT_MAP: Invalid fill char type.");
 		      add_opvars(splev, "iiiiiiiio",
-				 LVLINIT_SOLIDFILL,filling,0,(long)yyvsp[0].terr.lit, 0,0,0,0, SPO_INITLEVEL);
+				 VA_PASS9(LVLINIT_SOLIDFILL, filling,
+                                          0, (int) yyvsp[0].terr.lit,
+                                          0,0,0,0, SPO_INITLEVEL));
 		      max_x_map = COLNO-1;
 		      max_y_map = ROWNO;
 		  }
 break;
 case 11:
 {
-		      long filling = what_map_char((char) yyvsp[0].i);
+		      int filling = (int) what_map_char((char) yyvsp[0].i);
+
 		      if (filling == INVALID_TYPE || filling >= MAX_TYPE)
 			  lc_error("INIT_MAP: Invalid fill char type.");
-		      add_opvars(splev, "iiiiiiiio",
-				 VA_PASS9(LVLINIT_MAZEGRID,filling,0,0,
+                      add_opvars(splev, "iiiiiiiio",
+				 VA_PASS9(LVLINIT_MAZEGRID, filling, 0,0,
 					  0,0,0,0, SPO_INITLEVEL));
 		      max_x_map = COLNO-1;
 		      max_y_map = ROWNO;
@@ -2687,13 +2697,14 @@ case 12:
 break;
 case 13:
 {
-		      long fg = what_map_char((char) yyvsp[-11].i);
-		      long bg = what_map_char((char) yyvsp[-9].i);
-		      long smoothed = yyvsp[-7].i;
-		      long joined = yyvsp[-5].i;
-		      long lit = yyvsp[-3].i;
-		      long walled = yyvsp[-1].i;
-		      long filling = yyvsp[0].i;
+                      int fg = (int) what_map_char((char) yyvsp[-11].i),
+                          bg = (int) what_map_char((char) yyvsp[-9].i);
+                      int smoothed = (int) yyvsp[-7].i,
+                          joined = (int) yyvsp[-5].i,
+                          lit = (int) yyvsp[-3].i,
+                          walled = (int) yyvsp[-1].i,
+                          filling = (int) yyvsp[0].i;
+
 		      if (fg == INVALID_TYPE || fg >= MAX_TYPE)
 			  lc_error("INIT_MAP: Invalid foreground type.");
 		      if (bg == INVALID_TYPE || bg >= MAX_TYPE)
@@ -2705,8 +2716,8 @@ case 13:
 			  lc_error("INIT_MAP: Invalid fill char type.");
 
 		      add_opvars(splev, "iiiiiiiio",
-				 VA_PASS9(LVLINIT_MINES,filling,walled,lit,
-					  joined,smoothed,bg,fg,
+				 VA_PASS9(LVLINIT_MINES, filling, walled, lit,
+					  joined, smoothed, bg, fg,
 					  SPO_INITLEVEL));
 			max_x_map = COLNO-1;
 			max_y_map = ROWNO;
@@ -2750,7 +2761,8 @@ case 22:
 break;
 case 23:
 {
-		      add_opvars(splev, "io", VA_PASS2(yyvsp[0].i, SPO_LEVEL_FLAGS));
+		      add_opvars(splev, "io",
+                                 VA_PASS2((int) yyvsp[0].i, SPO_LEVEL_FLAGS));
 		  }
 break;
 case 24:
@@ -2781,74 +2793,80 @@ break;
 case 96:
 {
 		      struct lc_vardefs *vd;
-		      if ((vd = vardef_defined(variable_definitions, yyvsp[0].map, 1))) {
+
+		      if ((vd = vardef_defined(vardefs, yyvsp[0].map, 1))) {
 			  if (!(vd->var_type & SPOVAR_ARRAY))
-			      lc_error("Trying to shuffle non-array variable '%s'", yyvsp[0].map);
-		      } else lc_error("Trying to shuffle undefined variable '%s'", yyvsp[0].map);
+			      lc_error("Trying to shuffle non-array variable '%s'",
+                                       yyvsp[0].map);
+		      } else
+                          lc_error("Trying to shuffle undefined variable '%s'",
+                                   yyvsp[0].map);
 		      add_opvars(splev, "so", VA_PASS2(yyvsp[0].map, SPO_SHUFFLE_ARRAY));
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 97:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-2].map, SPOVAR_INT);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-2].map, SPOVAR_INT);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-2].map, SPO_VAR_INIT));
 		      Free(yyvsp[-2].map);
 		  }
 break;
 case 98:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_SEL);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map, SPOVAR_SEL);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
 		  }
 break;
 case 99:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-2].map, SPOVAR_STRING);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-2].map, SPOVAR_STRING);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-2].map, SPO_VAR_INIT));
 		      Free(yyvsp[-2].map);
 		  }
 break;
 case 100:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_MAPCHAR);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map, SPOVAR_MAPCHAR);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
 		  }
 break;
 case 101:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_MONST);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map, SPOVAR_MONST);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
 		  }
 break;
 case 102:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_OBJ);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map, SPOVAR_OBJ);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
 		  }
 break;
 case 103:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-2].map, SPOVAR_COORD);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-2].map, SPOVAR_COORD);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-2].map, SPO_VAR_INIT));
 		      Free(yyvsp[-2].map);
 		  }
 break;
 case 104:
 {
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-2].map, SPOVAR_REGION);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-2].map, SPOVAR_REGION);
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-2].map, SPO_VAR_INIT));
 		      Free(yyvsp[-2].map);
 		  }
 break;
 case 105:
 {
-		      long n_items = yyvsp[-1].i;
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_INT|SPOVAR_ARRAY);
+		      int n_items = (int) yyvsp[-1].i;
+
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map,
+                                                SPOVAR_INT | SPOVAR_ARRAY);
 		      add_opvars(splev, "iso",
 				 VA_PASS3(n_items, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
@@ -2856,8 +2874,10 @@ case 105:
 break;
 case 106:
 {
-		      long n_items = yyvsp[-1].i;
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_COORD|SPOVAR_ARRAY);
+		      int n_items = (int) yyvsp[-1].i;
+
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map,
+                                                SPOVAR_COORD | SPOVAR_ARRAY);
 		      add_opvars(splev, "iso",
 				 VA_PASS3(n_items, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
@@ -2865,8 +2885,10 @@ case 106:
 break;
 case 107:
 {
-		      long n_items = yyvsp[-1].i;
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_REGION|SPOVAR_ARRAY);
+                      int n_items = (int) yyvsp[-1].i;
+
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map,
+                                                SPOVAR_REGION | SPOVAR_ARRAY);
 		      add_opvars(splev, "iso",
 				 VA_PASS3(n_items, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
@@ -2874,8 +2896,10 @@ case 107:
 break;
 case 108:
 {
-		      long n_items = yyvsp[-1].i;
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-6].map, SPOVAR_MAPCHAR|SPOVAR_ARRAY);
+                      int n_items = (int) yyvsp[-1].i;
+
+		      vardefs = add_vardef_type(vardefs, yyvsp[-6].map,
+                                                SPOVAR_MAPCHAR | SPOVAR_ARRAY);
 		      add_opvars(splev, "iso",
 				 VA_PASS3(n_items, yyvsp[-6].map, SPO_VAR_INIT));
 		      Free(yyvsp[-6].map);
@@ -2883,8 +2907,10 @@ case 108:
 break;
 case 109:
 {
-		      long n_items = yyvsp[-1].i;
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-6].map, SPOVAR_MONST|SPOVAR_ARRAY);
+		      int n_items = (int) yyvsp[-1].i;
+
+		      vardefs = add_vardef_type(vardefs, yyvsp[-6].map,
+                                                SPOVAR_MONST | SPOVAR_ARRAY);
 		      add_opvars(splev, "iso",
 				 VA_PASS3(n_items, yyvsp[-6].map, SPO_VAR_INIT));
 		      Free(yyvsp[-6].map);
@@ -2892,8 +2918,10 @@ case 109:
 break;
 case 110:
 {
-		      long n_items = yyvsp[-1].i;
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-6].map, SPOVAR_OBJ|SPOVAR_ARRAY);
+                      int n_items = (int) yyvsp[-1].i;
+
+		      vardefs = add_vardef_type(vardefs, yyvsp[-6].map,
+                                                SPOVAR_OBJ | SPOVAR_ARRAY);
 		      add_opvars(splev, "iso",
 				 VA_PASS3(n_items, yyvsp[-6].map, SPO_VAR_INIT));
 		      Free(yyvsp[-6].map);
@@ -2901,8 +2929,10 @@ case 110:
 break;
 case 111:
 {
-		      long n_items = yyvsp[-1].i;
-		      variable_definitions = add_vardef_type(variable_definitions, yyvsp[-4].map, SPOVAR_STRING|SPOVAR_ARRAY);
+                      int n_items = (int) yyvsp[-1].i;
+
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map,
+                                                SPOVAR_STRING | SPOVAR_ARRAY);
 		      add_opvars(splev, "iso",
 				 VA_PASS3(n_items, yyvsp[-4].map, SPO_VAR_INIT));
 		      Free(yyvsp[-4].map);
@@ -3005,8 +3035,8 @@ case 126:
 		      splev = &(funcdef->code);
 		      Free(yyvsp[-1].map);
 		      curr_function = funcdef;
-		      function_tmp_var_defs = variable_definitions;
-		      variable_definitions = NULL;
+		      function_tmp_var_defs = vardefs;
+		      vardefs = NULL;
 		  }
 break;
 case 127:
@@ -3020,21 +3050,25 @@ case 128:
 		      splev = function_splev_backup;
 		      in_function_definition--;
 		      curr_function = NULL;
-		      vardef_free_all(variable_definitions);
-		      variable_definitions = function_tmp_var_defs;
+		      vardef_free_all(vardefs);
+		      vardefs = function_tmp_var_defs;
 		  }
 break;
 case 129:
 {
 		      struct lc_funcdefs *tmpfunc;
+
 		      tmpfunc = funcdef_defined(function_definitions, yyvsp[-3].map, 1);
 		      if (tmpfunc) {
-			  long l;
-			  long nparams = strlen( yyvsp[-1].map );
+			  int l;
+			  int nparams = (int) strlen(yyvsp[-1].map);
 			  char *fparamstr = funcdef_paramtypes(tmpfunc);
+
 			  if (strcmp(yyvsp[-1].map, fparamstr)) {
 			      char *tmps = strdup(decode_parm_str(fparamstr));
-			      lc_error("Function '%s' requires params '%s', got '%s' instead.", yyvsp[-3].map, tmps, decode_parm_str(yyvsp[-1].map));
+
+			      lc_error("Function '%s' requires params '%s', got '%s' instead.",
+                                       yyvsp[-3].map, tmps, decode_parm_str(yyvsp[-1].map));
 			      Free(tmps);
 			  }
 			  Free(fparamstr);
@@ -3042,9 +3076,11 @@ case 129:
 			  if (!(tmpfunc->n_called)) {
 			      /* we haven't called the function yet, so insert it in the code */
 			      struct opvar *jmp = New(struct opvar);
+
 			      set_opvar_int(jmp, splev->n_opcodes+1);
 			      add_opcode(splev, SPO_PUSH, jmp);
-			      add_opcode(splev, SPO_JMP, NULL); /* we must jump past it first, then CALL it, due to RETURN. */
+                              /* we must jump past it first, then CALL it, due to RETURN. */
+			      add_opcode(splev, SPO_JMP, NULL);
 
 			      tmpfunc->addr = splev->n_opcodes;
 
@@ -3059,9 +3095,10 @@ case 129:
 			      }
 
 			      splev_add_from(splev, &(tmpfunc->code));
-			      set_opvar_int(jmp, splev->n_opcodes - jmp->vardata.l);
+			      set_opvar_int(jmp,
+                                            splev->n_opcodes - jmp->vardata.l);
 			  }
-			  l = tmpfunc->addr - splev->n_opcodes - 2;
+			  l = (int) (tmpfunc->addr - splev->n_opcodes - 2);
 			  add_opvars(splev, "iio",
 				     VA_PASS3(nparams, l, SPO_CALL));
 			  tmpfunc->n_called++;
@@ -3090,7 +3127,7 @@ case 133:
 {
 		      /* val > rn2(100) */
 		      add_opvars(splev, "iio",
-				 VA_PASS3((long)yyvsp[0].i, 100, SPO_RN2));
+				 VA_PASS3((int) yyvsp[0].i, 100, SPO_RN2));
 		      yyval.i = SPO_JG;
                   }
 break;
@@ -3114,6 +3151,7 @@ break;
 case 137:
 {
 		      struct opvar *chkjmp;
+
 		      if (in_switch_statement > 0)
 			  lc_error("Cannot nest switch-statements.");
 
@@ -3178,6 +3216,7 @@ case 141:
 {
 		      if (n_switch_case_list < MAX_SWITCH_CASES) {
 			  struct opvar *tmppush = New(struct opvar);
+
 			  set_opvar_int(tmppush, splev->n_opcodes);
 			  switch_case_value[n_switch_case_list] = yyvsp[-1].i;
 			  switch_case_list[n_switch_case_list++] = tmppush;
@@ -3222,17 +3261,16 @@ case 148:
 		      }
 
 		      /* first, define a variable for the for-loop end value */
-		      snprintf(buf, 255, "%s end", yyvsp[-4].map);
+		      Sprintf(buf, "%s end", yyvsp[-4].map);
 		      /* the value of which is already in stack (the 2nd math_expr) */
 		      add_opvars(splev, "iso", VA_PASS3(0, buf, SPO_VAR_INIT));
 
-		      variable_definitions = add_vardef_type(variable_definitions,
-							     yyvsp[-4].map, SPOVAR_INT);
+		      vardefs = add_vardef_type(vardefs, yyvsp[-4].map, SPOVAR_INT);
 		      /* define the for-loop variable. value is in stack (1st math_expr) */
 		      add_opvars(splev, "iso", VA_PASS3(0, yyvsp[-4].map, SPO_VAR_INIT));
 
 		      /* calculate value for the loop "step" variable */
-		      snprintf(buf2, 255, "%s step", yyvsp[-4].map);
+		      Sprintf(buf2, "%s step", yyvsp[-4].map);
 		      /* end - start */
 		      add_opvars(splev, "vvo",
 				 VA_PASS3(buf, yyvsp[-4].map, SPO_MATH_SUB));
@@ -3257,10 +3295,12 @@ case 149:
 break;
 case 150:
 {
+                      int l;
 		      char buf[256], buf2[256];
+
 		      n_forloops--;
-		      snprintf(buf, 255, "%s step", forloop_list[n_forloops].varname);
-		      snprintf(buf2, 255, "%s end", forloop_list[n_forloops].varname);
+		      Sprintf(buf, "%s step", forloop_list[n_forloops].varname);
+		      Sprintf(buf2, "%s end", forloop_list[n_forloops].varname);
 		      /* compare for-loop var to end value */
 		      add_opvars(splev, "vvo",
 				 VA_PASS3(forloop_list[n_forloops].varname,
@@ -3274,10 +3314,9 @@ case 150:
 				 VA_PASS3(0, forloop_list[n_forloops].varname,
 					  SPO_VAR_INIT));
 		      /* jump back if compared values were not equal */
-		      add_opvars(splev, "io",
-				 VA_PASS2(
-		    forloop_list[n_forloops].jmp_point - splev->n_opcodes - 1,
-					  SPO_JNE));
+                      l = (int) (forloop_list[n_forloops].jmp_point
+                                 - splev->n_opcodes - 1);
+		      add_opvars(splev, "io", VA_PASS2(l, SPO_JNE));
 		      Free(forloop_list[n_forloops].varname);
 		      break_stmt_end(splev);
 		  }
@@ -3304,10 +3343,11 @@ case 152:
 		      add_opvars(splev, "oio", VA_PASS3(SPO_COPY, 0, SPO_CMP));
 
 		      tmppush = (struct opvar *) if_list[--n_if_list];
-		      set_opvar_int(tmppush, tmppush->vardata.l - splev->n_opcodes-1);
+		      set_opvar_int(tmppush,
+                                    tmppush->vardata.l - splev->n_opcodes-1);
 		      add_opcode(splev, SPO_PUSH, tmppush);
 		      add_opcode(splev, SPO_JG, NULL);
-		      add_opcode(splev, SPO_POP, NULL); /* get rid of the count value in stack */
+		      add_opcode(splev, SPO_POP, NULL); /* discard count */
 		      break_stmt_end(splev);
 		  }
 break;
@@ -3336,8 +3376,10 @@ case 154:
 {
 		      if (n_if_list > 0) {
 			  struct opvar *tmppush;
+
 			  tmppush = (struct opvar *) if_list[--n_if_list];
-			  set_opvar_int(tmppush, splev->n_opcodes - tmppush->vardata.l);
+			  set_opvar_int(tmppush,
+                                        splev->n_opcodes - tmppush->vardata.l);
 		      } else lc_error("IF: Huh?!  No start address?");
 		  }
 break;
@@ -3371,8 +3413,10 @@ case 157:
 {
 		      if (n_if_list > 0) {
 			  struct opvar *tmppush;
+
 			  tmppush = (struct opvar *) if_list[--n_if_list];
-			  set_opvar_int(tmppush, splev->n_opcodes - tmppush->vardata.l);
+			  set_opvar_int(tmppush,
+                                        splev->n_opcodes - tmppush->vardata.l);
 		      } else lc_error("IF: Huh?!  No start address?");
 		  }
 break;
@@ -3389,7 +3433,8 @@ case 158:
 
 			  tmppush2 = (struct opvar *) if_list[--n_if_list];
 
-			  set_opvar_int(tmppush2, splev->n_opcodes - tmppush2->vardata.l);
+			  set_opvar_int(tmppush2,
+                                      splev->n_opcodes - tmppush2->vardata.l);
 			  if_list[n_if_list++] = tmppush;
 		      } else lc_error("IF: Huh?!  No else-part address?");
 		  }
@@ -3588,7 +3633,7 @@ break;
 case 192:
 {
 		      add_opvars(splev, "ciisiio",
-				 VA_PASS7(0, 0, 1, (char *)0, 0, 0, SPO_MAP));
+				 VA_PASS7(0, 0, 1, (char *) 0, 0, 0, SPO_MAP));
 		      max_x_map = COLNO-1;
 		      max_y_map = ROWNO;
 		  }
@@ -3596,15 +3641,15 @@ break;
 case 193:
 {
 		      add_opvars(splev, "cii",
-				 VA_PASS3(SP_COORD_PACK((yyvsp[-4].i),(yyvsp[-2].i)),
-					  1, (long)yyvsp[-1].i));
+				 VA_PASS3(SP_COORD_PACK((yyvsp[-4].i), (yyvsp[-2].i)),
+					  1, (int) yyvsp[-1].i));
 		      scan_map(yyvsp[0].map, splev);
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 194:
 {
-		      add_opvars(splev, "ii", VA_PASS2(2, (long)yyvsp[-1].i));
+		      add_opvars(splev, "ii", VA_PASS2(2, (int) yyvsp[-1].i));
 		      scan_map(yyvsp[0].map, splev);
 		      Free(yyvsp[0].map);
 		  }
@@ -3636,6 +3681,7 @@ break;
 case 203:
 {
 		      struct opvar *stopit = New(struct opvar);
+
 		      set_opvar_int(stopit, SP_M_V_END);
 		      add_opcode(splev, SPO_PUSH, stopit);
 		      yyval.i = 0x0000;
@@ -3657,28 +3703,28 @@ break;
 case 206:
 {
 		      add_opvars(splev, "ii",
-				 VA_PASS2((long)yyvsp[0].i, SP_M_V_PEACEFUL));
+				 VA_PASS2((int) yyvsp[0].i, SP_M_V_PEACEFUL));
 		      yyval.i = 0x0002;
 		  }
 break;
 case 207:
 {
 		      add_opvars(splev, "ii",
-				 VA_PASS2((long)yyvsp[0].i, SP_M_V_ASLEEP));
+				 VA_PASS2((int) yyvsp[0].i, SP_M_V_ASLEEP));
 		      yyval.i = 0x0004;
 		  }
 break;
 case 208:
 {
 		      add_opvars(splev, "ii",
-				 VA_PASS2((long)yyvsp[0].i, SP_M_V_ALIGN));
+				 VA_PASS2((int) yyvsp[0].i, SP_M_V_ALIGN));
 		      yyval.i = 0x0008;
 		  }
 break;
 case 209:
 {
 		      add_opvars(splev, "ii",
-				 VA_PASS2((long)yyvsp[-1].i, SP_M_V_APPEAR));
+				 VA_PASS2((int) yyvsp[-1].i, SP_M_V_APPEAR));
 		      yyval.i = 0x0010;
 		  }
 break;
@@ -3745,13 +3791,14 @@ break;
 case 220:
 {
 		      add_opvars(splev, "ii",
-				 VA_PASS2((long)yyvsp[0].i, SP_M_V_SEENTRAPS));
+				 VA_PASS2((int) yyvsp[0].i, SP_M_V_SEENTRAPS));
 		      yyval.i = 0x8000;
 		  }
 break;
 case 221:
 {
 		      int token = get_trap_type(yyvsp[0].map);
+
 		      if (token == ERR || token == 0)
 			  lc_error("Unknown trap type '%s'!", yyvsp[0].map);
                       Free(yyvsp[0].map);
@@ -3777,15 +3824,19 @@ case 223:
 break;
 case 224:
 {
-		      long cnt = 0;
-		      if (in_container_obj) cnt |= SP_OBJ_CONTENT;
+		      int cnt = 0;
+
+		      if (in_container_obj)
+                          cnt |= SP_OBJ_CONTENT;
 		      add_opvars(splev, "io", VA_PASS2(cnt, SPO_OBJECT));
 		  }
 break;
 case 225:
 {
-		      long cnt = SP_OBJ_CONTAINER;
-		      if (in_container_obj) cnt |= SP_OBJ_CONTENT;
+		      int cnt = SP_OBJ_CONTAINER;
+
+		      if (in_container_obj)
+                          cnt |= SP_OBJ_CONTENT;
 		      add_opvars(splev, "io", VA_PASS2(cnt, SPO_OBJECT));
 		      in_container_obj++;
 		      break_stmt_start();
@@ -3824,7 +3875,7 @@ break;
 case 230:
 {
 		      add_opvars(splev, "ii",
-				 VA_PASS2((long)yyvsp[0].i, SP_O_V_CURSE));
+				 VA_PASS2((int) yyvsp[0].i, SP_O_V_CURSE));
 		      yyval.i = 0x0001;
 		  }
 break;
@@ -3860,7 +3911,7 @@ case 235:
 break;
 case 236:
 {
-		      add_opvars(splev, "ii", VA_PASS2((long)yyvsp[0].i, SP_O_V_LIT));
+		      add_opvars(splev, "ii", VA_PASS2((int) yyvsp[0].i, SP_O_V_LIT));
 		      yyval.i = 0x0040;
 		  }
 break;
@@ -3890,7 +3941,8 @@ case 239:
 break;
 case 240:
 {
-		      add_opvars(splev, "ii", VA_PASS2(yyvsp[0].i, SP_O_V_TRAPPED));
+		      add_opvars(splev, "ii",
+                                 VA_PASS2((int) yyvsp[0].i, SP_O_V_TRAPPED));
 		      yyval.i = 0x0400;
 		  }
 break;
@@ -3920,7 +3972,7 @@ case 244:
 break;
 case 245:
 {
-		      add_opvars(splev, "io", VA_PASS2((long)yyvsp[-2].i, SPO_TRAP));
+		      add_opvars(splev, "io", VA_PASS2((int) yyvsp[-2].i, SPO_TRAP));
 		  }
 break;
 case 246:
@@ -3954,14 +4006,14 @@ break;
 case 247:
 {
 		      add_opvars(splev, "iiio",
-				 VA_PASS4((long)yyvsp[0].i, 1, 0, SPO_MAZEWALK));
+				 VA_PASS4((int) yyvsp[0].i, 1, 0, SPO_MAZEWALK));
 		  }
 break;
 case 248:
 {
 		      add_opvars(splev, "iiio",
-				 VA_PASS4((long)yyvsp[-3].i, (long)yyvsp[-1].i,
-					  (long)yyvsp[0].i, SPO_MAZEWALK));
+				 VA_PASS4((int) yyvsp[-3].i, (int) yyvsp[-1].i,
+					  (int) yyvsp[0].i, SPO_MAZEWALK));
 		  }
 break;
 case 249:
@@ -3979,13 +4031,13 @@ break;
 case 251:
 {
 		      add_opvars(splev, "io",
-				 VA_PASS2((long)yyvsp[0].i, SPO_LADDER));
+				 VA_PASS2((int) yyvsp[0].i, SPO_LADDER));
 		  }
 break;
 case 252:
 {
 		      add_opvars(splev, "io",
-				 VA_PASS2((long)yyvsp[0].i, SPO_STAIR));
+				 VA_PASS2((int) yyvsp[0].i, SPO_STAIR));
 		  }
 break;
 case 253:
@@ -3993,8 +4045,8 @@ case 253:
 		      add_opvars(splev, "iiiii iiiii iiso",
 				 VA_PASS14(yyvsp[-4].lregn.x1, yyvsp[-4].lregn.y1, yyvsp[-4].lregn.x2, yyvsp[-4].lregn.y2, yyvsp[-4].lregn.area,
 					   yyvsp[-2].lregn.x1, yyvsp[-2].lregn.y1, yyvsp[-2].lregn.x2, yyvsp[-2].lregn.y2, yyvsp[-2].lregn.area,
-				      (long)((yyvsp[0].i) ? LR_UPSTAIR : LR_DOWNSTAIR),
-					   0, (char *)0, SPO_LEVREGION));
+				     (long) ((yyvsp[0].i) ? LR_UPSTAIR : LR_DOWNSTAIR),
+					   0, (char *) 0, SPO_LEVREGION));
 		  }
 break;
 case 254:
@@ -4025,8 +4077,8 @@ case 256:
 		      add_opvars(splev, "iiiii iiiii iiso",
 				 VA_PASS14(yyvsp[-2].lregn.x1, yyvsp[-2].lregn.y1, yyvsp[-2].lregn.x2, yyvsp[-2].lregn.y2, yyvsp[-2].lregn.area,
 					   yyvsp[0].lregn.x1, yyvsp[0].lregn.y1, yyvsp[0].lregn.x2, yyvsp[0].lregn.y2, yyvsp[0].lregn.area,
-					   (long)LR_BRANCH, 0,
-					   (char *)0, SPO_LEVREGION));
+					   (long) LR_BRANCH, 0,
+					   (char *) 0, SPO_LEVREGION));
 		  }
 break;
 case 257:
@@ -4247,16 +4299,17 @@ case 304:
 break;
 case 305:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_STRING);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_STRING);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 306:
 {
-		      check_vardef_type(variable_definitions, yyvsp[-3].map, SPOVAR_STRING|SPOVAR_ARRAY);
-		      vardef_used(variable_definitions, yyvsp[-3].map);
+		      check_vardef_type(vardefs, yyvsp[-3].map,
+                                        SPOVAR_STRING | SPOVAR_ARRAY);
+		      vardef_used(vardefs, yyvsp[-3].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[-3].map));
 		      Free(yyvsp[-3].map);
 		  }
@@ -4278,16 +4331,17 @@ case 309:
 break;
 case 310:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_COORD);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_COORD);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 311:
 {
-		      check_vardef_type(variable_definitions, yyvsp[-3].map, SPOVAR_COORD|SPOVAR_ARRAY);
-		      vardef_used(variable_definitions, yyvsp[-3].map);
+		      check_vardef_type(vardefs, yyvsp[-3].map,
+                                        SPOVAR_COORD | SPOVAR_ARRAY);
+		      vardef_used(vardefs, yyvsp[-3].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[-3].map));
 		      Free(yyvsp[-3].map);
 		  }
@@ -4295,7 +4349,8 @@ break;
 case 312:
 {
 		      if (yyvsp[-3].i < 0 || yyvsp[-1].i < 0 || yyvsp[-3].i >= COLNO || yyvsp[-1].i >= ROWNO)
-			  lc_error("Coordinates (%li,%li) out of map range!", yyvsp[-3].i, yyvsp[-1].i);
+                          lc_error("Coordinates (%li,%li) out of map range!",
+                                   yyvsp[-3].i, yyvsp[-1].i);
 		      yyval.i = SP_COORD_PACK(yyvsp[-3].i, yyvsp[-1].i);
 		  }
 break;
@@ -4306,7 +4361,7 @@ case 313:
 break;
 case 314:
 {
-		      yyval.i = SP_COORD_PACK_RANDOM( yyvsp[-1].i );
+		      yyval.i = SP_COORD_PACK_RANDOM(yyvsp[-1].i);
 		  }
 break;
 case 315:
@@ -4328,16 +4383,17 @@ case 317:
 break;
 case 318:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_REGION);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_REGION);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 319:
 {
-		      check_vardef_type(variable_definitions, yyvsp[-3].map, SPOVAR_REGION|SPOVAR_ARRAY);
-		      vardef_used(variable_definitions, yyvsp[-3].map);
+		      check_vardef_type(vardefs, yyvsp[-3].map,
+                                        SPOVAR_REGION | SPOVAR_ARRAY);
+		      vardef_used(vardefs, yyvsp[-3].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[-3].map));
 		      Free(yyvsp[-3].map);
 		  }
@@ -4345,8 +4401,10 @@ break;
 case 320:
 {
 		      long r = SP_REGION_PACK(yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
-		      if ( yyvsp[-7].i > yyvsp[-3].i || yyvsp[-5].i > yyvsp[-1].i )
-			  lc_error("Region start > end: (%li,%li,%li,%li)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+
+		      if (yyvsp[-7].i > yyvsp[-3].i || yyvsp[-5].i > yyvsp[-1].i)
+			  lc_error("Region start > end: (%ld,%ld,%ld,%ld)!",
+                                   yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
 
 		      add_opvars(splev, "r", VA_PASS1(r));
 		      yyval.i = r;
@@ -4359,16 +4417,17 @@ case 321:
 break;
 case 322:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_MAPCHAR);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_MAPCHAR);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 323:
 {
-		      check_vardef_type(variable_definitions, yyvsp[-3].map, SPOVAR_MAPCHAR|SPOVAR_ARRAY);
-		      vardef_used(variable_definitions, yyvsp[-3].map);
+		      check_vardef_type(vardefs, yyvsp[-3].map,
+                                        SPOVAR_MAPCHAR | SPOVAR_ARRAY);
+		      vardef_used(vardefs, yyvsp[-3].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[-3].map));
 		      Free(yyvsp[-3].map);
 		  }
@@ -4400,16 +4459,17 @@ case 326:
 break;
 case 327:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_MONST);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_MONST);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 328:
 {
-		      check_vardef_type(variable_definitions, yyvsp[-3].map, SPOVAR_MONST|SPOVAR_ARRAY);
-		      vardef_used(variable_definitions, yyvsp[-3].map);
+		      check_vardef_type(vardefs, yyvsp[-3].map,
+                                        SPOVAR_MONST | SPOVAR_ARRAY);
+		      vardef_used(vardefs, yyvsp[-3].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[-3].map));
 		      Free(yyvsp[-3].map);
 		  }
@@ -4421,7 +4481,8 @@ case 329:
                           lc_error("Unknown monster \"%s\"!", yyvsp[0].map);
                           yyval.i = -1;
                       } else
-                          yyval.i = SP_MONST_PACK(m, def_monsyms[(int)mons[m].mlet].sym);
+                          yyval.i = SP_MONST_PACK(m,
+                                         def_monsyms[(int) mons[m].mlet].sym);
                       Free(yyvsp[0].map);
                   }
 break;
@@ -4458,16 +4519,17 @@ case 333:
 break;
 case 334:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_OBJ);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_OBJ);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		  }
 break;
 case 335:
 {
-		      check_vardef_type(variable_definitions, yyvsp[-3].map, SPOVAR_OBJ|SPOVAR_ARRAY);
-		      vardef_used(variable_definitions, yyvsp[-3].map);
+		      check_vardef_type(vardefs, yyvsp[-3].map,
+                                        SPOVAR_OBJ | SPOVAR_ARRAY);
+		      vardef_used(vardefs, yyvsp[-3].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[-3].map));
 		      Free(yyvsp[-3].map);
 		  }
@@ -4479,7 +4541,8 @@ case 336:
 			  lc_error("Unknown object \"%s\"!", yyvsp[0].map);
 			  yyval.i = -1;
 		      } else
-			  yyval.i = SP_OBJ_PACK(m, 1); /* obj class != 0 to force generation of a specific item */
+                          /* obj class != 0 to force generation of a specific item */
+                          yyval.i = SP_OBJ_PACK(m, 1);
                       Free(yyvsp[0].map);
 		  }
 break;
@@ -4534,8 +4597,8 @@ case 344:
 break;
 case 345:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_INT);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_INT);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		      is_inconstant_number = 1;
@@ -4543,9 +4606,9 @@ case 345:
 break;
 case 346:
 {
-		      check_vardef_type(variable_definitions,
-					yyvsp[-3].map, SPOVAR_INT|SPOVAR_ARRAY);
-		      vardef_used(variable_definitions, yyvsp[-3].map);
+		      check_vardef_type(vardefs, yyvsp[-3].map,
+					SPOVAR_INT | SPOVAR_ARRAY);
+		      vardef_used(vardefs, yyvsp[-3].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[-3].map));
 		      Free(yyvsp[-3].map);
 		      is_inconstant_number = 1;
@@ -4604,20 +4667,25 @@ case 355:
 		      } else if (!tmp) {
 			  lc_error("Could not alloc function params.");
 		      } else {
-			  long vt;
+			  long vt = SPOVAR_NULL;
+
 			  tmp->name = strdup(yyvsp[-2].map);
 			  tmp->parmtype = (char) yyvsp[0].i;
 			  tmp->next = curr_function->params;
 			  curr_function->params = tmp;
 			  curr_function->n_params++;
 			  switch (tmp->parmtype) {
-			  case 'i': vt = SPOVAR_INT; break;
-			  case 's': vt = SPOVAR_STRING; break;
-			  default: lc_error("Unknown func param conversion."); break;
+			  case 'i':
+                              vt = SPOVAR_INT;
+                              break;
+			  case 's':
+                              vt = SPOVAR_STRING;
+                              break;
+			  default:
+                              lc_error("Unknown func param conversion.");
+                              break;
 			  }
-			  variable_definitions = add_vardef_type(
-							 variable_definitions,
-								 yyvsp[-2].map, vt);
+			  vardefs = add_vardef_type( vardefs, yyvsp[-2].map, vt);
 		      }
 		      Free(yyvsp[-2].map);
 		  }
@@ -4643,7 +4711,7 @@ break;
 case 363:
 {
 			      long len = strlen( yyvsp[-2].map );
-			      char *tmp = (char *)alloc(len + 2);
+			      char *tmp = (char *) alloc(len + 2);
 			      sprintf(tmp, "%c%s", (char) yyvsp[0].i, yyvsp[-2].map );
 			      Free( yyvsp[-2].map );
 			      yyval.map = tmp;
@@ -4755,8 +4823,8 @@ case 382:
 break;
 case 383:
 {
-		      check_vardef_type(variable_definitions, yyvsp[0].map, SPOVAR_SEL);
-		      vardef_used(variable_definitions, yyvsp[0].map);
+		      check_vardef_type(vardefs, yyvsp[0].map, SPOVAR_SEL);
+		      vardef_used(vardefs, yyvsp[0].map);
 		      add_opvars(splev, "v", VA_PASS1(yyvsp[0].map));
 		      Free(yyvsp[0].map);
 		  }
@@ -4810,13 +4878,21 @@ break;
 case 404:
 {
 			if (yyvsp[-7].i <= 0 || yyvsp[-7].i >= COLNO)
-			    lc_error("Region (%li,%li,%li,%li) out of level range (x1)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			    lc_error(
+                          "Region (%ld,%ld,%ld,%ld) out of level range (x1)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
 			else if (yyvsp[-5].i < 0 || yyvsp[-5].i >= ROWNO)
-			    lc_error("Region (%li,%li,%li,%li) out of level range (y1)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			    lc_error(
+                          "Region (%ld,%ld,%ld,%ld) out of level range (y1)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
 			else if (yyvsp[-3].i <= 0 || yyvsp[-3].i >= COLNO)
-			    lc_error("Region (%li,%li,%li,%li) out of level range (x2)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			    lc_error(
+                          "Region (%ld,%ld,%ld,%ld) out of level range (x2)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
 			else if (yyvsp[-1].i < 0 || yyvsp[-1].i >= ROWNO)
-			    lc_error("Region (%li,%li,%li,%li) out of level range (y2)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			    lc_error(
+                          "Region (%ld,%ld,%ld,%ld) out of level range (y2)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
 			yyval.lregn.x1 = yyvsp[-7].i;
 			yyval.lregn.y1 = yyvsp[-5].i;
 			yyval.lregn.x2 = yyvsp[-3].i;
@@ -4828,14 +4904,22 @@ case 405:
 {
 /* This series of if statements is a hack for MSC 5.1.  It seems that its
    tiny little brain cannot compile if these are all one big if statement. */
-			if (yyvsp[-7].i < 0 || yyvsp[-7].i > (int)max_x_map)
-			    lc_error("Region (%li,%li,%li,%li) out of map range (x1)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
-			else if (yyvsp[-5].i < 0 || yyvsp[-5].i > (int)max_y_map)
-			    lc_error("Region (%li,%li,%li,%li) out of map range (y1)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
-			else if (yyvsp[-3].i < 0 || yyvsp[-3].i > (int)max_x_map)
-			    lc_error("Region (%li,%li,%li,%li) out of map range (x2)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
-			else if (yyvsp[-1].i < 0 || yyvsp[-1].i > (int)max_y_map)
-			    lc_error("Region (%li,%li,%li,%li) out of map range (y2)!", yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			if (yyvsp[-7].i < 0 || yyvsp[-7].i > (int) max_x_map)
+			    lc_error(
+                            "Region (%ld,%ld,%ld,%ld) out of map range (x1)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			else if (yyvsp[-5].i < 0 || yyvsp[-5].i > (int) max_y_map)
+			    lc_error(
+                            "Region (%ld,%ld,%ld,%ld) out of map range (y1)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			else if (yyvsp[-3].i < 0 || yyvsp[-3].i > (int) max_x_map)
+			    lc_error(
+                            "Region (%ld,%ld,%ld,%ld) out of map range (x2)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
+			else if (yyvsp[-1].i < 0 || yyvsp[-1].i > (int) max_y_map)
+			    lc_error(
+                            "Region (%ld,%ld,%ld,%ld) out of map range (y2)!",
+                                     yyvsp[-7].i, yyvsp[-5].i, yyvsp[-3].i, yyvsp[-1].i);
 			yyval.lregn.area = 0;
 			yyval.lregn.x1 = yyvsp[-7].i;
 			yyval.lregn.y1 = yyvsp[-5].i;

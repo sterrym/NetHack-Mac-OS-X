@@ -1,5 +1,6 @@
 /* NetHack 3.6	mgetline.c	$NHDT-Date: 1432512797 2015/05/25 00:13:17 $  $NHDT-Branch: master $:$NHDT-Revision: 1.10 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Kenneth Lorber, Kensington, Maryland, 2015. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
@@ -8,9 +9,9 @@
 #include "macpopup.h"
 #include "func_tab.h"
 
-extern int extcmd_via_menu(void); /* cmd.c */
+extern int NDECL(extcmd_via_menu); /* cmd.c */
 
-typedef Boolean (*key_func)(unsigned char);
+typedef Boolean FDECL((*key_func), (unsigned char));
 
 int
 get_line_from_key_queue(char *bufp)

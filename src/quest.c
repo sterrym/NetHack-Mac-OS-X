@@ -1,4 +1,4 @@
-/* NetHack 3.6	quest.c	$NHDT-Date: 1446191878 2015/10/30 07:57:58 $  $NHDT-Branch: master $:$NHDT-Revision: 1.20 $ */
+/* NetHack 3.6	quest.c	$NHDT-Date: 1505170343 2017/09/11 22:52:23 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.21 $ */
 /*      Copyright 1991, M. Stephenson             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -12,16 +12,16 @@
 #define Not_firsttime (on_level(&u.uz0, &u.uz))
 #define Qstat(x) (quest_status.x)
 
-STATIC_DCL void on_start(void);
-STATIC_DCL void on_locate(void);
-STATIC_DCL void on_goal(void);
-STATIC_DCL boolean not_capable(void);
-STATIC_DCL int is_pure(boolean);
-STATIC_DCL void expulsion(boolean);
-STATIC_DCL void chat_with_leader(void);
-STATIC_DCL void chat_with_nemesis(void);
-STATIC_DCL void chat_with_guardian(void);
-STATIC_DCL void prisoner_speaks(struct monst *);
+STATIC_DCL void NDECL(on_start);
+STATIC_DCL void NDECL(on_locate);
+STATIC_DCL void NDECL(on_goal);
+STATIC_DCL boolean NDECL(not_capable);
+STATIC_DCL int FDECL(is_pure, (BOOLEAN_P));
+STATIC_DCL void FDECL(expulsion, (BOOLEAN_P));
+STATIC_DCL void NDECL(chat_with_leader);
+STATIC_DCL void NDECL(chat_with_nemesis);
+STATIC_DCL void NDECL(chat_with_guardian);
+STATIC_DCL void FDECL(prisoner_speaks, (struct monst *));
 
 STATIC_OVL void
 on_start()
@@ -68,7 +68,20 @@ on_goal()
         qt_pager(QT_FIRSTGOAL);
         Qstat(made_goal) = 1;
     } else {
-        qt_pager(QT_NEXTGOAL);
+        /*
+         * Some QT_NEXTGOAL messages reference the quest artifact;
+         * find out if it is still present.  If not, request an
+         * alternate message (qt_pager() will revert to delivery
+         * of QT_NEXTGOAL if current role doesn't have QT_ALTGOAL).
+         * Note: if hero is already carrying it, it is treated as
+         * being absent from the level for quest message purposes.
+         */
+        unsigned whichobjchains = ((1 << OBJ_FLOOR)
+                                   | (1 << OBJ_MINVENT)
+                                   | (1 << OBJ_BURIED));
+        struct obj *qarti = find_quest_artifact(whichobjchains);
+
+        qt_pager(qarti ? QT_NEXTGOAL : QT_ALTGOAL);
         if (Qstat(made_goal) < 7)
             Qstat(made_goal)++;
     }
@@ -101,7 +114,8 @@ nemdead()
 }
 
 void
-artitouch(struct obj *obj)
+artitouch(obj)
+struct obj *obj;
 {
     if (!Qstat(touched_artifact)) {
         /* in case we haven't seen the item yet (ie, currently blinded),
@@ -129,7 +143,8 @@ not_capable()
 }
 
 STATIC_OVL int
-is_pure(boolean talk)
+is_pure(talk)
+boolean talk;
 {
     int purity;
     aligntyp original_alignment = u.ualignbase[A_ORIGINAL];
@@ -162,7 +177,8 @@ is_pure(boolean talk)
  * there is a single branch to and from it.
  */
 STATIC_OVL void
-expulsion(boolean seal)
+expulsion(seal)
+boolean seal;
 {
     branch *br;
     d_level *dest;
@@ -176,6 +192,7 @@ expulsion(boolean seal)
     schedule_goto(dest, FALSE, FALSE, portal_flag, (char *) 0, (char *) 0);
     if (seal) { /* remove the portal to the quest - sealing it off */
         int reexpelled = u.uevent.qexpelled;
+
         u.uevent.qexpelled = 1;
         remdun_mapseen(quest_dnum);
         /* Delete the near portal now; the far (main dungeon side)
@@ -198,7 +215,8 @@ expulsion(boolean seal)
    give another message about the character keeping the artifact
    and using the magic portal to return to the dungeon. */
 void
-finish_quest(struct obj *obj) /* quest artifact; possibly null if carrying Amulet */
+finish_quest(obj)
+struct obj *obj; /* quest artifact; possibly null if carrying Amulet */
 {
     struct obj *otmp;
 
@@ -298,7 +316,8 @@ chat_with_leader()
 }
 
 void
-leader_speaks(struct monst *mtmp)
+leader_speaks(mtmp)
+struct monst *mtmp;
 {
     /* maybe you attacked leader? */
     if (!mtmp->mpeaceful) {
@@ -359,7 +378,8 @@ chat_with_guardian()
 }
 
 STATIC_OVL void
-prisoner_speaks(struct monst *mtmp)
+prisoner_speaks(mtmp)
+struct monst *mtmp;
 {
     if (mtmp->data == &mons[PM_PRISONER]
         && (mtmp->mstrategy & STRAT_WAITMASK)) {
@@ -380,7 +400,8 @@ prisoner_speaks(struct monst *mtmp)
 }
 
 void
-quest_chat(register struct monst *mtmp)
+quest_chat(mtmp)
+register struct monst *mtmp;
 {
     if (mtmp->m_id == Qstat(leader_m_id)) {
         chat_with_leader();
@@ -399,7 +420,8 @@ quest_chat(register struct monst *mtmp)
 }
 
 void
-quest_talk(struct monst *mtmp)
+quest_talk(mtmp)
+struct monst *mtmp;
 {
     if (mtmp->m_id == Qstat(leader_m_id)) {
         leader_speaks(mtmp);
@@ -418,7 +440,8 @@ quest_talk(struct monst *mtmp)
 }
 
 void
-quest_stat_check(struct monst *mtmp)
+quest_stat_check(mtmp)
+struct monst *mtmp;
 {
     if (mtmp->data->msound == MS_NEMESIS)
         Qstat(in_battle) = (mtmp->mcanmove && !mtmp->msleeping

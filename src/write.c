@@ -1,17 +1,18 @@
-/* NetHack 3.6	write.c	$NHDT-Date: 1446078770 2015/10/29 00:32:50 $  $NHDT-Branch: master $:$NHDT-Revision: 1.16 $ */
+/* NetHack 3.6	write.c	$NHDT-Date: 1573346194 2019/11/10 00:36:34 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.20 $ */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
-STATIC_DCL int cost(struct obj *);
-STATIC_DCL boolean label_known(int, struct obj *);
-STATIC_DCL char *new_book_description(int, char *);
+STATIC_DCL int FDECL(cost, (struct obj *));
+STATIC_DCL boolean FDECL(label_known, (int, struct obj *));
+STATIC_DCL char *FDECL(new_book_description, (int, char *));
 
 /*
  * returns basecost of a scroll or a spellbook
  */
 STATIC_OVL int
-cost(register struct obj *otmp)
+cost(otmp)
+register struct obj *otmp;
 {
     if (otmp->oclass == SPBOOK_CLASS)
         return (10 * objects[otmp->otyp].oc_level);
@@ -57,11 +58,13 @@ cost(register struct obj *otmp)
 }
 
 /* decide whether the hero knowns a particular scroll's label;
-   unfortunately, we can't track things are haven't been added to
+   unfortunately, we can't track things that haven't been added to
    the discoveries list and aren't present in current inventory,
    so some scrolls with ought to yield True will end up False */
 STATIC_OVL boolean
-label_known(int scrolltype, struct obj *objlist)
+label_known(scrolltype, objlist)
+int scrolltype;
+struct obj *objlist;
 {
     struct obj *otmp;
 
@@ -88,10 +91,11 @@ static NEARDATA const char write_on[] = { SCROLL_CLASS, SPBOOK_CLASS, 0 };
 
 /* write -- applying a magic marker */
 int
-dowrite(register struct obj *pen)
+dowrite(pen)
+register struct obj *pen;
 {
     register struct obj *paper;
-    char namebuf[BUFSZ], *nm, *bp;
+    char namebuf[BUFSZ] = DUMMY, *nm, *bp;
     register struct obj *new_obj;
     int basecost, actualcost;
     int curseval;
@@ -105,7 +109,7 @@ dowrite(register struct obj *pen)
         return 0;
     } else if (Glib) {
         pline("%s from your %s.", Tobjnam(pen, "slip"),
-              makeplural(body_part(FINGER)));
+              fingers_or_gloves(FALSE));
         dropx(pen);
         return 1;
     }
@@ -124,12 +128,12 @@ dowrite(register struct obj *pen)
     if (Blind) {
         if (!paper->dknown) {
             You("don't know if that %s is blank or not.", typeword);
-            return 1;
+            return 0;
         } else if (paper->oclass == SPBOOK_CLASS) {
             /* can't write a magic book while blind */
             pline("%s can't create braille text.",
                   upstart(ysimple_name(pen)));
-            return 1;
+            return 0;
         }
     }
     paper->dknown = 1;
@@ -331,11 +335,20 @@ found:
     new_obj->cursed = (curseval < 0);
 #ifdef MAIL
     if (new_obj->otyp == SCR_MAIL)
-        new_obj->spe = 1;
+        /* 0: delivered in-game via external event (or randomly for fake mail);
+           1: from bones or wishing; 2: written with marker */
+        new_obj->spe = 2;
 #endif
-    new_obj =
-        hold_another_object(new_obj, "Oops!  %s out of your grasp!",
-                            The(aobjnam(new_obj, "slip")), (const char *) 0);
+    /* unlike alchemy, for example, a successful result yields the
+       specifically chosen item so hero recognizes it even if blind;
+       the exception is for being lucky writing an undiscovered scroll,
+       where the label associated with the type-name isn't known yet */
+    new_obj->dknown = label_known(new_obj->otyp, invent) ? 1 : 0;
+
+    new_obj = hold_another_object(new_obj, "Oops!  %s out of your grasp!",
+                                  The(aobjnam(new_obj, "slip")),
+                                  (const char *) 0);
+    nhUse(new_obj); /* try to avoid complaint about dead assignment */
     return 1;
 }
 
@@ -347,7 +360,9 @@ found:
    even that's rather iffy, indicating that such descriptions probably
    ought to be eliminated (especially "cloth"!) */
 STATIC_OVL char *
-new_book_description(int booktype, char *outbuf)
+new_book_description(booktype, outbuf)
+int booktype;
+char *outbuf;
 {
     /* subset of description strings from objects.c; if it grows
        much, we may need to add a new flag field to objects[] instead */

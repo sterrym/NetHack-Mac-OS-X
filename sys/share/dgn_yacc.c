@@ -11,7 +11,7 @@
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
 #define YYPREFIX "yy"
-/* NetHack 3.6  dgn_comp.y	$NHDT-Date: 1449233106 2015/12/04 12:45:06 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.11 $ */
+/* NetHack 3.6  dgn_comp.y	$NHDT-Date: 1551901399 2019/03/06 19:43:19 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.15 $ */
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /*	Copyright (c) 1990 by M. Stephenson				  */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -38,18 +38,18 @@
 #include "date.h"
 #include "dgn_file.h"
 
-void yyerror(const char *);
-void yywarning(const char *);
-int yylex(void);
-int yyparse(void);
-int getchain(char *);
-int check_dungeon(void);
-int check_branch(void);
-int check_level(void);
-void init_dungeon(void);
-void init_branch(void);
-void init_level(void);
-void output_dgn(void);
+void FDECL(yyerror, (const char *));
+void FDECL(yywarning, (const char *));
+int NDECL(yylex);
+int NDECL(yyparse);
+int FDECL(getchain, (char *));
+int NDECL(check_dungeon);
+int NDECL(check_branch);
+int NDECL(check_level);
+void NDECL(init_dungeon);
+void NDECL(init_branch);
+void NDECL(init_level);
+void NDECL(output_dgn);
 
 #define Free(ptr)		free((genericptr_t)ptr)
 

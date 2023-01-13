@@ -1,12 +1,12 @@
-/* NetHack 3.6	mplayer.c	$NHDT-Date: 1432512774 2015/05/25 00:12:54 $  $NHDT-Branch: master $:$NHDT-Revision: 1.19 $ */
-/*	Copyright (c) Izchak Miller, 1992.			  */
+/* NetHack 3.6	mplayer.c	$NHDT-Date: 1550524564 2019/02/18 21:16:04 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.26 $ */
+/*      Copyright (c) Izchak Miller, 1992.                        */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
-STATIC_DCL const char *dev_name(void);
-STATIC_DCL void get_mplname(struct monst *, char *);
-STATIC_DCL void mk_mplayer_armor(struct monst *, short);
+STATIC_DCL const char *NDECL(dev_name);
+STATIC_DCL void FDECL(get_mplname, (struct monst *, char *));
+STATIC_DCL void FDECL(mk_mplayer_armor, (struct monst *, SHORT_P));
 
 /* These are the names of those who
  * contributed to the development of NetHack 3.2/3.3/3.4/3.6.
@@ -16,9 +16,10 @@ STATIC_DCL void mk_mplayer_armor(struct monst *, short);
  */
 static const char *developers[] = {
     /* devteam */
-    "Dave",    "Dean",   "Eric",    "Izchak", "Janet",    "Jessie",
-    "Ken",     "Kevin",  "Michael", "Mike",   "Pat",      "Paul",
-    "Steve",   "Timo",   "Warwick",
+    "Alex",    "Dave",   "Dean",    "Derek",   "Eric",    "Izchak",
+    "Janet",   "Jessie", "Ken",     "Kevin",   "Michael", "Mike",
+    "Pasi",    "Pat",    "Patric",  "Paul",    "Sean",    "Steve",
+    "Timo",    "Warwick",
     /* PC team */
     "Bill",    "Eric",   "Keizo",   "Ken",    "Kevin",    "Michael",
     "Mike",    "Paul",   "Stephen", "Steve",  "Timo",     "Yitzhak",
@@ -67,7 +68,9 @@ dev_name()
 }
 
 STATIC_OVL void
-get_mplname(register struct monst *mtmp, char *nam)
+get_mplname(mtmp, nam)
+register struct monst *mtmp;
+char *nam;
 {
     boolean fmlkind = is_female(mtmp->data);
     const char *devnam;
@@ -90,7 +93,9 @@ get_mplname(register struct monst *mtmp, char *nam)
 }
 
 STATIC_OVL void
-mk_mplayer_armor(struct monst *mon, short typ)
+mk_mplayer_armor(mon, typ)
+struct monst *mon;
+short typ;
 {
     struct obj *obj;
 
@@ -112,7 +117,10 @@ mk_mplayer_armor(struct monst *mon, short typ)
 }
 
 struct monst *
-mk_mplayer(register struct permonst *ptr, xchar x, xchar y, register boolean special)
+mk_mplayer(ptr, x, y, special)
+register struct permonst *ptr;
+xchar x, y;
+register boolean special;
 {
     register struct monst *mtmp;
     char nam[PL_NSIZ];
@@ -127,23 +135,13 @@ mk_mplayer(register struct permonst *ptr, xchar x, xchar y, register boolean spe
         special = FALSE;
 
     if ((mtmp = makemon(ptr, x, y, NO_MM_FLAGS)) != 0) {
-        short weapon = rn2(2) ? LONG_SWORD : rnd_class(SPEAR, BULLWHIP);
-        short armor =
-            rnd_class(GRAY_DRAGON_SCALE_MAIL, YELLOW_DRAGON_SCALE_MAIL);
-        short cloak = !rn2(8)
-                          ? STRANGE_OBJECT
-                          : rnd_class(OILSKIN_CLOAK, CLOAK_OF_DISPLACEMENT);
-        short helm = !rn2(8) ? STRANGE_OBJECT : rnd_class(ELVEN_LEATHER_HELM,
-                                                          HELM_OF_TELEPATHY);
-        short shield = !rn2(8)
-                           ? STRANGE_OBJECT
-                           : rnd_class(ELVEN_SHIELD, SHIELD_OF_REFLECTION);
+        short weapon, armor, cloak, helm, shield;
         int quan;
         struct obj *otmp;
 
         mtmp->m_lev = (special ? rn1(16, 15) : rnd(16));
-        mtmp->mhp = mtmp->mhpmax =
-            d((int) mtmp->m_lev, 10) + (special ? (30 + rnd(30)) : 30);
+        mtmp->mhp = mtmp->mhpmax = d((int) mtmp->m_lev, 10)
+                                   + (special ? (30 + rnd(30)) : 30);
         if (special) {
             get_mplname(mtmp, nam);
             mtmp = christen_monst(mtmp, nam);
@@ -152,6 +150,16 @@ mk_mplayer(register struct permonst *ptr, xchar x, xchar y, register boolean spe
         }
         mtmp->mpeaceful = 0;
         set_malign(mtmp); /* peaceful may have changed again */
+
+        /* default equipment; much of it will be overridden below */
+        weapon = !rn2(2) ? LONG_SWORD : rnd_class(SPEAR, BULLWHIP);
+        armor  = rnd_class(GRAY_DRAGON_SCALE_MAIL, YELLOW_DRAGON_SCALE_MAIL);
+        cloak  = !rn2(8) ? STRANGE_OBJECT
+                         : rnd_class(OILSKIN_CLOAK, CLOAK_OF_DISPLACEMENT);
+        helm   = !rn2(8) ? STRANGE_OBJECT
+                         : rnd_class(ELVEN_LEATHER_HELM, HELM_OF_TELEPATHY);
+        shield = !rn2(8) ? STRANGE_OBJECT
+                         : rnd_class(ELVEN_SHIELD, SHIELD_OF_REFLECTION);
 
         switch (monsndx(ptr)) {
         case PM_ARCHEOLOGIST:
@@ -262,7 +270,8 @@ mk_mplayer(register struct permonst *ptr, xchar x, xchar y, register boolean spe
             if (special && rn2(2))
                 otmp = mk_artifact(otmp, A_NONE);
             /* usually increase stack size if stackable weapon */
-            if (objects[otmp->otyp].oc_merge && !otmp->oartifact)
+            if (objects[otmp->otyp].oc_merge && !otmp->oartifact
+                && monmightthrowwep(otmp))
                 otmp->quan += (long) rn2(is_spear(otmp) ? 4 : 8);
             /* mplayers knew better than to overenchant Magicbane */
             if (otmp->oartifact == ART_MAGICBANE)
@@ -277,19 +286,21 @@ mk_mplayer(register struct permonst *ptr, xchar x, xchar y, register boolean spe
             mk_mplayer_armor(mtmp, cloak);
             mk_mplayer_armor(mtmp, helm);
             mk_mplayer_armor(mtmp, shield);
+            if (weapon == WAR_HAMMER) /* valkyrie: wimpy weapon or Mjollnir */
+                mk_mplayer_armor(mtmp, GAUNTLETS_OF_POWER);
+            else if (rn2(8))
+                mk_mplayer_armor(mtmp, rnd_class(LEATHER_GLOVES,
+                                                 GAUNTLETS_OF_DEXTERITY));
             if (rn2(8))
-                mk_mplayer_armor(
-                    mtmp, rnd_class(LEATHER_GLOVES, GAUNTLETS_OF_DEXTERITY));
-            if (rn2(8))
-                mk_mplayer_armor(mtmp,
-                                 rnd_class(LOW_BOOTS, LEVITATION_BOOTS));
+                mk_mplayer_armor(mtmp, rnd_class(LOW_BOOTS,
+                                                 LEVITATION_BOOTS));
             m_dowear(mtmp, TRUE);
 
             quan = rn2(3) ? rn2(3) : rn2(16);
             while (quan--)
                 (void) mongets(mtmp, rnd_class(DILITHIUM_CRYSTAL, JADE));
-            /* To get the gold "right" would mean a player can double his */
-            /* gold supply by killing one mplayer.  Not good. */
+            /* To get the gold "right" would mean a player can double his
+               gold supply by killing one mplayer.  Not good. */
             mkmonmoney(mtmp, rn2(1000));
             quan = rn2(10);
             while (quan--)
@@ -317,17 +328,20 @@ mk_mplayer(register struct permonst *ptr, xchar x, xchar y, register boolean spe
  * fill up the overflow.
  */
 void
-create_mplayers(register int num, boolean special)
+create_mplayers(num, special)
+register int num;
+boolean special;
 {
     int pm, x, y;
     struct monst fakemon;
 
+    fakemon = zeromonst;
     while (num) {
         int tryct = 0;
 
         /* roll for character class */
-        pm = PM_ARCHEOLOGIST + rn2(PM_WIZARD - PM_ARCHEOLOGIST + 1);
-        fakemon.data = &mons[pm];
+        pm = rn1(PM_WIZARD - PM_ARCHEOLOGIST + 1, PM_ARCHEOLOGIST);
+        set_mon_data(&fakemon, &mons[pm]);
 
         /* roll for an available location */
         do {
@@ -345,17 +359,20 @@ create_mplayers(register int num, boolean special)
 }
 
 void
-mplayer_talk(register struct monst *mtmp)
+mplayer_talk(mtmp)
+register struct monst *mtmp;
 {
-    static const char *same_class_msg[3] =
-        {
-          "I can't win, and neither will you!", "You don't deserve to win!",
-          "Mine should be the honor, not yours!",
+    static const char
+        *same_class_msg[3] = {
+            "I can't win, and neither will you!",
+            "You don't deserve to win!",
+            "Mine should be the honor, not yours!",
         },
-                      *other_class_msg[3] = {
-                          "The low-life wants to talk, eh?", "Fight, scum!",
-                          "Here is what I have to say!",
-                      };
+        *other_class_msg[3] = {
+            "The low-life wants to talk, eh?",
+            "Fight, scum!",
+            "Here is what I have to say!",
+        };
 
     if (mtmp->mpeaceful)
         return; /* will drop to humanoid talk */

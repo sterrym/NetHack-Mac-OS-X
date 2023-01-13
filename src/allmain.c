@@ -1,21 +1,27 @@
-/* NetHack 3.6	allmain.c	$NHDT-Date: 1446975459 2015/11/08 09:37:39 $  $NHDT-Branch: master $:$NHDT-Revision: 1.66 $ */
+/* NetHack 3.6	allmain.c	$NHDT-Date: 1555552624 2019/04/18 01:57:04 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.100 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2012. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* various code that was replicated in *main.c */
 
 #include "hack.h"
+#include <ctype.h>
 
 #ifndef NO_SIGNAL
 #include <signal.h>
 #endif
 
 #ifdef POSITIONBAR
-STATIC_DCL void do_positionbar(void);
+STATIC_DCL void NDECL(do_positionbar);
 #endif
+STATIC_DCL void FDECL(regen_hp, (int));
+STATIC_DCL void FDECL(interrupt_multi, (const char *));
+STATIC_DCL void FDECL(debug_fields, (const char *));
 
 void
-moveloop(boolean resuming)
+moveloop(resuming)
+boolean resuming;
 {
 #if defined(MICRO) || defined(WIN32)
     char ch;
@@ -29,11 +35,7 @@ moveloop(boolean resuming)
     */
     decl_init();
     monst_init();
-    monstr_init(); /* monster strengths */
     objects_init();
-
-    if (wizard)
-        add_debug_extended_commands();
 
     /* if a save file created in normal mode is now being restored in
        explore mode, treat it as normal restore followed by 'X' command
@@ -59,15 +61,12 @@ moveloop(boolean resuming)
         context.rndencode = rnd(9000);
         set_wear((struct obj *) 0); /* for side-effects of starting gear */
         (void) pickup(1);      /* autopickup at initial location */
-    } else {                   /* restore old game */
-#ifndef WIN32
-        update_inventory(); /* for perm_invent */
-#endif
+    }
+    context.botlx = TRUE; /* for STATUS_HILITES */
+    update_inventory(); /* for perm_invent */
+    if (resuming) { /* restoring old game */
         read_engr_at(u.ux, u.uy); /* subset of pickup() */
     }
-#ifdef WIN32
-    update_inventory(); /* for perm_invent */
-#endif
 
     (void) encumber_msg(); /* in case they auto-picked up something */
     if (defer_see_monsters) {
@@ -107,21 +106,24 @@ moveloop(boolean resuming)
                 context.mon_moving = FALSE;
 
                 if (!monscanmove && youmonst.movement < NORMAL_SPEED) {
-                    /* both you and the monsters are out of steam this round
-                     */
-                    /* set up for a new turn */
+                    /* both hero and monsters are out of steam this round */
                     struct monst *mtmp;
+
+                    /* set up for a new turn */
                     mcalcdistress(); /* adjust monsters' trap, blind, etc */
 
-                    /* reallocate movement rations to monsters */
+                    /* reallocate movement rations to monsters; don't need
+                       to skip dead monsters here because they will have
+                       been purged at end of their previous round of moving */
                     for (mtmp = fmon; mtmp; mtmp = mtmp->nmon)
                         mtmp->movement += mcalcmove(mtmp);
 
-                    if (!rn2(u.uevent.udemigod
-                                 ? 25
-                                 : (depth(&u.uz) > depth(&stronghold_level))
-                                       ? 50
-                                       : 70))
+                    /* occasionally add another monster; since this takes
+                       place after movement has been allotted, the new
+                       monster effectively loses its first turn */
+                    if (!rn2(u.uevent.udemigod ? 25
+                             : (depth(&u.uz) > depth(&stronghold_level)) ? 50
+                               : 70))
                         (void) makemon((struct permonst *) 0, 0, 0,
                                        NO_MM_FLAGS);
 
@@ -132,15 +134,14 @@ moveloop(boolean resuming)
                     } else {
                         moveamt = youmonst.data->mmove;
 
-                        if (Very_fast) { /* speed boots or potion */
-                            /* average movement is 1.67 times normal */
-                            moveamt += NORMAL_SPEED / 2;
-                            if (rn2(3) == 0)
-                                moveamt += NORMAL_SPEED / 2;
-                        } else if (Fast) {
-                            /* average movement is 1.33 times normal */
+                        if (Very_fast) { /* speed boots, potion, or spell */
+                            /* gain a free action on 2/3 of turns */
                             if (rn2(3) != 0)
-                                moveamt += NORMAL_SPEED / 2;
+                                moveamt += NORMAL_SPEED;
+                        } else if (Fast) { /* intrinsic */
+                            /* gain a free action on 1/3 of turns */
+                            if (rn2(3) == 0)
+                                moveamt += NORMAL_SPEED;
                         }
                     }
 
@@ -183,64 +184,24 @@ moveloop(boolean resuming)
                     if (u.ublesscnt)
                         u.ublesscnt--;
                     if (flags.time && !context.run)
-                        context.botl = 1;
+                        iflags.time_botl = TRUE;
 
                     /* One possible result of prayer is healing.  Whether or
                      * not you get healed depends on your current hit points.
-                     * If you are allowed to regenerate during the prayer, the
-                     * end-of-prayer calculation messes up on this.
+                     * If you are allowed to regenerate during the prayer,
+                     * the end-of-prayer calculation messes up on this.
                      * Another possible result is rehumanization, which
-                     * requires
-                     * that encumbrance and movement rate be recalculated.
+                     * requires that encumbrance and movement rate be
+                     * recalculated.
                      */
                     if (u.uinvulnerable) {
                         /* for the moment at least, you're in tiptop shape */
                         wtcap = UNENCUMBERED;
-                    } else if (Upolyd && youmonst.data->mlet == S_EEL
-                               && !is_pool(u.ux, u.uy)
-                               && !Is_waterlevel(&u.uz)) {
-                        /* eel out of water loses hp, same as for monsters;
-                           as hp gets lower, rate of further loss slows down
-                           */
-                        if (u.mh > 1 && rn2(u.mh) > rn2(8)
-                            && (!Half_physical_damage || !(moves % 2L))) {
-                            u.mh--;
-                            context.botl = 1;
-                        } else if (u.mh < 1)
-                            rehumanize();
-                    } else if (Upolyd && u.mh < u.mhmax) {
-                        if (u.mh < 1)
-                            rehumanize();
-                        else if (Regeneration
-                                 || (wtcap < MOD_ENCUMBER && !(moves % 20))) {
-                            context.botl = 1;
-                            u.mh++;
-                        }
-                    } else if (u.uhp < u.uhpmax
-                               && (wtcap < MOD_ENCUMBER || !u.umoved
-                                   || Regeneration)) {
-                        if (u.ulevel > 9 && !(moves % 3)) {
-                            int heal, Con = (int) ACURR(A_CON);
-
-                            if (Con <= 12) {
-                                heal = 1;
-                            } else {
-                                heal = rnd(Con);
-                                if (heal > u.ulevel - 9)
-                                    heal = u.ulevel - 9;
-                            }
-                            context.botl = 1;
-                            u.uhp += heal;
-                            if (u.uhp > u.uhpmax)
-                                u.uhp = u.uhpmax;
-                        } else if (Regeneration
-                                   || (u.ulevel <= 9
-                                       && !(moves
-                                            % ((MAXULEV + 12) / (u.ulevel + 2)
-                                               + 1)))) {
-                            context.botl = 1;
-                            u.uhp++;
-                        }
+                    } else if (!Upolyd ? (u.uhp < u.uhpmax)
+                                       : (u.mh < u.mhmax
+                                          || youmonst.data->mlet == S_EEL)) {
+                        /* maybe heal */
+                        regen_hp(wtcap);
                     }
 
                     /* moving around while encumbered is hard work */
@@ -249,8 +210,10 @@ moveloop(boolean resuming)
                                                    : moves % 10)) {
                             if (Upolyd && u.mh > 1) {
                                 u.mh--;
+                                context.botl = TRUE;
                             } else if (!Upolyd && u.uhp > 1) {
                                 u.uhp--;
+                                context.botl = TRUE;
                             } else {
                                 You("pass out from exertion!");
                                 exercise(A_CON, FALSE);
@@ -259,7 +222,7 @@ moveloop(boolean resuming)
                         }
                     }
 
-                    if ((u.uen < u.uenmax)
+                    if (u.uen < u.uenmax
                         && ((wtcap < MOD_ENCUMBER
                              && (!(moves % ((MAXULEV + 8 - u.ulevel)
                                             * (Role_if(PM_WIZARD) ? 3 : 4)
@@ -268,12 +231,15 @@ moveloop(boolean resuming)
                             (int) (ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1);
                         if (u.uen > u.uenmax)
                             u.uen = u.uenmax;
-                        context.botl = 1;
+                        context.botl = TRUE;
+                        if (u.uen == u.uenmax)
+                            interrupt_multi("You feel full of energy.");
                     }
 
                     if (!u.uinvulnerable) {
                         if (Teleportation && !rn2(85)) {
                             xchar old_ux = u.ux, old_uy = u.uy;
+
                             tele();
                             if (u.ux != old_ux || u.uy != old_uy) {
                                 if (!next_to_u()) {
@@ -295,10 +261,7 @@ moveloop(boolean resuming)
                             change = 2;
                         if (change && !Unchanging) {
                             if (multi >= 0) {
-                                if (occupation)
-                                    stop_occupation();
-                                else
-                                    nomul(0);
+                                stop_occupation();
                                 if (change == 1)
                                     polyself(0);
                                 else
@@ -310,6 +273,9 @@ moveloop(boolean resuming)
 
                     if (Searching && multi >= 0)
                         (void) dosearch0(1);
+                    if (Warning)
+                        warnreveal();
+                    mkot_trap_warn();
                     dosounds();
                     do_storms();
                     gethungry();
@@ -350,18 +316,21 @@ moveloop(boolean resuming)
                         }
                     }
                 }
-            } while (youmonst.movement
-                     < NORMAL_SPEED); /* hero can't move loop */
+            } while (youmonst.movement < NORMAL_SPEED); /* hero can't move */
 
             /******************************************/
             /* once-per-hero-took-time things go here */
             /******************************************/
 
+#ifdef STATUS_HILITES
+            if (iflags.hilite_delta)
+                status_eval_next_unhilite();
+#endif
             if (context.bypasses)
                 clear_bypasses();
             if ((u.uhave.amulet || Clairvoyant) && !In_endgame(&u.uz)
                 && !BClairvoyant && !(moves % 15) && !rn2(2))
-                do_vicinity_map();
+                do_vicinity_map((struct obj *) 0);
             if (u.utrap && u.utraptype == TT_LAVA)
                 sink_into_lava();
             /* when/if hero escapes from lava, he can't just stay there */
@@ -394,6 +363,9 @@ moveloop(boolean resuming)
         }
         if (context.botl || context.botlx) {
             bot();
+            curs_on_u();
+        } else if (iflags.time_botl) {
+            timebot();
             curs_on_u();
         }
 
@@ -428,7 +400,7 @@ moveloop(boolean resuming)
             continue;
         }
 
-        if (iflags.sanity_check)
+        if (iflags.sanity_check || iflags.debug_fuzzer)
             sanity_check();
 
 #ifdef CLIPPING
@@ -444,7 +416,7 @@ moveloop(boolean resuming)
                 /* lookaround may clear multi */
                 context.move = 0;
                 if (flags.time)
-                    context.botl = 1;
+                    context.botl = TRUE;
                 continue;
             }
             if (context.mv) {
@@ -466,7 +438,7 @@ moveloop(boolean resuming)
             deferred_goto(); /* after rhack() */
         /* !context.move here: multiple movement command stopped */
         else if (flags.time && (!context.move || !context.mv))
-            context.botl = 1;
+            context.botl = TRUE;
 
         if (vision_full_recalc)
             vision_recalc(0); /* vision! */
@@ -474,10 +446,81 @@ moveloop(boolean resuming)
         if ((!context.run || flags.runmode == RUN_TPORT)
             && (multi && (!context.travel ? !(multi % 7) : !(moves % 7L)))) {
             if (flags.time && context.run)
-                context.botl = 1;
+                context.botl = TRUE;
+            /* [should this be flush_screen() instead?] */
             display_nhwindow(WIN_MAP, FALSE);
         }
     }
+}
+
+/* maybe recover some lost health (or lose some when an eel out of water) */
+STATIC_OVL void
+regen_hp(wtcap)
+int wtcap;
+{
+    int heal = 0;
+    boolean reached_full = FALSE,
+            encumbrance_ok = (wtcap < MOD_ENCUMBER || !u.umoved);
+
+    if (Upolyd) {
+        if (u.mh < 1) { /* shouldn't happen... */
+            rehumanize();
+        } else if (youmonst.data->mlet == S_EEL
+                   && !is_pool(u.ux, u.uy) && !Is_waterlevel(&u.uz)) {
+            /* eel out of water loses hp, similar to monster eels;
+               as hp gets lower, rate of further loss slows down */
+            if (u.mh > 1 && !Regeneration && rn2(u.mh) > rn2(8)
+                && (!Half_physical_damage || !(moves % 2L)))
+                heal = -1;
+        } else if (u.mh < u.mhmax) {
+            if (Regeneration || (encumbrance_ok && !(moves % 20L)))
+                heal = 1;
+        }
+        if (heal) {
+            context.botl = TRUE;
+            u.mh += heal;
+            reached_full = (u.mh == u.mhmax);
+        }
+
+    /* !Upolyd */
+    } else {
+        /* [when this code was in-line within moveloop(), there was
+           no !Upolyd check here, so poly'd hero recovered lost u.uhp
+           once u.mh reached u.mhmax; that may have been convenient
+           for the player, but it didn't make sense for gameplay...] */
+        if (u.uhp < u.uhpmax && (encumbrance_ok || Regeneration)) {
+            if (u.ulevel > 9) {
+                if (!(moves % 3L)) {
+                    int Con = (int) ACURR(A_CON);
+
+                    if (Con <= 12) {
+                        heal = 1;
+                    } else {
+                        heal = rnd(Con);
+                        if (heal > u.ulevel - 9)
+                            heal = u.ulevel - 9;
+                    }
+                }
+            } else { /* u.ulevel <= 9 */
+                if (!(moves % (long) ((MAXULEV + 12) / (u.ulevel + 2) + 1)))
+                    heal = 1;
+            }
+            if (Regeneration && !heal)
+                heal = 1;
+
+            if (heal) {
+                context.botl = TRUE;
+                u.uhp += heal;
+                if (u.uhp > u.uhpmax)
+                    u.uhp = u.uhpmax;
+                /* stop voluntary multi-turn activity if now fully healed */
+                reached_full = (u.uhp == u.uhpmax);
+            }
+        }
+    }
+
+    if (reached_full)
+        interrupt_multi("You are in full health.");
 }
 
 void
@@ -487,9 +530,11 @@ stop_occupation()
         if (!maybe_finished_meal(TRUE))
             You("stop %s.", occtxt);
         occupation = 0;
-        context.botl = 1; /* in case u.uhs changed */
+        context.botl = TRUE; /* in case u.uhs changed */
         nomul(0);
         pushch(0);
+    } else if (multi >= 0) {
+        nomul(0);
     }
 }
 
@@ -497,13 +542,16 @@ void
 display_gamewindows()
 {
     WIN_MESSAGE = create_nhwindow(NHW_MESSAGE);
-#ifdef STATUS_VIA_WINDOWPORT
-    status_initialize(0);
-#else
-    WIN_STATUS = create_nhwindow(NHW_STATUS);
-#endif
+    if (VIA_WINDOWPORT()) {
+        status_initialize(0);
+    } else {
+        WIN_STATUS = create_nhwindow(NHW_STATUS);
+    }
     WIN_MAP = create_nhwindow(NHW_MAP);
     WIN_INVEN = create_nhwindow(NHW_MENU);
+    /* in case of early quit where WIN_INVEN could be destroyed before
+       ever having been used, use it here to pacify the Qt interface */
+    start_menu(WIN_INVEN), end_menu(WIN_INVEN, (char *) 0);
 
 #ifdef MAC
     /* This _is_ the right place for this - maybe we will
@@ -518,7 +566,7 @@ display_gamewindows()
      * The mac port is not DEPENDENT on the order of these
      * displays, but it looks a lot better this way...
      */
-#ifndef STATUS_VIA_WINDOWPORT
+#ifndef STATUS_HILITES
     display_nhwindow(WIN_STATUS, FALSE);
 #endif
     display_nhwindow(WIN_MESSAGE, FALSE);
@@ -535,7 +583,7 @@ newgame()
     gameDiskPrompt();
 #endif
 
-    context.botlx = 1;
+    context.botlx = TRUE;
     context.ident = 1;
     context.stethoscope_move = -1L;
     context.warnlevel = 1;
@@ -543,7 +591,7 @@ newgame()
     context.tribute.enabled = TRUE;   /* turn on 3.6 tributes    */
     context.tribute.tributesz = sizeof(struct tribute_info);
 
-    for (i = 0; i < NUMMONS; i++)
+    for (i = LOW_PM; i < NUMMONS; i++)
         mvitals[i].mvflags = mons[i].geno & G_NOCORPSE;
 
     init_objects(); /* must be before u_init() */
@@ -586,17 +634,12 @@ newgame()
         com_pager(1);
     }
 
+    urealtime.realtime = 0L;
+    urealtime.start_timing = getnow();
 #ifdef INSURANCE
     save_currentstate();
 #endif
     program_state.something_worth_saving++; /* useful data now exists */
-
-    urealtime.realtime = 0L;
-#if defined(BSD) && !defined(POSIX_TYPES)
-    (void) time((long *) &urealtime.restored);
-#else
-    (void) time(&urealtime.restored);
-#endif
 
     /* Success! */
     welcome(TRUE);
@@ -604,12 +647,19 @@ newgame()
 }
 
 /* show "welcome [back] to nethack" message at program startup */
-/* false => restoring an old game */
 void
-welcome(boolean new_game)
+welcome(new_game)
+boolean new_game; /* false => restoring an old game */
 {
     char buf[BUFSZ];
     boolean currentgend = Upolyd ? u.mfemale : flags.female;
+
+    /* skip "welcome back" if restoring a doomed character */
+    if (!new_game && Upolyd && ugenocided()) {
+        /* death via self-genocide is pending */
+        pline("You're back, but you still feel %s inside.", udeadinside());
+        return;
+    }
 
     /*
      * The "welcome back" message always describes your innate form
@@ -690,4 +740,186 @@ do_positionbar()
 }
 #endif
 
+STATIC_DCL void
+interrupt_multi(msg)
+const char *msg;
+{
+    if (multi > 0 && !context.travel && !context.run) {
+        nomul(0);
+        if (flags.verbose && msg)
+            Norep("%s", msg);
+    }
+}
+
+/*
+ * Argument processing helpers - for xxmain() to share
+ * and call.
+ *
+ * These should return TRUE if the argument matched,
+ * whether the processing of the argument was
+ * successful or not.
+ *
+ * Most of these do their thing, then after returning
+ * to xxmain(), the code exits without starting a game.
+ *
+ */
+
+static struct early_opt earlyopts[] = {
+    {ARG_DEBUG, "debug", 5, TRUE},
+    {ARG_VERSION, "version", 4, TRUE},
+    {ARG_SHOWPATHS, "showpaths", 9, FALSE},
+#ifdef WIN32
+    {ARG_WINDOWS, "windows", 4, TRUE},
+#endif
+};
+
+#ifdef WIN32
+extern int FDECL(windows_early_options, (const char *));
+#endif
+
+/*
+ * Returns:
+ *    0 = no match
+ *    1 = found and skip past this argument
+ *    2 = found and trigger immediate exit
+ */
+
+int
+argcheck(argc, argv, e_arg)
+int argc;
+char *argv[];
+enum earlyarg e_arg;
+{
+    int i, idx;
+    boolean match = FALSE;
+    char *userea = (char *)0;
+    const char *dashdash = "";
+
+    for (idx = 0; idx < SIZE(earlyopts); idx++) {
+        if (earlyopts[idx].e == e_arg)
+            break;
+    }
+    if ((idx >= SIZE(earlyopts)) || (argc <= 1))
+            return FALSE;
+
+    for (i = 0; i < argc; ++i) {
+        if (argv[i][0] != '-')
+            continue;
+        if (argv[i][1] == '-') {
+            userea = &argv[i][2];
+            dashdash = "-";
+        } else {
+            userea = &argv[i][1];
+        }
+        match = match_optname(userea, earlyopts[idx].name,
+                              earlyopts[idx].minlength,
+                              earlyopts[idx].valallowed);
+        if (match) break;
+    }
+
+    if (match) {
+        const char *extended_opt = index(userea, ':');
+
+        if (!extended_opt)
+            extended_opt = index(userea, '=');
+        switch(e_arg) {
+        case ARG_DEBUG:
+            if (extended_opt) {
+                extended_opt++;
+                debug_fields(extended_opt);
+            }
+            return 1;
+        case ARG_VERSION: {
+            boolean insert_into_pastebuf = FALSE;
+
+            if (extended_opt) {
+                extended_opt++;
+                if (match_optname(extended_opt, "paste", 5, FALSE)) {
+                    insert_into_pastebuf = TRUE;
+                } else {
+                    raw_printf(
+                   "-%sversion can only be extended with -%sversion:paste.\n",
+                               dashdash, dashdash);
+                    return TRUE;
+                }
+            }
+            early_version_info(insert_into_pastebuf);
+            return 2;
+        }
+        case ARG_SHOWPATHS: {
+            return 2;
+        }
+#ifdef WIN32
+        case ARG_WINDOWS: {
+            if (extended_opt) {
+                extended_opt++;
+                return windows_early_options(extended_opt);
+            }
+        }
+#endif
+        default:
+            break;
+        }
+    };
+    return FALSE;
+}
+
+/*
+ * These are internal controls to aid developers with
+ * testing and debugging particular aspects of the code.
+ * They are not player options and the only place they
+ * are documented is right here. No gameplay is altered.
+ *
+ * test             - test whether this parser is working
+ * ttystatus        - TTY:
+ * immediateflips   - WIN32: turn off display performance
+ *                    optimization so that display output
+ *                    can be debugged without buffering.
+ */
+STATIC_OVL void
+debug_fields(opts)
+const char *opts;
+{
+    char *op;
+    boolean negated = FALSE;
+
+    while ((op = index(opts, ',')) != 0) {
+        *op++ = 0;
+        /* recurse */
+        debug_fields(op);
+    }
+    if (strlen(opts) > BUFSZ / 2)
+        return;
+
+
+    /* strip leading and trailing white space */
+    while (isspace((uchar) *opts))
+        opts++;
+    op = eos((char *) opts);
+    while (--op >= opts && isspace((uchar) *op))
+        *op = '\0';
+
+    if (!*opts) {
+        /* empty */
+        return;
+    }
+    while ((*opts == '!') || !strncmpi(opts, "no", 2)) {
+        if (*opts == '!')
+            opts++;
+        else
+            opts += 2;
+        negated = !negated;
+    }
+    if (match_optname(opts, "test", 4, FALSE))
+        iflags.debug.test = negated ? FALSE : TRUE;
+#ifdef TTY_GRAPHICS
+    if (match_optname(opts, "ttystatus", 9, FALSE))
+        iflags.debug.ttystatus = negated ? FALSE : TRUE;
+#endif
+#ifdef WIN32
+    if (match_optname(opts, "immediateflips", 14, FALSE))
+        iflags.debug.immediateflips = negated ? FALSE : TRUE;
+#endif
+    return;
+}
 /*allmain.c*/

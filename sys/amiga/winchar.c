@@ -439,7 +439,8 @@ struct amiv_glyph_node amiv_g_nodes[NUMBER_GLYPH_NODES];
 static char amiv_glyph_buffer[GLYPH_BUFFER_SIZE];
 
 void
-flush_glyph_buffer(struct Window *vw)
+flush_glyph_buffer(vw)
+struct Window *vw;
 {
     if (WINVERS_AMIV)
         amiv_flush_glyph_buffer(vw);
@@ -451,7 +452,8 @@ flush_glyph_buffer(struct Window *vw)
  * Routine to flush whatever is buffered
  */
 void
-amiv_flush_glyph_buffer(struct Window *vw)
+amiv_flush_glyph_buffer(vw)
+struct Window *vw;
 {
 #if !defined(DISPMAP) || defined(OPT_DISPMAP)
     int xsize, ysize, x, y;
@@ -629,7 +631,9 @@ amiv_flush_glyph_buffer(struct Window *vw)
  * Glyph buffering routine.  Called instead of WindowPuts().
  */
 void
-amiv_lprint_glyph(winid window, int color_index, int glyph)
+amiv_lprint_glyph(window, color_index, glyph)
+winid window;
+int color_index, glyph;
 {
     int base;
     struct amii_WinDesc *cw;
@@ -803,7 +807,8 @@ static int usecolor;
  */
 
 void
-amiv_start_glyphout(winid window)
+amiv_start_glyphout(window)
+winid window;
 {
     struct amii_WinDesc *cw;
     struct Window *w;
@@ -838,7 +843,8 @@ amiv_start_glyphout(winid window)
  * General cleanup routine -- flushes and restores cursor
  */
 void
-amii_end_glyphout(winid window)
+amii_end_glyphout(window)
+winid window;
 {
     struct amii_WinDesc *cw;
     struct Window *w;
@@ -963,7 +969,8 @@ int backg[AMII_MAXCOLORS] = {
  * Routine to simply flush whatever is buffered
  */
 void
-amii_flush_glyph_buffer(struct Window *w)
+amii_flush_glyph_buffer(w)
+struct Window *w;
 {
     short i, x, y;
     register struct RastPort *rp = w->RPort;
@@ -1004,7 +1011,9 @@ amii_flush_glyph_buffer(struct Window *w)
     glyph_node_index = glyph_buffer_index = 0;
 }
 void
-amiga_print_glyph(winid window, int color_index, int glyph)
+amiga_print_glyph(window, color_index, glyph)
+winid window;
+int color_index, glyph;
 {
     if (WINVERS_AMIV)
         amiv_lprint_glyph(window, color_index, glyph);
@@ -1016,7 +1025,9 @@ amiga_print_glyph(winid window, int color_index, int glyph)
  * Glyph buffering routine.  Called instead of WindowPuts().
  */
 void
-amii_lprint_glyph(winid window, int color_index, int glyph)
+amii_lprint_glyph(window, color_index, glyph)
+winid window;
+int color_index, glyph;
 {
     int fg_color, bg_color;
     struct amii_WinDesc *cw;
@@ -1096,7 +1107,8 @@ static int usecolor;
  */
 
 void
-amii_start_glyphout(winid window)
+amii_start_glyphout(window)
+winid window;
 {
     struct amii_WinDesc *cw;
     struct Window *w;
@@ -1133,7 +1145,8 @@ amii_start_glyphout(winid window)
  * General cleanup routine -- flushes and restores cursor
  */
 void
-amii_end_glyphout(winid window)
+amii_end_glyphout(window)
+    winid window;
 {
     struct amii_WinDesc *cw;
     struct Window *w;
@@ -1177,7 +1190,8 @@ dispmap_sanity()
     }
 }
 int
-dispmap_sanity1(int x)
+dispmap_sanity1(x)
+int x;
 {
     static unsigned char valid[] = { 8, 16, 24, 32, 48, 0 };
     return !!strchr(valid, x);

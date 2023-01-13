@@ -50,6 +50,7 @@ struct window_procs mswin_procs = {
         | WC_TILE_WIDTH | WC_TILE_HEIGHT | WC_TILE_FILE | WC_VARY_MSGCOUNT
         | WC_WINDOWCOLORS | WC_PLAYER_SELECTION,
     WC2_FULLSCREEN | WC2_SOFTKEYBOARD | WC2_WRAPTEXT, mswin_init_nhwindows,
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},   /* color availability */
     mswin_player_selection, mswin_askname, mswin_get_nh_event,
     mswin_exit_nhwindows, mswin_suspend_nhwindows, mswin_resume_nhwindows,
     mswin_create_nhwindow, mswin_clear_nhwindow, mswin_display_nhwindow,
@@ -73,13 +74,8 @@ struct window_procs mswin_procs = {
     /* other defs that really should go away (they're tty specific) */
     mswin_start_screen, mswin_end_screen, mswin_outrip,
     mswin_preference_update, genl_getmsghistory, genl_putmsghistory,
-#ifdef STATUS_VIA_WINDOWPORT
     genl_status_init, genl_status_finish, genl_status_enablefield,
     genl_status_update,
-#ifdef STATUS_HILITES
-    genl_status_threshold,
-#endif
-#endif
     genl_can_suspend_no,
 };
 
@@ -230,7 +226,7 @@ mswin_player_selection(void)
                                            flags.initalign, PICK_RANDOM);
                 if (flags.initrole < 0) {
                     raw_print("Incompatible role!");
-                    flags.initrole = randrole();
+                    flags.initrole = randrole(FALSE);
                 }
             }
 
@@ -363,7 +359,7 @@ prompt_for_player_selection(void)
                                        flags.initalign, PICK_RANDOM);
             if (flags.initrole < 0) {
                 /* tty_putstr(BASE_WINDOW, 0, "Incompatible role!"); */
-                flags.initrole = randrole();
+                flags.initrole = randrole(FALSE);
             }
         } else {
             /* tty_clear_nhwindow(BASE_WINDOW); */
@@ -401,7 +397,7 @@ prompt_for_player_selection(void)
             any.a_int = pick_role(flags.initrace, flags.initgend,
                                   flags.initalign, PICK_RANDOM) + 1;
             if (any.a_int == 0) /* must be non-zero */
-                any.a_int = randrole() + 1;
+                any.a_int = randrole(FALSE) + 1;
             add_menu(win, NO_GLYPH, &any, '*', 0, ATR_NONE, "Random",
                      MENU_UNSELECTED);
             any.a_int = i + 1; /* must be non-zero */
@@ -680,7 +676,7 @@ mswin_exit_nhwindows(const char *str)
     // Don't do any of this (?) - exit_nhwindows does not terminate
     // the application
     // DestroyWindow(GetNHApp()->hMainWnd);
-    // terminate(EXIT_SUCCESS);
+    // nh_terminate(EXIT_SUCCESS);
 }
 
 /* Prepare the window to be suspended. */
@@ -796,7 +792,7 @@ mswin_clear_nhwindow(winid wid)
                    --more--, if necessary, in the tty window-port.
 */
 void
-mswin_display_nhwindow(winid wid, boolean block)
+mswin_display_nhwindow(winid wid, BOOLEAN_P block)
 {
     logDebug("mswin_display_nhwindow(%d, %d)\n", wid, block);
     if (GetNHApp()->windowlist[wid].win != NULL) {
@@ -967,7 +963,7 @@ mswin_putstr_ex(winid wid, int attr, const char *text, boolean app)
                    iff complain is TRUE.
 */
 void
-mswin_display_file(const char *filename, boolean must_exist)
+mswin_display_file(const char *filename, BOOLEAN_P must_exist)
 {
     dlb *f;
     TCHAR wbuf[BUFSZ];
@@ -1053,7 +1049,7 @@ identifier
                    outside of the standard accelerator (see above) or a
                    number.  If 0, the item is unaffected by any group
                    accelerator.  If this accelerator conflicts with
-                   the menu command (or their user defined alises), it loses.
+                   the menu command (or their user defined aliases), it loses.
                    The menu commands and aliases take care not to interfere
                    with the default object class symbols.
                 -- If you want this choice to be preselected when the
@@ -1061,8 +1057,8 @@ identifier
 */
 void
 mswin_add_menu(winid wid, int glyph, const ANY_P *identifier,
-               char accelerator, char group_accel, int attr,
-               const char *str, boolean presel)
+               CHAR_P accelerator, CHAR_P group_accel, int attr,
+               const char *str, BOOLEAN_P presel)
 {
     logDebug("mswin_add_menu(%d, %d, %p, %c, %c, %d, %s, %d)\n", wid, glyph,
              identifier, (char) accelerator, (char) group_accel, attr, str,
@@ -1212,7 +1208,7 @@ print_glyph(window, x, y, glyph, bkglyph)
                    a 1-1 map between glyphs and distinct things on the map).
 */
 void
-mswin_print_glyph(winid wid, xchar x, xchar y, int glyph, int bkglyph)
+mswin_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph)
 {
     logDebug("mswin_print_glyph(%d, %d, %d, %d, %d)\n", wid, x, y, glyph, bkglyph);
 
@@ -1366,7 +1362,7 @@ char yn_function(const char *ques, const char *choices, char default)
                    ports might use a popup.
 */
 char
-mswin_yn_function(const char *question, const char *choices, char def)
+mswin_yn_function(const char *question, const char *choices, CHAR_P def)
 {
     int result = -1;
     char ch;
@@ -1726,7 +1722,7 @@ bail(const char *mesg)
 {
     clearlocks();
     mswin_exit_nhwindows(mesg);
-    terminate(EXIT_SUCCESS);
+    nh_terminate(EXIT_SUCCESS);
     /*NOTREACHED*/
 }
 

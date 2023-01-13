@@ -1,4 +1,4 @@
-/* NetHack 3.6	timeout.h	$NHDT-Date: 1432512775 2015/05/25 00:12:55 $  $NHDT-Branch: master $:$NHDT-Revision: 1.10 $ */
+/* NetHack 3.6	timeout.h	$NHDT-Date: 1564269131 2019/07/27 23:12:11 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.12 $ */
 /* Copyright 1994, Dean Luick					  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -6,13 +6,16 @@
 #define TIMEOUT_H
 
 /* generic timeout function */
-typedef void (*timeout_proc)(ANY_P *, long);
+typedef void FDECL((*timeout_proc), (ANY_P *, long));
 
 /* kind of timer */
-#define TIMER_LEVEL 0   /* event specific to level */
-#define TIMER_GLOBAL 1  /* event follows current play */
-#define TIMER_OBJECT 2  /* event follows a object */
-#define TIMER_MONSTER 3 /* event follows a monster */
+enum timer_type {
+    TIMER_LEVEL = 0,   /* event specific to level [melting ice] */
+    TIMER_GLOBAL = 1,  /* event follows current play [not used] */
+    TIMER_OBJECT = 2,  /* event follows an object [various] */
+    TIMER_MONSTER = 3, /* event follows a monster [not used] */
+    NUM_TIMER_KINDS    /* 4 */
+};
 
 /* save/restore timer ranges */
 #define RANGE_LEVEL 0  /* save/restore timers staying on level */
@@ -22,14 +25,17 @@ typedef void (*timeout_proc)(ANY_P *, long);
  * Timeout functions.  Add a define here, then put it in the table
  * in timeout.c.  "One more level of indirection will fix everything."
  */
-#define ROT_ORGANIC 0 /* for buried organics */
-#define ROT_CORPSE 1
-#define REVIVE_MON 2
-#define BURN_OBJECT 3
-#define HATCH_EGG 4
-#define FIG_TRANSFORM 5
-#define MELT_ICE_AWAY 6
-#define NUM_TIME_FUNCS 7
+enum timeout_types {
+    ROT_ORGANIC = 0, /* for buried organics */
+    ROT_CORPSE,
+    REVIVE_MON,
+    BURN_OBJECT,
+    HATCH_EGG,
+    FIG_TRANSFORM,
+    MELT_ICE_AWAY,
+
+    NUM_TIME_FUNCS
+};
 
 /* used in timeout.c */
 typedef struct fe {

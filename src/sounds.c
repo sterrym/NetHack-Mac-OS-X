@@ -1,17 +1,19 @@
-/* NetHack 3.6	sounds.c	$NHDT-Date: 1446713641 2015/11/05 08:54:01 $  $NHDT-Branch: master $:$NHDT-Revision: 1.74 $ */
+/* NetHack 3.6	sounds.c	$NHDT-Date: 1570844005 2019/10/12 01:33:25 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.83 $ */
 /*      Copyright (c) 1989 Janet Walz, Mike Threepoint */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
-STATIC_DCL boolean mon_is_gecko(struct monst *);
-STATIC_DCL int domonnoise(struct monst *);
-STATIC_DCL int dochat(void);
-STATIC_DCL int mon_in_room(struct monst *, int);
+STATIC_DCL boolean FDECL(mon_is_gecko, (struct monst *));
+STATIC_DCL int FDECL(domonnoise, (struct monst *));
+STATIC_DCL int NDECL(dochat);
+STATIC_DCL int FDECL(mon_in_room, (struct monst *, int));
 
 /* this easily could be a macro, but it might overtax dumb compilers */
 STATIC_OVL int
-mon_in_room(struct monst *mon, int rmtyp)
+mon_in_room(mon, rmtyp)
+struct monst *mon;
+int rmtyp;
 {
     int rno = levl[mon->mx][mon->my].roomno;
     if (rno >= ROOMOFFSET)
@@ -111,8 +113,8 @@ dosounds()
                         You_hear("someone searching.");
                     break;
                 }
-                /* fall into... (yes, even for hallucination) */
             }
+                /*FALLTHRU*/
             case 0:
                 You_hear("the footsteps of a guard on patrol.");
                 break;
@@ -305,7 +307,8 @@ static const char *const h_sounds[] = {
 };
 
 const char *
-growl_sound(register struct monst *mtmp)
+growl_sound(mtmp)
+register struct monst *mtmp;
 {
     const char *ret;
 
@@ -347,7 +350,8 @@ growl_sound(register struct monst *mtmp)
 
 /* the sounds of a seriously abused pet, including player attacking it */
 void
-growl(register struct monst *mtmp)
+growl(mtmp)
+register struct monst *mtmp;
 {
     register const char *growl_verb = 0;
 
@@ -369,7 +373,8 @@ growl(register struct monst *mtmp)
 
 /* the sounds of mistreated pets */
 void
-yelp(register struct monst *mtmp)
+yelp(mtmp)
+register struct monst *mtmp;
 {
     register const char *yelp_verb = 0;
 
@@ -382,23 +387,23 @@ yelp(register struct monst *mtmp)
     else
         switch (mtmp->data->msound) {
         case MS_MEW:
-            yelp_verb = "yowl";
+            yelp_verb = (!Deaf) ? "yowl" : "arch";
             break;
         case MS_BARK:
         case MS_GROWL:
-            yelp_verb = "yelp";
+            yelp_verb = (!Deaf) ? "yelp" : "recoil";
             break;
         case MS_ROAR:
-            yelp_verb = "snarl";
+            yelp_verb = (!Deaf) ? "snarl" : "bluff";
             break;
         case MS_SQEEK:
-            yelp_verb = "squeal";
+            yelp_verb = (!Deaf) ? "squeal" : "quiver";
             break;
         case MS_SQAWK:
-            yelp_verb = "screak";
+            yelp_verb = (!Deaf) ? "screak" : "thrash";
             break;
         case MS_WAIL:
-            yelp_verb = "wail";
+            yelp_verb = (!Deaf) ? "wail" : "cringe";
             break;
         }
     if (yelp_verb) {
@@ -411,7 +416,8 @@ yelp(register struct monst *mtmp)
 
 /* the sounds of distressed pets */
 void
-whimper(register struct monst *mtmp)
+whimper(mtmp)
+register struct monst *mtmp;
 {
     register const char *whimper_verb = 0;
 
@@ -444,7 +450,8 @@ whimper(register struct monst *mtmp)
 
 /* pet makes "I'm hungry" noises */
 void
-beg(register struct monst *mtmp)
+beg(mtmp)
+register struct monst *mtmp;
 {
     if (mtmp->msleeping || !mtmp->mcanmove
         || !(carnivorous(mtmp->data) || herbivorous(mtmp->data)))
@@ -462,7 +469,8 @@ beg(register struct monst *mtmp)
 
 /* return True if mon is a gecko or seems to look like one (hallucination) */
 STATIC_OVL boolean
-mon_is_gecko(struct monst *mon)
+mon_is_gecko(mon)
+struct monst *mon;
 {
     int glyph;
 
@@ -480,14 +488,15 @@ mon_is_gecko(struct monst *mon)
 }
 
 STATIC_OVL int
-domonnoise(register struct monst *mtmp)
+domonnoise(mtmp)
+register struct monst *mtmp;
 {
     char verbuf[BUFSZ];
     register const char *pline_msg = 0, /* Monnam(mtmp) will be prepended */
         *verbl_msg = 0,                 /* verbalize() */
-            *verbl_msg_mcan = 0;        /* verbalize() if cancelled */
+        *verbl_msg_mcan = 0;            /* verbalize() if cancelled */
     struct permonst *ptr = mtmp->data;
-    int msound = ptr->msound;
+    int msound = ptr->msound, gnomeplan = 0;
 
     /* presumably nearness and sleep checks have already been made */
     if (Deaf)
@@ -503,8 +512,9 @@ domonnoise(register struct monst *mtmp)
         msound = mons[genus(monsndx(ptr), 1)].msound;
     /* some normally non-speaking types can/will speak if hero is similar */
     else if (msound == MS_ORC         /* note: MS_ORC is same as MS_GRUNT */
-             && (same_race(ptr, youmonst.data)           /* current form, */
-                 || same_race(ptr, &mons[Race_switch]))) /* unpoly'd form */
+             && ((same_race(ptr, youmonst.data)          /* current form, */
+                  || same_race(ptr, &mons[Race_switch])) /* unpoly'd form */
+                 || Hallucination))
         msound = MS_HUMANOID;
     /* silliness, with slight chance to interfere with shopping */
     else if (Hallucination && mon_is_gecko(mtmp))
@@ -579,20 +589,21 @@ domonnoise(register struct monst *mtmp)
             } else
                 verbl_msg = "I only drink... potions.";
         } else {
-            int vampindex;
             static const char *const vampmsg[] = {
                 /* These first two (0 and 1) are specially handled below */
                 "I vant to suck your %s!",
                 "I vill come after %s without regret!",
                 /* other famous vampire quotes can follow here if desired */
             };
+            int vampindex;
+
             if (kindred)
                 verbl_msg =
                     "This is my hunting ground that you dare to prowl!";
             else if (youmonst.data == &mons[PM_SILVER_DRAGON]
                      || youmonst.data == &mons[PM_BABY_SILVER_DRAGON]) {
                 /* Silver dragons are silver in color, not made of silver */
-                Sprintf(verbuf, "%s! Your silver sheen does not frighten me!",
+                Sprintf(verbuf, "%s!  Your silver sheen does not frighten me!",
                         youmonst.data == &mons[PM_SILVER_DRAGON]
                             ? "Fool"
                             : "Young Fool");
@@ -653,7 +664,8 @@ domonnoise(register struct monst *mtmp)
             else
                 pline_msg = "mews.";
             break;
-        } /* else FALLTHRU */
+        }
+        /*FALLTHRU*/
     case MS_GROWL:
         pline_msg = mtmp->mpeaceful ? "snarls." : "growls!";
         break;
@@ -755,7 +767,7 @@ domonnoise(register struct monst *mtmp)
             }
             break;
         }
-    /* else FALLTHRU */
+        /*FALLTHRU*/
     case MS_HUMANOID:
         if (!mtmp->mpeaceful) {
             if (In_endgame(&u.uz) && is_mplayer(ptr))
@@ -793,6 +805,18 @@ domonnoise(register struct monst *mtmp)
             pline_msg = "talks about spellcraft.";
         else if (ptr->mlet == S_CENTAUR)
             pline_msg = "discusses hunting.";
+        else if (is_gnome(ptr) && Hallucination && (gnomeplan = rn2(4)) % 2)
+            /* skipped for rn2(4) result of 0 or 2;
+               gag from an early episode of South Park called "Gnomes";
+               initially, Tweek (introduced in that episode) is the only
+               one aware of the tiny gnomes after spotting them sneaking
+               about; they are embarked upon a three-step business plan;
+               a diagram of the plan shows:
+                         Phase 1         Phase 2      Phase 3
+                   Collect underpants       ?          Profit
+               and they never verbalize step 2 so we don't either */
+            verbl_msg = (gnomeplan == 1) ? "Phase one, collect underpants."
+                                         : "Phase three, profit!";
         else
             switch (monsndx(ptr)) {
             case PM_HOBBIT:
@@ -815,6 +839,7 @@ domonnoise(register struct monst *mtmp)
         break;
     case MS_SEDUCE: {
         int swval;
+
         if (SYSOPT_SEDUCE) {
             if (ptr->mlet != S_NYMPH
                 && could_seduce(mtmp, &youmonst, (struct attack *) 0) == 1) {
@@ -898,50 +923,47 @@ domonnoise(register struct monst *mtmp)
                                     : soldier_foe_msg[rn2(3)];
         break;
     }
-    case MS_RIDER:
-        /* 3.6.0 tribute */
-        if (ptr == &mons[PM_DEATH]
-            && !context.tribute.Deathnotice && u_have_novel()) {
-            struct obj *book = u_have_novel();
-            const char *tribtitle = (char *)0;
+    case MS_RIDER: {
+        const char *tribtitle;
+        struct obj *book = 0;
+        boolean ms_Death = (ptr == &mons[PM_DEATH]);
 
-            if (book) {
-                int novelidx = book->novelidx;
-
-                tribtitle = noveltitle(&novelidx);
-            }
-            if (tribtitle) {
+        /* 3.6 tribute */
+        if (ms_Death && !context.tribute.Deathnotice
+            && (book = u_have_novel()) != 0) {
+            if ((tribtitle = noveltitle(&book->novelidx)) != 0) {
                 Sprintf(verbuf, "Ah, so you have a copy of /%s/.", tribtitle);
                 /* no Death featured in these two, so exclude them */
-                if (!(strcmpi(tribtitle, "Snuff") == 0
-                      || strcmpi(tribtitle, "The Wee Free Men") == 0))
-                    Strcat(verbuf, " I may have been misquoted there.");
+                if (strcmpi(tribtitle, "Snuff")
+                    && strcmpi(tribtitle, "The Wee Free Men"))
+                    Strcat(verbuf, "  I may have been misquoted there.");
                 verbl_msg = verbuf;
-                context.tribute.Deathnotice = 1;
             }
-        } else if (ptr == &mons[PM_DEATH]
-                   && !rn2(2) && Death_quote(verbuf, BUFSZ)) {
-                verbl_msg = verbuf;
-        }
+            context.tribute.Deathnotice = 1;
+        } else if (ms_Death && rn2(3) && Death_quote(verbuf, sizeof verbuf)) {
+            verbl_msg = verbuf;
         /* end of tribute addition */
-        else if (ptr == &mons[PM_DEATH] && !rn2(10))
+
+        } else if (ms_Death && !rn2(10)) {
             pline_msg = "is busy reading a copy of Sandman #8.";
-        else
+        } else
             verbl_msg = "Who do you think you are, War?";
         break;
-    }
+    } /* case MS_RIDER */
+    } /* switch */
 
-    if (pline_msg)
+    if (pline_msg) {
         pline("%s %s", Monnam(mtmp), pline_msg);
-    else if (mtmp->mcan && verbl_msg_mcan)
+    } else if (mtmp->mcan && verbl_msg_mcan) {
         verbalize1(verbl_msg_mcan);
-    else if (verbl_msg) {
+    } else if (verbl_msg) {
+        /* more 3.6 tribute */
         if (ptr == &mons[PM_DEATH]) {
             /* Death talks in CAPITAL LETTERS
                and without quotation marks */
             char tmpbuf[BUFSZ];
-            Sprintf(tmpbuf, "%s", verbl_msg);
-            pline1(ucase(tmpbuf));
+
+            pline1(ucase(strcpy(tmpbuf, verbl_msg)));
         } else {
             verbalize1(verbl_msg);
         }
@@ -1051,8 +1073,8 @@ dochat()
         return 0;
     }
 
-    if (!mtmp || mtmp->mundetected || mtmp->m_ap_type == M_AP_FURNITURE
-        || mtmp->m_ap_type == M_AP_OBJECT)
+    if (!mtmp || mtmp->mundetected || M_AP_TYPE(mtmp) == M_AP_FURNITURE
+        || M_AP_TYPE(mtmp) == M_AP_OBJECT)
         return 0;
 
     /* sleeping monsters won't talk, except priests (who wake up) */
@@ -1079,7 +1101,7 @@ dochat()
 
 #ifdef USER_SOUNDS
 
-extern void play_usersound(const char *, int);
+extern void FDECL(play_usersound, (const char *, int));
 
 typedef struct audio_mapping_rec {
     struct nhregex *regex;
@@ -1094,7 +1116,8 @@ char *sounddir = ".";
 
 /* adds a sound file mapping, returns 0 on failure, 1 on success */
 int
-add_sound_mapping(const char *mapping)
+add_sound_mapping(mapping)
+const char *mapping;
 {
     char text[256];
     char filename[256];
@@ -1141,7 +1164,8 @@ add_sound_mapping(const char *mapping)
 }
 
 void
-play_sound_for_message(const char *msg)
+play_sound_for_message(msg)
+const char *msg;
 {
     audio_mapping *cursor = soundmap;
 

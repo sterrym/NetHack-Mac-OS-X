@@ -1,12 +1,14 @@
-/* NetHack 3.6	worn.c	$NHDT-Date: 1446887541 2015/11/07 09:12:21 $  $NHDT-Branch: master $:$NHDT-Revision: 1.47 $ */
+/* NetHack 3.6	worn.c	$NHDT-Date: 1550524569 2019/02/18 21:16:09 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.56 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2013. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
-STATIC_DCL void m_lose_armor(struct monst *, struct obj *);
-STATIC_DCL void m_dowear_type(struct monst *, long, boolean, boolean);
-STATIC_DCL int extra_pref(struct monst *, struct obj *);
+STATIC_DCL void FDECL(m_lose_armor, (struct monst *, struct obj *));
+STATIC_DCL void FDECL(m_dowear_type,
+                      (struct monst *, long, BOOLEAN_P, BOOLEAN_P));
+STATIC_DCL int FDECL(extra_pref, (struct monst *, struct obj *));
 
 const struct worn {
     long w_mask;
@@ -27,21 +29,24 @@ const struct worn {
              { W_TOOL, &ublindf },
              { W_BALL, &uball },
              { W_CHAIN, &uchain },
-             { 0, 0 } };
+             { 0, 0 }
+};
 
 /* This only allows for one blocking item per property */
-#define w_blocks(o, m)                                                     \
-    ((o->otyp == MUMMY_WRAPPING && ((m) &W_ARMC))                          \
-         ? INVIS                                                           \
-         : (o->otyp == CORNUTHAUM && ((m) &W_ARMH) && !Role_if(PM_WIZARD)) \
-               ? CLAIRVOYANT                                               \
+#define w_blocks(o, m) \
+    ((o->otyp == MUMMY_WRAPPING && ((m) & W_ARMC))                          \
+         ? INVIS                                                            \
+         : (o->otyp == CORNUTHAUM && ((m) & W_ARMH) && !Role_if(PM_WIZARD)) \
+               ? CLAIRVOYANT                                                \
                : 0)
 /* note: monsters don't have clairvoyance, so your role
    has no significant effect on their use of w_blocks() */
 
 /* Updated to use the extrinsic and blocked fields. */
 void
-setworn(register struct obj *obj, long mask)
+setworn(obj, mask)
+register struct obj *obj;
+long mask;
 {
     register const struct worn *wp;
     register struct obj *oobj;
@@ -74,6 +79,9 @@ setworn(register struct obj *obj, long mask)
                         if (oobj->oartifact)
                             set_artifact_intrinsic(oobj, 0, mask);
                     }
+                    /* in case wearing or removal is in progress or removal
+                       is pending (via 'A' command for multiple items) */
+                    cancel_doff(oobj, wp->w_mask);
                 }
                 *(wp->w_obj) = obj;
                 if (obj) {
@@ -104,7 +112,8 @@ setworn(register struct obj *obj, long mask)
 /* called e.g. when obj is destroyed */
 /* Updated to use the extrinsic and blocked fields. */
 void
-setnotworn(register struct obj *obj)
+setnotworn(obj)
+register struct obj *obj;
 {
     register const struct worn *wp;
     register int p;
@@ -115,6 +124,10 @@ setnotworn(register struct obj *obj)
         u.twoweap = 0;
     for (wp = worn; wp->w_mask; wp++)
         if (obj == *(wp->w_obj)) {
+            /* in case wearing or removal is in progress or removal
+               is pending (via 'A' command for multiple items) */
+            cancel_doff(obj, wp->w_mask);
+
             *(wp->w_obj) = 0;
             p = objects[obj->otyp].oc_oprop;
             u.uprops[p].extrinsic = u.uprops[p].extrinsic & ~wp->w_mask;
@@ -127,9 +140,23 @@ setnotworn(register struct obj *obj)
     update_inventory();
 }
 
+/* return item worn in slot indiciated by wornmask; needed by poly_obj() */
+struct obj *
+wearmask_to_obj(wornmask)
+long wornmask;
+{
+    const struct worn *wp;
+
+    for (wp = worn; wp->w_mask; wp++)
+        if (wp->w_mask & wornmask)
+            return *wp->w_obj;
+    return (struct obj *) 0;
+}
+
 /* return a bitmask of the equipment slot(s) a given item might be worn in */
 long
-wearslot(struct obj *obj)
+wearslot(obj)
+struct obj *obj;
 {
     int otyp = obj->otyp;
     /* practically any item can be wielded or quivered; it's up to
@@ -201,7 +228,8 @@ wearslot(struct obj *obj)
 }
 
 void
-mon_set_minvis(struct monst *mon)
+mon_set_minvis(mon)
+struct monst *mon;
 {
     mon->perminvis = 1;
     if (!mon->invis_blkd) {
@@ -213,9 +241,10 @@ mon_set_minvis(struct monst *mon)
 }
 
 void
-mon_adjust_speed(struct monst *mon,
-                 int adjust,      /* positive => increase speed, negative => decrease */
-                 struct obj *obj) /* item to make known if effect can be seen */
+mon_adjust_speed(mon, adjust, obj)
+struct monst *mon;
+int adjust;      /* positive => increase speed, negative => decrease */
+struct obj *obj; /* item to make known if effect can be seen */
 {
     struct obj *otmp;
     boolean give_msg = !in_mklev, petrify = FALSE;
@@ -288,9 +317,13 @@ mon_adjust_speed(struct monst *mon,
     }
 }
 
-/* armor put on or taken off; might be magical variety */
+/* armor put on or taken off; might be magical variety
+   [TODO: rename to 'update_mon_extrinsics()' and change all callers...] */
 void
-update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on, boolean silently)
+update_mon_intrinsics(mon, obj, on, silently)
+struct monst *mon;
+struct obj *obj;
+boolean on, silently;
 {
     int unseen;
     uchar mask;
@@ -337,7 +370,7 @@ update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on, boolean si
             if (which <= 8) { /* 1 thru 8 correspond to MR_xxx mask values */
                 /* FIRE,COLD,SLEEP,DISINT,SHOCK,POISON,ACID,STONE */
                 mask = (uchar) (1 << (which - 1));
-                mon->mintrinsics |= (unsigned short) mask;
+                mon->mextrinsics |= (unsigned short) mask;
             }
             break;
         }
@@ -363,25 +396,22 @@ update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on, boolean si
         case ACID_RES:
         case STONE_RES:
             mask = (uchar) (1 << (which - 1));
-            /* If the monster doesn't have this resistance intrinsically,
-               check whether any other worn item confers it.  Note that
-               we don't currently check for anything conferred via simply
-               carrying an object. */
-            if (!(mon->data->mresists & mask)) {
-                for (otmp = mon->minvent; otmp; otmp = otmp->nobj)
-                    if (otmp->owornmask
-                        && (int) objects[otmp->otyp].oc_oprop == which)
-                        break;
-                if (!otmp)
-                    mon->mintrinsics &= ~((unsigned short) mask);
-            }
+            /* update monster's extrinsics (for worn objects only;
+               'obj' itself might still be worn or already unworn) */
+            for (otmp = mon->minvent; otmp; otmp = otmp->nobj)
+                if (otmp != obj
+                    && otmp->owornmask
+                    && (int) objects[otmp->otyp].oc_oprop == which)
+                    break;
+            if (!otmp)
+                mon->mextrinsics &= ~((unsigned short) mask);
             break;
         default:
             break;
         }
     }
 
-maybe_blocks:
+ maybe_blocks:
     /* obj->owornmask has been cleared by this point, so we can't use it.
        However, since monsters don't wield armor, we don't have to guard
        against that and can get away with a blanket worn-mask value. */
@@ -403,7 +433,8 @@ maybe_blocks:
 }
 
 int
-find_mac(register struct monst *mon)
+find_mac(mon)
+register struct monst *mon;
 {
     register struct obj *obj;
     int base = mon->data->ac;
@@ -436,7 +467,9 @@ find_mac(register struct monst *mon)
  * already worn body armor is too obviously buggy...
  */
 void
-m_dowear(register struct monst *mon, boolean creation)
+m_dowear(mon, creation)
+register struct monst *mon;
+boolean creation;
 {
 #define RACE_EXCEPTION TRUE
     /* Note the restrictions here are the same as in dowear in do_wear.c
@@ -473,7 +506,11 @@ m_dowear(register struct monst *mon, boolean creation)
 }
 
 STATIC_OVL void
-m_dowear_type(struct monst *mon, long flag, boolean creation, boolean racialexception)
+m_dowear_type(mon, flag, creation, racialexception)
+struct monst *mon;
+long flag;
+boolean creation;
+boolean racialexception;
 {
     struct obj *old, *best, *obj;
     int m_delay = 0;
@@ -613,7 +650,9 @@ outer_break:
 #undef RACE_EXCEPTION
 
 struct obj *
-which_armor(struct monst *mon, long flag)
+which_armor(mon, flag)
+struct monst *mon;
+long flag;
 {
     if (mon == &youmonst) {
         switch (flag) {
@@ -647,7 +686,9 @@ which_armor(struct monst *mon, long flag)
 
 /* remove an item of armor and then drop it */
 STATIC_OVL void
-m_lose_armor(struct monst *mon, struct obj *obj)
+m_lose_armor(mon, obj)
+struct monst *mon;
+struct obj *obj;
 {
     mon->misc_worn_check &= ~obj->owornmask;
     if (obj->owornmask)
@@ -666,6 +707,13 @@ clear_bypasses()
 {
     struct obj *otmp, *nobj;
     struct monst *mtmp;
+
+    /*
+     * 'Object' bypass is also used for one monster function:
+     * polymorph control of long worms.  Activated via setting
+     * context.bypasses even if no specific object has been
+     * bypassed.
+     */
 
     for (otmp = fobj; otmp; otmp = nobj) {
         nobj = otmp->nobj;
@@ -698,17 +746,27 @@ clear_bypasses()
             continue;
         for (otmp = mtmp->minvent; otmp; otmp = otmp->nobj)
             otmp->bypass = 0;
+        /* long worm created by polymorph has mon->mextra->mcorpsenm set
+           to PM_LONG_WORM to flag it as not being subject to further
+           polymorph (so polymorph zap won't hit monster to transform it
+           into a long worm, then hit that worm's tail and transform it
+           again on same zap); clearing mcorpsenm reverts worm to normal */
+        if (mtmp->data == &mons[PM_LONG_WORM] && has_mcorpsenm(mtmp))
+            MCORPSENM(mtmp) = NON_PM;
     }
     for (mtmp = migrating_mons; mtmp; mtmp = mtmp->nmon) {
         for (otmp = mtmp->minvent; otmp; otmp = otmp->nobj)
             otmp->bypass = 0;
+        /* no MCORPSENM(mtmp)==PM_LONG_WORM check here; long worms can't
+           be just created by polymorph and migrating at the same time */
     }
     /* billobjs and mydogs chains don't matter here */
     context.bypasses = FALSE;
 }
 
 void
-bypass_obj(struct obj *obj)
+bypass_obj(obj)
+struct obj *obj;
 {
     obj->bypass = 1;
     context.bypasses = TRUE;
@@ -716,8 +774,9 @@ bypass_obj(struct obj *obj)
 
 /* set or clear the bypass bit in a list of objects */
 void
-bypass_objlist(struct obj *objchain,
-               boolean on) /* TRUE => set, FALSE => clear */
+bypass_objlist(objchain, on)
+struct obj *objchain;
+boolean on; /* TRUE => set, FALSE => clear */
 {
     if (on && objchain)
         context.bypasses = TRUE;
@@ -730,7 +789,8 @@ bypass_objlist(struct obj *objchain,
 /* return the first object without its bypass bit set; set that bit
    before returning so that successive calls will find further objects */
 struct obj *
-nxt_unbypassed_obj(struct obj *objchain)
+nxt_unbypassed_obj(objchain)
+struct obj *objchain;
 {
     while (objchain) {
         if (!objchain->bypass) {
@@ -742,8 +802,34 @@ nxt_unbypassed_obj(struct obj *objchain)
     return objchain;
 }
 
+/* like nxt_unbypassed_obj() but operates on sortloot_item array rather
+   than an object linked list; the array contains obj==Null terminator;
+   there's an added complication that the array may have stale pointers
+   for deleted objects (see Multiple-Drop case in askchain(invent.c)) */
+struct obj *
+nxt_unbypassed_loot(lootarray, listhead)
+Loot *lootarray;
+struct obj *listhead;
+{
+    struct obj *o, *obj;
+
+    while ((obj = lootarray->obj) != 0) {
+        for (o = listhead; o; o = o->nobj)
+            if (o == obj)
+                break;
+        if (o && !obj->bypass) {
+            bypass_obj(obj);
+            break;
+        }
+        ++lootarray;
+    }
+    return obj;
+}
+
 void
-mon_break_armor(struct monst *mon, boolean polyspot)
+mon_break_armor(mon, polyspot)
+struct monst *mon;
+boolean polyspot;
 {
     register struct obj *otmp;
     struct permonst *mdat = mon->data;
@@ -902,7 +988,9 @@ mon_break_armor(struct monst *mon, boolean polyspot)
 
 /* bias a monster's preferences towards armor that has special benefits. */
 STATIC_OVL int
-extra_pref(struct monst *mon, struct obj *obj)
+extra_pref(mon, obj)
+struct monst *mon;
+struct obj *obj;
 {
     /* currently only does speed boots, but might be expanded if monsters
      * get to use more armor abilities
@@ -923,7 +1011,9 @@ extra_pref(struct monst *mon, struct obj *obj)
  *      -1 If the race/object combination is unacceptable.
  */
 int
-racial_exception(struct monst *mon, struct obj *obj)
+racial_exception(mon, obj)
+struct monst *mon;
+struct obj *obj;
 {
     const struct permonst *ptr = raceptr(mon);
 

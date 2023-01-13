@@ -1,4 +1,5 @@
-/* NetHack 3.6	tiletext.c	$NHDT-Date: 1432512803 2015/05/25 00:13:23 $  $NHDT-Branch: master $:$NHDT-Revision: 1.11 $ */
+/* NetHack 3.6	tiletext.c	$NHDT-Date: 1524689272 2018/04/25 20:47:52 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.16 $ */
+/*      Copyright (c) 2016 by Pasi Kallinen                       */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "config.h"
@@ -25,19 +26,35 @@ static const char *text_sets[] = { "monsters.txt", "objects.txt",
                                    "other.txt" };
 #endif
 
-extern const char *tilename(int, int);
-static void read_text_colormap(FILE *);
-static boolean write_text_colormap(FILE *);
-static boolean read_txttile(FILE *, pixel (*)[TILE_X]);
-static void write_txttile(FILE *, pixel (*)[TILE_X]);
+extern const char *FDECL(tilename, (int, int));
+extern boolean FDECL(acceptable_tilename, (int, const char *, const char *));
+static void FDECL(read_text_colormap, (FILE *));
+static boolean FDECL(write_text_colormap, (FILE *));
+static boolean FDECL(read_txttile, (FILE *, pixel (*)[TILE_X]));
+static void FDECL(write_txttile, (FILE *, pixel (*)[TILE_X]));
 
 /* Ugh.  DICE doesn't like %[A-Z], so we have to spell it out... */
 #define FORMAT_STRING                                                       \
     "%[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.] = " \
     "(%d, %d, %d) "
 
+static int grayscale = 0;
+/* grayscale color mapping */
+static const int graymappings[] = {
+ /* .  A  B   C   D   E   F   G   H   I   J   K   L   M   N   O   P */
+    0, 1, 17, 18, 19, 20, 27, 22, 23, 24, 25, 26, 21, 15, 13, 14, 14
+};
+
+void
+set_grayscale(g)
+int g;
+{
+    grayscale = g;
+}
+
 static void
-read_text_colormap(FILE *txtfile)
+read_text_colormap(txtfile)
+FILE *txtfile;
 {
     int i, r, g, b;
     char c[2];
@@ -59,7 +76,8 @@ read_text_colormap(FILE *txtfile)
 #undef FORMAT_STRING
 
 static boolean
-write_text_colormap(FILE *txtfile)
+write_text_colormap(txtfile)
+FILE *txtfile;
 {
     int i;
     char c;
@@ -86,7 +104,9 @@ write_text_colormap(FILE *txtfile)
 }
 
 static boolean
-read_txttile(FILE *txtfile, pixel (*pixels)[TILE_X])
+read_txttile(txtfile, pixels)
+FILE *txtfile;
+pixel (*pixels)[TILE_X];
 {
     int ph, i, j, k;
     char buf[BUFSZ], ttype[BUFSZ];
@@ -106,7 +126,7 @@ read_txttile(FILE *txtfile, pixel (*pixels)[TILE_X])
          * change when tiles are added
          */
         p = tilename(tile_set, tile_set_indx);
-        if (p && strcmp(p, buf)) {
+        if (p && strcmp(p, buf) && !acceptable_tilename(tile_set_indx,buf,p)) {
             Fprintf(stderr, "warning: for tile %d (numbered %d) of %s,\n",
                     tile_set_indx, i, text_sets[tile_set - 1]);
             Fprintf(stderr, "\tfound '%s' while expecting '%s'\n", buf, p);
@@ -130,6 +150,13 @@ read_txttile(FILE *txtfile, pixel (*pixels)[TILE_X])
                 return FALSE;
             }
             k = color_index[(int) c[0]];
+            if (grayscale) {
+                if (k > (SIZE(graymappings) - 1))
+                    Fprintf(stderr, "Gray mapping issue %d > %d.\n", k,
+                            SIZE(graymappings) - 1);
+                else
+                    k = graymappings[k];
+            }
             if (k == -1)
                 Fprintf(stderr, "color %c not in colormap!\n", c[0]);
             else {
@@ -155,7 +182,7 @@ read_txttile(FILE *txtfile, pixel (*pixels)[TILE_X])
     /* DICE again... it doesn't seem to eat whitespace after the } like
      * it should, so we have to do so manually.
      */
-    while ((*c = fgetc(txtfile)) != EOF && isspace(*c))
+    while ((*c = fgetc(txtfile)) != EOF && isspace((uchar) *c))
         ;
     ungetc(*c, txtfile);
 #endif
@@ -163,7 +190,9 @@ read_txttile(FILE *txtfile, pixel (*pixels)[TILE_X])
 }
 
 static void
-write_txttile(FILE *txtfile, pixel (*pixels)[TILE_X])
+write_txttile(txtfile, pixels)
+FILE *txtfile;
+pixel (*pixels)[TILE_X];
 {
     const char *p;
     const char *type;
@@ -246,7 +275,9 @@ merge_colormap()
 }
 
 boolean
-fopen_text_file(const char *filename, const char *type)
+fopen_text_file(filename, type)
+const char *filename;
+const char *type;
 {
     const char *p;
     int i;
@@ -302,13 +333,15 @@ fopen_text_file(const char *filename, const char *type)
 }
 
 boolean
-read_text_tile(pixel (*pixels)[TILE_X])
+read_text_tile(pixels)
+pixel (*pixels)[TILE_X];
 {
     return (read_txttile(tile_file, pixels));
 }
 
 boolean
-write_text_tile(pixel (*pixels)[TILE_X])
+write_text_tile(pixels)
+pixel (*pixels)[TILE_X];
 {
     write_txttile(tile_file, pixels);
     return TRUE;

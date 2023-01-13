@@ -21,6 +21,7 @@
 #define MSNH_MSG_CARET 110
 #define MSNH_MSG_GETTEXT 111
 #define MSNH_MSG_UPDATE_STATUS 112
+#define MSNH_MSG_RANDOM_INPUT 113
 
 typedef struct mswin_nhmsg_add_wnd {
     winid wid;
@@ -33,8 +34,8 @@ typedef struct mswin_nhmsg_putstr {
 } MSNHMsgPutstr, *PMSNHMsgPutstr;
 
 typedef struct mswin_nhmsg_print_glyph {
-    xchar x;
-    xchar y;
+    XCHAR_P x;
+    XCHAR_P y;
     int glyph;
     int bkglyph;
 } MSNHMsgPrintGlyph, *PMSNHMsgPrintGlyph;
@@ -47,11 +48,11 @@ typedef struct mswin_nhmsg_cliparound {
 typedef struct mswin_nhmsg_add_menu {
     int glyph;
     const ANY_P *identifier;
-    char accelerator;
-    char group_accel;
+    CHAR_P accelerator;
+    CHAR_P group_accel;
     int attr;
     const char *str;
-    boolean presel;
+    BOOLEAN_P presel;
 } MSNHMsgAddMenu, *PMSNHMsgAddMenu;
 
 typedef struct mswin_nhmsg_cursor {
@@ -69,10 +70,7 @@ typedef struct mswin_nhmsg_get_text {
 } MSNHMsgGetText, *PMSNHMsgGetText;
 
 typedef struct mswin_nhmsg_update_status {
-    int n_fields;
-    const char **vals;
-    boolean *activefields;
-    int *colors;
+    struct mswin_status_lines * status_lines;
 } MSNHMsgUpdateStatus, *PMSNHMsgUpdateStatus;
 
 #endif

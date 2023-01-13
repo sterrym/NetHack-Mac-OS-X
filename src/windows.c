@@ -1,4 +1,4 @@
-/* NetHack 3.6	windows.c	$NHDT-Date: 1448013599 2015/11/20 09:59:59 $  $NHDT-Branch: master $:$NHDT-Revision: 1.35 $ */
+/* NetHack 3.6	windows.c	$NHDT-Date: 1575245096 2019/12/02 00:04:56 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.60 $ */
 /* Copyright (c) D. Cohrs, 1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -6,11 +6,14 @@
 #ifdef TTY_GRAPHICS
 #include "wintty.h"
 #endif
+#ifdef CURSES_GRAPHICS
+extern struct window_procs curses_procs;
+#endif
 #ifdef X11_GRAPHICS
 /* Cannot just blindly include winX.h without including all of X11 stuff
    and must get the order of include files right.  Don't bother. */
 extern struct window_procs X11_procs;
-extern void win_X11_init(int);
+extern void FDECL(win_X11_init, (int));
 #endif
 #ifdef QT_GRAPHICS
 extern struct window_procs Qt_procs;
@@ -23,13 +26,13 @@ extern struct window_procs mac_procs;
 #endif
 #ifdef BEOS_GRAPHICS
 extern struct window_procs beos_procs;
-extern void be_win_init(int);
+extern void FDECL(be_win_init, (int));
 FAIL /* be_win_init doesn't exist? XXX*/
 #endif
 #ifdef AMIGA_INTUITION
 extern struct window_procs amii_procs;
 extern struct window_procs amiv_procs;
-extern void ami_wininit_data(int);
+extern void FDECL(ami_wininit_data, (int));
 #endif
 #ifdef WIN32_GRAPHICS
 extern struct window_procs win32_procs;
@@ -41,24 +44,35 @@ extern struct window_procs Gnome_procs;
 #ifdef MSWIN_GRAPHICS
 extern struct window_procs mswin_procs;
 #endif
-#ifdef COCOA_GRAPHICS
-extern struct window_procs cocoa_procs;
-#endif
 #ifdef WINCHAIN
 extern struct window_procs chainin_procs;
-extern void chainin_procs_init(int);
-extern void *chainin_procs_chain(int, int, void *, void *, void *);
+extern void FDECL(chainin_procs_init, (int));
+extern void *FDECL(chainin_procs_chain, (int, int, void *, void *, void *));
 
 extern struct chain_procs chainout_procs;
-extern void chainout_procs_init(int);
-extern void *chainout_procs_chain(int, int, void *, void *, void *);
+extern void FDECL(chainout_procs_init, (int));
+extern void *FDECL(chainout_procs_chain, (int, int, void *, void *, void *));
 
 extern struct chain_procs trace_procs;
-extern void trace_procs_init(int);
-extern void *trace_procs_chain(int, int, void *, void *, void *);
+extern void FDECL(trace_procs_init, (int));
+extern void *FDECL(trace_procs_chain, (int, int, void *, void *, void *));
 #endif
 
-STATIC_DCL void def_raw_print(const char *s);
+STATIC_DCL void FDECL(def_raw_print, (const char *s));
+STATIC_DCL void NDECL(def_wait_synch);
+
+#ifdef DUMPLOG
+STATIC_DCL winid FDECL(dump_create_nhwindow, (int));
+STATIC_DCL void FDECL(dump_clear_nhwindow, (winid));
+STATIC_DCL void FDECL(dump_display_nhwindow, (winid, BOOLEAN_P));
+STATIC_DCL void FDECL(dump_destroy_nhwindow, (winid));
+STATIC_DCL void FDECL(dump_start_menu, (winid));
+STATIC_DCL void FDECL(dump_add_menu, (winid, int, const ANY_P *, CHAR_P,
+                                      CHAR_P, int, const char *, BOOLEAN_P));
+STATIC_DCL void FDECL(dump_end_menu, (winid, const char *));
+STATIC_DCL int FDECL(dump_select_menu, (winid, int, MENU_ITEM_P **));
+STATIC_DCL void FDECL(dump_putstr, (winid, int, const char *));
+#endif /* DUMPLOG */
 
 #ifdef HANGUPHANDLING
 volatile
@@ -73,13 +87,16 @@ volatile
 
 static struct win_choices {
     struct window_procs *procs;
-    void (*ini_routine)(int); /* optional (can be 0) */
+    void FDECL((*ini_routine), (int)); /* optional (can be 0) */
 #ifdef WINCHAIN
-    void *(*chain_routine)(int, int, void *, void *, void *);
+    void *FDECL((*chain_routine), (int, int, void *, void *, void *));
 #endif
 } winchoices[] = {
 #ifdef TTY_GRAPHICS
     { &tty_procs, win_tty_init CHAINR(0) },
+#endif
+#ifdef CURSES_GRAPHICS
+    { &curses_procs, 0 },
 #endif
 #ifdef X11_GRAPHICS
     { &X11_procs, win_X11_init CHAINR(0) },
@@ -111,9 +128,6 @@ static struct win_choices {
 #ifdef MSWIN_GRAPHICS
     { &mswin_procs, 0 CHAINR(0) },
 #endif
-#ifdef COCOA_GRAPHICS
-	{ &cocoa_procs, 0 CHAINR(0) },
-#endif
 #ifdef WINCHAIN
     { &chainin_procs, chainin_procs_init, chainin_procs_chain },
     { (struct window_procs *) &chainout_procs, chainout_procs_init,
@@ -138,14 +152,22 @@ static struct winlink *chain = 0;
 static struct winlink *
 wl_new()
 {
-    return calloc(1, sizeof(struct winlink));
+    struct winlink *wl = (struct winlink *) alloc(sizeof *wl);
+
+    wl->nextlink = 0;
+    wl->wincp = 0;
+    wl->linkdata = 0;
+
+    return wl;
 }
+
 static void
 wl_addhead(struct winlink *wl)
 {
     wl->nextlink = chain;
     chain = wl;
 }
+
 static void
 wl_addtail(struct winlink *wl)
 {
@@ -179,14 +201,32 @@ genl_can_suspend_yes(VOID_ARGS)
 
 STATIC_OVL
 void
-def_raw_print(const char *s)
+def_raw_print(s)
+const char *s;
 {
     puts(s);
 }
 
+STATIC_OVL
+void
+def_wait_synch(VOID_ARGS)
+{
+    /* Config file error handling routines
+     * call wait_sync() without checking to
+     * see if it actually has a value,
+     * leading to spectacular violations
+     * when you try to execute address zero.
+     * The existence of this allows early
+     * processing to have something to execute
+     * even though it essentially does nothing
+     */
+     return;
+}
+
 #ifdef WINCHAIN
 static struct win_choices *
-win_choices_find(const char *s)
+win_choices_find(s)
+const char *s;
 {
     register int i;
 
@@ -200,9 +240,11 @@ win_choices_find(const char *s)
 #endif
 
 void
-choose_windows(const char *s)
+choose_windows(s)
+const char *s;
 {
-    register int i;
+    int i;
+    char *tmps = 0;
 
     for (i = 0; winchoices[i].procs; i++) {
         if ('+' == winchoices[i].procs->name[0])
@@ -223,33 +265,60 @@ choose_windows(const char *s)
 
     if (!windowprocs.win_raw_print)
         windowprocs.win_raw_print = def_raw_print;
+    if (!windowprocs.win_wait_synch)
+        /* early config file error processing routines call this */
+        windowprocs.win_wait_synch = def_wait_synch;
 
     if (!winchoices[0].procs) {
-        raw_printf("No window types?");
-        exit(EXIT_FAILURE);
+        raw_printf("No window types supported?");
+        nh_terminate(EXIT_FAILURE);
     }
+    /* 50: arbitrary, no real window_type names are anywhere near that long;
+       used to prevent potential raw_printf() overflow if user supplies a
+       very long string (on the order of 1200 chars) on the command line
+       (config file options can't get that big; they're truncated at 1023) */
+#define WINDOW_TYPE_MAXLEN 50
+    if (strlen(s) >= WINDOW_TYPE_MAXLEN) {
+        tmps = (char *) alloc(WINDOW_TYPE_MAXLEN);
+        (void) strncpy(tmps, s, WINDOW_TYPE_MAXLEN - 1);
+        tmps[WINDOW_TYPE_MAXLEN - 1] = '\0';
+        s = tmps;
+    }
+#undef WINDOW_TYPE_MAXLEN
+
     if (!winchoices[1].procs) {
-        raw_printf("Window type %s not recognized.  The only choice is: %s.",
-                   s, winchoices[0].procs->name);
+        config_error_add(
+                     "Window type %s not recognized.  The only choice is: %s",
+                         s, winchoices[0].procs->name);
     } else {
-        raw_printf("Window type %s not recognized.  Choices are:", s);
+        char buf[BUFSZ];
+        boolean first = TRUE;
+
+        buf[0] = '\0';
         for (i = 0; winchoices[i].procs; i++) {
             if ('+' == winchoices[i].procs->name[0])
                 continue;
             if ('-' == winchoices[i].procs->name[0])
                 continue;
-            raw_printf("        %s", winchoices[i].procs->name);
+            Sprintf(eos(buf), "%s%s",
+                    first ? "" : ", ", winchoices[i].procs->name);
+            first = FALSE;
         }
+        config_error_add("Window type %s not recognized.  Choices are:  %s",
+                         s, buf);
     }
+    if (tmps)
+        free((genericptr_t) tmps) /*, tmps = 0*/ ;
 
-    if (windowprocs.win_raw_print == def_raw_print)
-        terminate(EXIT_SUCCESS);
-    wait_synch();
+    if (windowprocs.win_raw_print == def_raw_print
+            || WINDOWPORT("safe-startup"))
+        nh_terminate(EXIT_SUCCESS);
 }
 
 #ifdef WINCHAIN
 void
-addto_windowchain(const char *s)
+addto_windowchain(s)
+const char *s;
 {
     register int i;
 
@@ -258,6 +327,7 @@ addto_windowchain(const char *s)
             continue;
         if (!strcmpi(s, winchoices[i].procs->name)) {
             struct winlink *p = wl_new();
+
             p->wincp = &winchoices[i];
             wl_addtail(p);
             /* NB: The ini_routine() will be called during commit. */
@@ -274,7 +344,7 @@ addto_windowchain(const char *s)
         raw_printf("        %s", winchoices[i].procs->name);
     }
 
-    exit(EXIT_FAILURE);
+    nh_terminate(EXIT_FAILURE);
 }
 
 void
@@ -357,7 +427,10 @@ commit_windowchain()
  */
 /*ARGSUSED*/
 char
-genl_message_menu(char let UNUSED, int how UNUSED, const char *mesg)
+genl_message_menu(let, how, mesg)
+char let UNUSED;
+int how UNUSED;
+const char *mesg;
 {
     pline("%s", mesg);
     return 0;
@@ -365,7 +438,8 @@ genl_message_menu(char let UNUSED, int how UNUSED, const char *mesg)
 
 /*ARGSUSED*/
 void
-genl_preference_update(const char *pref UNUSED)
+genl_preference_update(pref)
+const char *pref UNUSED;
 {
     /* window ports are expected to provide
        their own preference update routine
@@ -376,7 +450,8 @@ genl_preference_update(const char *pref UNUSED)
 }
 
 char *
-genl_getmsghistory(boolean init UNUSED)
+genl_getmsghistory(init)
+boolean init UNUSED;
 {
     /* window ports can provide
        their own getmsghistory() routine to
@@ -393,7 +468,9 @@ genl_getmsghistory(boolean init UNUSED)
 }
 
 void
-genl_putmsghistory(const char *msg, boolean is_restoring)
+genl_putmsghistory(msg, is_restoring)
+const char *msg;
+boolean is_restoring;
 {
     /* window ports can provide
        their own putmsghistory() routine to
@@ -427,45 +504,46 @@ genl_putmsghistory(const char *msg, boolean is_restoring)
  * in order to avoid all terminal I/O after hangup/disconnect.
  */
 
-static int hup_nhgetch(void);
-static char hup_yn_function(const char *, const char *, char);
-static int hup_nh_poskey(int *, int *, int *);
-static void hup_getlin(const char *, char *);
-static void hup_init_nhwindows(int *, char **);
-static void hup_exit_nhwindows(const char *);
-static winid hup_create_nhwindow(int);
-static int hup_select_menu(winid, int, MENU_ITEM_P **);
-static void hup_add_menu(winid, int, const anything *, char, char,
-                                 int, const char *, boolean);
-static void hup_end_menu(winid, const char *);
-static void hup_putstr(winid, int, const char *);
-static void hup_print_glyph(winid, xchar, xchar, int, int);
-static void hup_outrip(winid, int, time_t);
-static void hup_curs(winid, int, int);
-static void hup_display_nhwindow(winid, boolean);
-static void hup_display_file(const char *, boolean);
+static int NDECL(hup_nhgetch);
+static char FDECL(hup_yn_function, (const char *, const char *, CHAR_P));
+static int FDECL(hup_nh_poskey, (int *, int *, int *));
+static void FDECL(hup_getlin, (const char *, char *));
+static void FDECL(hup_init_nhwindows, (int *, char **));
+static void FDECL(hup_exit_nhwindows, (const char *));
+static winid FDECL(hup_create_nhwindow, (int));
+static int FDECL(hup_select_menu, (winid, int, MENU_ITEM_P **));
+static void FDECL(hup_add_menu, (winid, int, const anything *, CHAR_P, CHAR_P,
+                                 int, const char *, BOOLEAN_P));
+static void FDECL(hup_end_menu, (winid, const char *));
+static void FDECL(hup_putstr, (winid, int, const char *));
+static void FDECL(hup_print_glyph, (winid, XCHAR_P, XCHAR_P, int, int));
+static void FDECL(hup_outrip, (winid, int, time_t));
+static void FDECL(hup_curs, (winid, int, int));
+static void FDECL(hup_display_nhwindow, (winid, BOOLEAN_P));
+static void FDECL(hup_display_file, (const char *, BOOLEAN_P));
 #ifdef CLIPPING
-static void hup_cliparound(int, int);
+static void FDECL(hup_cliparound, (int, int));
 #endif
 #ifdef CHANGE_COLOR
-static void hup_change_color(int, long, int);
+static void FDECL(hup_change_color, (int, long, int));
 #ifdef MAC
-static short hup_set_font_name(winid, char *);
+static short FDECL(hup_set_font_name, (winid, char *));
 #endif
-static char *hup_get_color_string(void);
+static char *NDECL(hup_get_color_string);
 #endif /* CHANGE_COLOR */
-#ifdef STATUS_VIA_WINDOWPORT
-static void hup_status_update(int, genericptr_t, int, int);
-#endif
+static void FDECL(hup_status_update, (int, genericptr_t, int, int, int,
+                                      unsigned long *));
 
-static int hup_int_ndecl(void);
-static void hup_void_ndecl(void);
-static void hup_void_fdecl_int(int);
-static void hup_void_fdecl_winid(winid);
-static void hup_void_fdecl_constchar_p(const char *);
+static int NDECL(hup_int_ndecl);
+static void NDECL(hup_void_ndecl);
+static void FDECL(hup_void_fdecl_int, (int));
+static void FDECL(hup_void_fdecl_winid, (winid));
+static void FDECL(hup_void_fdecl_constchar_p, (const char *));
 
 static struct window_procs hup_procs = {
-    "hup", 0L, 0L, hup_init_nhwindows,
+    "hup", 0L, 0L,
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    hup_init_nhwindows,
     hup_void_ndecl,                                    /* player_selection */
     hup_void_ndecl,                                    /* askname */
     hup_void_ndecl,                                    /* get_nh_event */
@@ -483,7 +561,7 @@ static struct window_procs hup_procs = {
     hup_cliparound,
 #endif
 #ifdef POSITIONBAR
-    (void (*)(char *)) hup_void_fdecl_constchar_p,
+    (void FDECL((*), (char *))) hup_void_fdecl_constchar_p,
                                                       /* update_positionbar */
 #endif
     hup_print_glyph,
@@ -506,24 +584,19 @@ static struct window_procs hup_procs = {
     hup_void_ndecl,                                   /* end_screen */
     hup_outrip, genl_preference_update, genl_getmsghistory,
     genl_putmsghistory,
-#ifdef STATUS_VIA_WINDOWPORT
     hup_void_ndecl,                                   /* status_init */
     hup_void_ndecl,                                   /* status_finish */
     genl_status_enablefield, hup_status_update,
-#ifdef STATUS_HILITES
-    genl_status_threshold,
-#endif
-#endif /* STATUS_VIA_WINDOWPORT */
     genl_can_suspend_no,
 };
 
-static void (*previnterface_exit_nhwindows)(const char *) = 0;
+static void FDECL((*previnterface_exit_nhwindows), (const char *)) = 0;
 
 /* hangup has occurred; switch to no-op user interface */
 void
 nhwindows_hangup()
 {
-    char *(*previnterface_getmsghistory)(boolean) = 0;
+    char *FDECL((*previnterface_getmsghistory), (BOOLEAN_P)) = 0;
 
 #ifdef ALTMETA
     /* command processor shouldn't look for 2nd char after seeing ESC */
@@ -549,7 +622,8 @@ nhwindows_hangup()
 }
 
 static void
-hup_exit_nhwindows(const char *lastgasp)
+hup_exit_nhwindows(lastgasp)
+const char *lastgasp;
 {
     /* core has called exit_nhwindows(); call the previous interface's
        shutdown routine now; xxx_exit_nhwindows() needs to call other
@@ -570,7 +644,9 @@ hup_nhgetch(VOID_ARGS)
 
 /*ARGSUSED*/
 static char
-hup_yn_function(const char *prompt UNUSED, const char *resp UNUSED, char deflt)
+hup_yn_function(prompt, resp, deflt)
+const char *prompt UNUSED, *resp UNUSED;
+char deflt;
 {
     if (!deflt)
         deflt = '\033';
@@ -579,91 +655,124 @@ hup_yn_function(const char *prompt UNUSED, const char *resp UNUSED, char deflt)
 
 /*ARGSUSED*/
 static int
-hup_nh_poskey(int *x UNUSED, int *y UNUSED, int *mod UNUSED)
+hup_nh_poskey(x, y, mod)
+int *x UNUSED, *y UNUSED, *mod UNUSED;
 {
     return '\033';
 }
 
 /*ARGSUSED*/
 static void
-hup_getlin(const char *prompt UNUSED, char *outbuf)
+hup_getlin(prompt, outbuf)
+const char *prompt UNUSED;
+char *outbuf;
 {
     Strcpy(outbuf, "\033");
 }
 
 /*ARGSUSED*/
 static void
-hup_init_nhwindows(int *argc_p UNUSED, char **argv UNUSED)
+hup_init_nhwindows(argc_p, argv)
+int *argc_p UNUSED;
+char **argv UNUSED;
 {
     iflags.window_inited = 1;
 }
 
 /*ARGUSED*/
 static winid
-hup_create_nhwindow(int type UNUSED)
+hup_create_nhwindow(type)
+int type UNUSED;
 {
     return WIN_ERR;
 }
 
 /*ARGSUSED*/
 static int
-hup_select_menu(winid window UNUSED, int how UNUSED, struct mi **menu_list UNUSED)
+hup_select_menu(window, how, menu_list)
+winid window UNUSED;
+int how UNUSED;
+struct mi **menu_list UNUSED;
 {
     return -1;
 }
 
 /*ARGSUSED*/
 static void
-hup_add_menu(winid window UNUSED, int glyph UNUSED, const anything *identifier UNUSED, char sel UNUSED, char grpsel UNUSED, int attr UNUSED, const char *txt UNUSED, boolean preselected UNUSED)
+hup_add_menu(window, glyph, identifier, sel, grpsel, attr, txt, preselected)
+winid window UNUSED;
+int glyph UNUSED, attr UNUSED;
+const anything *identifier UNUSED;
+char sel UNUSED, grpsel UNUSED;
+const char *txt UNUSED;
+boolean preselected UNUSED;
 {
     return;
 }
 
 /*ARGSUSED*/
 static void
-hup_end_menu(winid window UNUSED, const char *prompt UNUSED)
+hup_end_menu(window, prompt)
+winid window UNUSED;
+const char *prompt UNUSED;
 {
     return;
 }
 
 /*ARGSUSED*/
 static void
-hup_putstr(winid window UNUSED, int attr UNUSED, const char *text UNUSED)
+hup_putstr(window, attr, text)
+winid window UNUSED;
+int attr UNUSED;
+const char *text UNUSED;
 {
     return;
 }
 
 /*ARGSUSED*/
 static void
-hup_print_glyph(winid window UNUSED, xchar x UNUSED, xchar y UNUSED, int glyph UNUSED, int bkglyph UNUSED)
+hup_print_glyph(window, x, y, glyph, bkglyph)
+winid window UNUSED;
+xchar x UNUSED, y UNUSED;
+int glyph UNUSED;
+int bkglyph UNUSED;
 {
     return;
 }
 
 /*ARGSUSED*/
 static void
-hup_outrip(winid tmpwin UNUSED, int how UNUSED, time_t when UNUSED)
+hup_outrip(tmpwin, how, when)
+winid tmpwin UNUSED;
+int how UNUSED;
+time_t when UNUSED;
 {
     return;
 }
 
 /*ARGSUSED*/
 static void
-hup_curs(winid window UNUSED, int x UNUSED, int y UNUSED)
+hup_curs(window, x, y)
+winid window UNUSED;
+int x UNUSED, y UNUSED;
 {
     return;
 }
 
 /*ARGSUSED*/
 static void
-hup_display_nhwindow(winid window UNUSED, boolean blocking UNUSED)
+hup_display_nhwindow(window, blocking)
+winid window UNUSED;
+boolean blocking UNUSED;
 {
     return;
 }
 
 /*ARGSUSED*/
 static void
-hup_display_file(const char *fname UNUSED, boolean complain UNUSED)
+hup_display_file(fname, complain)
+const char *fname UNUSED;
+boolean complain UNUSED;
 {
     return;
 }
@@ -671,7 +780,8 @@ hup_display_file(const char *fname UNUSED, boolean complain UNUSED)
 #ifdef CLIPPING
 /*ARGSUSED*/
 static void
-hup_cliparound(int x UNUSED, int y UNUSED)
+hup_cliparound(x, y)
+int x UNUSED, y UNUSED;
 {
     return;
 }
@@ -680,7 +790,9 @@ hup_cliparound(int x UNUSED, int y UNUSED)
 #ifdef CHANGE_COLOR
 /*ARGSUSED*/
 static void
-hup_change_color(int color, long rgb, int reverse)
+hup_change_color(color, rgb, reverse)
+int color, reverse;
+long rgb;
 {
     return;
 }
@@ -688,7 +800,9 @@ hup_change_color(int color, long rgb, int reverse)
 #ifdef MAC
 /*ARGSUSED*/
 static short
-hup_set_font_name(winid window, char *fontname)
+hup_set_font_name(window, fontname)
+winid window;
+char *fontname;
 {
     return 0;
 }
@@ -701,55 +815,60 @@ hup_get_color_string(VOID_ARGS)
 }
 #endif /* CHANGE_COLOR */
 
-#ifdef STATUS_VIA_WINDOWPORT
 /*ARGSUSED*/
 static void
-hup_status_update(int idx UNUSED, genericptr_t ptr UNUSED, int chg UNUSED, int percent UNUSED)
+hup_status_update(idx, ptr, chg, pc, color, colormasks)
+int idx UNUSED;
+genericptr_t ptr UNUSED;
+int chg UNUSED, pc UNUSED, color UNUSED;
+unsigned long *colormasks UNUSED;
+
 {
     return;
 }
-#endif /* STATUS_VIA_WINDOWPORT */
 
 /*
  * Non-specific stubs.
  */
 
 static int
-hup_int_ndecl(void)
+hup_int_ndecl(VOID_ARGS)
 {
     return -1;
 }
 
 static void
-hup_void_ndecl(void)
+hup_void_ndecl(VOID_ARGS)
 {
     return;
 }
 
 /*ARGUSED*/
 static void
-hup_void_fdecl_int(int arg UNUSED)
+hup_void_fdecl_int(arg)
+int arg UNUSED;
 {
     return;
 }
 
 /*ARGUSED*/
 static void
-hup_void_fdecl_winid(winid window UNUSED)
+hup_void_fdecl_winid(window)
+winid window UNUSED;
 {
     return;
 }
 
 /*ARGUSED*/
 static void
-hup_void_fdecl_constchar_p(const char *string UNUSED)
+hup_void_fdecl_constchar_p(string)
+const char *string UNUSED;
 {
     return;
 }
 
 #endif /* HANGUPHANDLING */
 
-#ifdef STATUS_VIA_WINDOWPORT
 
 /****************************************************************************/
 /* genl backward compat stuff                                               */
@@ -759,12 +878,12 @@ const char *status_fieldnm[MAXBLSTATS];
 const char *status_fieldfmt[MAXBLSTATS];
 char *status_vals[MAXBLSTATS];
 boolean status_activefields[MAXBLSTATS];
-NEARDATA winid WIN_STATUS;
 
 void
 genl_status_init()
 {
     int i;
+
     for (i = 0; i < MAXBLSTATS; ++i) {
         status_vals[i] = (char *) alloc(MAXCO);
         *status_vals[i] = '\0';
@@ -785,91 +904,514 @@ genl_status_finish()
     /* free alloc'd memory here */
     for (i = 0; i < MAXBLSTATS; ++i) {
         if (status_vals[i])
-            free((genericptr_t) status_vals[i]);
-        status_vals[i] = (char *) 0;
+            free((genericptr_t) status_vals[i]), status_vals[i] = (char *) 0;
     }
 }
 
 void
-genl_status_enablefield(int fieldidx, const char *nm, const char *fmt, boolean enable)
+genl_status_enablefield(fieldidx, nm, fmt, enable)
+int fieldidx;
+const char *nm;
+const char *fmt;
+boolean enable;
 {
     status_fieldfmt[fieldidx] = fmt;
     status_fieldnm[fieldidx] = nm;
     status_activefields[fieldidx] = enable;
 }
 
+/* call once for each field, then call with BL_FLUSH to output the result */
 void
-genl_status_update(int idx, genericptr_t ptr, int chg, int percent)
+genl_status_update(idx, ptr, chg, percent, color, colormasks)
+int idx;
+genericptr_t ptr;
+int chg UNUSED, percent UNUSED, color UNUSED;
+unsigned long *colormasks UNUSED;
 {
     char newbot1[MAXCO], newbot2[MAXCO];
     long cond, *condptr = (long *) ptr;
     register int i;
-    char *text = (char *) ptr;
+    unsigned pass, lndelta;
+    enum statusfields idx1, idx2, *fieldlist;
+    char *nb, *text = (char *) ptr;
 
-    enum statusfields fieldorder[2][15] = {
+    static enum statusfields fieldorder[][15] = {
+        /* line one */
         { BL_TITLE, BL_STR, BL_DX, BL_CO, BL_IN, BL_WI, BL_CH, BL_ALIGN,
           BL_SCORE, BL_FLUSH, BL_FLUSH, BL_FLUSH, BL_FLUSH, BL_FLUSH,
           BL_FLUSH },
-        { BL_LEVELDESC, BL_GOLD, BL_HP, BL_HPMAX, BL_ENE, BL_ENEMAX,
-          BL_AC, BL_XP, BL_EXP, BL_HD, BL_TIME, BL_HUNGER,
-          BL_CAP, BL_CONDITION, BL_FLUSH }
+        /* line two, default order */
+        { BL_LEVELDESC, BL_GOLD,
+          BL_HP, BL_HPMAX, BL_ENE, BL_ENEMAX, BL_AC,
+          BL_XP, BL_EXP, BL_HD,
+          BL_TIME,
+          BL_HUNGER, BL_CAP, BL_CONDITION,
+          BL_FLUSH },
+        /* move time to the end */
+        { BL_LEVELDESC, BL_GOLD,
+          BL_HP, BL_HPMAX, BL_ENE, BL_ENEMAX, BL_AC,
+          BL_XP, BL_EXP, BL_HD,
+          BL_HUNGER, BL_CAP, BL_CONDITION,
+          BL_TIME, BL_FLUSH },
+        /* move experience and time to the end */
+        { BL_LEVELDESC, BL_GOLD,
+          BL_HP, BL_HPMAX, BL_ENE, BL_ENEMAX, BL_AC,
+          BL_HUNGER, BL_CAP, BL_CONDITION,
+          BL_XP, BL_EXP, BL_HD, BL_TIME, BL_FLUSH },
+        /* move level description plus gold and experience and time to end */
+        { BL_HP, BL_HPMAX, BL_ENE, BL_ENEMAX, BL_AC,
+          BL_HUNGER, BL_CAP, BL_CONDITION,
+          BL_LEVELDESC, BL_GOLD, BL_XP, BL_EXP, BL_HD, BL_TIME, BL_FLUSH },
     };
 
-    if (idx != BL_FLUSH) {
+    /* in case interface is using genl_status_update() but has not
+       specified WC2_FLUSH_STATUS (status_update() for field values
+       is buffered so final BL_FLUSH is needed to produce output) */
+    windowprocs.wincap2 |= WC2_FLUSH_STATUS;
+
+    if (idx >= 0) {
         if (!status_activefields[idx])
             return;
         switch (idx) {
         case BL_CONDITION:
-            cond = *condptr;
-            *status_vals[idx] = '\0';
-            if (cond & BL_MASK_BLIND)
-                Strcat(status_vals[idx], " Blind");
-            if (cond & BL_MASK_CONF)
-                Strcat(status_vals[idx], " Conf");
+            cond = condptr ? *condptr : 0L;
+            nb = status_vals[idx];
+            *nb = '\0';
+            if (cond & BL_MASK_STONE)
+                Strcpy(nb = eos(nb), " Stone");
+            if (cond & BL_MASK_SLIME)
+                Strcpy(nb = eos(nb), " Slime");
+            if (cond & BL_MASK_STRNGL)
+                Strcpy(nb = eos(nb), " Strngl");
             if (cond & BL_MASK_FOODPOIS)
-                Strcat(status_vals[idx], " FoodPois");
-            if (cond & BL_MASK_ILL)
-                Strcat(status_vals[idx], " Ill");
-            if (cond & BL_MASK_STUNNED)
-                Strcat(status_vals[idx], " Stun");
+                Strcpy(nb = eos(nb), " FoodPois");
+            if (cond & BL_MASK_TERMILL)
+                Strcpy(nb = eos(nb), " TermIll");
+            if (cond & BL_MASK_BLIND)
+                Strcpy(nb = eos(nb), " Blind");
+            if (cond & BL_MASK_DEAF)
+                Strcpy(nb = eos(nb), " Deaf");
+            if (cond & BL_MASK_STUN)
+                Strcpy(nb = eos(nb), " Stun");
+            if (cond & BL_MASK_CONF)
+                Strcpy(nb = eos(nb), " Conf");
             if (cond & BL_MASK_HALLU)
-                Strcat(status_vals[idx], " Hallu");
-            if (cond & BL_MASK_SLIMED)
-                Strcat(status_vals[idx], " Slime");
+                Strcpy(nb = eos(nb), " Hallu");
+            if (cond & BL_MASK_LEV)
+                Strcpy(nb = eos(nb), " Lev");
+            if (cond & BL_MASK_FLY)
+                Strcpy(nb = eos(nb), " Fly");
+            if (cond & BL_MASK_RIDE)
+                Strcpy(nb = eos(nb), " Ride");
             break;
         default:
             Sprintf(status_vals[idx],
-                    status_fieldfmt[idx] ? status_fieldfmt[idx] : "%s", text);
+                    status_fieldfmt[idx] ? status_fieldfmt[idx] : "%s",
+                    text ? text : "");
             break;
         }
-    }
+        return; /* processed one field other than BL_FLUSH */
+    } /* (idx >= 0, thus not BL_FLUSH, BL_RESET, BL_CHARACTERISTICS) */
 
-    /* This genl version updates everything on the display, everytime */
-    newbot1[0] = '\0';
-    for (i = 0; fieldorder[0][i] != BL_FLUSH; ++i) {
-        int idx1 = fieldorder[0][i];
+    /* does BL_RESET require any specific code to ensure all fields ? */
+
+    if (!(idx == BL_FLUSH || idx == BL_RESET))
+        return;
+
+    /* We've received BL_FLUSH; time to output the gathered data */
+    nb = newbot1;
+    *nb = '\0';
+    /* BL_FLUSH is the only pseudo-index value we need to check for
+       in the loop below because it is the only entry used to pad the
+       end of the fieldorder array. We could stop on any
+       negative (illegal) index, but this should be fine */
+    for (i = 0; (idx1 = fieldorder[0][i]) != BL_FLUSH; ++i) {
         if (status_activefields[idx1])
-            Strcat(newbot1, status_vals[idx1]);
+            Strcpy(nb = eos(nb), status_vals[idx1]);
     }
-    newbot2[0] = '\0';
-    for (i = 0; fieldorder[1][i] != BL_FLUSH; ++i) {
-        int idx2 = fieldorder[1][i];
-        if (status_activefields[idx2])
-            Strcat(newbot2, status_vals[idx2]);
-    }
+    /* if '$' is encoded, buffer length of \GXXXXNNNN is 9 greater than
+       single char; we want to subtract that 9 when checking display length */
+    lndelta = (status_activefields[BL_GOLD]
+               && strstr(status_vals[BL_GOLD], "\\G")) ? 9 : 0;
+    /* basic bot2 formats groups of second line fields into five buffers,
+       then decides how to order those buffers based on comparing lengths
+       of [sub]sets of them to the width of the map; we have more control
+       here but currently emulate that behavior */
+    for (pass = 1; pass <= 4; pass++) {
+        fieldlist = fieldorder[pass];
+        nb = newbot2;
+        *nb = '\0';
+        for (i = 0; (idx2 = fieldlist[i]) != BL_FLUSH; ++i) {
+            if (status_activefields[idx2]) {
+                const char *val = status_vals[idx2];
+
+                switch (idx2) {
+                case BL_HP: /* for pass 4, Hp comes first; mungspaces()
+                               will strip the unwanted leading spaces */
+                case BL_XP: case BL_HD:
+                case BL_TIME:
+                    Strcpy(nb = eos(nb), " ");
+                    break;
+                case BL_LEVELDESC:
+                    /* leveldesc has no leading space, so if we've moved
+                       it past the first position, provide one */
+                    if (i != 0)
+                        Strcpy(nb = eos(nb), " ");
+                    break;
+                /*
+                 * We want "  hunger encumbrance conditions"
+                 *   or    "  encumbrance conditions"
+                 *   or    "  hunger conditions"
+                 *   or    "  conditions"
+                 * 'hunger'      is either " " or " hunger_text";
+                 * 'encumbrance' is either " " or " encumbrance_text";
+                 * 'conditions'  is either ""  or " cond1 cond2...".
+                 */
+                case BL_HUNGER:
+                    /* hunger==" " - keep it, end up with " ";
+                       hunger!=" " - insert space and get "  hunger" */
+                    if (strcmp(val, " "))
+                        Strcpy(nb = eos(nb), " ");
+                    break;
+                case BL_CAP:
+                    /* cap==" " - suppress it, retain "  hunger" or " ";
+                       cap!=" " - use it, get "  hunger cap" or "  cap" */
+                    if (!strcmp(val, " "))
+                        ++val;
+                    break;
+                default:
+                    break;
+                }
+                Strcpy(nb = eos(nb), val); /* status_vals[idx2] */
+            } /* status_activefields[idx2] */
+
+            if (idx2 == BL_CONDITION && pass < 4
+                && strlen(newbot2) - lndelta > COLNO)
+                break; /* switch to next order */
+        } /* i */
+
+        if (idx2 == BL_FLUSH) { /* made it past BL_CONDITION */
+            if (pass > 1)
+                mungspaces(newbot2);
+            break;
+        }
+    } /* pass */
     curs(WIN_STATUS, 1, 0);
     putstr(WIN_STATUS, 0, newbot1);
     curs(WIN_STATUS, 1, 1);
     putmixed(WIN_STATUS, 0, newbot2); /* putmixed() due to GOLD glyph */
 }
 
-#ifdef STATUS_HILITES
+STATIC_VAR struct window_procs dumplog_windowprocs_backup;
+STATIC_VAR FILE *dumplog_file;
+
+#ifdef DUMPLOG
+STATIC_VAR time_t dumplog_now;
+
+char *
+dump_fmtstr(fmt, buf, fullsubs)
+const char *fmt;
+char *buf;
+boolean fullsubs; /* True -> full substitution for file name, False ->
+                   * partial substitution for '--showpaths' feedback
+                   * where there's no game in progress when executed */
+{
+    const char *fp = fmt;
+    char *bp = buf;
+    int slen, len = 0;
+    char tmpbuf[BUFSZ];
+    char verbuf[BUFSZ];
+    long uid;
+    time_t now;
+
+    now = dumplog_now;
+    uid = (long) getuid();
+
+    /*
+     * Note: %t and %T assume that time_t is a 'long int' number of
+     * seconds since some epoch value.  That's quite iffy....  The
+     * unit of time might be different and the datum size might be
+     * some variant of 'long long int'.  [Their main purpose is to
+     * construct a unique file name rather than record the date and
+     * time; violating the 'long seconds since base-date' assumption
+     * may or may not interfere with that usage.]
+     */
+
+    while (fp && *fp && len < BUFSZ - 1) {
+        if (*fp == '%') {
+            fp++;
+            switch (*fp) {
+            default:
+                goto finish;
+            case '\0': /* fallthrough */
+            case '%':  /* literal % */
+                Sprintf(tmpbuf, "%%");
+                break;
+            case 't': /* game start, timestamp */
+                if (fullsubs)
+                    Sprintf(tmpbuf, "%lu", (unsigned long) ubirthday);
+                else
+                    Strcpy(tmpbuf, "{game start cookie}");
+                break;
+            case 'T': /* current time, timestamp */
+                if (fullsubs)
+                    Sprintf(tmpbuf, "%lu", (unsigned long) now);
+                else
+                    Strcpy(tmpbuf, "{current time cookie}");
+                break;
+            case 'd': /* game start, YYYYMMDDhhmmss */
+                if (fullsubs)
+                    Sprintf(tmpbuf, "%08ld%06ld",
+                            yyyymmdd(ubirthday), hhmmss(ubirthday));
+                else
+                    Strcpy(tmpbuf, "{game start date+time}");
+                break;
+            case 'D': /* current time, YYYYMMDDhhmmss */
+                if (fullsubs)
+                    Sprintf(tmpbuf, "%08ld%06ld", yyyymmdd(now), hhmmss(now));
+                else
+                    Strcpy(tmpbuf, "{current date+time}");
+                break;
+            case 'v': /* version, eg. "3.6.5-0" */
+                Sprintf(tmpbuf, "%s", version_string(verbuf));
+                break;
+            case 'u': /* UID */
+                Sprintf(tmpbuf, "%ld", uid);
+                break;
+            case 'n': /* player name */
+                if (fullsubs)
+                    Sprintf(tmpbuf, "%s", *plname ? plname : "unknown");
+                else
+                    Strcpy(tmpbuf, "{hero name}");
+                break;
+            case 'N': /* first character of player name */
+                if (fullsubs)
+                    Sprintf(tmpbuf, "%c", *plname ? *plname : 'u');
+                else
+                    Strcpy(tmpbuf, "{hero initial}");
+                break;
+            }
+            if (fullsubs) {
+                /* replace potentially troublesome characters (including
+                   <space> even though it might be an acceptable file name
+                   character); user shouldn't be able to get ' ' or '/'
+                   or '\\' into plname[] but play things safe */
+                (void) strNsubst(tmpbuf, " ", "_", 0);
+                (void) strNsubst(tmpbuf, "/", "_", 0);
+                (void) strNsubst(tmpbuf, "\\", "_", 0);
+                /* note: replacements are only done on field substitutions,
+                   not on the template (from sysconf or DUMPLOG_FILE) */
+            }
+
+            slen = (int) strlen(tmpbuf);
+            if (len + slen < BUFSZ - 1) {
+                len += slen;
+                Sprintf(bp, "%s", tmpbuf);
+                bp += slen;
+                if (*fp)
+                    fp++;
+            } else
+                break;
+        } else {
+            *bp = *fp;
+            bp++;
+            fp++;
+            len++;
+        }
+    }
+ finish:
+    *bp = '\0';
+    return buf;
+}
+#endif /* DUMPLOG */
+
 void
-genl_status_threshold(int fldidx, int thresholdtype, anything threshold, int behavior, int under, int over)
+dump_open_log(now)
+time_t now;
+{
+#ifdef DUMPLOG
+    char buf[BUFSZ];
+    char *fname;
+
+    dumplog_now = now;
+#ifdef SYSCF
+    if (!sysopt.dumplogfile)
+        return;
+    fname = dump_fmtstr(sysopt.dumplogfile, buf, TRUE);
+#else
+    fname = dump_fmtstr(DUMPLOG_FILE, buf, TRUE);
+#endif
+    dumplog_file = fopen(fname, "w");
+    dumplog_windowprocs_backup = windowprocs;
+
+#else /*!DUMPLOG*/
+    nhUse(now);
+#endif /*?DUMPLOG*/
+}
+
+void
+dump_close_log()
+{
+    if (dumplog_file) {
+        (void) fclose(dumplog_file);
+        dumplog_file = (FILE *) 0;
+    }
+}
+
+void
+dump_forward_putstr(win, attr, str, no_forward)
+winid win;
+int attr;
+const char *str;
+int no_forward;
+{
+    if (dumplog_file)
+        fprintf(dumplog_file, "%s\n", str);
+    if (!no_forward)
+        putstr(win, attr, str);
+}
+
+/*ARGSUSED*/
+STATIC_OVL void
+dump_putstr(win, attr, str)
+winid win UNUSED;
+int attr UNUSED;
+const char *str;
+{
+    if (dumplog_file)
+        fprintf(dumplog_file, "%s\n", str);
+}
+
+STATIC_OVL winid
+dump_create_nhwindow(dummy)
+int dummy;
+{
+    return dummy;
+}
+
+/*ARGUSED*/
+STATIC_OVL void
+dump_clear_nhwindow(win)
+winid win UNUSED;
 {
     return;
 }
-#endif /* STATUS_HILITES */
-#endif /* STATUS_VIA_WINDOWPORT */
+
+/*ARGSUSED*/
+STATIC_OVL void
+dump_display_nhwindow(win, p)
+winid win UNUSED;
+boolean p UNUSED;
+{
+    return;
+}
+
+/*ARGUSED*/
+STATIC_OVL void
+dump_destroy_nhwindow(win)
+winid win UNUSED;
+{
+    return;
+}
+
+/*ARGUSED*/
+STATIC_OVL void
+dump_start_menu(win)
+winid win UNUSED;
+{
+    return;
+}
+
+/*ARGSUSED*/
+STATIC_OVL void
+dump_add_menu(win, glyph, identifier, ch, gch, attr, str, preselected)
+winid win UNUSED;
+int glyph;
+const anything *identifier UNUSED;
+char ch;
+char gch UNUSED;
+int attr UNUSED;
+const char *str;
+boolean preselected UNUSED;
+{
+    if (dumplog_file) {
+        if (glyph == NO_GLYPH)
+            fprintf(dumplog_file, " %s\n", str);
+        else
+            fprintf(dumplog_file, "  %c - %s\n", ch, str);
+    }
+}
+
+/*ARGSUSED*/
+STATIC_OVL void
+dump_end_menu(win, str)
+winid win UNUSED;
+const char *str;
+{
+    if (dumplog_file) {
+        if (str)
+            fprintf(dumplog_file, "%s\n", str);
+        else
+            fputs("\n", dumplog_file);
+    }
+}
+
+STATIC_OVL int
+dump_select_menu(win, how, item)
+winid win UNUSED;
+int how UNUSED;
+menu_item **item;
+{
+    *item = (menu_item *) 0;
+    return 0;
+}
+
+void
+dump_redirect(onoff_flag)
+boolean onoff_flag;
+{
+    if (dumplog_file) {
+        if (onoff_flag) {
+            windowprocs.win_create_nhwindow = dump_create_nhwindow;
+            windowprocs.win_clear_nhwindow = dump_clear_nhwindow;
+            windowprocs.win_display_nhwindow = dump_display_nhwindow;
+            windowprocs.win_destroy_nhwindow = dump_destroy_nhwindow;
+            windowprocs.win_start_menu = dump_start_menu;
+            windowprocs.win_add_menu = dump_add_menu;
+            windowprocs.win_end_menu = dump_end_menu;
+            windowprocs.win_select_menu = dump_select_menu;
+            windowprocs.win_putstr = dump_putstr;
+        } else {
+            windowprocs = dumplog_windowprocs_backup;
+        }
+        iflags.in_dumplog = onoff_flag;
+    } else {
+        iflags.in_dumplog = FALSE;
+    }
+}
+
+#ifdef TTY_GRAPHICS
+#ifdef TEXTCOLOR
+#ifdef TOS
+extern const char *hilites[CLR_MAX];
+#else
+extern NEARDATA char *hilites[CLR_MAX];
+#endif
+#endif
+#endif
+
+int
+has_color(color)
+int color;
+{
+    return (iflags.use_color && windowprocs.name
+            && (windowprocs.wincap & WC_COLOR) && windowprocs.has_color[color]
+#ifdef TTY_GRAPHICS
+#if defined(TEXTCOLOR) && defined(TERMLIB) && !defined(NO_TERMS)
+             && (hilites[color] != 0)
+#endif
+#endif
+    );
+}
 
 /*windows.c*/

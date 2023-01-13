@@ -34,6 +34,7 @@ static int menuid2mapmode(int menuid);
 static int mapmode2menuid(int map_mode);
 static void nhlock_windows(BOOL lock);
 static char *nh_compose_ascii_screenshot();
+static void mswin_apply_window_style_all();
 // returns strdup() created pointer - callee assumes the ownership
 
 HWND
@@ -103,7 +104,7 @@ register_main_window_class()
     wcex.hInstance = GetNHApp()->hApp;
     wcex.hIcon = LoadIcon(GetNHApp()->hApp, (LPCTSTR) IDI_NETHACKW);
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wcex.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
     wcex.lpszMenuName = (TCHAR *) IDC_NETHACKW;
     wcex.lpszClassName = szMainWindowClass;
 
@@ -184,6 +185,8 @@ static const char scanmap[] = {
     'b', 'n', 'm', ',', '.', '?' /* ... */
 };
 
+#define IDT_FUZZ_TIMER 100 
+
 /*
 //  FUNCTION: WndProc(HWND, unsigned, WORD, LONG)
 //
@@ -192,7 +195,7 @@ static const char scanmap[] = {
 LRESULT CALLBACK
 MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PNHMainWindow data;
+    PNHMainWindow data = (PNHMainWindow) GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
     switch (message) {
     case WM_CREATE:
@@ -222,7 +225,6 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_KEYDOWN: {
-        data = (PNHMainWindow) GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
         /* translate arrow keys into nethack commands */
         switch (wParam) {
@@ -329,6 +331,15 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             NHEVENT_KBD(KEYTABLE(KEY_PLUS));
             return 0;
 
+#if defined(DEBUG) && defined(_MSC_VER)
+        case VK_PAUSE:
+            if (IsDebuggerPresent()) {
+                iflags.debug_fuzzer = !iflags.debug_fuzzer;
+                return 0;
+            }
+            break;
+#endif
+
         case VK_CLEAR: /* This is the '5' key */
             NHEVENT_KBD(KEYTABLE(KEY_GOINTERESTING));
             return 0;
@@ -369,7 +380,7 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             ZeroMemory(kbd_state, sizeof(kbd_state));
             GetKeyboardState(kbd_state);
 
-            if (ToAscii(wParam, (lParam >> 16) & 0xFF, kbd_state, &c, 0)) {
+            if (ToAscii((UINT) wParam, (lParam >> 16) & 0xFF, kbd_state, &c, 0)) {
                 NHEVENT_KBD(c & 0xFF);
                 return 0;
             } else {
@@ -498,6 +509,10 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         exit(1);
         break;
 
+    case WM_DPICHANGED: {
+        mswin_layout_main_window(NULL);
+    } break;
+
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -522,6 +537,12 @@ onMSNHCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
         child = GetNHApp()->windowlist[msg_param->wid].win;
     } break;
+
+    case MSNH_MSG_RANDOM_INPUT: {
+        nhassert(iflags.debug_fuzzer);
+        NHEVENT_KBD(randomkey());
+    } break;
+
     }
 }
 
@@ -699,7 +720,7 @@ mswin_layout_main_window(HWND changed_child)
         GetNHApp()->rtInvenWindow.bottom = GetNHApp()->rtMenuWindow.bottom;
 
         /* adjust map window size only if perm_invent is set */
-        if (flags.perm_invent)
+        if (iflags.perm_invent)
             GetNHApp()->rtMapWindow.right = GetNHApp()->rtMenuWindow.left;
     }
 
@@ -711,11 +732,12 @@ mswin_layout_main_window(HWND changed_child)
             /* kludge - inventory window should have its own type (same as
                menu-text
                as a matter of fact) */
-            if (flags.perm_invent && i == WIN_INVEN)
+            if (iflags.perm_invent && i == WIN_INVEN) {
                 mswin_get_window_placement(NHW_INVEN, &rt);
-            else
+            } else {
                 mswin_get_window_placement(GetNHApp()->windowlist[i].type,
                                            &rt);
+            }
 
             MoveWindow(GetNHApp()->windowlist[i].win, rt.left, rt.top,
                        rt.right - rt.left, rt.bottom - rt.top, TRUE);
@@ -723,6 +745,62 @@ mswin_layout_main_window(HWND changed_child)
     }
     if (IsWindow(changed_child))
         SetForegroundWindow(changed_child);
+}
+
+VOID CALLBACK FuzzTimerProc(
+	_In_ HWND     hwnd,
+	_In_ UINT     uMsg,
+	_In_ UINT_PTR idEvent,
+	_In_ DWORD    dwTime
+	)
+{
+	INPUT input[16];
+	int i_pos = 0;
+	int c = randomkey();
+	SHORT k = VkKeyScanA(c);
+	BOOL gen_alt = (rn2(50) == 0) && isalpha(c);
+
+	if (!iflags.debug_fuzzer) {
+		KillTimer(hwnd, IDT_FUZZ_TIMER);
+		return;
+	}
+
+	if (!GetFocus())
+            return;
+
+	ZeroMemory(input, sizeof(input));
+	if (gen_alt) {
+		input[i_pos].type = INPUT_KEYBOARD;
+		input[i_pos].ki.dwFlags = KEYEVENTF_SCANCODE;
+		input[i_pos].ki.wScan = MapVirtualKey(VK_MENU, 0);
+		i_pos++;
+	}
+
+	if (HIBYTE(k) & 1) {
+		input[i_pos].type = INPUT_KEYBOARD;
+		input[i_pos].ki.dwFlags = KEYEVENTF_SCANCODE;
+		input[i_pos].ki.wScan = MapVirtualKey(VK_LSHIFT, 0);
+		i_pos++;
+	}
+
+	input[i_pos].type = INPUT_KEYBOARD;
+	input[i_pos].ki.dwFlags = KEYEVENTF_SCANCODE;
+	input[i_pos].ki.wScan = MapVirtualKey(LOBYTE(k), 0);
+	i_pos++;
+
+	if (HIBYTE(k) & 1) {
+		input[i_pos].type = INPUT_KEYBOARD;
+		input[i_pos].ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
+		input[i_pos].ki.wScan = MapVirtualKey(VK_LSHIFT, 0);
+		i_pos++;
+	}
+	if (gen_alt) {
+		input[i_pos].type = INPUT_KEYBOARD;
+		input[i_pos].ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
+		input[i_pos].ki.wScan = MapVirtualKey(VK_MENU, 0);
+		i_pos++;
+	}
+	SendInput(i_pos, input, sizeof(input[0]));
 }
 
 LRESULT
@@ -743,11 +821,22 @@ onWMCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
         mswin_display_splash_window(TRUE);
         break;
 
+    case IDM_FUZZ:
+        if (iflags.debug_fuzzer)
+            KillTimer(hWnd, IDT_FUZZ_TIMER);
+        else
+            SetTimer(hWnd, IDT_FUZZ_TIMER, 10, FuzzTimerProc);
+        iflags.debug_fuzzer = !iflags.debug_fuzzer;
+        break;
     case IDM_EXIT:
+        if (iflags.debug_fuzzer)
+            break;
         done2();
         break;
 
     case IDM_SAVE:
+        if (iflags.debug_fuzzer)
+            break;
         if (!program_state.gameover && !program_state.done_hup)
             dosave();
         else
@@ -793,6 +882,7 @@ onWMCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
         if (!OpenClipboard(hWnd)) {
             NHMessageBox(hWnd, TEXT("Cannot open clipboard"),
                          MB_OK | MB_ICONERROR);
+            free(p);
             return 0;
         }
 
@@ -801,6 +891,7 @@ onWMCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
         hglbCopy = GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(char));
         if (hglbCopy == NULL) {
             CloseClipboard();
+            free(p);
             return FALSE;
         }
 
@@ -824,6 +915,9 @@ onWMCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
         char *text;
         wchar_t *wtext;
         int tlen = 0;
+
+        if (iflags.debug_fuzzer)
+            break;
 
         ZeroMemory(filename, sizeof(filename));
         ZeroMemory(&ofn, sizeof(ofn));
@@ -879,6 +973,7 @@ onWMCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
     case IDM_NHMODE: {
         GetNHApp()->regNetHackMode = GetNHApp()->regNetHackMode ? 0 : 1;
         mswin_menu_check_intf_mode();
+        mswin_apply_window_style_all();
         break;
     }
     case IDM_CLEARSETTINGS: {
@@ -1099,29 +1194,50 @@ mapmode2menuid(int map_mode)
 void
 nhlock_windows(BOOL lock)
 {
-    int i;
-
-    /* go through the windows list and adjust sizes */
-    for (i = 0; i < MAXWINDOWS; i++) {
-        if (IsWindow(GetNHApp()->windowlist[i].win)
-            && !GetNHApp()->windowlist[i].dead) {
-            DWORD style;
-            style = GetWindowLong(GetNHApp()->windowlist[i].win, GWL_STYLE);
-            if (lock)
-                style &= ~WS_CAPTION;
-            else
-                style |= WS_CAPTION;
-            SetWindowLong(GetNHApp()->windowlist[i].win, GWL_STYLE, style);
-            SetWindowPos(GetNHApp()->windowlist[i].win, NULL, 0, 0, 0, 0,
-                         SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER
-                             | SWP_FRAMECHANGED);
-        }
-    }
-
     /* update menu */
     GetNHApp()->bWindowsLocked = lock;
     CheckMenuItem(GetMenu(GetNHApp()->hMainWnd), IDM_SETTING_LOCKWINDOWS,
                   MF_BYCOMMAND | (lock ? MF_CHECKED : MF_UNCHECKED));
+
+    /* restyle windows */
+    mswin_apply_window_style_all();
+}
+
+void
+mswin_apply_window_style(HWND hwnd) {
+    DWORD style = 0, exstyle = 0;
+
+    style = GetWindowLong(hwnd, GWL_STYLE);
+    exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+    if( !GetNHApp()->bWindowsLocked ) {
+        style = WS_CHILD|WS_CLIPSIBLINGS|WS_CAPTION|WS_SIZEBOX|(style & (WS_VISIBLE|WS_VSCROLL|WS_HSCROLL));
+        exstyle = WS_EX_WINDOWEDGE;
+    } else if (GetNHApp()->regNetHackMode) {
+        /* do away borders */
+        style = WS_CHILD|WS_CLIPSIBLINGS|(style & (WS_VISIBLE|WS_VSCROLL|WS_HSCROLL));
+        exstyle = 0;
+    } else {
+        style = WS_CHILD|WS_CLIPSIBLINGS|WS_THICKFRAME|(style & (WS_VISIBLE|WS_VSCROLL|WS_HSCROLL));
+        exstyle = WS_EX_WINDOWEDGE;
+    }
+
+    SetWindowLong(hwnd, GWL_STYLE, style);
+    SetWindowLong(hwnd, GWL_EXSTYLE, exstyle);
+    SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOCOPYBITS);
+}
+
+void
+mswin_apply_window_style_all() {
+    int i;
+    for (i = 0; i < MAXWINDOWS; i++) {
+        if (IsWindow(GetNHApp()->windowlist[i].win)
+            && !GetNHApp()->windowlist[i].dead) {
+            mswin_apply_window_style(GetNHApp()->windowlist[i].win);
+        }
+    }
+    mswin_layout_main_window(NULL);
 }
 
 // returns strdup() created pointer - callee assumes the ownership

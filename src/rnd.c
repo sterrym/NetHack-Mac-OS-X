@@ -1,11 +1,82 @@
-/* NetHack 3.6	rnd.c	$NHDT-Date: 1446883921 2015/11/07 08:12:01 $  $NHDT-Branch: master $:$NHDT-Revision: 1.16 $ */
+/* NetHack 3.6	rnd.c	$NHDT-Date: 1524689470 2018/04/25 20:51:10 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.18 $ */
+/*      Copyright (c) 2004 by Robert Patrick Rankin               */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
+#ifdef USE_ISAAC64
+#include "isaac64.h"
+
+#if 0
+static isaac64_ctx rng_state;
+#endif
+
+struct rnglist_t {
+    int FDECL((*fn), (int));
+    boolean init;
+    isaac64_ctx rng_state;
+};
+
+enum { CORE = 0, DISP = 1 };
+
+static struct rnglist_t rnglist[] = {
+    { rn2, FALSE, { 0 } },                      /* CORE */
+    { rn2_on_display_rng, FALSE, { 0 } },       /* DISP */
+};
+
+int
+whichrng(fn)
+int FDECL((*fn), (int));
+{
+    int i;
+
+    for (i = 0; i < SIZE(rnglist); ++i)
+        if (rnglist[i].fn == fn)
+            return i;
+    return -1;
+}
+
+void
+init_isaac64(seed, fn)
+unsigned long seed;
+int FDECL((*fn), (int));
+{
+    unsigned char new_rng_state[sizeof seed];
+    unsigned i;
+    int rngindx = whichrng(fn);
+
+    if (rngindx < 0)
+        panic("Bad rng function passed to init_isaac64().");
+
+    for (i = 0; i < sizeof seed; i++) {
+        new_rng_state[i] = (unsigned char) (seed & 0xFF);
+        seed >>= 8;
+    }
+    isaac64_init(&rnglist[rngindx].rng_state, new_rng_state,
+                 (int) sizeof seed);
+}
+
+static int
+RND(int x)
+{
+    return (isaac64_next_uint64(&rnglist[CORE].rng_state) % x);
+}
+
+/* 0 <= rn2(x) < x, but on a different sequence from the "main" rn2;
+   used in cases where the answer doesn't affect gameplay and we don't
+   want to give users easy control over the main RNG sequence. */
+int
+rn2_on_display_rng(x)
+register int x;
+{
+    return (isaac64_next_uint64(&rnglist[DISP].rng_state) % x);
+}
+
+#else   /* USE_ISAAC64 */
+
 /* "Rand()"s definition is determined by [OS]conf.h */
 #if defined(LINT) && defined(UNIX) /* rand() is long... */
-extern int rand(void);
+extern int NDECL(rand);
 #define RND(x) (rand() % x)
 #else /* LINT */
 #if defined(UNIX) || defined(RANDOM)
@@ -15,12 +86,22 @@ extern int rand(void);
 #define RND(x) ((int) ((Rand() >> 3) % (x)))
 #endif
 #endif /* LINT */
+int
+rn2_on_display_rng(x)
+register int x;
+{
+    static unsigned seed = 1;
+    seed *= 2739110765;
+    return (int)((seed >> 16) % (unsigned)x);
+}
+#endif  /* USE_ISAAC64 */
 
 /* 0 <= rn2(x) < x */
 int
-rn2(register int x)
+rn2(x)
+register int x;
 {
-#ifdef BETA
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
     if (x <= 0) {
         impossible("rn2(%d) attempted", x);
         return 0;
@@ -35,11 +116,12 @@ rn2(register int x)
 /* 0 <= rnl(x) < x; sometimes subtracting Luck;
    good luck approaches 0, bad luck approaches (x-1) */
 int
-rnl(register int x)
+rnl(x)
+register int x;
 {
     register int i, adjustment;
 
-#ifdef BETA
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
     if (x <= 0) {
         impossible("rnl(%d) attempted", x);
         return 0;
@@ -78,9 +160,10 @@ rnl(register int x)
 
 /* 1 <= rnd(x) <= x */
 int
-rnd(register int x)
+rnd(x)
+register int x;
 {
-#ifdef BETA
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
     if (x <= 0) {
         impossible("rnd(%d) attempted", x);
         return 1;
@@ -92,11 +175,12 @@ rnd(register int x)
 
 /* d(N,X) == NdX == dX+dX+...+dX N times; n <= d(n,x) <= (n*x) */
 int
-d(register int n, register int x)
+d(n, x)
+register int n, x;
 {
     register int tmp = n;
 
-#ifdef BETA
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
     if (x < 0 || n < 0 || (x == 0 && n != 0)) {
         impossible("d(%d,%d) attempted", n, x);
         return 1;
@@ -109,7 +193,8 @@ d(register int n, register int x)
 
 /* 1 <= rne(x) <= max(u.ulevel/3,5) */
 int
-rne(register int x)
+rne(x)
+register int x;
 {
     register int tmp, utmp;
 
@@ -131,7 +216,8 @@ rne(register int x)
 
 /* rnz: everyone's favorite! */
 int
-rnz(int i)
+rnz(i)
+int i;
 {
 #ifdef LINT
     int x = i;

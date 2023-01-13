@@ -37,7 +37,15 @@ typedef struct dlb_library {
 
 /* library definitions */
 #ifndef DLBFILE
+#ifndef VERSION_IN_DLB_FILENAME
 #define DLBFILE "nhdat" /* name of library */
+#else
+#define MAX_DLB_FILENAME 256
+#define DLBFILE dlbfilename
+#define DLBBASENAME "nhdat"
+extern char dlbfilename[MAX_DLB_FILENAME];
+extern char *FDECL(build_dlb_filename, (const char *));
+#endif
 #endif
 #ifndef FILENAME_CMP
 #define FILENAME_CMP strcmp /* case sensitive */
@@ -67,16 +75,16 @@ typedef struct dlb_handle {
 #define DLB_P dlb *
 #endif
 
-boolean dlb_init(void);
-void dlb_cleanup(void);
+boolean NDECL(dlb_init);
+void NDECL(dlb_cleanup);
 
-dlb *dlb_fopen(const char *, const char *);
-int dlb_fclose(DLB_P);
-int dlb_fread(char *, int, int, DLB_P);
-int dlb_fseek(DLB_P, long, int);
-char *dlb_fgets(char *, int, DLB_P);
-int dlb_fgetc(DLB_P);
-long dlb_ftell(DLB_P);
+dlb *FDECL(dlb_fopen, (const char *, const char *));
+int FDECL(dlb_fclose, (DLB_P));
+int FDECL(dlb_fread, (char *, int, int, DLB_P));
+int FDECL(dlb_fseek, (DLB_P, long, int));
+char *FDECL(dlb_fgets, (char *, int, DLB_P));
+int FDECL(dlb_fgetc, (DLB_P));
+long FDECL(dlb_ftell, (DLB_P));
 
 /* Resource DLB entry points */
 #ifdef DLBRSRC
@@ -105,12 +113,6 @@ long rsrc_dlb_ftell(dlb *dp);
 #define dlb_fgets fgets
 #define dlb_fgetc fgetc
 #define dlb_ftell ftell
-
-#if TARGET_OS_MAC
-#undef dlb_fopen
-#define dlb_fopen cocoa_dlb_fopen
-extern FILE *cocoa_dlb_fopen(const char *filename, const char *mode);
-#endif
 
 #endif /* DLB */
 

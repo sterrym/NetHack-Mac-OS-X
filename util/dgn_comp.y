@@ -26,18 +26,18 @@
 #include "date.h"
 #include "dgn_file.h"
 
-void yyerror(const char *);
-void yywarning(const char *);
-int yylex(void);
-int yyparse(void);
-int getchain(char *);
-int check_dungeon(void);
-int check_branch(void);
-int check_level(void);
-void init_dungeon(void);
-void init_branch(void);
-void init_level(void);
-void output_dgn(void);
+void FDECL(yyerror, (const char *));
+void FDECL(yywarning, (const char *));
+int NDECL(yylex);
+int NDECL(yyparse);
+int FDECL(getchain, (char *));
+int NDECL(check_dungeon);
+int NDECL(check_branch);
+int NDECL(check_level);
+void NDECL(init_dungeon);
+void NDECL(init_branch);
+void NDECL(init_level);
+void NDECL(output_dgn);
 
 #define Free(ptr)		free((genericptr_t)ptr)
 
@@ -485,7 +485,8 @@ init_branch()
 }
 
 int
-getchain(char *s)
+getchain(s)
+	char	*s;
 {
 	int i;
 

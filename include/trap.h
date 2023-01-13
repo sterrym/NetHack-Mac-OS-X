@@ -1,5 +1,6 @@
-/* NetHack 3.6	trap.h	$NHDT-Date: 1432512776 2015/05/25 00:12:56 $  $NHDT-Branch: master $:$NHDT-Revision: 1.12 $ */
+/* NetHack 3.6	trap.h	$NHDT-Date: 1547255912 2019/01/12 01:18:32 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.17 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Pasi Kallinen, 2016. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* note for 3.1.0 and later: no longer manipulated by 'makedefs' */
@@ -23,7 +24,7 @@ struct trap {
     Bitfield(tseen, 1);
     Bitfield(once, 1);
     Bitfield(madeby_u, 1); /* So monsters may take offence when you trap
-                              them.	Recognizing who made the trap isn't
+                              them.  Recognizing who made the trap isn't
                               completely unreasonable, everybody has
                               their own style.  This flag is also needed
                               when you untrap a monster.  It would be too
@@ -53,30 +54,36 @@ extern struct trap *ftrap;
 /* Note: if adding/removing a trap, adjust trap_engravings[] in mklev.c */
 
 /* unconditional traps */
-#define NO_TRAP 0
-#define ARROW_TRAP 1
-#define DART_TRAP 2
-#define ROCKTRAP 3
-#define SQKY_BOARD 4
-#define BEAR_TRAP 5
-#define LANDMINE 6
-#define ROLLING_BOULDER_TRAP 7
-#define SLP_GAS_TRAP 8
-#define RUST_TRAP 9
-#define FIRE_TRAP 10
-#define PIT 11
-#define SPIKED_PIT 12
-#define HOLE 13
-#define TRAPDOOR 14
-#define TELEP_TRAP 15
-#define LEVEL_TELEP 16
-#define MAGIC_PORTAL 17
-#define WEB 18
-#define STATUE_TRAP 19
-#define MAGIC_TRAP 20
-#define ANTI_MAGIC 21
-#define POLY_TRAP 22
-#define VIBRATING_SQUARE 23
-#define TRAPNUM 24
+enum trap_types {
+    NO_TRAP      =  0,
+    ARROW_TRAP   =  1,
+    DART_TRAP    =  2,
+    ROCKTRAP     =  3,
+    SQKY_BOARD   =  4,
+    BEAR_TRAP    =  5,
+    LANDMINE     =  6,
+    ROLLING_BOULDER_TRAP = 7,
+    SLP_GAS_TRAP =  8,
+    RUST_TRAP    =  9,
+    FIRE_TRAP    = 10,
+    PIT          = 11,
+    SPIKED_PIT   = 12,
+    HOLE         = 13,
+    TRAPDOOR     = 14,
+    TELEP_TRAP   = 15,
+    LEVEL_TELEP  = 16,
+    MAGIC_PORTAL = 17,
+    WEB          = 18,
+    STATUE_TRAP  = 19,
+    MAGIC_TRAP   = 20,
+    ANTI_MAGIC   = 21,
+    POLY_TRAP    = 22,
+    VIBRATING_SQUARE = 23,
+
+    TRAPNUM      = 24
+};
+
+#define is_pit(ttyp) ((ttyp) == PIT || (ttyp) == SPIKED_PIT)
+#define is_hole(ttyp)  ((ttyp) == HOLE || (ttyp) == TRAPDOOR)
 
 #endif /* TRAP_H */

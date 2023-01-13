@@ -141,11 +141,14 @@
 #define index strchr
 #define rindex strrchr
 #define USE_STDARG
-#ifdef RANDOM
+
 /* Use the high quality random number routines. */
-#define Rand() random()
-#else
-#define Rand() rand()
+#ifndef USE_ISAAC64
+# ifdef RANDOM
+#  define Rand() random()
+# else
+#  define Rand() rand()
+# endif
 #endif
 
 #define FCMASK 0660 /* file creation mask */
@@ -175,10 +178,10 @@ extern char hackdir[];
 #define ABORT C('a')
 #define getuid() 1
 #define getlogin() ((char *) 0)
-extern void win32_abort(void);
+extern void NDECL(win32_abort);
 #ifdef WIN32CON
-extern void nttty_preference_update(const char *);
-extern void toggle_mouse_support(void);
+extern void FDECL(nttty_preference_update, (const char *));
+extern void NDECL(toggle_mouse_support);
 #endif
 
 #ifndef alloca
@@ -211,7 +214,7 @@ extern void toggle_mouse_support(void);
 #define NH_A2W(a, w, cb) (strncpy((w), (a), (cb)))
 #endif
 
-extern int set_win32_option(const char *, const char *);
+extern int FDECL(set_win32_option, (const char *, const char *));
 
 /*
  * 3.4.3 addition - Stuff to help the user with some common, yet significant

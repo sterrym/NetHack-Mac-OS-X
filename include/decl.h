@@ -1,5 +1,6 @@
-/* NetHack 3.6  decl.h  $NHDT-Date: 1432512782 2015/05/25 00:13:02 $  $NHDT-Branch: master $:$NHDT-Revision: 1.76 $ */
+/* NetHack 3.6  decl.h  $NHDT-Date: 1573869061 2019/11/16 01:51:01 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.165 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Michael Allison, 2007. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #ifndef DECL_H
@@ -7,8 +8,8 @@
 
 #define E extern
 
-E int (*occupation)(void);
-E int (*afternmv)(void);
+E int NDECL((*occupation));
+E int NDECL((*afternmv));
 
 E const char *hname;
 E int hackpid;
@@ -23,6 +24,10 @@ E char SAVEF[];
 #ifdef MICRO
 E char SAVEP[];
 #endif
+
+/* max size of a windowtype option */
+#define WINTYPELEN 16
+E char chosen_windowtype[WINTYPELEN];
 
 E NEARDATA int bases[MAXOCLASSES];
 
@@ -159,6 +164,7 @@ E NEARDATA struct sinfo {
 } program_state;
 
 E boolean restoring;
+E boolean ransacked;
 
 E const char quitchars[];
 E const char vowels[];
@@ -185,8 +191,6 @@ E NEARDATA struct kinfo {
 } killer;
 
 E long done_money;
-E const char *configfile;
-E char lastconfigfile[BUFSZ]; /* used for messaging */
 E NEARDATA char plname[PL_NSIZ];
 E NEARDATA char dogname[];
 E NEARDATA char catname[];
@@ -216,6 +220,7 @@ E NEARDATA boolean mrg_to_wielded;
 E NEARDATA boolean defer_see_monsters;
 
 E NEARDATA boolean in_steed_dismounting;
+E NEARDATA boolean has_strong_rngseed;
 
 E const int shield_static[];
 
@@ -243,8 +248,10 @@ E NEARDATA struct obj *migrating_objs;
 E NEARDATA struct obj *billobjs;
 E NEARDATA struct obj *current_wand, *thrownobj, *kickedobj;
 
-E NEARDATA struct obj zeroobj; /* init'd and defined in decl.c */
-E NEARDATA anything zeroany;   /* init'd and defined in decl.c */
+E NEARDATA const struct obj zeroobj; /* for init; also, &zeroobj is used
+                                      * as special value */
+
+E NEARDATA const anything zeroany;   /* init'd and defined in decl.c */
 
 #include "you.h"
 E NEARDATA struct you u;
@@ -256,7 +263,8 @@ E NEARDATA struct u_realtime urealtime;
 #include "pm.h"
 #endif
 
-E NEARDATA struct monst youmonst; /* init'd and defined in decl.c */
+E NEARDATA const struct monst zeromonst; /* for init of new or temp monsters */
+E NEARDATA struct monst youmonst; /* monster details when hero is poly'd */
 E NEARDATA struct monst *mydogs, *migrating_mons;
 
 E NEARDATA struct mvitals {
@@ -264,6 +272,11 @@ E NEARDATA struct mvitals {
     uchar died;
     uchar mvflags;
 } mvitals[NUMMONS];
+
+E NEARDATA long domove_attempting;
+E NEARDATA long domove_succeeded;
+#define DOMOVE_WALK         0x00000001
+#define DOMOVE_RUSH         0x00000002
 
 E NEARDATA struct c_color_names {
     const char *const c_black, *const c_amber, *const c_golden,
@@ -289,7 +302,8 @@ E struct c_common_strings {
     const char *const c_nothing_happens, *const c_thats_enough_tries,
         *const c_silly_thing_to, *const c_shudder_for_moment,
         *const c_something, *const c_Something, *const c_You_can_move_again,
-        *const c_Never_mind, *c_vision_clears, *const c_the_your[2];
+        *const c_Never_mind, *c_vision_clears, *const c_the_your[2],
+        *const c_fakename[2];
 } c_common_strings;
 #define nothing_happens c_common_strings.c_nothing_happens
 #define thats_enough_tries c_common_strings.c_thats_enough_tries
@@ -301,6 +315,9 @@ E struct c_common_strings {
 #define Never_mind c_common_strings.c_Never_mind
 #define vision_clears c_common_strings.c_vision_clears
 #define the_your c_common_strings.c_the_your
+/* fakename[] used occasionally so vtense() won't be fooled by an assigned
+   name ending in 's' */
+#define fakename c_common_strings.c_fakename
 
 /* material strings */
 E const char *materialnm[];
@@ -317,6 +334,7 @@ E const char *materialnm[];
 #define SUPPRESS_HALLUCINATION 0x04
 #define SUPPRESS_SADDLE 0x08
 #define EXACT_NAME 0x0F
+#define SUPPRESS_NAME 0x10
 
 /* Vision */
 E NEARDATA boolean vision_full_recalc; /* TRUE if need vision recalc */
@@ -324,9 +342,7 @@ E NEARDATA char **viz_array;           /* could see/in sight row pointers */
 
 /* Window system stuff */
 E NEARDATA winid WIN_MESSAGE;
-#ifndef STATUS_VIA_WINDOWPORT
 E NEARDATA winid WIN_STATUS;
-#endif
 E NEARDATA winid WIN_MAP, WIN_INVEN;
 
 /* pline (et al) for a single string argument (suppress compiler warning) */
@@ -382,11 +398,22 @@ E const char *const monexplain[], invisexplain[], *const oclass_names[];
 #endif
 
 E char *fqn_prefix[PREFIX_COUNT];
+#ifdef WIN32
+E boolean fqn_prefix_locked[PREFIX_COUNT];
+#endif
 #ifdef PREFIXES_IN_USE
-E char *fqn_prefix_names[PREFIX_COUNT];
+E const char *fqn_prefix_names[PREFIX_COUNT];
 #endif
 
 E NEARDATA struct savefile_info sfcap, sfrestinfo, sfsaveinfo;
+
+struct opvar {
+    xchar spovartyp; /* one of SPOVAR_foo */
+    union {
+        char *str;
+        long l;
+    } vardata;
+};
 
 struct autopickup_exception {
     struct nhregex *regex;
@@ -394,6 +421,7 @@ struct autopickup_exception {
     boolean grab;
     struct autopickup_exception *next;
 };
+E struct autopickup_exception *apelist;
 
 struct plinemsg_type {
     xchar msgtype;  /* one of MSGTYP_foo */
@@ -406,12 +434,34 @@ struct plinemsg_type {
 #define MSGTYP_NOREP    1
 #define MSGTYP_NOSHOW   2
 #define MSGTYP_STOP     3
+/* bitmask for callers of hide_unhide_msgtypes() */
+#define MSGTYP_MASK_REP_SHOW ((1 << MSGTYP_NOREP) | (1 << MSGTYP_NOSHOW))
 
 E struct plinemsg_type *plinemsg_types;
 
+enum bcargs {override_restriction = -1};
+struct breadcrumbs {
+    const char *funcnm;
+    int linenum;
+    boolean in_effect;
+};
+
 #ifdef PANICTRACE
-E char *ARGV0;
+E const char *ARGV0;
 #endif
+
+enum earlyarg {ARG_DEBUG, ARG_VERSION, ARG_SHOWPATHS
+#ifdef WIN32
+    ,ARG_WINDOWS
+#endif
+};
+
+struct early_opt {
+    enum earlyarg e;
+    const char *name;
+    int minlength;
+    boolean valallowed;
+};
 
 #undef E
 

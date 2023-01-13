@@ -3,40 +3,40 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* amidos.c */
-void flushout(void);
+void NDECL(flushout );
 #ifndef	getuid
-int getuid(void);
+int NDECL(getuid );
 #endif
 #ifndef	getpid
-int getpid(void);
+int NDECL(getpid );
 #endif
 #ifndef	getlogin
-char *getlogin(void);
+char *NDECL(getlogin );
 #endif
 #ifndef	abs
-int abs(int);
+int FDECL(abs, (int ));
 #endif
-int tgetch(void);
-int dosh(void);
-long freediskspace(char *);
-long filesize(char *);
-void eraseall(const char * , const char *);
-char *CopyFile(const char * , const char *);
-void copybones(int );
-void playwoRAMdisk(void);
-int saveDiskPrompt(int );
-void gameDiskPrompt(void);
-void append_slash(char *);
-void getreturn(const char *);
+int NDECL(tgetch );
+int NDECL(dosh );
+long FDECL(freediskspace, (char *));
+long FDECL(filesize, (char *));
+void FDECL(eraseall, (const char * , const char *));
+char *FDECL(CopyFile, (const char * , const char *));
+void FDECL(copybones, (int ));
+void NDECL(playwoRAMdisk );
+int FDECL(saveDiskPrompt, (int ));
+void NDECL(gameDiskPrompt );
+void FDECL(append_slash, (char *));
+void FDECL(getreturn, (const char *));
 #ifndef msmsg
-void msmsg(const char *, ...);
+void FDECL(msmsg, ( const char *, ... ));
 #endif
 #if !defined(__SASC_60) && !defined(_DCC)
-int chdir(char *);
+int FDECL(chdir, (char *));
 #endif
 #ifndef	strcmpi
-int strcmpi(char * , char *);
+int FDECL(strcmpi, (char * , char *));
 #endif
 #if !defined(memcmp) && !defined(AZTEC_C) && !defined(_DCC) && !defined(__GNUC__)
-int memcmp(unsigned char * , unsigned char * , int );
+int FDECL(memcmp, (unsigned char * , unsigned char * , int ));
 #endif

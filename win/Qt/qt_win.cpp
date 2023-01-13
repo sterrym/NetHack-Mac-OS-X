@@ -1,4 +1,4 @@
-// NetHack 3.6	qt_win.cpp	$NHDT-Date$  $NHDT-Branch$:$NHDT-Revision$
+// NetHack 3.6	qt_win.cpp	$NHDT-Date: 1524684508 2018/04/25 19:28:28 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.77 $
 // Copyright (c) Warwick Allison, 1999.
 // NetHack may be freely redistributed.  See license for details.
 
@@ -1379,6 +1379,7 @@ void NetHackQtStringRequestor::SetDefault(const char* d)
 {
     input.setText(d);
 }
+
 bool NetHackQtStringRequestor::Get(char* buffer, int maxchar)
 {
     input.setMaxLength(maxchar);
@@ -1432,6 +1433,7 @@ void NetHackQtStringRequestor::done(int i)
 NetHackQtWindow::NetHackQtWindow()
 {
 }
+
 NetHackQtWindow::~NetHackQtWindow()
 {
 }
@@ -1514,7 +1516,10 @@ void NetHackQtMapWindow::putMessage(int attr, const char* text)
 	messages += "\n";
     messages += text;
     QFontMetrics fm = fontMetrics();
-    messages_rect = fm.boundingRect(viewport.contentsX(),viewport.contentsY(),viewport.width(),0, WordBreak|AlignTop|AlignLeft|DontClip, messages);
+    messages_rect = fm.boundingRect(viewport.contentsX(), viewport.contentsY(),
+                                    viewport.width(), 0,
+                                    WordBreak|AlignTop|AlignLeft|DontClip,
+                                    messages);
     update(messages_rect);
 }
 
@@ -1683,7 +1688,7 @@ void NetHackQtMapWindow::paintEvent(QPaintEvent* event)
 
 		painter.setPen( green );
 		/* map glyph to character and color */
-    		(void)mapglyph(g, &och, &color, &special, i, j);
+    		(void)mapglyph(g, &och, &color, &special, i, j, 0);
 		ch = (uchar)och;
 #ifdef TEXTCOLOR
 		painter.setPen( nhcolor_to_pen(color) );
@@ -1701,7 +1706,9 @@ void NetHackQtMapWindow::paintEvent(QPaintEvent* event)
 		    && ::iflags.hilite_pet
 #endif
 		) {
-		    painter.drawPixmap(QPoint(i*qt_settings->glyphs().width(), j*qt_settings->glyphs().height()), pet_annotation);
+		    painter.drawPixmap(QPoint(i*qt_settings->glyphs().width(),
+                                              j*qt_settings->glyphs().height()),
+                                       pet_annotation);
 		}
 	    }
 	}
@@ -1717,7 +1724,9 @@ void NetHackQtMapWindow::paintEvent(QPaintEvent* event)
 		    && ::iflags.hilite_pet
 #endif
 		) {
-		    painter.drawPixmap(QPoint(i*qt_settings->glyphs().width(), j*qt_settings->glyphs().height()), pet_annotation);
+		    painter.drawPixmap(QPoint(i*qt_settings->glyphs().width(),
+                                              j*qt_settings->glyphs().height()),
+                                       pet_annotation);
 		}
 	    }
 	}
@@ -2827,6 +2836,7 @@ void NetHackQtMenuWindow::Layout()
     invert->setGeometry(x,0,butw,buth); x+=butw; butw=(dialog->width()-x)/1;
     search->setGeometry(x,0,butw,buth);
 }
+
 int NetHackQtMenuWindow::SelectMenu(int h, MENU_ITEM_P **menu_list)
 {
     setFont(str_fixed ?
@@ -2896,7 +2906,7 @@ int NetHackQtMenuWindow::SelectMenu(int h, MENU_ITEM_P **menu_list)
 	if (dialog->result()<0)
 	    qApp->enter_loop();
     }
-    //if ( (nhid != WIN_INVEN || !flags.perm_invent) ) // doesn't work yet
+    //if ( (nhid != WIN_INVEN || !iflags.perm_invent) ) // doesn't work yet
     {
 	dialog->hide();
     }
@@ -2947,6 +2957,7 @@ int NetHackQtMenuWindow::SelectMenu(int h, MENU_ITEM_P **menu_list)
 	return -1;
     }
 }
+
 void NetHackQtMenuWindow::keyPressEvent(QKeyEvent* event)
 {
     if (viewHeight() < totalHeight() && !(event->state()&ShiftButton)) {
@@ -2974,12 +2985,14 @@ void NetHackQtMenuWindow::ChooseNone()
 	if (item[i].selected) ToggleSelect(i);
     }
 }
+
 void NetHackQtMenuWindow::Invert()
 {
     for (int i=0; i<itemcount; i++) {
 	ToggleSelect(i);
     }
 }
+
 void NetHackQtMenuWindow::Search()
 {
     NetHackQtStringRequestor requestor(keysource,"Search for:");
@@ -2991,6 +3004,7 @@ void NetHackQtMenuWindow::Search()
 	}
     }
 }
+
 void NetHackQtMenuWindow::ToggleSelect(int i)
 {
     if (item[i].Selectable()) {
@@ -3115,6 +3129,7 @@ void NetHackQtMenuWindow::mousePressEvent(QMouseEvent* event)
 	}
     }
 }
+
 void NetHackQtMenuWindow::mouseReleaseEvent(QMouseEvent* event)
 {
     if (pressed>=0) {
@@ -3123,6 +3138,7 @@ void NetHackQtMenuWindow::mouseReleaseEvent(QMouseEvent* event)
 	updateCell(p,3);
     }
 }
+
 void NetHackQtMenuWindow::mouseMoveEvent(QMouseEvent* event)
 {
     if (pressed>=0) {
@@ -3292,7 +3308,7 @@ static char** rip_line=0;
     Sprintf(rip_line[GOLD_LINE], "%ld Au", done_money);
 
     /* Put together death description */
-    formatkiller(buf, sizeof buf, how);
+    formatkiller(buf, sizeof buf, how, FALSE);
 
     /* Put death type on stone */
     for (line=DEATH_LINE, dpx = buf; line<YEAR_LINE; line++) {
@@ -3445,7 +3461,7 @@ void NetHackQtInvUsageWindow::drawWorn(QPainter& painter, obj* nhobj, int x, int
 {
     short int glyph;
     if (nhobj)
-	glyph=obj_to_glyph(nhobj);
+	glyph=obj_to_glyph(nhobj, rn2_on_display_rng);
     else if (canbe)
 	glyph=cmap_to_glyph(S_room);
     else
@@ -4023,7 +4039,7 @@ void NetHackQtMainWindow::closeEvent(QCloseEvent* e)
 		if (dosave0()) {
 		    u.uhp = -1;
 		    NetHackQtBind::qt_exit_nhwindows(0);
-		    terminate(EXIT_SUCCESS);
+		    nh_terminate(EXIT_SUCCESS);
 		}
 		break;
 	    case 1:
@@ -4274,8 +4290,9 @@ NetHackQtGlyphs::NetHackQtGlyphs()
 	} else {
 	    tiles_per_row = TILES_PER_ROW;
 	    if (img.width()%tiles_per_row) {
-		impossible("Tile file \"%s\" has %d columns, not multiple of row count (%d)",
-		   tile_file, img.width(), tiles_per_row);
+		impossible(
+            "Tile file \"%s\" has %d columns, not multiple of row count (%d)",
+                           tile_file, img.width(), tiles_per_row);
 	    }
 	}
     } else {
@@ -4368,18 +4385,30 @@ QWidget* NetHackQtMenuOrTextWindow::Widget()
 // Text
 void NetHackQtMenuOrTextWindow::Clear()
 {
-    if (!actual) impossible("Clear called before we know if Menu or Text");
-    actual->Clear();
+    if (!actual)
+        impossible("Clear called before we know if Menu or Text");
+    else
+        actual->Clear();
 }
+
 void NetHackQtMenuOrTextWindow::Display(bool block)
 {
-    if (!actual) impossible("Display called before we know if Menu or Text");
-    actual->Display(block);
+    if (!actual)
+        impossible("Display called before we know if Menu or Text");
+    else
+        actual->Display(block);
 }
+
 bool NetHackQtMenuOrTextWindow::Destroy()
 {
-    if (!actual) impossible("Destroy called before we know if Menu or Text");
-    return actual->Destroy();
+    bool res = FALSE;
+
+    if (!actual)
+        impossible("Destroy called before we know if Menu or Text");
+    else
+        res = actual->Destroy();
+
+    return res;
 }
 
 void NetHackQtMenuOrTextWindow::PutStr(int attr, const char* text)
@@ -4394,17 +4423,20 @@ void NetHackQtMenuOrTextWindow::StartMenu()
     if (!actual) actual=new NetHackQtMenuWindow(keysource);
     actual->StartMenu();
 }
+
 void NetHackQtMenuOrTextWindow::AddMenu(int glyph, const ANY_P* identifier, char ch, char gch, int attr,
 	const char* str, bool presel)
 {
     if (!actual) impossible("AddMenu called before we know if Menu or Text");
     actual->AddMenu(glyph,identifier,ch,gch,attr,str,presel);
 }
+
 void NetHackQtMenuOrTextWindow::EndMenu(const char* prompt)
 {
     if (!actual) impossible("EndMenu called before we know if Menu or Text");
     actual->EndMenu(prompt);
 }
+
 int NetHackQtMenuOrTextWindow::SelectMenu(int how, MENU_ITEM_P **menu_list)
 {
     if (!actual) impossible("SelectMenu called before we know if Menu or Text");
@@ -4607,7 +4639,7 @@ void NetHackQtBind::qt_askname()
     // Quit
     clearlocks();
     qt_exit_nhwindows(0);
-    terminate(0);
+    nh_terminate(0);
 }
 
 void NetHackQtBind::qt_get_nh_event()
@@ -4700,7 +4732,7 @@ void NetHackQtBind::qt_clear_nhwindow(winid wid)
     window->Clear();
 }
 
-void NetHackQtBind::qt_display_nhwindow(winid wid, boolean block)
+void NetHackQtBind::qt_display_nhwindow(winid wid, BOOLEAN_P block)
 {
     NetHackQtWindow* window=id_to_window[wid];
     window->Display(block);
@@ -4727,7 +4759,7 @@ void NetHackQtBind::qt_putstr(winid wid, int attr, const char *text)
     window->PutStr(attr,text);
 }
 
-void NetHackQtBind::qt_display_file(const char *filename, boolean must_exist)
+void NetHackQtBind::qt_display_file(const char *filename, BOOLEAN_P must_exist)
 {
     NetHackQtTextWindow* window=new NetHackQtTextWindow(keybuffer);
     bool complain = FALSE;
@@ -4784,8 +4816,8 @@ void NetHackQtBind::qt_start_menu(winid wid)
 }
 
 void NetHackQtBind::qt_add_menu(winid wid, int glyph,
-    const ANY_P * identifier, char ch, char gch, int attr,
-    const char *str, boolean presel)
+    const ANY_P * identifier, CHAR_P ch, CHAR_P gch, int attr,
+    const char *str, BOOLEAN_P presel)
 {
     NetHackQtWindow* window=id_to_window[wid];
     window->AddMenu(glyph, identifier, ch, gch, attr, str, presel);
@@ -4808,7 +4840,7 @@ void NetHackQtBind::qt_update_inventory()
     if (main)
 	main->updateInventory();
     /* doesn't work yet
-    if (program_state.something_worth_saving && flags.perm_invent)
+    if (program_state.something_worth_saving && iflags.perm_invent)
         display_inventory(NULL, FALSE);
     */
 }
@@ -4832,12 +4864,12 @@ void NetHackQtBind::qt_cliparound_window(winid wid, int x, int y)
     NetHackQtWindow* window=id_to_window[wid];
     window->ClipAround(x,y);
 }
-void NetHackQtBind::qt_print_glyph(winid wid,xchar x,xchar y,int glyph, int bkglyph)
+void NetHackQtBind::qt_print_glyph(winid wid,XCHAR_P x,XCHAR_P y,int glyph, int bkglyph)
 {
     NetHackQtWindow* window=id_to_window[wid];
     window->PrintGlyph(x,y,glyph);
 }
-//void NetHackQtBind::qt_print_glyph_compose(winid wid,xchar x,xchar y,int glyph1, int glyph2)
+//void NetHackQtBind::qt_print_glyph_compose(winid wid,XCHAR_P x,XCHAR_P y,int glyph1, int glyph2)
 //{
     //NetHackQtWindow* window=id_to_window[wid];
     //window->PrintGlyphCompose(x,y,glyph1,glyph2);
@@ -4914,7 +4946,7 @@ int NetHackQtBind::qt_doprev_message()
     return 0;
 }
 
-char NetHackQtBind::qt_yn_function(const char *question, const char *choices, char def)
+char NetHackQtBind::qt_yn_function(const char *question, const char *choices, CHAR_P def)
 {
     if (qt_settings->ynInMessages() && WIN_MESSAGE!=WIN_ERR) {
 	// Similar to X11 windowport `slow' feature.
@@ -5197,6 +5229,7 @@ struct window_procs Qt_procs = {
 	WC_FONT_MAP|WC_TILE_FILE|WC_TILE_WIDTH|WC_TILE_HEIGHT|
 	WC_PLAYER_SELECTION|WC_SPLASH_SCREEN,
     0L,
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},   /* color availability */
     NetHackQtBind::qt_init_nhwindows,
     NetHackQtBind::qt_player_selection,
     NetHackQtBind::qt_askname,
@@ -5254,15 +5287,11 @@ struct window_procs Qt_procs = {
     genl_preference_update,
     genl_getmsghistory,
     genl_putmsghistory,
-#ifdef STATUS_VIA_WINDOWPORT
     genl_status_init,
     genl_status_finish,
     genl_status_enablefield,
     genl_status_update,
-# ifdef STATUS_HILITES
-    genl_status_threshold,
-# endif
-#endif
+    genl_can_suspend_yes,
 };
 
 extern "C" void play_usersound(const char* filename, int volume)

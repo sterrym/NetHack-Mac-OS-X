@@ -15,11 +15,11 @@ GtkWidget *ghack_init_menu_window(void);
 struct _GHackMenuItem {
     int glyph;
     const ANY_P *identifier;
-    char accelerator;
-    char group_accel;
+    CHAR_P accelerator;
+    CHAR_P group_accel;
     int attr;
     const char *str;
-    boolean presel;
+    BOOLEAN_P presel;
 };
 
 typedef struct _GHackMenuItem GHackMenuItem;

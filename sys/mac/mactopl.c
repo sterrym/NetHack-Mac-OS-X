@@ -1,5 +1,6 @@
 /* NetHack 3.6	mactopl.c	$NHDT-Date: 1432512797 2015/05/25 00:13:17 $  $NHDT-Branch: master $:$NHDT-Revision: 1.9 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Kenneth Lorber, Kensington, Maryland, 2015. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
@@ -48,7 +49,9 @@ topl_yn_function(const char *query, const char *resp, char def)
 }
 
 char
-mac_yn_function(const char *query, const char *resp, char def)
+mac_yn_function(query, resp, def)
+const char *query, *resp;
+char def;
 /*
  *   Generic yes/no function. 'def' is the default (returned by space or
  *   return; 'esc' returns 'q', or 'n', or the default, depending on

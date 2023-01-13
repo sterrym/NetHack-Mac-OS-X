@@ -38,6 +38,8 @@
 
 #include "hack.h"
 
+#if defined(USE_ISAAC64) && !defined(RANDOM)
+#else
 #ifdef LIBC_SCCS
 #ifndef lint
 static char sccsid[] = "@(#)random.c	5.5 (Berkeley) 7/6/88";
@@ -199,7 +201,9 @@ static long *end_ptr = &randtbl[DEG_3 + 1];
  */
 
 void
-srandom(unsigned x)
+srandom(x)
+
+unsigned x;
 {
     register int i;
 
@@ -234,9 +238,11 @@ srandom(unsigned x)
  */
 
 char *
-initstate(unsigned seed,   /* seed for R. N. G. */
-          char *arg_state, /* pointer to state array */
-          int n)           /* # bytes of state info */
+initstate(seed, arg_state, n)
+
+unsigned seed;   /* seed for R. N. G. */
+char *arg_state; /* pointer to state array */
+int n;           /* # bytes of state info */
 {
     register char *ostate = (char *) (&state[-1]);
 
@@ -300,7 +306,9 @@ initstate(unsigned seed,   /* seed for R. N. G. */
  */
 
 char *
-setstate(char *arg_state)
+setstate(arg_state)
+
+char *arg_state;
 {
     register long *new_state = (long *) arg_state;
     register int type = new_state[0] % MAX_TYPES;
@@ -371,3 +379,7 @@ random()
     }
     return (i);
 }
+#endif /* else defined(USE_ISAAC64) && !defined(RANDOM) */
+
+
+

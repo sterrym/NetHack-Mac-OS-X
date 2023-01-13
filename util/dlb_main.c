@@ -1,4 +1,4 @@
-/* NetHack 3.6	dlb_main.c	$NHDT-Date: 1432512785 2015/05/25 00:13:05 $  $NHDT-Branch: master $:$NHDT-Revision: 1.10 $ */
+/* NetHack 3.6	dlb_main.c	$NHDT-Date: 1570258542 2019/10/05 06:55:42 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.13 $ */
 /* Copyright (c) Kenneth Lorber, Bethesda, Maryland, 1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -14,8 +14,8 @@
 #include <string.h>
 #endif
 
-static void grow_ld(libdir **, int *, int);
-static void xexit(int);
+static void FDECL(grow_ld, (libdir **, int *, int));
+static void FDECL(xexit, (int)) NORETURN;
 
 #ifdef DLB
 #ifdef DLBLIB
@@ -24,16 +24,16 @@ static void xexit(int);
 #define LIBLISTFILE "dlb.lst"     /* default list file */
 
 /* library functions (from dlb.c) */
-extern boolean open_library(const char *, library *);
-extern void close_library(library *);
+extern boolean FDECL(open_library, (const char *, library *));
+extern void FDECL(close_library, (library *));
 
-char *eos(char *); /* also used by dlb.c */
-FILE *fopen_datafile(const char *, const char *);
+char *FDECL(eos, (char *)); /* also used by dlb.c */
+FILE *FDECL(fopen_datafile, (const char *, const char *));
 
-static void Write(int, char *, long);
-static void usage(void);
-static void verbose_help(void);
-static void write_dlb_directory(int, int, libdir *, long, long, long);
+static void FDECL(Write, (int, char *, long));
+static void NDECL(usage) NORETURN;
+static void NDECL(verbose_help) NORETURN;
+static void FDECL(write_dlb_directory, (int, int, libdir *, long, long, long));
 
 static char default_progname[] = "dlb";
 static char *progname = default_progname;
@@ -83,12 +83,13 @@ usage()
     (void) printf("  default library is %s\n", library_file);
     (void) printf("  default list file is %s\n", list_file);
     xexit(EXIT_FAILURE);
+    /*NOTREACHED*/
 }
 
 static void
 verbose_help()
 {
-    static const char *long_help[] = {
+    static const char *const long_help[] = {
         "", "dlb COMMANDoptions args... files...", "  commands:",
         "    dlb ?   print this text", "    dlb h   ditto",
         "    dlb x   extract all files", "    dlb c   create the archive",
@@ -99,15 +100,19 @@ verbose_help()
         "    C dir   change directory before processing any files", "",
         (char *) 0
     };
-    const char **str;
+    const char *const *str;
 
     for (str = long_help; *str; str++)
         (void) printf("%s\n", *str);
     usage();
+    /*NOTREACHED*/
 }
 
 static void
-Write(int out, char *buf, long len)
+Write(out, buf, len)
+int out;
+char *buf;
+long len;
 {
 #if defined(MSDOS) && !defined(__DJGPP__)
     unsigned short slen;
@@ -128,7 +133,8 @@ Write(int out, char *buf, long len)
 }
 
 char *
-eos(char *s)
+eos(s)
+char *s;
 {
     while (*s)
         s++;
@@ -137,7 +143,8 @@ eos(char *s)
 
 /* open_library(dlb.c) needs this (which normally comes from src/files.c) */
 FILE *
-fopen_datafile(const char *filename, const char *mode)
+fopen_datafile(filename, mode)
+const char *filename, *mode;
 {
     return fopen(filename, mode);
 }
@@ -146,7 +153,9 @@ fopen_datafile(const char *filename, const char *mode)
 #endif /* DLB */
 
 int
-main(int argc, char **argv)
+main(argc, argv)
+int argc;
+char **argv;
 {
 #ifdef DLB
 #ifdef DLBLIB
@@ -172,11 +181,14 @@ main(int argc, char **argv)
         switch (argv[1][cp]) {
         default:
             usage(); /* doesn't return */
+            /*NOTREACHED*/
+            break;
         case '-':    /* silently ignore */
             break;
         case '?':
         case 'h':
             verbose_help();
+            /*NOTREACHED*/
             break;
         case 'I':
             if (ap == argc)
@@ -190,6 +202,9 @@ main(int argc, char **argv)
             if (ap == argc)
                 usage();
             library_file = argv[ap++];
+#ifdef VERSION_IN_DLB_FILENAME
+            library_file = build_dlb_filename(library_file);
+#endif
             if (fseen)
                 printf("Warning: multiple f options.  Previous ignored.\n");
             fseen = 1;
@@ -232,7 +247,9 @@ main(int argc, char **argv)
     default:
         printf("Internal error - action.\n");
         xexit(EXIT_FAILURE);
+        /*NOTREACHED*/
         break;
+
     case 't': /* list archive */
         if (!open_library(library_file, &lib)) {
             printf("Can't open dlb file\n");
@@ -252,7 +269,8 @@ main(int argc, char **argv)
                    lib.nentries, lib.strsize);
 
         close_library(&lib);
-        xexit(EXIT_SUCCESS);
+        /* xexit(EXIT_SUCCESS); */
+        break;
 
     case 'x': { /* extract archive contents */
         int f, n;
@@ -320,7 +338,8 @@ main(int argc, char **argv)
         }
 
         close_library(&lib);
-        xexit(EXIT_SUCCESS);
+        /* xexit(EXIT_SUCCESS); */
+        break;
     }
 
     case 'c': /* create archive */
@@ -392,8 +411,8 @@ main(int argc, char **argv)
         }
 
         /* open output file */
-        out =
-            open(library_file, O_RDWR | O_TRUNC | O_BINARY | O_CREAT, FCMASK);
+        out = open(library_file,
+                   O_RDWR | O_TRUNC | O_BINARY | O_CREAT, FCMASK);
         if (out < 0) {
             printf("Can't open %s for output\n", library_file);
             xexit(EXIT_FAILURE);
@@ -451,9 +470,10 @@ main(int argc, char **argv)
         free((genericptr_t) ld), ldlimit = 0;
 
         (void) close(out);
-        xexit(EXIT_SUCCESS);
-    }
-    }
+        /* xexit(EXIT_SUCCESS); */
+        break;
+    } /* case 'c' */
+    } /* switch */
 #endif /* DLBLIB */
 #endif /* DLB */
 
@@ -466,7 +486,10 @@ main(int argc, char **argv)
 #ifdef DLBLIB
 
 static void
-grow_ld(libdir **ld_p, int *ldlimit_p, int alloc_incr)
+grow_ld(ld_p, ldlimit_p, alloc_incr)
+libdir **ld_p;
+int *ldlimit_p;
+int alloc_incr;
 {
     static libdir zerolibdir;
     int i = 0, newlimit = *ldlimit_p + alloc_incr;
@@ -483,7 +506,10 @@ grow_ld(libdir **ld_p, int *ldlimit_p, int alloc_incr)
 }
 
 static void
-write_dlb_directory(int out, int nfiles, libdir *ld, long slen, long dir_size, long flen)
+write_dlb_directory(out, nfiles, ld, slen, dir_size, flen)
+int out, nfiles;
+libdir *ld;
+long slen, dir_size, flen;
 {
     char buf[BUFSIZ];
     int i;
@@ -492,7 +518,7 @@ write_dlb_directory(int out, int nfiles, libdir *ld, long slen, long dir_size, l
             (long) DLB_VERS,   /* version of dlb file */
             (long) nfiles + 1, /* # of entries (includes directory) */
                                /* string length + room for nulls */
-            (long) slen + strlen(DLB_DIRECTORY) + nfiles + 1,
+            (long) slen + (long) strlen(DLB_DIRECTORY) + nfiles + 1,
             (long) dir_size,         /* start of first file */
             (long) flen + dir_size); /* total file size */
     Write(out, buf, strlen(buf));
@@ -513,7 +539,8 @@ write_dlb_directory(int out, int nfiles, libdir *ld, long slen, long dir_size, l
 #endif /* DLB */
 
 static void
-xexit(int retcd)
+xexit(retcd)
+int retcd;
 {
 #ifdef DLB
 #ifdef AMIGA
@@ -522,6 +549,7 @@ xexit(int retcd)
 #endif
 #endif
     exit(retcd);
+    /*NOTREACHED*/
 }
 
 #ifdef AMIGA

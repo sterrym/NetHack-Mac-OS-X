@@ -1,4 +1,5 @@
-/* NetHack 3.6	vmsmisc.c	$NHDT-Date: 1432512789 2015/05/25 00:13:09 $  $NHDT-Branch: master $:$NHDT-Revision: 1.10 $ */
+/* NetHack 3.6	vmsmisc.c	$NHDT-Date: 1524689429 2018/04/25 20:50:29 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.11 $ */
+/*      Copyright (c) 2011 by Robert Patrick Rankin              */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "config.h"
@@ -8,15 +9,16 @@
 
 int debuggable = 0; /* 1 if we can debug or show a call trace */
 
-void vms_exit(int);
-void vms_abort(void);
+void FDECL(vms_exit, (int));
+void NDECL(vms_abort);
 
 /* first arg should be unsigned long but <lib$routines.h> has unsigned int */
-extern void lib$signal(unsigned, ...);
+extern void VDECL(lib$signal, (unsigned, ...));
 
 /* terminate, converting Unix-style exit code into VMS status code */
 void
-vms_exit(int status)
+vms_exit(status)
+int status;
 {
     /* convert non-zero to failure, zero to success */
     exit(status ? (SS$_ABORT | STS$M_INHIB_MSG) : SS$_NORMAL);

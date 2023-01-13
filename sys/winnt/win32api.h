@@ -7,13 +7,34 @@
  * header files & NetHack before including windows.h, so all NetHack
  * files should include "win32api.h" rather than <windows.h>.
  */
+#ifndef WIN32API
+#define WIN32API
+
 #if defined(_MSC_VER)
-#undef strcmpi
-#undef min
-#undef max
+
+#if defined(HACK_H)
+#error win32api.h must be included before hack.h
+#endif
+
+#if defined(strcmpi)
+#error win32api.h should be included first
+#endif
+
+#if defined(min)
+#error win32api.h should be included first
+#endif
+
+#if defined(max)
+#error win32api.h should be included first
+#endif
+
+#if defined(Protection)
+#error win32api.h should be included first
+#endif
+
 #pragma warning(disable : 4142) /* Warning, Benign redefinition of type */
 #pragma pack(8)
-#endif
+#endif // _MSC_VER
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -23,5 +44,7 @@
 #if defined(_MSC_VER)
 #pragma pack()
 #endif
+
+#endif // WIN32API
 
 /*win32api.h*/

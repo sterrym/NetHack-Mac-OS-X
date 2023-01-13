@@ -68,7 +68,8 @@ getlogin()
 
 #ifndef AZTEC_50
 int
-abs(int x)
+abs(x)
+int x;
 {
     return x < 0 ? -x : x;
 }
@@ -112,7 +113,8 @@ dosh()
  */
 /* TODO: update this for FFS */
 long
-freediskspace(char *path)
+freediskspace(path)
+char *path;
 {
 #ifdef UNTESTED
     /* these changes from Patric Mueller <bhaak@gmx.net> for AROS to
@@ -181,7 +183,8 @@ freediskspace(char *path)
 }
 
 long
-filesize(char *file)
+filesize(file)
+char *file;
 {
     register BPTR fileLock;
     register struct FileInfoBlock *fileInfoBlock;
@@ -201,12 +204,13 @@ filesize(char *file)
 
 #if 0
 void
-eraseall(const char *path, const char *files)
+eraseall(path, files)
+const char *path, *files;
 {
     BPTR dirLock, dirLock2;
     struct FileInfoBlock *fibp;
     int chklen;
-#ifdef BETA
+#if (NH_DEVEL_STATUS != NH_STATUS_RELEASED)
     if(files != alllevels)panic("eraseall");
 #endif
     chklen=(int)index(files,'*')-(int)files;
@@ -236,7 +240,8 @@ eraseall(const char *path, const char *files)
 #if 0 /* Unused */
 #define COPYSIZE 4096
 
-char *CopyFile(const char *from, const char *to)
+char *CopyFile(from, to)
+const char *from, *to;
 {
     register BPTR fromFile, toFile;
     register char *buffer;
@@ -350,7 +355,8 @@ gameDiskPrompt()
  * be room for the /.
  */
 void
-append_slash(char *name)
+append_slash(name)
+char *name;
 {
     char *ptr;
 
@@ -365,7 +371,8 @@ append_slash(char *name)
 }
 
 void
-getreturn(const char *str)
+getreturn(str)
+const char *str;
 {
     int ch;
 
@@ -379,7 +386,8 @@ getreturn(const char *str)
 #define PATHSEP ';'
 
 FILE *
-fopenp(register const char *name, register const char *mode)
+fopenp(name, mode)
+register const char *name, *mode;
 {
     register char *bp, *pp, lastch;
     register FILE *fp;
@@ -434,7 +442,7 @@ fopenp(register const char *name, register const char *mode)
 
 static BPTR OrgDirLock = NO_LOCK;
 
-chdir(char *dir)
+chdir(dir) char *dir;
 {
     extern char orgdir[];
 
@@ -488,7 +496,8 @@ nethack_exit(code)
     exit(code);
 }
 
-void regularize(register char *s) /* normalize file name - we don't like :'s or /'s */
+void regularize(s) /* normalize file name - we don't like :'s or /'s */
+register char *s;
 {
     register char *lp;
 

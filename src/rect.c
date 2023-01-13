@@ -1,12 +1,12 @@
 /* NetHack 3.6	rect.c	$NHDT-Date: 1432512774 2015/05/25 00:12:54 $  $NHDT-Branch: master $:$NHDT-Revision: 1.11 $ */
-/* Copyright (c) 1990 by Jean-Christophe Collet	 */
+/* Copyright (c) 1990 by Jean-Christophe Collet                   */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
-int get_rect_ind(NhRect *);
+int FDECL(get_rect_ind, (NhRect *));
 
-STATIC_DCL boolean intersect(NhRect *, NhRect *, NhRect *);
+STATIC_DCL boolean FDECL(intersect, (NhRect *, NhRect *, NhRect *));
 
 /*
  * In this file, we will handle the various rectangle functions we
@@ -40,7 +40,8 @@ init_rect()
  */
 
 int
-get_rect_ind(NhRect *r)
+get_rect_ind(r)
+NhRect *r;
 {
     register NhRect *rectp;
     register int lx, ly, hx, hy;
@@ -62,7 +63,8 @@ get_rect_ind(NhRect *r)
  */
 
 NhRect *
-get_rect(NhRect *r)
+get_rect(r)
+NhRect *r;
 {
     register NhRect *rectp;
     register int lx, ly, hx, hy;
@@ -96,7 +98,8 @@ rnd_rect()
  */
 
 STATIC_OVL boolean
-intersect(NhRect *r1, NhRect *r2, NhRect *r3)
+intersect(r1, r2, r3)
+NhRect *r1, *r2, *r3;
 {
     if (r2->lx > r1->hx || r2->ly > r1->hy || r2->hx < r1->lx
         || r2->hy < r1->ly)
@@ -117,7 +120,8 @@ intersect(NhRect *r1, NhRect *r2, NhRect *r3)
  */
 
 void
-remove_rect(NhRect *r)
+remove_rect(r)
+NhRect *r;
 {
     int ind;
 
@@ -131,7 +135,8 @@ remove_rect(NhRect *r)
  */
 
 void
-add_rect(NhRect *r)
+add_rect(r)
+NhRect *r;
 {
     if (rect_cnt >= MAXRECT) {
         if (wizard)
@@ -153,7 +158,8 @@ add_rect(NhRect *r)
  */
 
 void
-split_rects(NhRect *r1, NhRect *r2)
+split_rects(r1, r2)
+NhRect *r1, *r2;
 {
     NhRect r, old_r;
     int i;

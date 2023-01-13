@@ -1,4 +1,4 @@
-/* NetHack 3.6	mswproc.c	$NHDT-Date: 1449116670 2015/12/03 04:24:30 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.94 $ */
+/* NetHack 3.6	mswproc.c	$NHDT-Date: 1575245201 2019/12/02 00:06:41 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.137 $ */
 /* Copyright (C) 2001 by Alex Kompel 	 */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -8,10 +8,12 @@
 */
 
 #include "hack.h"
+#include "color.h"
 #include "dlb.h"
 #include "func_tab.h" /* for extended commands */
 #include "winMS.h"
 #include <assert.h>
+#include <mmsystem.h>
 #include "mhmap.h"
 #include "mhstatus.h"
 #include "mhtext.h"
@@ -36,7 +38,9 @@
 static FILE* _s_debugfp = NULL;
 extern void logDebug(const char *fmt, ...);
 # endif
-#else
+#endif
+
+#ifndef _DEBUG
 void
 logDebug(const char *fmt, ...)
 {
@@ -71,6 +75,8 @@ COLORREF status_fg_color = RGB(0xFF, 0xFF, 0xFF);
 COLORREF message_bg_color = RGB(0, 0, 0);
 COLORREF message_fg_color = RGB(0xFF, 0xFF, 0xFF);
 
+strbuf_t raw_print_strbuf = { 0 };
+
 /* Interface definition, for windows.c */
 struct window_procs mswin_procs = {
     "MSWIN",
@@ -80,8 +86,13 @@ struct window_procs mswin_procs = {
         | WC_FONTSIZ_MESSAGE | WC_FONTSIZ_STATUS | WC_FONTSIZ_MENU
         | WC_FONTSIZ_TEXT | WC_TILE_WIDTH | WC_TILE_HEIGHT | WC_TILE_FILE
         | WC_VARY_MSGCOUNT | WC_WINDOWCOLORS | WC_PLAYER_SELECTION
-        | WC_SPLASH_SCREEN | WC_POPUP_DIALOG,
-    0L, mswin_init_nhwindows, mswin_player_selection, mswin_askname,
+        | WC_SPLASH_SCREEN | WC_POPUP_DIALOG | WC_MOUSE_SUPPORT,
+#ifdef STATUS_HILITES
+    WC2_HITPOINTBAR | WC2_FLUSH_STATUS | WC2_RESET_STATUS | WC2_HILITE_STATUS |
+#endif
+    0L,
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},   /* color availability */
+    mswin_init_nhwindows, mswin_player_selection, mswin_askname,
     mswin_get_nh_event, mswin_exit_nhwindows, mswin_suspend_nhwindows,
     mswin_resume_nhwindows, mswin_create_nhwindow, mswin_clear_nhwindow,
     mswin_display_nhwindow, mswin_destroy_nhwindow, mswin_curs, mswin_putstr,
@@ -104,13 +115,8 @@ struct window_procs mswin_procs = {
     /* other defs that really should go away (they're tty specific) */
     mswin_start_screen, mswin_end_screen, mswin_outrip,
     mswin_preference_update, mswin_getmsghistory, mswin_putmsghistory,
-#ifdef STATUS_VIA_WINDOWPORT
     mswin_status_init, mswin_status_finish, mswin_status_enablefield,
     mswin_status_update,
-#ifdef STATUS_HILITES
-    mswin_status_threshold,
-#endif
-#endif
     genl_can_suspend_yes,
 };
 
@@ -138,6 +144,7 @@ mswin_init_nhwindows(int *argc, char **argv)
 # ifdef _DEBUG
     if (showdebug(NHTRACE_LOG) && !_s_debugfp) {
         /* truncate trace file */
+        /* BUG: this relies on current working directory */
         _s_debugfp = fopen(NHTRACE_LOG, "w");
     }
 # endif
@@ -207,7 +214,8 @@ mswin_init_nhwindows(int *argc, char **argv)
      */
     iflags.toptenwin = 1;
     set_option_mod_status("toptenwin", SET_IN_FILE);
-    set_option_mod_status("perm_invent", SET_IN_FILE);
+    //set_option_mod_status("perm_invent", SET_IN_FILE);
+    set_option_mod_status("mouse_support", SET_IN_GAME);
 
     /* initialize map tiles bitmap */
     initMapTiles();
@@ -255,8 +263,6 @@ mswin_init_nhwindows(int *argc, char **argv)
 void
 mswin_player_selection(void)
 {
-    int nRole;
-
     logDebug("mswin_player_selection()\n");
 
     if (iflags.wc_player_selection == VIA_DIALOG) {
@@ -268,7 +274,7 @@ mswin_player_selection(void)
                                            flags.initalign, PICK_RANDOM);
                 if (flags.initrole < 0) {
                     raw_print("Incompatible role!");
-                    flags.initrole = randrole();
+                    flags.initrole = randrole(FALSE);
                 }
             }
 
@@ -306,7 +312,7 @@ mswin_player_selection(void)
             }
         } else {
             /* select a role */
-            if (mswin_player_selection_window(&nRole) == IDCANCEL) {
+            if (!mswin_player_selection_window()) {
                 bail(0);
             }
         }
@@ -392,7 +398,7 @@ prompt_for_player_selection(void)
                                        flags.initalign, PICK_RANDOM);
             if (flags.initrole < 0) {
                 /* tty_putstr(BASE_WINDOW, 0, "Incompatible role!"); */
-                flags.initrole = randrole();
+                flags.initrole = randrole(FALSE);
             }
         } else {
             /* tty_clear_nhwindow(BASE_WINDOW); */
@@ -430,7 +436,7 @@ prompt_for_player_selection(void)
             any.a_int = pick_role(flags.initrace, flags.initgend,
                                   flags.initalign, PICK_RANDOM) + 1;
             if (any.a_int == 0) /* must be non-zero */
-                any.a_int = randrole() + 1;
+                any.a_int = randrole(FALSE) + 1;
             add_menu(win, NO_GLYPH, &any, '*', 0, ATR_NONE, "Random",
                      MENU_UNSELECTED);
             any.a_int = i + 1; /* must be non-zero */
@@ -714,8 +720,14 @@ mswin_exit_nhwindows(const char *str)
 
     /* Write Window settings to the registry */
     mswin_write_reg();
-    while (max_brush)
-        DeleteObject(brush_table[--max_brush]);
+
+    /* set things back to failsafes */
+    windowprocs = *get_safe_procs(0);
+
+    /* and make sure there is still a way to communicate something */
+    windowprocs.win_raw_print = mswin_raw_print;
+    windowprocs.win_raw_print_bold = mswin_raw_print_bold;
+    windowprocs.win_wait_synch = mswin_wait_synch;
 }
 
 /* Prepare the window to be suspended. */
@@ -811,8 +823,14 @@ mswin_clear_nhwindow(winid wid)
         && (GetNHApp()->windowlist[wid].win != NULL)) {
         if (GetNHApp()->windowlist[wid].type == NHW_MAP) {
             if (Is_rogue_level(&u.uz))
-                mswin_map_mode(mswin_hwnd_from_winid(WIN_MAP),
-                               ROGUE_LEVEL_MAP_MODE);
+                if (iflags.wc_map_mode == MAP_MODE_ASCII_FIT_TO_SCREEN ||
+                    iflags.wc_map_mode == MAP_MODE_TILES_FIT_TO_SCREEN)
+
+                    mswin_map_mode(mswin_hwnd_from_winid(WIN_MAP),
+                                   ROGUE_LEVEL_MAP_MODE_FIT_TO_SCREEN);
+                else
+                    mswin_map_mode(mswin_hwnd_from_winid(WIN_MAP),
+                                   ROGUE_LEVEL_MAP_MODE);
             else
                 mswin_map_mode(mswin_hwnd_from_winid(WIN_MAP),
                                iflags.wc_map_mode);
@@ -833,7 +851,7 @@ mswin_clear_nhwindow(winid wid)
                    --more--, if necessary, in the tty window-port.
 */
 void
-mswin_display_nhwindow(winid wid, boolean block)
+mswin_display_nhwindow(winid wid, BOOLEAN_P block)
 {
     logDebug("mswin_display_nhwindow(%d, %d)\n", wid, block);
     if (GetNHApp()->windowlist[wid].win != NULL) {
@@ -1014,7 +1032,7 @@ mswin_putstr_ex(winid wid, int attr, const char *text, int app)
                    iff complain is TRUE.
 */
 void
-mswin_display_file(const char *filename, boolean must_exist)
+mswin_display_file(const char *filename, BOOLEAN_P must_exist)
 {
     dlb *f;
     TCHAR wbuf[BUFSZ];
@@ -1100,7 +1118,7 @@ identifier
                    outside of the standard accelerator (see above) or a
                    number.  If 0, the item is unaffected by any group
                    accelerator.  If this accelerator conflicts with
-                   the menu command (or their user defined alises), it loses.
+                   the menu command (or their user defined aliases), it loses.
                    The menu commands and aliases take care not to interfere
                    with the default object class symbols.
                 -- If you want this choice to be preselected when the
@@ -1108,8 +1126,8 @@ identifier
 */
 void
 mswin_add_menu(winid wid, int glyph, const ANY_P *identifier,
-               char accelerator, char group_accel, int attr,
-               const char *str, boolean presel)
+               CHAR_P accelerator, CHAR_P group_accel, int attr,
+               const char *str, BOOLEAN_P presel)
 {
     logDebug("mswin_add_menu(%d, %d, %p, %c, %c, %d, %s, %d)\n", wid, glyph,
              identifier, (char) accelerator, (char) group_accel, attr, str,
@@ -1192,7 +1210,7 @@ mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected)
         ShowWindow(GetNHApp()->windowlist[wid].win, SW_SHOW);
         nReturned = mswin_menu_window_select_menu(
             GetNHApp()->windowlist[wid].win, how, selected,
-            !(flags.perm_invent && wid == WIN_INVEN
+            !(iflags.perm_invent && wid == WIN_INVEN
               && how == PICK_NONE) /* don't activate inventory window if
                                       perm_invent is on */
             );
@@ -1209,7 +1227,7 @@ void
 mswin_update_inventory()
 {
     logDebug("mswin_update_inventory()\n");
-    if (flags.perm_invent && program_state.something_worth_saving
+    if (iflags.perm_invent && program_state.something_worth_saving
         && iflags.window_inited && WIN_INVEN != WIN_ERR)
         display_inventory(NULL, FALSE);
 }
@@ -1235,6 +1253,7 @@ void
 mswin_wait_synch()
 {
     logDebug("mswin_wait_synch()\n");
+    mswin_raw_print_flush();
 }
 
 /*
@@ -1272,7 +1291,7 @@ print_glyph(window, x, y, glyph, bkglyph)
                    
 */
 void
-mswin_print_glyph(winid wid, xchar x, xchar y, int glyph, int bkglyph)
+mswin_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph)
 {
     logDebug("mswin_print_glyph(%d, %d, %d, %d, %d)\n", wid, x, y, glyph, bkglyph);
 
@@ -1291,6 +1310,40 @@ mswin_print_glyph(winid wid, xchar x, xchar y, int glyph, int bkglyph)
 }
 
 /*
+ * mswin_raw_print_accumulate() accumulate the given text into
+ *   raw_print_strbuf.
+ */
+void
+mswin_raw_print_accumulate(const char * str, boolean bold)
+{
+    bold; // ignored for now
+
+    if (raw_print_strbuf.str != NULL) strbuf_append(&raw_print_strbuf, "\n");
+    strbuf_append(&raw_print_strbuf, str);
+}
+
+/*
+ * mswin_raw_print_flush() - display any text found in raw_print_strbuf in a
+ *   dialog box and clear raw_print_strbuf.
+ */
+void
+mswin_raw_print_flush()
+{
+    if (raw_print_strbuf.str != NULL) {
+        int wlen = strlen(raw_print_strbuf.str) + 1;
+        TCHAR * wbuf = (TCHAR *) alloc(wlen * sizeof(TCHAR));
+        if (wbuf != NULL) {
+            NHMessageBox(GetNHApp()->hMainWnd,
+                            NH_A2W(raw_print_strbuf.str, wbuf, wlen),
+                            MB_ICONINFORMATION | MB_OK);
+            free(wbuf);
+        }
+        strbuf_empty(&raw_print_strbuf);
+    }
+}
+
+
+/*
 raw_print(str)  -- Print directly to a screen, or otherwise guarantee that
                    the user sees str.  raw_print() appends a newline to str.
                    It need not recognize ASCII control characters.  This is
@@ -1302,14 +1355,12 @@ raw_print(str)  -- Print directly to a screen, or otherwise guarantee that
 void
 mswin_raw_print(const char *str)
 {
-    TCHAR wbuf[255];
     logDebug("mswin_raw_print(%s)\n", str);
+
     if (str && *str) {
         extern int redirect_stdout;
         if (!redirect_stdout)
-            NHMessageBox(GetNHApp()->hMainWnd,
-                         NH_A2W(str, wbuf, sizeof(wbuf)),
-                         MB_ICONINFORMATION | MB_OK);
+            mswin_raw_print_accumulate(str, FALSE);
         else
             fprintf(stdout, "%s", str);
     }
@@ -1323,11 +1374,14 @@ possible).
 void
 mswin_raw_print_bold(const char *str)
 {
-    TCHAR wbuf[255];
     logDebug("mswin_raw_print_bold(%s)\n", str);
-    if (str && *str)
-        NHMessageBox(GetNHApp()->hMainWnd, NH_A2W(str, wbuf, sizeof(wbuf)),
-                     MB_ICONINFORMATION | MB_OK);
+    if (str && *str) {
+        extern int redirect_stdout;
+        if (!redirect_stdout)
+            mswin_raw_print_accumulate(str, TRUE);
+        else
+            fprintf(stdout, "%s", str);
+    }
 }
 
 /*
@@ -1378,9 +1432,11 @@ mswin_nh_poskey(int *x, int *y, int *mod)
         mswin_main_loop();
 
     if (event->type == NHEVENT_MOUSE) {
-        *mod = event->ms.mod;
-        *x = event->ms.x;
-        *y = event->ms.y;
+	if (iflags.wc_mouse_support) {
+            *mod = event->ms.mod;
+            *x = event->ms.x;
+            *y = event->ms.y;
+        }
         key = 0;
     } else {
         key = event->kbd.ch;
@@ -1433,7 +1489,7 @@ char yn_function(const char *ques, const char *choices, char default)
                    ports might use a popup.
 */
 char
-mswin_yn_function(const char *question, const char *choices, char def)
+mswin_yn_function(const char *question, const char *choices, CHAR_P def)
 {
     char ch;
     char yn_esc_map = '\033';
@@ -1580,7 +1636,7 @@ mswin_yn_function(const char *question, const char *choices, char def)
                 (WPARAM) MSNH_MSG_CARET, (LPARAM) &createcaret);
 
     /* display selection in the message window */
-    if (isprint(ch) && ch != '#') {
+    if (isprint((uchar) ch) && ch != '#') {
         res_ch[0] = ch;
         res_ch[1] = '\x0';
         mswin_putstr_ex(WIN_MESSAGE, ATR_BOLD, res_ch, 1);
@@ -1614,11 +1670,16 @@ mswin_getlin(const char *question, char *input)
         SendMessage(mswin_hwnd_from_winid(WIN_MESSAGE), WM_MSNH_COMMAND,
                     (WPARAM) MSNH_MSG_CARET, (LPARAM) &createcaret);
 
-        mswin_clear_nhwindow(WIN_MESSAGE);
+        /* mswin_clear_nhwindow(WIN_MESSAGE); */
         mswin_putstr_ex(WIN_MESSAGE, ATR_BOLD, question, 0);
         mswin_putstr_ex(WIN_MESSAGE, ATR_BOLD, " ", 1);
+#ifdef EDIT_GETLIN
+        mswin_putstr_ex(WIN_MESSAGE, ATR_BOLD, input, 0);
+        len = strlen(input);
+#else
         input[0] = '\0';
         len = 0;
+#endif
         ShowCaret(mswin_hwnd_from_winid(WIN_MESSAGE));
         done = FALSE;
         while (!done) {
@@ -1640,6 +1701,8 @@ mswin_getlin(const char *question, char *input)
                     if (len > 0)
                         len--;
                     input[len] = '\0';
+                } else if (len>=(BUFSZ-1)) {
+                    PlaySound((LPCSTR)SND_ALIAS_SYSTEMEXCLAMATION, NULL, SND_ALIAS_ID|SND_ASYNC);
                 } else {
                     input[len++] = c;
                     input[len] = '\0';
@@ -1721,7 +1784,9 @@ mswin_get_ext_cmd()
                     com_index = -1;
                     for (oindex = 0; extcmdlist[oindex].ef_txt != (char *) 0;
                          oindex++) {
-                        if (!strncmpi(cmd, extcmdlist[oindex].ef_txt, len)) {
+                        if ((extcmdlist[oindex].flags & AUTOCOMPLETE)
+                            && !(!wizard && (extcmdlist[oindex].flags & WIZMODECMD))
+                            && !strncmpi(cmd, extcmdlist[oindex].ef_txt, len)) {
                             if (com_index == -1) /* no matches yet */
                                 com_index = oindex;
                             else
@@ -1842,7 +1907,7 @@ mswin_outrip(winid wid, int how, time_t when)
     putstr(wid, 0, buf);
 
     /* Put together death description */
-    formatkiller(buf, sizeof buf, how);
+    formatkiller(buf, sizeof buf, how, FALSE);
 
     /* Put death type on stone */
     putstr(wid, 0, buf);
@@ -1858,16 +1923,13 @@ mswin_outrip(winid wid, int how, time_t when)
 void
 mswin_preference_update(const char *pref)
 {
-    HDC hdc;
-    int i;
-
     if (stricmp(pref, "font_menu") == 0
         || stricmp(pref, "font_size_menu") == 0) {
         if (iflags.wc_fontsiz_menu < NHFONT_SIZE_MIN
             || iflags.wc_fontsiz_menu > NHFONT_SIZE_MAX)
             iflags.wc_fontsiz_menu = NHFONT_DEFAULT_SIZE;
 
-        hdc = GetDC(GetNHApp()->hMainWnd);
+        HDC hdc = GetDC(GetNHApp()->hMainWnd);
         mswin_get_font(NHW_MENU, ATR_NONE, hdc, TRUE);
         mswin_get_font(NHW_MENU, ATR_BOLD, hdc, TRUE);
         mswin_get_font(NHW_MENU, ATR_DIM, hdc, TRUE);
@@ -1886,7 +1948,7 @@ mswin_preference_update(const char *pref)
             || iflags.wc_fontsiz_status > NHFONT_SIZE_MAX)
             iflags.wc_fontsiz_status = NHFONT_DEFAULT_SIZE;
 
-        hdc = GetDC(GetNHApp()->hMainWnd);
+        HDC hdc = GetDC(GetNHApp()->hMainWnd);
         mswin_get_font(NHW_STATUS, ATR_NONE, hdc, TRUE);
         mswin_get_font(NHW_STATUS, ATR_BOLD, hdc, TRUE);
         mswin_get_font(NHW_STATUS, ATR_DIM, hdc, TRUE);
@@ -1895,7 +1957,7 @@ mswin_preference_update(const char *pref)
         mswin_get_font(NHW_STATUS, ATR_INVERSE, hdc, TRUE);
         ReleaseDC(GetNHApp()->hMainWnd, hdc);
 
-        for (i = 1; i < MAXWINDOWS; i++) {
+        for (int i = 1; i < MAXWINDOWS; i++) {
             if (GetNHApp()->windowlist[i].type == NHW_STATUS
                 && GetNHApp()->windowlist[i].win != NULL) {
                 InvalidateRect(GetNHApp()->windowlist[i].win, NULL, TRUE);
@@ -1911,7 +1973,7 @@ mswin_preference_update(const char *pref)
             || iflags.wc_fontsiz_message > NHFONT_SIZE_MAX)
             iflags.wc_fontsiz_message = NHFONT_DEFAULT_SIZE;
 
-        hdc = GetDC(GetNHApp()->hMainWnd);
+        HDC hdc = GetDC(GetNHApp()->hMainWnd);
         mswin_get_font(NHW_MESSAGE, ATR_NONE, hdc, TRUE);
         mswin_get_font(NHW_MESSAGE, ATR_BOLD, hdc, TRUE);
         mswin_get_font(NHW_MESSAGE, ATR_DIM, hdc, TRUE);
@@ -1931,7 +1993,7 @@ mswin_preference_update(const char *pref)
             || iflags.wc_fontsiz_text > NHFONT_SIZE_MAX)
             iflags.wc_fontsiz_text = NHFONT_DEFAULT_SIZE;
 
-        hdc = GetDC(GetNHApp()->hMainWnd);
+        HDC hdc = GetDC(GetNHApp()->hMainWnd);
         mswin_get_font(NHW_TEXT, ATR_NONE, hdc, TRUE);
         mswin_get_font(NHW_TEXT, ATR_BOLD, hdc, TRUE);
         mswin_get_font(NHW_TEXT, ATR_DIM, hdc, TRUE);
@@ -1975,11 +2037,16 @@ mswin_preference_update(const char *pref)
         mswin_layout_main_window(NULL);
         return;
     }
+
+    if (stricmp(pref, "perm_invent") == 0) {
+        mswin_update_inventory();
+        return;
+    }
 }
 
 #define TEXT_BUFFER_SIZE 4096
 char *
-mswin_getmsghistory(boolean init)
+mswin_getmsghistory(BOOLEAN_P init)
 {
     static PMSNHMsgGetText text = 0;
     static char *next_message = 0;
@@ -2009,14 +2076,14 @@ mswin_getmsghistory(boolean init)
         if (next_message)
             next_message++;
         if (p)
-            while (p >= retval && isspace(*p))
+            while (p >= retval && isspace((uchar) *p))
                 *p-- = (char) 0; /* delete trailing whitespace */
         return retval;
     }
 }
 
 void
-mswin_putmsghistory(const char *msg, boolean restoring)
+mswin_putmsghistory(const char *msg, BOOLEAN_P restoring)
 {
     BOOL save_sound_opt;
 
@@ -2038,12 +2105,23 @@ mswin_main_loop()
 {
     MSG msg;
 
-    while (!mswin_have_input() && GetMessage(&msg, NULL, 0, 0) != 0) {
-        if (GetNHApp()->regNetHackMode
-            || !TranslateAccelerator(msg.hwnd, GetNHApp()->hAccelTable,
-                                     &msg)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+    while (!mswin_have_input()) {
+        if (!iflags.debug_fuzzer || PeekMessage(&msg, NULL, 0, 0, FALSE)) {
+            if(GetMessage(&msg, NULL, 0, 0) != 0) {
+                if (GetNHApp()->regNetHackMode
+                    || !TranslateAccelerator(msg.hwnd, GetNHApp()->hAccelTable,
+                                             &msg)) {
+                    TranslateMessage(&msg);
+                    DispatchMessage(&msg);
+                }
+            } else {
+                /* WM_QUIT */
+                break;
+            }
+        } else {
+            nhassert(iflags.debug_fuzzer);
+            PostMessage(GetNHApp()->hMainWnd, WM_MSNH_COMMAND,
+                        MSNH_MSG_RANDOM_INPUT, 0);
         }
     }
 }
@@ -2054,7 +2132,7 @@ bail(const char *mesg)
 {
     clearlocks();
     mswin_exit_nhwindows(mesg);
-    terminate(EXIT_SUCCESS);
+    nh_terminate(EXIT_SUCCESS);
     /*NOTREACHED*/
 }
 
@@ -2064,6 +2142,7 @@ initMapTiles(void)
     HBITMAP hBmp;
     BITMAP bm;
     TCHAR wbuf[MAX_PATH];
+    DWORD errcode;
     int tl_num;
     SIZE map_size;
     extern int total_tiles_used;
@@ -2077,8 +2156,13 @@ initMapTiles(void)
                      NH_A2W(iflags.wc_tile_file, wbuf, MAX_PATH),
                      IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
     if (hBmp == NULL) {
-        raw_print(
-            "Cannot load tiles from the file. Reverting back to default.");
+        char errmsg[BUFSZ];
+
+        errcode = GetLastError();
+        Sprintf(errmsg, "%s (0x%x).",
+            "Cannot load tiles from the file. Reverting back to default",
+            errcode);
+        raw_print(errmsg);
         return FALSE;
     }
 
@@ -2152,14 +2236,24 @@ mswin_popup_display(HWND hWnd, int *done_indicator)
     SetFocus(hWnd);
 
     /* go into message loop */
-    while (IsWindow(hWnd) && (done_indicator == NULL || !*done_indicator)
-           && GetMessage(&msg, NULL, 0, 0) != 0) {
-        if (!IsDialogMessage(hWnd, &msg)) {
-            if (!TranslateAccelerator(msg.hwnd, GetNHApp()->hAccelTable,
-                                      &msg)) {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
+    while (IsWindow(hWnd) && (done_indicator == NULL || !*done_indicator)) {
+        if (!iflags.debug_fuzzer || PeekMessage(&msg, NULL, 0, 0, FALSE)) {
+            if(GetMessage(&msg, NULL, 0, 0) != 0) {
+                if (msg.message == WM_MSNH_COMMAND ||
+                    !IsDialogMessage(hWnd, &msg)) {
+                    if (!TranslateAccelerator(msg.hwnd,
+                                              GetNHApp()->hAccelTable, &msg)) {
+                        TranslateMessage(&msg);
+                        DispatchMessage(&msg);
+                    }
+                }
+            } else {
+                /* WM_QUIT */
+                break;
             }
+        } else {
+            nhassert(iflags.debug_fuzzer);
+            PostMessage(hWnd, WM_MSNH_COMMAND, MSNH_MSG_RANDOM_INPUT, 0);
         }
     }
 }
@@ -2188,7 +2282,10 @@ mswin_popup_destroy(HWND hWnd)
     }
     DrawMenuBar(GetNHApp()->hMainWnd);
 
-    ShowWindow(hWnd, SW_HIDE);
+    /* Don't hide the permanent inventory window ... leave it showing */
+    if (!iflags.perm_invent || mswin_winid_from_handle(hWnd) != WIN_INVEN)
+        ShowWindow(hWnd, SW_HIDE);
+
     GetNHApp()->hPopupWnd = NULL;
 
     mswin_layout_main_window(hWnd);
@@ -2219,7 +2316,7 @@ logDebug(const char *fmt, ...)
 /* Reading and writing settings from the registry. */
 #define CATEGORYKEY "Software"
 #define COMPANYKEY "NetHack"
-#define PRODUCTKEY "NetHack 3.6.0"
+#define PRODUCTKEY "NetHack 3.6.6"
 #define SETTINGSKEY "Settings"
 #define MAINSHOWSTATEKEY "MainShowState"
 #define MAINMINXKEY "MainMinX"
@@ -2266,6 +2363,25 @@ mswin_read_reg()
     DWORD size;
     DWORD safe_buf;
     char keystring[MAX_PATH];
+    int i;
+    COLORREF default_mapcolors[CLR_MAX] = {
+	RGB(0x55, 0x55, 0x55), /* CLR_BLACK */
+	RGB(0xFF, 0x00, 0x00), /* CLR_RED */
+	RGB(0x00, 0x80, 0x00), /* CLR_GREEN */
+	RGB(0xA5, 0x2A, 0x2A), /* CLR_BROWN */
+	RGB(0x00, 0x00, 0xFF), /* CLR_BLUE */
+	RGB(0xFF, 0x00, 0xFF), /* CLR_MAGENTA */
+	RGB(0x00, 0xFF, 0xFF), /* CLR_CYAN */
+	RGB(0xC0, 0xC0, 0xC0), /* CLR_GRAY */
+	RGB(0xFF, 0xFF, 0xFF), /* NO_COLOR */
+	RGB(0xFF, 0xA5, 0x00), /* CLR_ORANGE */
+	RGB(0x00, 0xFF, 0x00), /* CLR_BRIGHT_GREEN */
+	RGB(0xFF, 0xFF, 0x00), /* CLR_YELLOW */
+	RGB(0x00, 0xC0, 0xFF), /* CLR_BRIGHT_BLUE */
+	RGB(0xFF, 0x80, 0xFF), /* CLR_BRIGHT_MAGENTA */
+	RGB(0x80, 0xFF, 0xFF), /* CLR_BRIGHT_CYAN */
+	RGB(0xFF, 0xFF, 0xFF)  /* CLR_WHITE */
+    };
 
     sprintf(keystring, "%s\\%s\\%s\\%s", CATEGORYKEY, COMPANYKEY, PRODUCTKEY,
             SETTINGSKEY);
@@ -2274,7 +2390,10 @@ mswin_read_reg()
        is
        read from the registry, so these defaults apply. */
     GetNHApp()->saveRegistrySettings = 1; /* Normally, we always save */
-    GetNHApp()->regNetHackMode = 0;
+    GetNHApp()->regNetHackMode = TRUE;
+
+    for (i = 0; i < CLR_MAX; i++)
+        GetNHApp()->regMapColors[i] = default_mapcolors[i];
 
     if (RegOpenKeyEx(HKEY_CURRENT_USER, keystring, 0, KEY_READ, &key)
         != ERROR_SUCCESS)
@@ -2328,6 +2447,14 @@ mswin_read_reg()
     NHGETREG_DWORD(INVENTBOTTOM, GetNHApp()->rtInvenWindow.bottom);
 #undef NHGETREG_DWORD
 
+    for (i = 0; i < CLR_MAX; i++) {
+        COLORREF cl;
+        char mapcolorkey[64];
+        sprintf(mapcolorkey, "MapColor%02d", i);
+        if (RegQueryValueEx(key, mapcolorkey, NULL, NULL, (BYTE *)&cl, &size) == ERROR_SUCCESS)
+            GetNHApp()->regMapColors[i] = cl;
+    }
+
     RegCloseKey(key);
 
     /* check the data for validity */
@@ -2346,6 +2473,7 @@ mswin_write_reg()
 {
     HKEY key;
     DWORD disposition;
+    int i;
 
     if (GetNHApp()->saveRegistrySettings) {
         char keystring[MAX_PATH];
@@ -2406,6 +2534,13 @@ mswin_write_reg()
         NHSETREG_DWORD(INVENTTOP, GetNHApp()->rtInvenWindow.top);
         NHSETREG_DWORD(INVENTBOTTOM, GetNHApp()->rtInvenWindow.bottom);
 #undef NHSETREG_DWORD
+
+        for (i = 0; i < CLR_MAX; i++) {
+            COLORREF cl = GetNHApp()->regMapColors[i];
+            char mapcolorkey[64];
+            sprintf(mapcolorkey, "MapColor%02d", i);
+            RegSetValueEx(key, mapcolorkey, 0, REG_DWORD, (BYTE *)&cl, sizeof(DWORD));
+        }
 
         RegCloseKey(key);
     }
@@ -2529,23 +2664,32 @@ mswin_color_from_string(char *colorstring, HBRUSH *brushptr,
         if (strlen(++colorstring) != 6)
             return;
 
-        red_value = (int) (index(hexadecimals, tolower(*colorstring++))
+        red_value = (int) (index(hexadecimals, tolower((uchar) *colorstring))
                            - hexadecimals);
+        ++colorstring;
         red_value *= 16;
-        red_value += (int) (index(hexadecimals, tolower(*colorstring++))
+        red_value += (int) (index(hexadecimals, tolower((uchar) *colorstring))
                             - hexadecimals);
+        ++colorstring;
 
-        green_value = (int) (index(hexadecimals, tolower(*colorstring++))
+        green_value = (int) (index(hexadecimals,
+                                   tolower((uchar) *colorstring))
                              - hexadecimals);
+        ++colorstring;
         green_value *= 16;
-        green_value += (int) (index(hexadecimals, tolower(*colorstring++))
+        green_value += (int) (index(hexadecimals,
+                                    tolower((uchar) *colorstring))
                               - hexadecimals);
+        ++colorstring;
 
-        blue_value = (int) (index(hexadecimals, tolower(*colorstring++))
+        blue_value = (int) (index(hexadecimals, tolower((uchar) *colorstring))
                             - hexadecimals);
+        ++colorstring;
         blue_value *= 16;
-        blue_value += (int) (index(hexadecimals, tolower(*colorstring++))
+        blue_value += (int) (index(hexadecimals,
+                                   tolower((uchar) *colorstring))
                              - hexadecimals);
+        ++colorstring;
 
         *colorptr = RGB(red_value, green_value, blue_value);
     } else {
@@ -2650,18 +2794,34 @@ NHMessageBox(HWND hWnd, LPCTSTR text, UINT type)
     return MessageBox(hWnd, text, title, type);
 }
 
-#ifdef STATUS_VIA_WINDOWPORT
-static const char *_status_fieldnm[MAXBLSTATS];
-static const char *_status_fieldfmt[MAXBLSTATS];
-static char *_status_vals[MAXBLSTATS];
-static int _status_colors[MAXBLSTATS];
-static boolean _status_activefields[MAXBLSTATS];
+static mswin_status_lines _status_lines;
+static mswin_status_string _status_strings[MAXBLSTATS];
+static mswin_status_string _condition_strings[BL_MASK_BITS];
+static mswin_status_field _status_fields[MAXBLSTATS];
+
+static mswin_condition_field _condition_fields[BL_MASK_BITS] = {
+    { BL_MASK_STONE, "Stone" },
+    { BL_MASK_SLIME, "Slime" },
+    { BL_MASK_STRNGL, "Strngl" },
+    { BL_MASK_FOODPOIS, "FoodPois" },
+    { BL_MASK_TERMILL, "TermIll" },
+    { BL_MASK_BLIND, "Blind" },
+    { BL_MASK_DEAF, "Deaf" },
+    { BL_MASK_STUN, "Stun" },
+    { BL_MASK_CONF, "Conf" },
+    { BL_MASK_HALLU, "Hallu" },
+    { BL_MASK_LEV, "Lev" },
+    { BL_MASK_FLY, "Fly" },
+    { BL_MASK_RIDE, "Ride" }
+};
+
+
 extern winid WIN_STATUS;
 
 #ifdef STATUS_HILITES
 typedef struct hilite_data_struct {
     int thresholdtype;
-    anything threshold;
+    anything value;
     int behavior;
     int under;
     int over;
@@ -2676,14 +2836,62 @@ status_init()   -- core calls this to notify the window port that a status
 void
 mswin_status_init(void)
 {
-    int i;
     logDebug("mswin_status_init()\n");
-    for (i = 0; i < MAXBLSTATS; ++i) {
-        _status_vals[i] = (char *) alloc(BUFSZ);
-        *_status_vals[i] = '\0';
-        _status_activefields[i] = FALSE;
-        _status_fieldfmt[i] = (const char *) 0;
-        _status_colors[i] = CLR_MAX; /* no color */
+
+    for (int i = 0; i < SIZE(_status_fields); i++) {
+        mswin_status_field * status_field = &_status_fields[i];
+        status_field->field_index = i;
+        status_field->enabled = FALSE;
+    }
+
+    for (int i = 0; i < SIZE(_condition_fields); i++) {
+        mswin_condition_field * condition_field = &_condition_fields[i];
+        nhassert(condition_field->mask == (1 << i));
+        condition_field->bit_position = i;
+    }
+
+    for (int i = 0; i < SIZE(_status_strings); i++) {
+        mswin_status_string * status_string = &_status_strings[i];
+        status_string->str = NULL;
+    }
+
+    for (int i = 0; i < SIZE(_condition_strings); i++) {
+        mswin_status_string * status_string = &_condition_strings[i];
+        status_string->str = NULL;
+    }
+
+    for (int lineIndex = 0; lineIndex < SIZE(_status_lines.lines); lineIndex++) {
+        mswin_status_line * line = &_status_lines.lines[lineIndex];
+
+        mswin_status_fields * status_fields = &line->status_fields;
+        status_fields->count = 0;
+
+        mswin_status_strings * status_strings = &line->status_strings;
+        status_strings->count = 0;
+
+        for (int i = 0; i < fieldcounts[lineIndex]; i++) {
+            int field_index = fieldorders[lineIndex][i];
+            nhassert(field_index <= SIZE(_status_fields));
+
+            nhassert(status_fields->count <= SIZE(status_fields->status_fields));
+            status_fields->status_fields[status_fields->count++] = &_status_fields[field_index];
+
+            nhassert(status_strings->count <= SIZE(status_strings->status_strings));
+            status_strings->status_strings[status_strings->count++] =
+                &_status_strings[field_index];
+
+            if (field_index == BL_CONDITION) {
+                for (int j = 0; j < BL_MASK_BITS; j++) {
+                    nhassert(status_strings->count <= SIZE(status_strings->status_strings));
+                    status_strings->status_strings[status_strings->count++] =
+                        &_condition_strings[j];
+                }
+            }
+        }
+    }
+
+
+    for (int i = 0; i < MAXBLSTATS; ++i) {
 #ifdef STATUS_HILITES
         _status_hilites[i].thresholdtype = 0;
         _status_hilites[i].behavior = BL_TH_NONE;
@@ -2703,17 +2911,7 @@ status_finish() -- called when it is time for the window port to tear down
 void
 mswin_status_finish(void)
 {
-    /* tear down routine */
-    int i;
-
     logDebug("mswin_status_finish()\n");
-
-    /* free alloc'd memory here */
-    for (i = 0; i < MAXBLSTATS; ++i) {
-        if (_status_vals[i])
-            free((genericptr_t) _status_vals[i]);
-        _status_vals[i] = (char *) 0;
-    }
 }
 
 /*
@@ -2736,69 +2934,65 @@ mswin_status_enablefield(int fieldidx, const char *nm, const char *fmt,
 {
     logDebug("mswin_status_enablefield(%d, %s, %s, %d)\n", fieldidx, nm, fmt,
              (int) enable);
-    _status_fieldfmt[fieldidx] = fmt;
-    _status_fieldnm[fieldidx] = nm;
-    _status_activefields[fieldidx] = enable;
+
+    nhassert(fieldidx <= SIZE(_status_fields));
+    mswin_status_field * field = &_status_fields[fieldidx];
+
+    nhassert(fieldidx <= SIZE(_status_strings));
+    mswin_status_string * string = &_status_strings[fieldidx];
+
+    if (field != NULL) {
+        field->format = fmt;
+        field->space_in_front = (fmt[0] == ' ');
+        if (field->space_in_front) field->format++;
+        field->name = nm;
+        field->enabled = enable;
+
+        string->str = (field->enabled ? field->string : NULL);
+        string->space_in_front = field->space_in_front;
+
+        if (field->field_index == BL_CONDITION)
+            string->str = NULL;
+
+        string->draw_bar = (field->enabled && field->field_index == BL_TITLE);
+    }
 }
 
-#ifdef STATUS_HILITES
-/*
-status_threshold(int fldidx, int threshholdtype, anything threshold,
-                                        int behavior, int under, int over)
-                -- called when a hiliting preference is added, changed, or
-                   removed.
-                -- the fldindex identifies which field is having its hiliting
-                   preference set. It is an integer index value from botl.h
-                -- fldindex could be any one of the following from botl.h:
-                   BL_TITLE, BL_STR, BL_DX, BL_CO, BL_IN, BL_WI, BL_CH,
-                   BL_ALIGN, BL_SCORE, BL_CAP, BL_GOLD, BL_ENE, BL_ENEMAX,
-                   BL_XP, BL_AC, BL_HD, BL_TIME, BL_HUNGER, BL_HP, BL_HPMAX,
-                   BL_LEVELDESC, BL_EXP, BL_CONDITION
-                -- datatype is P_INT, P_UINT, P_LONG, or P_MASK.
-                -- threshold is an "anything" union which can contain the
-                   datatype value.
-                -- behavior is used to define how threshold is used and can
-                   be BL_TH_NONE, BL_TH_VAL_PERCENTAGE, BL_TH_VAL_ABSOLUTE,
-                   or BL_TH_UPDOWN. BL_TH_NONE means don't do anything above
-                   or below the threshold.  BL_TH_VAL_PERCENTAGE treats the
-                   threshold value as a precentage of the maximum possible
-                   value. BL_TH_VAL_ABSOLUTE means that the threshold is an
-                   actual value. BL_TH_UPDOWN means that threshold is not
-                   used, and the two below/above hilite values indicate how
-                   to display something going down (under) or rising (over).
-                -- under is the hilite attribute used if value is below the
-                   threshold. The attribute can be BL_HILITE_NONE,
-                   BL_HILITE_INVERSE, BL_HILITE_BOLD (-1, -2, or -3), or one
-                   of the color indexes of CLR_BLACK, CLR_RED, CLR_GREEN,
-                   CLR_BROWN, CLR_BLUE, CLR_MAGENTA, CLR_CYAN, CLR_GRAY,
-                   CLR_ORANGE, CLR_BRIGHT_GREEN, CLR_YELLOW, CLR_BRIGHT_BLUE,
-                   CLR_BRIGHT_MAGENTA, CLR_BRIGHT_CYAN, or CLR_WHITE (0 - 15).
-                -- over is the hilite attribute used if value is at or above
-                   the threshold. The attribute can be BL_HILITE_NONE,
-                   BL_HILITE_INVERSE, BL_HILITE_BOLD (-1, -2, or -3), or one
-                   of the color indexes of CLR_BLACK, CLR_RED, CLR_GREEN,
-                   CLR_BROWN, CLR_BLUE, CLR_MAGENTA, CLR_CYAN, CLR_GRAY,
-                   CLR_ORANGE, CLR_BRIGHT_GREEN, CLR_YELLOW, CLR_BRIGHT_BLUE,
-                   CLR_BRIGHT_MAGENTA, CLR_BRIGHT_CYAN, or CLR_WHITE (0 - 15).
-*/
-void
-mswin_status_threshold(int fldidx, int thresholdtype, anything threshold,
-                       int behavior, int under, int over)
+/* TODO: turn this into a commmon helper; multiple identical implementations */
+static int
+mswin_condcolor(bm, bmarray)
+long bm;
+unsigned long *bmarray;
 {
-    logDebug("mswin_status_threshold(%d, %d, %d, %d, %d)\n", fldidx,
-             thresholdtype, behavior, under, over);
-    assert(fldidx >= 0 && fldidx < MAXBLSTATS);
-    _status_hilites[fldidx].thresholdtype = thresholdtype;
-    _status_hilites[fldidx].threshold = threshold;
-    _status_hilites[fldidx].behavior = behavior;
-    _status_hilites[fldidx].under = under;
-    _status_hilites[fldidx].over = over;
+    int i;
+
+    if (bm && bmarray)
+        for (i = 0; i < CLR_MAX; ++i) {
+            if ((bm & bmarray[i]) != 0)
+                return i;
+        }
+    return NO_COLOR;
 }
-#endif /* STATUS_HILITES */
+
+static int
+mswin_condattr(bm, bmarray)
+long bm;
+unsigned long *bmarray;
+{
+    if (bm && bmarray) {
+        if (bm & bmarray[HL_ATTCLR_DIM]) return HL_DIM;
+        if (bm & bmarray[HL_ATTCLR_BLINK]) return HL_BLINK;
+        if (bm & bmarray[HL_ATTCLR_ULINE]) return HL_ULINE;
+        if (bm & bmarray[HL_ATTCLR_INVERSE]) return HL_INVERSE;
+        if (bm & bmarray[HL_ATTCLR_BOLD]) return HL_BOLD;
+    }
+
+    return HL_NONE;
+}
 
 /*
 
-status_update(int fldindex, genericptr_t ptr, int chg, int percentage)
+status_update(int fldindex, genericptr_t ptr, int chg, int percent, int color, unsigned long *colormasks)
                 -- update the value of a status field.
                 -- the fldindex identifies which field is changing and
                    is an integer index value from botl.h
@@ -2807,159 +3001,138 @@ status_update(int fldindex, genericptr_t ptr, int chg, int percentage)
                    BL_ALIGN, BL_SCORE, BL_CAP, BL_GOLD, BL_ENE, BL_ENEMAX,
                    BL_XP, BL_AC, BL_HD, BL_TIME, BL_HUNGER, BL_HP, BL_HPMAX,
                    BL_LEVELDESC, BL_EXP, BL_CONDITION
-                -- fldindex could also be BL_FLUSH (-1), which is not really
-                   a field index, but is a special trigger to tell the
-                   windowport that it should redisplay all its status fields,
-                   even if no changes have been presented to it.
+		-- fldindex could also be BL_FLUSH, which is not really
+		   a field index, but is a special trigger to tell the 
+		   windowport that it should output all changes received
+                   to this point. It marks the end of a bot() cycle.
+		-- fldindex could also be BL_RESET, which is not really
+		   a field index, but is a special advisory to to tell the 
+		   windowport that it should redisplay all its status fields,
+		   even if no changes have been presented to it.
                 -- ptr is usually a "char *", unless fldindex is BL_CONDITION.
                    If fldindex is BL_CONDITION, then ptr is a long value with
                    any or none of the following bits set (from botl.h):
-                        BL_MASK_BLIND		0x00000001L
-                        BL_MASK_CONF		0x00000002L
-                        BL_MASK_FOODPOIS	0x00000004L
-                        BL_MASK_ILL		0x00000008L
-                        BL_MASK_HALLU		0x00000010L
-                        BL_MASK_STUNNED		0x00000020L
-                        BL_MASK_SLIMED		0x00000040L
-                -- The value passed for BL_GOLD includes a leading
-                   symbol for GOLD "$:nnn". If the window port needs to use
-                   the textual gold amount without the leading "$:" the port
-                   will have to add 2 to the passed "ptr" for the BL_GOLD
-case.
+                        BL_MASK_STONE           0x00000001L
+                        BL_MASK_SLIME           0x00000002L
+                        BL_MASK_STRNGL          0x00000004L
+                        BL_MASK_FOODPOIS        0x00000008L
+                        BL_MASK_TERMILL         0x00000010L
+                        BL_MASK_BLIND           0x00000020L
+                        BL_MASK_DEAF            0x00000040L
+                        BL_MASK_STUN            0x00000080L
+                        BL_MASK_CONF            0x00000100L
+                        BL_MASK_HALLU           0x00000200L
+                        BL_MASK_LEV             0x00000400L
+                        BL_MASK_FLY             0x00000800L
+                        BL_MASK_RIDE            0x00001000L
+                -- The value passed for BL_GOLD includes an encoded leading
+                   symbol for GOLD "\GXXXXNNNN:nnn". If window port needs
+                   textual gold amount without the leading "$:" the port will
+                   have to skip past ':' in passed "ptr" for the BL_GOLD case.
+                -- color is the color that the NetHack core is telling you to
+                   use to display the text.
+                -- condmasks is a pointer to a set of BL_ATTCLR_MAX unsigned
+                   longs telling which conditions should be displayed in each
+                   color and attriubte.
 */
 void
-mswin_status_update(int idx, genericptr_t ptr, int chg, int percent)
+mswin_status_update(int idx, genericptr_t ptr, int chg, int percent, int color, unsigned long *condmasks)
 {
     long cond, *condptr = (long *) ptr;
     char *text = (char *) ptr;
     MSNHMsgUpdateStatus update_cmd_data;
     int ocolor, ochar;
     unsigned ospecial;
-    long value = -1;
 
-    logDebug("mswin_status_update(%d, %p, %d, %d)\n", idx, ptr, chg, percent);
+    logDebug("mswin_status_update(%d, %p, %d, %d, %x, %p)\n", idx, ptr, chg, percent, color, condmasks);
 
-    if (idx != BL_FLUSH) {
-        if (!_status_activefields[idx])
+    if (idx >= 0) {
+
+        nhassert(idx <= SIZE(_status_fields));
+        mswin_status_field * status_field = &_status_fields[idx];
+        nhassert(status_field->field_index == idx);
+
+        nhassert(idx <= SIZE(_status_strings));
+        mswin_status_string * status_string = &_status_strings[idx];
+
+        if (!status_field->enabled) {
+            nhassert(status_string->str == NULL);
             return;
+        }
+
+        status_field->color = status_string->color = color & 0xff;
+        status_field->attribute = status_string->attribute = (color >> 8) & 0xff;
+
         switch (idx) {
         case BL_CONDITION: {
+            mswin_condition_field * condition_field = _condition_fields;
+
+            nhassert(status_string->str == NULL);
+
             cond = *condptr;
-            *_status_vals[idx] = '\0';
-            if (cond & BL_MASK_BLIND)
-                Strcat(_status_vals[idx], " Blind");
-            if (cond & BL_MASK_CONF)
-                Strcat(_status_vals[idx], " Conf");
-            if (cond & BL_MASK_FOODPOIS)
-                Strcat(_status_vals[idx], " FoodPois");
-            if (cond & BL_MASK_ILL)
-                Strcat(_status_vals[idx], " Ill");
-            if (cond & BL_MASK_STUNNED)
-                Strcat(_status_vals[idx], " Stun");
-            if (cond & BL_MASK_HALLU)
-                Strcat(_status_vals[idx], " Hallu");
-            if (cond & BL_MASK_SLIMED)
-                Strcat(_status_vals[idx], " Slime");
-            value = cond;
+
+            for (int i = 0; i < BL_MASK_BITS; i++, condition_field++) {
+                status_string = &_condition_strings[i];
+
+                if (condition_field->mask & cond) {
+                    status_string->str = condition_field->name;
+                    status_string->space_in_front = TRUE;
+                    status_string->color = mswin_condcolor(condition_field->mask, condmasks);
+                    status_string->attribute = mswin_condattr(condition_field->mask, condmasks);
+                }
+                else
+                    status_string->str = NULL;
+            }
         } break;
         case BL_GOLD: {
             char buf[BUFSZ];
             char *p;
+
             ZeroMemory(buf, sizeof(buf));
-            mapglyph(objnum_to_glyph(GOLD_PIECE), &ochar, &ocolor, &ospecial,
-                     0, 0);
+            if (iflags.invis_goldsym)
+                ochar = GOLD_SYM;
+            else
+                mapglyph(objnum_to_glyph(GOLD_PIECE),
+                         &ochar, &ocolor, &ospecial, 0, 0, 0);
             buf[0] = ochar;
             p = strchr(text, ':');
             if (p) {
                 strncpy(buf + 1, p, sizeof(buf) - 2);
-                value = atol(p + 1);
             } else {
                 buf[1] = ':';
-                strncpy(buf + 2, text, sizeof(buf) - 2);
-                value = atol(text);
+                strncpy(buf + 2, text, sizeof(buf) - 3);
             }
-            Sprintf(_status_vals[idx],
-                    _status_fieldfmt[idx] ? _status_fieldfmt[idx] : "%s",
-                    buf);
+            buf[sizeof buf - 1] = '\0';
+            Sprintf(status_field->string,
+                    status_field->format ? status_field->format : "%s", buf);
+            nhassert(status_string->str == status_field->string);
         } break;
         default: {
-            value = atol(text);
-            Sprintf(_status_vals[idx],
-                    _status_fieldfmt[idx] ? _status_fieldfmt[idx] : "%s",
-                    text);
+            Sprintf(status_field->string,
+                    status_field->format ? status_field->format : "%s", text);
+            nhassert(status_string->str == status_field->string);
         } break;
         }
+
+        /* if we received an update for the hp field, we must update the
+         * bar percent and bar color for the title string */
+        if (idx == BL_HP) {
+            mswin_status_string * title_string = &_status_strings[BL_TITLE];
+
+            title_string->bar_color = color & 0xff;
+            title_string->bar_attribute = (color >> 8) & 0xff;
+            title_string->bar_percent = percent;
+
+        }
+
     }
 
-#ifdef STATUS_HILITES
-    switch (_status_hilites[idx].behavior) {
-    case BL_TH_NONE: {
-        _status_colors[idx] = CLR_MAX;
-    } break;
-
-    case BL_TH_UPDOWN: {
-        if (chg > 0)
-            _status_colors[idx] = _status_hilites[idx].over;
-        else if (chg < 0)
-            _status_colors[idx] = _status_hilites[idx].under;
-        else
-            _status_colors[idx] = CLR_MAX;
-    } break;
-
-    case BL_TH_VAL_PERCENTAGE: {
-        int pct_th = 0;
-        if (_status_hilites[idx].thresholdtype != ANY_INT) {
-            impossible("mswin_status_update: unsupported percentage "
-                       "threshold type %d",
-                       _status_hilites[idx].thresholdtype);
-            break;
-        }
-        pct_th = _status_hilites[idx].threshold.a_int;
-        _status_colors[idx] = (percent >= pct_th)
-                                  ? _status_hilites[idx].over
-                                  : _status_hilites[idx].under;
-    } break;
-
-    case BL_TH_VAL_ABSOLUTE: {
-        int c = CLR_MAX;
-        int o = _status_hilites[idx].over;
-        int u = _status_hilites[idx].under;
-        anything *t = &_status_hilites[idx].threshold;
-        switch (_status_hilites[idx].thresholdtype) {
-        case ANY_LONG:
-            c = (value >= t->a_long) ? o : u;
-            break;
-        case ANY_INT:
-            c = (value >= t->a_int) ? o : u;
-            break;
-        case ANY_UINT:
-            c = ((unsigned long) value >= t->a_uint) ? o : u;
-            break;
-        case ANY_ULONG:
-            c = ((unsigned long) value >= t->a_ulong) ? o : u;
-            break;
-        case ANY_MASK32:
-            c = (value & t->a_ulong) ? o : u;
-            break;
-        default:
-            impossible("mswin_status_update: unsupported absolute threshold "
-                       "type %d\n",
-                       _status_hilites[idx].thresholdtype);
-            break;
-        }
-        _status_colors[idx] = c;
-    } break;
+    if (idx == BL_FLUSH || idx == BL_RESET) {
+        /* send command to status window to update */
+        ZeroMemory(&update_cmd_data, sizeof(update_cmd_data));
+        update_cmd_data.status_lines = &_status_lines;
+        SendMessage(mswin_hwnd_from_winid(WIN_STATUS), WM_MSNH_COMMAND,
+            (WPARAM)MSNH_MSG_UPDATE_STATUS, (LPARAM)&update_cmd_data);
     }
-#endif /* STATUS_HILITES */
-
-    /* send command to status window */
-    ZeroMemory(&update_cmd_data, sizeof(update_cmd_data));
-    update_cmd_data.n_fields = MAXBLSTATS;
-    update_cmd_data.vals = _status_vals;
-    update_cmd_data.activefields = _status_activefields;
-    update_cmd_data.colors = _status_colors;
-    SendMessage(mswin_hwnd_from_winid(WIN_STATUS), WM_MSNH_COMMAND,
-                (WPARAM) MSNH_MSG_UPDATE_STATUS, (LPARAM) &update_cmd_data);
 }
 
-#endif /*STATUS_VIA_WINDOWPORT*/

@@ -1,4 +1,4 @@
-/* NetHack 3.6  posixregex.c	$NHDT-Date: 1434446946 2015/06/16 09:29:06 $  $NHDT-Branch: master $:$NHDT-Revision: 1.1 $ */
+/* NetHack 3.6  pmatchregex.c	$NHDT-Date: 1544482890 2018/12/10 23:01:30 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.2 $ */
 /* Copyright (c) Sean Hunt  2015.                                 */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -30,7 +30,9 @@ regex_init()
 }
 
 boolean
-regex_compile(const char *s, struct nhregex *re)
+regex_compile(s, re)
+const char *s;
+struct nhregex *re;
 {
     if (!re)
         return FALSE;
@@ -42,13 +44,16 @@ regex_compile(const char *s, struct nhregex *re)
 }
 
 const char *
-regex_error_desc(struct nhregex *re UNUSED)
+regex_error_desc(re)
+struct nhregex *re UNUSED;
 {
     return "pattern match compilation error";
 }
 
 boolean
-regex_match(const char *s, struct nhregex *re)
+regex_match(s, re)
+const char *s;
+struct nhregex *re;
 {
     if (!re || !re->pat || !s)
         return FALSE;
@@ -57,7 +62,8 @@ regex_match(const char *s, struct nhregex *re)
 }
 
 void
-regex_free(struct nhregex *re)
+regex_free(re)
+struct nhregex *re;
 {
     if (re) {
         if (re->pat)

@@ -1,5 +1,6 @@
-/* NetHack 3.6	system.h	$NHDT-Date: 1449269772 2015/12/04 22:56:12 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.12 $ */
+/* NetHack 3.6	system.h	$NHDT-Date: 1550268586 2019/02/15 22:09:46 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.17 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2017. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #ifndef SYSTEM_H
@@ -59,7 +60,7 @@ typedef long off_t;
 #endif
 #ifndef SIG_RET_TYPE
 #if defined(NHSTDC) || defined(POSIX_TYPES) || defined(OS2) || defined(__DECC)
-#define SIG_RET_TYPE void (*)(int)
+#define SIG_RET_TYPE void (*)()
 #endif
 #endif
 #ifndef SIG_RET_TYPE
@@ -79,25 +80,30 @@ typedef long off_t;
 #undef random
 #endif
 #if !defined(__SC__) && !defined(LINUX)
-E long random(void);
+E long NDECL(random);
 #endif
 #if (!defined(SUNOS4) && !defined(bsdi) && !defined(__FreeBSD__)) \
     || defined(RANDOM)
-E void srandom(unsigned int);
+E void FDECL(srandom, (unsigned int));
 #else
 #if !defined(bsdi) && !defined(__FreeBSD__)
-E int srandom(unsigned int);
+E int FDECL(srandom, (unsigned int));
 #endif
 #endif
 #else
-E long lrand48(void);
-E void srand48(long);
+#if defined(MACOSX)
+E long NDECL(lrand48);
+E void FDECL(srand48, (long));
+#else
+E long lrand48();
+E void srand48();
+#endif /* MACOSX */
 #endif /* BSD || ULTRIX || RANDOM */
 
 #if !defined(BSD) || defined(ultrix)
 /* real BSD wants all these to return int */
 #ifndef MICRO
-E void exit(int);
+E void FDECL(exit, (int));
 #endif /* MICRO */
 /* compensate for some CSet/2 bogosities */
 #if defined(OS2_CSET2) && defined(OS2_CSET2_VER_2)
@@ -116,31 +122,31 @@ E void exit(int);
 #if defined(__STDC__) || !defined(FLEX_SCANNER)
 #ifndef OS2_CSET2
 #ifndef MONITOR_HEAP
-E void free(genericptr_t);
+E void FDECL(free, (genericptr_t));
 #endif
 #endif
 #endif
 #if !defined(__SASC_60) && !defined(_DCC) && !defined(__SC__)
 #if defined(AMIGA) && !defined(AZTEC_50) && !defined(__GNUC__)
-E int perror(const char *);
+E int FDECL(perror, (const char *));
 #else
 #if !(defined(ULTRIX_PROTO) && defined(__GNUC__))
-E void perror(const char *);
+E void FDECL(perror, (const char *));
 #endif
 #endif
 #endif
 #endif
 #ifndef NeXT
 #ifdef POSIX_TYPES
-E void qsort(genericptr_t, size_t, size_t,
-                     int (*)(const genericptr, const genericptr));
+E void FDECL(qsort, (genericptr_t, size_t, size_t,
+                     int (*)(const genericptr, const genericptr)));
 #else
 #if defined(BSD) || defined(ULTRIX)
 E int qsort();
 #else
 #if !defined(LATTICE) && !defined(AZTEC_50)
-E void qsort(genericptr_t, size_t, size_t,
-                     int (*)(const genericptr, const genericptr));
+E void FDECL(qsort, (genericptr_t, size_t, size_t,
+                     int (*)(const genericptr, const genericptr)));
 #endif
 #endif
 #endif
@@ -152,37 +158,35 @@ E void qsort(genericptr_t, size_t, size_t,
 
 #ifdef ULTRIX
 #ifdef ULTRIX_PROTO
-E int lseek(int, off_t, int);
+E int FDECL(lseek, (int, off_t, int));
 #else
-E long lseek(int, off_t, int);
+E long FDECL(lseek, (int, off_t, int));
 #endif
 /* Ultrix 3.0 man page mistakenly says it returns an int. */
-E int write(int, char *, int);
-E int link(const char *, const char *);
-#else
-#ifndef bsdi
-E long lseek(int, long, int);
-#endif
+E int FDECL(write, (int, char *, int));
+E int FDECL(link, (const char *, const char *));
+#else /*!ULTRIX*/
+#if !(defined(bsdi) || defined(VMS))
+E long FDECL(lseek, (int, long, int));
 #if defined(POSIX_TYPES) || defined(__TURBOC__)
-#ifndef bsdi
-E int write(int, const void *, unsigned);
-#endif
+E int FDECL(write, (int, const void *, unsigned));
 #else
 #ifndef __MWERKS__ /* metrowerks defines write via universal headers */
-E int write(int, genericptr_t, unsigned);
+E int FDECL(write, (int, genericptr_t, unsigned));
 #endif
-#endif
-#endif /* ULTRIX */
+#endif /*?(POSIX_TYPES || __TURBOC__)*/
+#endif /*!(bsdi || VMS)*/
+#endif /*?ULTRIX*/
 
 #ifdef OS2_CSET2 /* IBM CSet/2 */
 #ifdef OS2_CSET2_VER_1
-E int unlink(char *);
+E int FDECL(unlink, (char *));
 #else
-E int unlink(const char *); /* prototype is ok in ver >= 2 */
+E int FDECL(unlink, (const char *)); /* prototype is ok in ver >= 2 */
 #endif
 #else
 #ifndef __SC__
-E int unlink(const char *);
+E int FDECL(unlink, (const char *));
 #endif
 #endif
 
@@ -190,89 +194,89 @@ E int unlink(const char *);
 
 #ifdef MAC
 #ifndef __CONDITIONALMACROS__          /* universal headers */
-E int close(int);             /* unistd.h */
-E int read(int, char *, int); /* unistd.h */
-E int chdir(const char *);    /* unistd.h */
-E char *getcwd(char *, int);  /* unistd.h */
+E int FDECL(close, (int));             /* unistd.h */
+E int FDECL(read, (int, char *, int)); /* unistd.h */
+E int FDECL(chdir, (const char *));    /* unistd.h */
+E char *FDECL(getcwd, (char *, int));  /* unistd.h */
 #endif
 
-E int open(const char *, int);
+E int FDECL(open, (const char *, int));
 #endif
 
 #if defined(MICRO)
-E int close(int);
+E int FDECL(close, (int));
 #ifndef __EMX__
-E int read(int, genericptr_t, unsigned int);
+E int FDECL(read, (int, genericptr_t, unsigned int));
 #endif
-E int open(const char *, int, ...);
-E int dup2(int, int);
-E int setmode(int, int);
-E int kbhit(void);
+E int FDECL(open, (const char *, int, ...));
+E int FDECL(dup2, (int, int));
+E int FDECL(setmode, (int, int));
+E int NDECL(kbhit);
 #if !defined(_DCC)
 #if defined(__TURBOC__)
-E int chdir(const char *);
+E int FDECL(chdir, (const char *));
 #else
 #ifndef __EMX__
-E int chdir(char *);
+E int FDECL(chdir, (char *));
 #endif
 #endif
 #ifndef __EMX__
-E char *getcwd(char *, int);
+E char *FDECL(getcwd, (char *, int));
 #endif
 #endif /* !_DCC */
 #endif
 
 #ifdef ULTRIX
-E int close(int);
-E int atoi(const char *);
-E long atol(const char *);
-E int chdir(const char *);
+E int FDECL(close, (int));
+E int FDECL(atoi, (const char *));
+E long FDECL(atol, (const char *));
+E int FDECL(chdir, (const char *));
 #if !defined(ULTRIX_CC20) && !defined(__GNUC__)
-E int chmod(const char *, int);
-E mode_t umask(int);
+E int FDECL(chmod, (const char *, int));
+E mode_t FDECL(umask, (int));
 #endif
-E int read(int, genericptr_t, unsigned);
+E int FDECL(read, (int, genericptr_t, unsigned));
 /* these aren't quite right, but this saves including lots of system files */
-E int stty(int, genericptr_t);
-E int gtty(int, genericptr_t);
-E int ioctl(int, int, char *);
-E int isatty(int); /* 1==yes, 0==no, -1==error */
+E int FDECL(stty, (int, genericptr_t));
+E int FDECL(gtty, (int, genericptr_t));
+E int FDECL(ioctl, (int, int, char *));
+E int FDECL(isatty, (int)); /* 1==yes, 0==no, -1==error */
 #include <sys/file.h>
 #if defined(ULTRIX_PROTO) || defined(__GNUC__)
-E int fork(void);
+E int NDECL(fork);
 #else
-E long fork(void);
+E long NDECL(fork);
 #endif
 #endif /* ULTRIX */
 
 #ifdef VMS
 #ifndef abs
-E int abs(int);
+E int FDECL(abs, (int));
 #endif
-E int atexit(void (*)(void));
-E int atoi(const char *);
-E long atol(const char *);
-E int chdir(const char *);
-E int chown(const char *, unsigned, unsigned);
+E int FDECL(atexit, (void (*)(void)));
+E int FDECL(atoi, (const char *));
+E long FDECL(atol, (const char *));
+E int FDECL(chdir, (const char *));
+E int FDECL(chown, (const char *, unsigned, unsigned));
 #ifdef __DECC_VER
-E int chmod(const char *, mode_t);
-E mode_t umask(mode_t);
+E int FDECL(chmod, (const char *, mode_t));
+E mode_t FDECL(umask, (mode_t));
 #else
-E int chmod(const char *, int);
-E int umask(int);
+E int FDECL(chmod, (const char *, int));
+E int FDECL(umask, (int));
 #endif
 /* #include <unixio.h> */
-E int close(int);
-E int creat(const char *, unsigned, ...);
-E int delete(const char *);
-E int fstat(/*_ int, stat_t * _*/);
-E int isatty(int); /* 1==yes, 0==no, -1==error */
-E long lseek(int, long, int);
-E int open(const char *, int, unsigned, ...);
-E int read(int, genericptr_t, unsigned);
-E int rename(const char *, const char *);
-E int stat(/*_ const char *,stat_t * _*/);
-E int write(int, const genericptr, unsigned);
+E int FDECL(close, (int));
+E int VDECL(creat, (const char *, unsigned, ...));
+E int FDECL(delete, (const char *));
+E int FDECL(fstat, (/*_ int, stat_t * _*/));
+E int FDECL(isatty, (int)); /* 1==yes, 0==no, -1==error */
+E off_t FDECL(lseek, (int, off_t, int));
+E int VDECL(open, (const char *, int, unsigned, ...));
+E int FDECL(read, (int, genericptr_t, unsigned));
+E int FDECL(rename, (const char *, const char *));
+E int FDECL(stat, (/*_ const char *,stat_t * _*/));
+E int FDECL(write, (int, const genericptr, unsigned));
 #endif
 
 #endif /* __SASC_60 */
@@ -282,19 +286,19 @@ E int write(int, const genericptr, unsigned);
 E void abort();
 E void bcopy();
 #ifdef ULTRIX
-E int system(const char *);
+E int FDECL(system, (const char *));
 #ifndef _UNISTD_H_
-E int execl(const char *, ...);
+E int FDECL(execl, (const char *, ...));
 #endif
 #endif
 #endif
 #ifdef MICRO
-E void abort(void);
-E void _exit(int);
-E int system(const char *);
+E void NDECL(abort);
+E void FDECL(_exit, (int));
+E int FDECL(system, (const char *));
 #endif
 #if defined(HPUX) && !defined(_POSIX_SOURCE)
-E long fork(void);
+E long NDECL(fork);
 #endif
 
 #ifdef POSIX_TYPES
@@ -305,9 +309,9 @@ E long fork(void);
 #if defined(NHSTDC) || (defined(VMS) && !defined(ANCIENT_VAXC))
 #if !defined(_AIX32) && !(defined(SUNOS4) && defined(__STDC__))
 /* Solaris unbundled cc (acc) */
-E int memcmp(const void *, const void *, size_t);
-E void *memcpy(void *, const void *, size_t);
-E void *memset(void *, int, size_t);
+E int FDECL(memcmp, (const void *, const void *, size_t));
+E void *FDECL(memcpy, (void *, const void *, size_t));
+E void *FDECL(memset, (void *, int, size_t));
 #endif
 #else
 #ifndef memcmp /* some systems seem to macro these back to b*() */
@@ -322,27 +326,27 @@ E char *memset();
 #endif
 #else
 #ifdef HPUX
-E int memcmp(char *, char *, int);
-E void *memcpy(char *, char *, int);
-E void *memset(char *, int, int);
+E int FDECL(memcmp, (char *, char *, int));
+E void *FDECL(memcpy, (char *, char *, int));
+E void *FDECL(memset, (char *, int, int));
 #endif
 #endif
 #endif /* POSIX_TYPES */
 
 #if defined(MICRO) && !defined(LATTICE)
 #if defined(TOS) && defined(__GNUC__)
-E int memcmp(const void *, const void *, size_t);
-E void *memcpy(void *, const void *, size_t);
-E void *memset(void *, int, size_t);
+E int FDECL(memcmp, (const void *, const void *, size_t));
+E void *FDECL(memcpy, (void *, const void *, size_t));
+E void *FDECL(memset, (void *, int, size_t));
 #else
 #if defined(AZTEC_50) || defined(NHSTDC) || defined(WIN32)
-E int memcmp(const void *, const void *, size_t);
-E void *memcpy(void *, const void *, size_t);
-E void *memset(void *, int, size_t);
+E int FDECL(memcmp, (const void *, const void *, size_t));
+E void *FDECL(memcpy, (void *, const void *, size_t));
+E void *FDECL(memset, (void *, int, size_t));
 #else
-E int memcmp(char *, char *, unsigned int);
-E char *memcpy(char *, char *, unsigned int);
-E char *memset(char *, int, int);
+E int FDECL(memcmp, (char *, char *, unsigned int));
+E char *FDECL(memcpy, (char *, char *, unsigned int));
+E char *FDECL(memset, (char *, int, int));
 #endif /* AZTEC_50 || NHSTDC */
 #endif /* TOS */
 #endif /* MICRO */
@@ -351,43 +355,43 @@ E char *memset(char *, int, int);
 E void sleep();
 #endif
 #if defined(ULTRIX) || defined(SYSV)
-E unsigned sleep(unsigned);
+E unsigned sleep();
 #endif
 #if defined(HPUX)
-E unsigned int sleep(unsigned int);
+E unsigned int FDECL(sleep, (unsigned int));
 #endif
 #ifdef VMS
-E int sleep(unsigned);
+E int FDECL(sleep, (unsigned));
 #endif
 
-E char *getenv(const char *);
-E char *getlogin(void);
+E char *FDECL(getenv, (const char *));
+E char *getlogin();
 #if defined(HPUX) && !defined(_POSIX_SOURCE)
-E long getuid(void);
-E long getgid(void);
-E long getpid(void);
+E long NDECL(getuid);
+E long NDECL(getgid);
+E long NDECL(getpid);
 #else
 #ifdef POSIX_TYPES
-E pid_t getpid(void);
-E uid_t getuid(void);
-E gid_t getgid(void);
+E pid_t NDECL(getpid);
+E uid_t NDECL(getuid);
+E gid_t NDECL(getgid);
 #ifdef VMS
-E pid_t getppid(void);
+E pid_t NDECL(getppid);
 #endif
 #else          /*!POSIX_TYPES*/
 #ifndef getpid /* Borland C defines getpid() as a macro */
-E int getpid(void);
+E int NDECL(getpid);
 #endif
 #ifdef VMS
-E int getppid(void);
-E unsigned getuid(void);
-E unsigned getgid(void);
+E int NDECL(getppid);
+E unsigned NDECL(getuid);
+E unsigned NDECL(getgid);
 #endif
 #if defined(ULTRIX) && !defined(_UNISTD_H_)
-E unsigned getuid(void);
-E unsigned getgid(void);
-E int setgid(int);
-E int setuid(int);
+E unsigned NDECL(getuid);
+E unsigned NDECL(getgid);
+E int FDECL(setgid, (int));
+E int FDECL(setuid, (int));
 #endif
 #endif /*?POSIX_TYPES*/
 #endif /*?(HPUX && !_POSIX_SOURCE)*/
@@ -404,31 +408,31 @@ E int setuid(int);
 #if (defined(ULTRIX) || defined(NeXT)) && defined(__GNUC__)
 #include <strings.h>
 #else
-E char *strcpy(char *, const char *);
-E char *strncpy(char *, const char *, size_t);
-E char *strcat(char *, const char *);
-E char *strncat(char *, const char *, size_t);
-E char *strpbrk(const char *, const char *);
+E char *FDECL(strcpy, (char *, const char *));
+E char *FDECL(strncpy, (char *, const char *, size_t));
+E char *FDECL(strcat, (char *, const char *));
+E char *FDECL(strncat, (char *, const char *, size_t));
+E char *FDECL(strpbrk, (const char *, const char *));
 
 #if defined(SYSV) || defined(MICRO) || defined(MAC) || defined(VMS) \
     || defined(HPUX)
-E char *strchr(const char *, int);
-E char *strrchr(const char *, int);
+E char *FDECL(strchr, (const char *, int));
+E char *FDECL(strrchr, (const char *, int));
 #else /* BSD */
-E char *index(const char *, int);
-E char *rindex(const char *, int);
+E char *FDECL(index, (const char *, int));
+E char *FDECL(rindex, (const char *, int));
 #endif
 
-E int strcmp(const char *, const char *);
-E int strncmp(const char *, const char *, size_t);
+E int FDECL(strcmp, (const char *, const char *));
+E int FDECL(strncmp, (const char *, const char *, size_t));
 #if defined(MICRO) || defined(MAC) || defined(VMS)
-E size_t strlen(const char *);
+E size_t FDECL(strlen, (const char *));
 #else
 #ifdef HPUX
-E unsigned int strlen(char *);
+E unsigned int FDECL(strlen, (char *));
 #else
 #if !(defined(ULTRIX_PROTO) && defined(__GNUC__))
-E int strlen(const char *);
+E int FDECL(strlen, (const char *));
 #endif
 #endif /* HPUX */
 #endif /* MICRO */
@@ -437,8 +441,8 @@ E int strlen(const char *);
 #endif /* !_XtIntrinsic_h_ && !POSIX_TYPES */
 
 #if defined(ULTRIX) && defined(__GNUC__)
-E char *index(const char *, int);
-E char *rindex(const char *, int);
+E char *FDECL(index, (const char *, int));
+E char *FDECL(rindex, (const char *, int));
 #endif
 
 /* Old varieties of BSD have char *sprintf().
@@ -466,7 +470,7 @@ E char *rindex(const char *, int);
 
 #ifndef SPRINTF_PROTO
 #if defined(POSIX_TYPES) || defined(DGUX) || defined(NeXT) || !defined(BSD)
-E int sprintf(char *, const char *, ...);
+E int FDECL(sprintf, (char *, const char *, ...));
 #else
 #define OLD_SPRINTF
 E char *sprintf();
@@ -482,73 +486,82 @@ E char *sprintf();
 #if !defined(SVR4) && !defined(apollo)
 #if !(defined(ULTRIX_PROTO) && defined(__GNUC__))
 #if !(defined(SUNOS4) && defined(__STDC__)) /* Solaris unbundled cc (acc) */
-E int vsprintf(char *, const char *, va_list);
-E int vfprintf(FILE *, const char *, va_list);
-E int vprintf(const char *, va_list);
+E int FDECL(vsprintf, (char *, const char *, va_list));
+E int FDECL(vfprintf, (FILE *, const char *, va_list));
+E int FDECL(vprintf, (const char *, va_list));
 #endif
 #endif
 #endif
 #else
+#ifdef vprintf
+#undef vprintf
+#endif
 #define vprintf printf
+#ifdef vfprintf
+#undef vfprintf
+#endif
 #define vfprintf fprintf
+#ifdef vsprintf
+#undef vsprintf
+#endif
 #define vsprintf sprintf
 #endif
 #endif /* NEED_VARARGS */
 #endif
 
 #ifdef MICRO
-E int tgetent(const char *, const char *);
-E void tputs(const char *, int, int (*)());
-E int tgetnum(const char *);
-E int tgetflag(const char *);
-E char *tgetstr(const char *, char **);
-E char *tgoto(const char *, int, int);
+E int FDECL(tgetent, (const char *, const char *));
+E void FDECL(tputs, (const char *, int, int (*)()));
+E int FDECL(tgetnum, (const char *));
+E int FDECL(tgetflag, (const char *));
+E char *FDECL(tgetstr, (const char *, char **));
+E char *FDECL(tgoto, (const char *, int, int));
 #else
 #if !(defined(HPUX) && defined(_POSIX_SOURCE))
-E int tgetent(char *, const char *);
-E void tputs(const char *, int, int (*)(int));
+E int FDECL(tgetent, (char *, const char *));
+E void FDECL(tputs, (const char *, int, int (*)()));
 #endif
-E int tgetnum(const char *);
-E int tgetflag(const char *);
-E char *tgetstr(const char *, char **);
-E char *tgoto(const char *, int, int);
+E int FDECL(tgetnum, (const char *));
+E int FDECL(tgetflag, (const char *));
+E char *FDECL(tgetstr, (const char *, char **));
+E char *FDECL(tgoto, (const char *, int, int));
 #endif
 
 #if defined(ALLOC_C) || defined(MAKEDEFS_C)
-E genericptr_t malloc(size_t);
-E genericptr_t realloc(genericptr_t, size_t);
+E genericptr_t FDECL(malloc, (size_t));
+E genericptr_t FDECL(realloc, (genericptr_t, size_t));
 #endif
 
 /* time functions */
 
 #ifndef LATTICE
 #if !(defined(ULTRIX_PROTO) && defined(__GNUC__))
-E struct tm *localtime(const time_t *);
+E struct tm *FDECL(localtime, (const time_t *));
 #endif
 #endif
 
 #if defined(ULTRIX) || (defined(BSD) && defined(POSIX_TYPES))          \
     || defined(SYSV) || defined(MICRO) || defined(VMS) || defined(MAC) \
     || (defined(HPUX) && defined(_POSIX_SOURCE))
-E time_t time(time_t *);
+E time_t FDECL(time, (time_t *));
 #else
-E long time(time_t *);
+E long FDECL(time, (time_t *));
 #endif /* ULTRIX */
 
 #ifdef VMS
 /* used in makedefs.c, but missing from gcc-vms's <time.h> */
-E char *ctime(const time_t *);
+E char *FDECL(ctime, (const time_t *));
 #endif
 
 #ifdef MICRO
 #ifdef abs
 #undef abs
 #endif
-E int abs(int);
+E int FDECL(abs, (int));
 #ifdef atoi
 #undef atoi
 #endif
-E int atoi(const char *);
+E int FDECL(atoi, (const char *));
 #endif
 
 #undef E

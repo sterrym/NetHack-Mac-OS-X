@@ -1,5 +1,6 @@
 /* NetHack 3.6	dungeon.h	$NHDT-Date: 1447755969 2015/11/17 10:26:09 $  $NHDT-Branch: master $:$NHDT-Revision: 1.24 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Michael Allison, 2006. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #ifndef DUNGEON_H
@@ -35,13 +36,15 @@ typedef struct stairway { /* basic stairway identifier */
 } stairway;
 
 /* level region types */
-#define LR_DOWNSTAIR 0
-#define LR_UPSTAIR 1
-#define LR_PORTAL 2
-#define LR_BRANCH 3
-#define LR_TELE 4
-#define LR_UPTELE 5
-#define LR_DOWNTELE 6
+enum level_region_types {
+    LR_DOWNSTAIR = 0,
+    LR_UPSTAIR,
+    LR_PORTAL,
+    LR_BRANCH,
+    LR_TELE,
+    LR_UPTELE,
+    LR_DOWNTELE
+};
 
 typedef struct dest_area { /* non-stairway level change identifier */
     xchar lx, ly;          /* "lower" left corner (near [0,0]) */
@@ -95,31 +98,36 @@ typedef struct branch {
  *
  * Depth corresponds to the number of floors below the surface.
  */
-#define Is_astralevel(x) (on_level(x, &astral_level))
-#define Is_earthlevel(x) (on_level(x, &earth_level))
-#define Is_waterlevel(x) (on_level(x, &water_level))
-#define Is_firelevel(x) (on_level(x, &fire_level))
-#define Is_airlevel(x) (on_level(x, &air_level))
-#define Is_medusa_level(x) (on_level(x, &medusa_level))
-#define Is_oracle_level(x) (on_level(x, &oracle_level))
-#define Is_valley(x) (on_level(x, &valley_level))
-#define Is_juiblex_level(x) (on_level(x, &juiblex_level))
-#define Is_asmo_level(x) (on_level(x, &asmodeus_level))
-#define Is_baal_level(x) (on_level(x, &baalzebub_level))
-#define Is_wiz1_level(x) (on_level(x, &wiz1_level))
-#define Is_wiz2_level(x) (on_level(x, &wiz2_level))
-#define Is_wiz3_level(x) (on_level(x, &wiz3_level))
-#define Is_sanctum(x) (on_level(x, &sanctum_level))
-#define Is_portal_level(x) (on_level(x, &portal_level))
-#define Is_rogue_level(x) (on_level(x, &rogue_level))
-#define Is_stronghold(x) (on_level(x, &stronghold_level))
-#define Is_bigroom(x) (on_level(x, &bigroom_level))
-#define Is_qstart(x) (on_level(x, &qstart_level))
-#define Is_qlocate(x) (on_level(x, &qlocate_level))
-#define Is_nemesis(x) (on_level(x, &nemesis_level))
-#define Is_knox(x) (on_level(x, &knox_level))
-#define Is_mineend_level(x) (on_level(x, &mineend_level))
-#define Is_sokoend_level(x) (on_level(x, &sokoend_level))
+
+/* These both can't be zero, or dungeon_topology isn't init'd / restored */
+#define Lassigned(y) ((y)->dlevel || (y)->dnum)
+#define Lcheck(x,z) (Lassigned(z) && on_level(x, z))
+
+#define Is_astralevel(x)    (Lcheck(x, &astral_level))
+#define Is_earthlevel(x)    (Lcheck(x, &earth_level))
+#define Is_waterlevel(x)    (Lcheck(x, &water_level))
+#define Is_firelevel(x)     (Lcheck(x, &fire_level))
+#define Is_airlevel(x)      (Lcheck(x, &air_level))
+#define Is_medusa_level(x)  (Lcheck(x, &medusa_level))
+#define Is_oracle_level(x)  (Lcheck(x, &oracle_level))
+#define Is_valley(x)        (Lcheck(x, &valley_level))
+#define Is_juiblex_level(x) (Lcheck(x, &juiblex_level))
+#define Is_asmo_level(x)    (Lcheck(x, &asmodeus_level))
+#define Is_baal_level(x)    (Lcheck(x, &baalzebub_level))
+#define Is_wiz1_level(x)    (Lcheck(x, &wiz1_level))
+#define Is_wiz2_level(x)    (Lcheck(x, &wiz2_level))
+#define Is_wiz3_level(x)    (Lcheck(x, &wiz3_level))
+#define Is_sanctum(x)       (Lcheck(x, &sanctum_level))
+#define Is_portal_level(x)  (Lcheck(x, &portal_level))
+#define Is_rogue_level(x)   (Lcheck(x, &rogue_level))
+#define Is_stronghold(x)    (Lcheck(x, &stronghold_level))
+#define Is_bigroom(x)       (Lcheck(x, &bigroom_level))
+#define Is_qstart(x)        (Lcheck(x, &qstart_level))
+#define Is_qlocate(x)       (Lcheck(x, &qlocate_level))
+#define Is_nemesis(x)       (Lcheck(x, &nemesis_level))
+#define Is_knox(x)          (Lcheck(x, &knox_level))
+#define Is_mineend_level(x) (Lcheck(x, &mineend_level))
+#define Is_sokoend_level(x) (Lcheck(x, &sokoend_level))
 
 #define In_sokoban(x) ((x)->dnum == sokoban_dnum)
 #define Inhell In_hell(&u.uz) /* now gehennom */
@@ -143,7 +151,8 @@ typedef struct branch {
 #define MIGR_WITH_HERO 9    /* mon: followers; obj: trap door */
 #define MIGR_NOBREAK 1024   /* bitmask: don't break on delivery */
 #define MIGR_NOSCATTER 2048 /* don't scatter on delivery */
-
+#define MIGR_TO_SPECIES 4096 /* migrating to species as they are made */ 
+#define MIGR_LEFTOVERS 8192  /* grab remaining MIGR_TO_SPECIES objects */
 /* level information (saved via ledger number) */
 
 struct linfo {

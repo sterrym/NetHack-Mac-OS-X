@@ -21,13 +21,15 @@ struct rogueroom {
 #define RIGHT 8
 
 static NEARDATA struct rogueroom r[3][3];
-STATIC_DCL void roguejoin(int, int, int, int, int);
-STATIC_DCL void roguecorr(int, int, int);
-STATIC_DCL void miniwalk(int, int);
+STATIC_DCL void FDECL(roguejoin, (int, int, int, int, int));
+STATIC_DCL void FDECL(roguecorr, (int, int, int));
+STATIC_DCL void FDECL(miniwalk, (int, int));
 
 STATIC_OVL
 void
-roguejoin(int x1, int y1, int x2, int y2, int horiz)
+roguejoin(x1, y1, x2, y2, horiz)
+int x1, y1, x2, y2;
+int horiz;
 {
     register int x, y, middle;
     if (horiz) {
@@ -51,7 +53,8 @@ roguejoin(int x1, int y1, int x2, int y2, int horiz)
 
 STATIC_OVL
 void
-roguecorr(int x, int y, int dir)
+roguecorr(x, y, dir)
+int x, y, dir;
 {
     register int fromx, fromy, tox, toy;
 
@@ -146,7 +149,8 @@ roguecorr(int x, int y, int dir)
 /* Modified walkfrom() from mkmaze.c */
 STATIC_OVL
 void
-miniwalk(int x, int y)
+miniwalk(x, y)
+int x, y;
 {
     register int q, dir;
     int dirs[4];
@@ -283,7 +287,8 @@ makeroguerooms()
 }
 
 void
-corr(int x, int y)
+corr(x, y)
+int x, y;
 {
     if (rn2(50)) {
         levl[x][y].typ = CORR;

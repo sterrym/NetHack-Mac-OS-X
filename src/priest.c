@@ -1,4 +1,4 @@
-/* NetHack 3.6	priest.c	$NHDT-Date: 1446892452 2015/11/07 10:34:12 $  $NHDT-Branch: master $:$NHDT-Revision: 1.41 $ */
+/* NetHack 3.6	priest.c	$NHDT-Date: 1545131519 2018/12/18 11:11:59 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.45 $ */
 /* Copyright (c) Izchak Miller, Steve Linhart, 1989.              */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -9,11 +9,12 @@
 #define ALGN_SINNED (-4) /* worse than strayed (-1..-3) */
 #define ALGN_PIOUS 14    /* better than fervent (9..13) */
 
-STATIC_DCL boolean histemple_at(struct monst *, xchar, xchar);
-STATIC_DCL boolean has_shrine(struct monst *);
+STATIC_DCL boolean FDECL(histemple_at, (struct monst *, XCHAR_P, XCHAR_P));
+STATIC_DCL boolean FDECL(has_shrine, (struct monst *));
 
 void
-newepri(struct monst *mtmp)
+newepri(mtmp)
+struct monst *mtmp;
 {
     if (!mtmp->mextra)
         mtmp->mextra = newmextra();
@@ -24,7 +25,8 @@ newepri(struct monst *mtmp)
 }
 
 void
-free_epri(struct monst *mtmp)
+free_epri(mtmp)
+struct monst *mtmp;
 {
     if (mtmp->mextra && EPRI(mtmp)) {
         free((genericptr_t) EPRI(mtmp));
@@ -38,7 +40,12 @@ free_epri(struct monst *mtmp)
  * Valid returns are  1: moved  0: didn't  -1: let m_move do it  -2: died.
  */
 int
-move_special(register struct monst *mtmp, boolean in_his_shop, schar appr, boolean uondoor, boolean avoid, register xchar omx, register xchar omy, register xchar gx, register xchar gy)
+move_special(mtmp, in_his_shop, appr, uondoor, avoid, omx, omy, gx, gy)
+register struct monst *mtmp;
+boolean in_his_shop;
+schar appr;
+boolean uondoor, avoid;
+register xchar omx, omy, gx, gy;
 {
     register xchar nx, ny, nix, niy;
     register schar i;
@@ -46,7 +53,9 @@ move_special(register struct monst *mtmp, boolean in_his_shop, schar appr, boole
     coord poss[9];
     long info[9];
     long allowflags;
+#if 0 /* dead code; see below */
     struct obj *ib = (struct obj *) 0;
+#endif
 
     if (omx == gx && omy == gy)
         return 0;
@@ -109,11 +118,14 @@ pick_move:
     }
 
     if (nix != omx || niy != omy) {
+        if (MON_AT(nix, niy))
+            return 0;
         remove_monster(omx, omy);
         place_monster(mtmp, nix, niy);
         newsym(nix, niy);
         if (mtmp->isshk && !in_his_shop && inhishop(mtmp))
             check_special_room(FALSE);
+#if 0 /* dead code; maybe someday someone will track down why... */
         if (ib) {
             if (cansee(mtmp->mx, mtmp->my))
                 pline("%s picks up %s.", Monnam(mtmp),
@@ -121,13 +133,15 @@ pick_move:
             obj_extract_self(ib);
             (void) mpickobj(mtmp, ib);
         }
+#endif
         return 1;
     }
     return 0;
 }
 
 char
-temple_occupied(register char *array)
+temple_occupied(array)
+register char *array;
 {
     register char *ptr;
 
@@ -138,7 +152,9 @@ temple_occupied(register char *array)
 }
 
 STATIC_OVL boolean
-histemple_at(register struct monst *priest, register xchar x, register xchar y)
+histemple_at(priest, x, y)
+register struct monst *priest;
+register xchar x, y;
 {
     return (boolean) (priest && priest->ispriest
                       && (EPRI(priest)->shroom == *in_rooms(x, y, TEMPLE))
@@ -146,7 +162,8 @@ histemple_at(register struct monst *priest, register xchar x, register xchar y)
 }
 
 boolean
-inhistemple(struct monst *priest)
+inhistemple(priest)
+struct monst *priest;
 {
     /* make sure we have a priest */
     if (!priest || !priest->ispriest)
@@ -162,7 +179,8 @@ inhistemple(struct monst *priest)
  * pri_move: return 1: moved  0: didn't  -1: let m_move do it  -2: died
  */
 int
-pri_move(register struct monst *priest)
+pri_move(priest)
+register struct monst *priest;
 {
     register xchar gx, gy, omx, omy;
     schar temple;
@@ -205,8 +223,11 @@ pri_move(register struct monst *priest)
 
 /* exclusively for mktemple() */
 void
-priestini(d_level *lvl, struct mkroom *sroom, int sx, int sy,
-          boolean sanctum) /* is it the seat of the high priest? */
+priestini(lvl, sroom, sx, sy, sanctum)
+d_level *lvl;
+struct mkroom *sroom;
+int sx, sy;
+boolean sanctum; /* is it the seat of the high priest? */
 {
     struct monst *priest;
     struct obj *otmp;
@@ -251,7 +272,8 @@ priestini(d_level *lvl, struct mkroom *sroom, int sx, int sy,
 
 /* get a monster's alignment type without caller needing EPRI & EMIN */
 aligntyp
-mon_aligntyp(struct monst *mon)
+mon_aligntyp(mon)
+struct monst *mon;
 {
     aligntyp algn = mon->ispriest ? EPRI(mon)->shralign
                                   : mon->isminion ? EMIN(mon)->min_align
@@ -273,8 +295,9 @@ mon_aligntyp(struct monst *mon)
  *              the true name even when under that influence
  */
 char *
-priestname(register struct monst *mon,
-           char *pname) /* caller-supplied output buffer */
+priestname(mon, pname)
+register struct monst *mon;
+char *pname; /* caller-supplied output buffer */
 {
     boolean do_hallu = Hallucination,
             aligned_priest = mon->data == &mons[PM_ALIGNED_PRIEST],
@@ -322,13 +345,15 @@ priestname(register struct monst *mon,
 }
 
 boolean
-p_coaligned(struct monst *priest)
+p_coaligned(priest)
+struct monst *priest;
 {
     return (boolean) (u.ualign.type == mon_aligntyp(priest));
 }
 
 STATIC_OVL boolean
-has_shrine(struct monst *pri)
+has_shrine(pri)
+struct monst *pri;
 {
     struct rm *lev;
     struct epri *epri_p;
@@ -344,7 +369,8 @@ has_shrine(struct monst *pri)
 }
 
 struct monst *
-findpriest(char roomno)
+findpriest(roomno)
+char roomno;
 {
     register struct monst *mtmp;
 
@@ -360,7 +386,8 @@ findpriest(char roomno)
 
 /* called from check_special_room() when the player enters the temple room */
 void
-intemple(int roomno)
+intemple(roomno)
+int roomno;
 {
     struct monst *priest, *mtmp;
     struct epri *epri_p;
@@ -470,11 +497,11 @@ intemple(int roomno)
         if (!rn2(5)
             && (mtmp = makemon(&mons[PM_GHOST], u.ux, u.uy, NO_MM_FLAGS))
                    != 0) {
-            /* [TODO: alter this (at a minimum, by switching from
-               an exclamation to a simple declaration) if hero has
-               already killed enough ghosts.] */
+            int ngen = mvitals[PM_GHOST].born;
             if (canspotmon(mtmp))
-                pline("An enormous ghost appears next to you!");
+                pline("A%s ghost appears next to you%c",
+                      ngen < 5 ? "n enormous" : "",
+                      ngen < 10 ? '!' : '.');
             else
                 You("sense a presence close by!");
             mtmp->mpeaceful = 0;
@@ -482,7 +509,7 @@ intemple(int roomno)
             if (flags.verbose)
                 You("are frightened to death, and unable to move.");
             nomul(-3);
-            multi_reason = "being terrified of a demon";
+            multi_reason = "being terrified of a ghost";
             nomovemsg = "You regain your composure.";
         }
     }
@@ -491,7 +518,8 @@ intemple(int roomno)
 /* reset the move counters used to limit temple entry feedback;
    leaving the level and then returning yields a fresh start */
 void
-forget_temple_entry(struct monst *priest)
+forget_temple_entry(priest)
+struct monst *priest;
 {
     struct epri *epri_p = priest->ispriest ? EPRI(priest) : 0;
 
@@ -504,7 +532,8 @@ forget_temple_entry(struct monst *priest)
 }
 
 void
-priest_talk(register struct monst *priest)
+priest_talk(priest)
+register struct monst *priest;
 {
     boolean coaligned = p_coaligned(priest);
     boolean strayed = (u.ualign.record < 0);
@@ -615,7 +644,11 @@ priest_talk(register struct monst *priest)
 }
 
 struct monst *
-mk_roamer(register struct permonst *ptr, aligntyp alignment, xchar x, xchar y, boolean peaceful)
+mk_roamer(ptr, alignment, x, y, peaceful)
+register struct permonst *ptr;
+aligntyp alignment;
+xchar x, y;
+boolean peaceful;
 {
     register struct monst *roamer;
     register boolean coaligned = (u.ualign.type == alignment);
@@ -645,7 +678,8 @@ mk_roamer(register struct permonst *ptr, aligntyp alignment, xchar x, xchar y, b
 }
 
 void
-reset_hostility(register struct monst *roamer)
+reset_hostility(roamer)
+register struct monst *roamer;
 {
     if (!roamer->isminion)
         return;
@@ -661,8 +695,9 @@ reset_hostility(register struct monst *roamer)
 }
 
 boolean
-in_your_sanctuary(struct monst *mon, /* if non-null, <mx,my> overrides <x,y> */
-                  xchar x, xchar y)
+in_your_sanctuary(mon, x, y)
+struct monst *mon; /* if non-null, <mx,my> overrides <x,y> */
+xchar x, y;
 {
     register char roomno;
     register struct monst *priest;
@@ -670,7 +705,7 @@ in_your_sanctuary(struct monst *mon, /* if non-null, <mx,my> overrides <x,y> */
     if (mon) {
         if (is_minion(mon->data) || is_rider(mon->data))
             return FALSE;
-        x = mon->mx; y = mon->my;
+        x = mon->mx, y = mon->my;
     }
     if (u.ualign.record <= ALGN_SINNED) /* sinned or worse */
         return FALSE;
@@ -685,7 +720,8 @@ in_your_sanctuary(struct monst *mon, /* if non-null, <mx,my> overrides <x,y> */
 
 /* when attacking "priest" in his temple */
 void
-ghod_hitsu(struct monst *priest)
+ghod_hitsu(priest)
+struct monst *priest;
 {
     int x, y, ax, ay, roomno = (int) temple_occupied(u.urooms);
     struct mkroom *troom;
@@ -765,7 +801,8 @@ angry_priest()
     if ((priest = findpriest(temple_occupied(u.urooms))) != 0) {
         struct epri *eprip = EPRI(priest);
 
-        wakeup(priest);
+        wakeup(priest, FALSE);
+        setmangry(priest, FALSE);
         /*
          * If the altar has been destroyed or converted, let the
          * priest run loose.
@@ -811,12 +848,252 @@ clearpriests()
 
 /* munge priest-specific structure when restoring -dlc */
 void
-restpriest(register struct monst *mtmp, boolean ghostly)
+restpriest(mtmp, ghostly)
+register struct monst *mtmp;
+boolean ghostly;
 {
     if (u.uz.dlevel) {
         if (ghostly)
             assign_level(&(EPRI(mtmp)->shrlevel), &u.uz);
     }
+}
+
+/*
+ * align_str(), piousness(), mstatusline() and ustatusline() used to be
+ * in pline.c, presumeably because the latter two generate one line of
+ * output.  The USE_OLDARGS config gets warnings from 2016ish-vintage
+ * gcc (for -Wint-to-pointer-cast, activated by -Wall or -W) when they
+ * follow pline() itself.  Fixing up the variadic calls like is done for
+ * lev_comp would be needlessly messy there.
+ *
+ * They don't belong here.  If/when enlightenment ever gets split off
+ * from cmd.c (which definitely doesn't belong there), they should go
+ * with it.
+ */
+
+const char *
+align_str(alignment)
+aligntyp alignment;
+{
+    switch ((int) alignment) {
+    case A_CHAOTIC:
+        return "chaotic";
+    case A_NEUTRAL:
+        return "neutral";
+    case A_LAWFUL:
+        return "lawful";
+    case A_NONE:
+        return "unaligned";
+    }
+    return "unknown";
+}
+
+/* used for self-probing */
+char *
+piousness(showneg, suffix)
+boolean showneg;
+const char *suffix;
+{
+    static char buf[32]; /* bigger than "insufficiently neutral" */
+    const char *pio;
+
+    /* note: piousness 20 matches MIN_QUEST_ALIGN (quest.h) */
+    if (u.ualign.record >= 20)
+        pio = "piously";
+    else if (u.ualign.record > 13)
+        pio = "devoutly";
+    else if (u.ualign.record > 8)
+        pio = "fervently";
+    else if (u.ualign.record > 3)
+        pio = "stridently";
+    else if (u.ualign.record == 3)
+        pio = "";
+    else if (u.ualign.record > 0)
+        pio = "haltingly";
+    else if (u.ualign.record == 0)
+        pio = "nominally";
+    else if (!showneg)
+        pio = "insufficiently";
+    else if (u.ualign.record >= -3)
+        pio = "strayed";
+    else if (u.ualign.record >= -8)
+        pio = "sinned";
+    else
+        pio = "transgressed";
+
+    Sprintf(buf, "%s", pio);
+    if (suffix && (!showneg || u.ualign.record >= 0)) {
+        if (u.ualign.record != 3)
+            Strcat(buf, " ");
+        Strcat(buf, suffix);
+    }
+    return buf;
+}
+
+/* stethoscope or probing applied to monster -- one-line feedback */
+void
+mstatusline(mtmp)
+struct monst *mtmp;
+{
+    aligntyp alignment = mon_aligntyp(mtmp);
+    char info[BUFSZ], monnambuf[BUFSZ];
+
+    info[0] = 0;
+    if (mtmp->mtame) {
+        Strcat(info, ", tame");
+        if (wizard) {
+            Sprintf(eos(info), " (%d", mtmp->mtame);
+            if (!mtmp->isminion)
+                Sprintf(eos(info), "; hungry %ld; apport %d",
+                        EDOG(mtmp)->hungrytime, EDOG(mtmp)->apport);
+            Strcat(info, ")");
+        }
+    } else if (mtmp->mpeaceful)
+        Strcat(info, ", peaceful");
+
+    if (mtmp->data == &mons[PM_LONG_WORM]) {
+        int segndx, nsegs = count_wsegs(mtmp);
+
+        /* the worm code internals don't consider the head of be one of
+           the worm's segments, but we count it as such when presenting
+           worm feedback to the player */
+        if (!nsegs) {
+            Strcat(info, ", single segment");
+        } else {
+            ++nsegs; /* include head in the segment count */
+            segndx = wseg_at(mtmp, bhitpos.x, bhitpos.y);
+            Sprintf(eos(info), ", %d%s of %d segments",
+                    segndx, ordin(segndx), nsegs);
+        }
+    }
+    if (mtmp->cham >= LOW_PM && mtmp->data != &mons[mtmp->cham])
+        /* don't reveal the innate form (chameleon, vampire, &c),
+           just expose the fact that this current form isn't it */
+        Strcat(info, ", shapechanger");
+    /* pets eating mimic corpses mimic while eating, so this comes first */
+    if (mtmp->meating)
+        Strcat(info, ", eating");
+    /* a stethoscope exposes mimic before getting here so this
+       won't be relevant for it, but wand of probing doesn't */
+    if (mtmp->mundetected || mtmp->m_ap_type)
+        mhidden_description(mtmp, TRUE, eos(info));
+    if (mtmp->mcan)
+        Strcat(info, ", cancelled");
+    if (mtmp->mconf)
+        Strcat(info, ", confused");
+    if (mtmp->mblinded || !mtmp->mcansee)
+        Strcat(info, ", blind");
+    if (mtmp->mstun)
+        Strcat(info, ", stunned");
+    if (mtmp->msleeping)
+        Strcat(info, ", asleep");
+#if 0 /* unfortunately mfrozen covers temporary sleep and being busy \
+         (donning armor, for instance) as well as paralysis */
+    else if (mtmp->mfrozen)
+        Strcat(info, ", paralyzed");
+#else
+    else if (mtmp->mfrozen || !mtmp->mcanmove)
+        Strcat(info, ", can't move");
+#endif
+    /* [arbitrary reason why it isn't moving] */
+    else if (mtmp->mstrategy & STRAT_WAITMASK)
+        Strcat(info, ", meditating");
+    if (mtmp->mflee)
+        Strcat(info, ", scared");
+    if (mtmp->mtrapped)
+        Strcat(info, ", trapped");
+    if (mtmp->mspeed)
+        Strcat(info, (mtmp->mspeed == MFAST) ? ", fast"
+                      : (mtmp->mspeed == MSLOW) ? ", slow"
+                         : ", [? speed]");
+    if (mtmp->minvis)
+        Strcat(info, ", invisible");
+    if (mtmp == u.ustuck)
+        Strcat(info, sticks(youmonst.data) ? ", held by you"
+                      : !u.uswallow ? ", holding you"
+                         : attacktype_fordmg(u.ustuck->data, AT_ENGL, AD_DGST)
+                            ? ", digesting you"
+                            : is_animal(u.ustuck->data) ? ", swallowing you"
+                               : ", engulfing you");
+    if (mtmp == u.usteed)
+        Strcat(info, ", carrying you");
+
+    /* avoid "Status of the invisible newt ..., invisible" */
+    /* and unlike a normal mon_nam, use "saddled" even if it has a name */
+    Strcpy(monnambuf, x_monnam(mtmp, ARTICLE_THE, (char *) 0,
+                               (SUPPRESS_IT | SUPPRESS_INVISIBLE), FALSE));
+
+    pline("Status of %s (%s):  Level %d  HP %d(%d)  AC %d%s.", monnambuf,
+          align_str(alignment), mtmp->m_lev, mtmp->mhp, mtmp->mhpmax,
+          find_mac(mtmp), info);
+}
+
+/* stethoscope or probing applied to hero -- one-line feedback */
+void
+ustatusline()
+{
+    char info[BUFSZ];
+
+    info[0] = '\0';
+    if (Sick) {
+        Strcat(info, ", dying from");
+        if (u.usick_type & SICK_VOMITABLE)
+            Strcat(info, " food poisoning");
+        if (u.usick_type & SICK_NONVOMITABLE) {
+            if (u.usick_type & SICK_VOMITABLE)
+                Strcat(info, " and");
+            Strcat(info, " illness");
+        }
+    }
+    if (Stoned)
+        Strcat(info, ", solidifying");
+    if (Slimed)
+        Strcat(info, ", becoming slimy");
+    if (Strangled)
+        Strcat(info, ", being strangled");
+    if (Vomiting)
+        Strcat(info, ", nauseated"); /* !"nauseous" */
+    if (Confusion)
+        Strcat(info, ", confused");
+    if (Blind) {
+        Strcat(info, ", blind");
+        if (u.ucreamed) {
+            if ((long) u.ucreamed < Blinded || Blindfolded
+                || !haseyes(youmonst.data))
+                Strcat(info, ", cover");
+            Strcat(info, "ed by sticky goop");
+        } /* note: "goop" == "glop"; variation is intentional */
+    }
+    if (Stunned)
+        Strcat(info, ", stunned");
+    if (!u.usteed && Wounded_legs) {
+        const char *what = body_part(LEG);
+        if ((Wounded_legs & BOTH_SIDES) == BOTH_SIDES)
+            what = makeplural(what);
+        Sprintf(eos(info), ", injured %s", what);
+    }
+    if (Glib)
+        Sprintf(eos(info), ", slippery %s", makeplural(body_part(HAND)));
+    if (u.utrap)
+        Strcat(info, ", trapped");
+    if (Fast)
+        Strcat(info, Very_fast ? ", very fast" : ", fast");
+    if (u.uundetected)
+        Strcat(info, ", concealed");
+    if (Invis)
+        Strcat(info, ", invisible");
+    if (u.ustuck) {
+        if (sticks(youmonst.data))
+            Strcat(info, ", holding ");
+        else
+            Strcat(info, ", held by ");
+        Strcat(info, mon_nam(u.ustuck));
+    }
+
+    pline("Status of %s (%s):  Level %d  HP %d(%d)  AC %d%s.", plname,
+          piousness(FALSE, align_str(u.ualign.type)),
+          Upolyd ? mons[u.umonnum].mlevel : u.ulevel, Upolyd ? u.mh : u.uhp,
+          Upolyd ? u.mhmax : u.uhpmax, u.uac, info);
 }
 
 /*priest.c*/

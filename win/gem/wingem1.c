@@ -21,23 +21,23 @@ typedef signed char schar;
 #include "wintype.h"
 #undef genericptr_t
 
-#define NDECL(f) f()
+#define NDECL(f) f(void)
 #define FDECL(f, p) f p
-#define char char
-#define schar schar
-#define uchar uchar
-#define xchar xchar
-#define short short
-#define boolean boolean
+#define CHAR_P char
+#define SCHAR_P schar
+#define UCHAR_P uchar
+#define XCHAR_P xchar
+#define SHORT_P short
+#define BOOLEAN_P boolean
 #define ALIGNTYP_P aligntyp
 typedef signed char xchar;
 #include "wingem.h"
-#undef char
-#undef schar
-#undef uchar
-#undef xchar
-#undef short
-#undef boolean
+#undef CHAR_P
+#undef SCHAR_P
+#undef UCHAR_P
+#undef XCHAR_P
+#undef SHORT_P
+#undef BOOLEAN_P
 #undef ALIGNTYP_P
 #undef NDECL
 #undef FDECL
@@ -362,25 +362,29 @@ mar_ob_mapcenter(OBJECT *p_obj)
  * *************************************/
 
 void
-mar_set_no_glyph(int ng)
+mar_set_no_glyph(ng)
+int ng;
 {
     no_glyph = ng;
 }
 
 void
-mar_set_tilefile(char *name)
+mar_set_tilefile(name)
+char *name;
 {
     Tilefile = name;
 }
 void
-mar_set_tilex(int value)
+mar_set_tilex(value)
+int value;
 {
     Min(&value, 32);
     Max(&value, 1);
     Tile_width = value;
 }
 void
-mar_set_tiley(int value)
+mar_set_tiley(value)
+int value;
 {
     Min(&value, 32);
     Max(&value, 1);
@@ -964,7 +968,9 @@ my_close_dialog(DIAINFO *dialog, boolean shrink_box)
 }
 
 void
-mar_get_rsc_tree(int obj_number, OBJECT **z_ob_obj)
+mar_get_rsc_tree(obj_number, z_ob_obj)
+int obj_number;
+OBJECT **z_ob_obj;
 {
     rsrc_gaddr(R_TREE, obj_number, z_ob_obj);
     fix_objects(*z_ob_obj, SCALING, 0, 0);
@@ -973,7 +979,8 @@ mar_get_rsc_tree(int obj_number, OBJECT **z_ob_obj)
 void mar_clear_map(void);
 
 void
-img_error(int errnumber)
+img_error(errnumber)
+int errnumber;
 {
     char buf[BUFSZ];
 
@@ -1236,7 +1243,8 @@ mar_exit_nhwindows()
 /************************* mar_curs *******************************/
 
 void
-mar_curs(int x, int y)
+mar_curs(x, y)
+int x, y;
 {
     Min(&dirty_map_area.g_x, x);
     Min(&dirty_map_area.g_y, y);
@@ -1329,21 +1337,27 @@ send_return()
 }
 
 int
-K_Init(XEVENT *xev, int availiable)
+K_Init(xev, availiable)
+XEVENT *xev;
+int availiable;
 {
     xev = xev;
     return (MU_KEYBD & availiable);
 }
 
 int
-KM_Init(XEVENT *xev, int availiable)
+KM_Init(xev, availiable)
+XEVENT *xev;
+int availiable;
 {
     xev = xev;
     return ((MU_KEYBD | MU_MESAG) & availiable);
 }
 
 int
-M_Init(XEVENT *xev, int availiable)
+M_Init(xev, availiable)
+XEVENT *xev;
+int availiable;
 {
     xev = xev;
     return (MU_MESAG & availiable);
@@ -1352,7 +1366,8 @@ M_Init(XEVENT *xev, int availiable)
 #define More_Init K_Init
 
 int
-More_Handler(XEVENT *xev)
+More_Handler(xev)
+XEVENT *xev;
 {
     int ev = xev->ev_mwich;
 
@@ -1410,7 +1425,8 @@ mar_more()
 
 /************************* Gem_start_menu *******************************/
 void
-Gem_start_menu(winid win)
+Gem_start_menu(win)
+winid win;
 {
     win = win;
     if (invent_list) {
@@ -1430,7 +1446,9 @@ Gem_start_menu(winid win)
 /************************* mar_add_menu *******************************/
 
 void
-mar_add_menu(winid win, Gem_menu_item *item)
+mar_add_menu(win, item)
+winid win;
+Gem_menu_item *item;
 {
     win = win;
     item->Gmi_next = invent_list;
@@ -1526,7 +1544,8 @@ mar_putstr_text(winid window, int attr, const char *str)
 }
 
 int
-mar_set_inv_win(int Anzahl, int Breite)
+mar_set_inv_win(Anzahl, Breite)
+int Anzahl, Breite;
 {
     OBJECT *z_ob = zz_oblist[LINES];
     int retval = WIN_DIAL | MODAL | NO_ICONIFY;
@@ -1601,7 +1620,8 @@ mar_status_dirty()
 /************************* mar_add_message *******************************/
 
 void
-mar_add_message(const char *str)
+mar_add_message(str)
+const char *str;
 {
     int i, mesg_hist = mar_get_msg_history();
     char *tmp, *rest, buf[TBUFSZ];
@@ -1664,7 +1684,9 @@ mar_add_message(const char *str)
 /************************* mar_add_status_str *******************************/
 
 void
-mar_add_status_str(const char *str, int line)
+mar_add_status_str(str, line)
+const char *str;
+int line;
 {
     int i, last_diff = -1;
     GRECT area = { 0, line * status_font.ch, status_font.cw, status_font.ch };
@@ -1698,7 +1720,8 @@ mar_add_status_str(const char *str, int line)
 /************************* mar_set_menu_title *******************************/
 
 void
-mar_set_menu_title(const char *str)
+mar_set_menu_title(str)
+const char *str;
 {
     test_free(Menu_title); /* just in case */
     Menu_title = mar_copy_of(str ? str : nullstr);
@@ -1707,7 +1730,8 @@ mar_set_menu_title(const char *str)
 /************************* mar_set_menu_type *******************************/
 
 void
-mar_set_menu_type(int how)
+mar_set_menu_type(how)
+int how;
 {
     Inv_how = how;
 }
@@ -1715,7 +1739,8 @@ mar_set_menu_type(int how)
 /************************* Inventory Utils *******************************/
 
 void
-set_all_on_page(int start, int page)
+set_all_on_page(start, page)
+int start, page;
 {
     Gem_menu_item *curr;
 
@@ -1730,7 +1755,8 @@ set_all_on_page(int start, int page)
 }
 
 void
-unset_all_on_page(int start, int page)
+unset_all_on_page(start, page)
+int start, page;
 {
     Gem_menu_item *curr;
 
@@ -1747,7 +1773,9 @@ unset_all_on_page(int start, int page)
 }
 
 void
-invert_all_on_page(int start, int page, char acc)
+invert_all_on_page(start, page, acc)
+int start, page;
+char acc;
 {
     Gem_menu_item *curr;
 
@@ -1807,7 +1835,8 @@ scroll_top_dialog(char ch)
 #define Text_Init KM_Init
 
 int
-Text_Handler(XEVENT *xev)
+Text_Handler(xev)
+XEVENT *xev;
 {
     int ev = xev->ev_mwich;
 
@@ -1844,7 +1873,8 @@ Text_Handler(XEVENT *xev)
 
 static long count = 0;
 int
-Inv_Handler(XEVENT *xev)
+Inv_Handler(xev)
+XEVENT *xev;
 {
     int ev = xev->ev_mwich;
     Gem_menu_item *it;
@@ -2014,7 +2044,10 @@ Inv_Handler(XEVENT *xev)
 /************************* draw_window *******************************/
 
 static void
-mar_draw_window(int first, WIN *win, GRECT *area)
+mar_draw_window(first, win, area)
+int first;
+WIN *win;
+GRECT *area;
 {
     OBJECT *obj = (OBJECT *) win->para;
 
@@ -2162,7 +2195,8 @@ calc_std_winplace(int which, GRECT *place)
 }
 
 void
-mar_display_nhwindow(winid wind)
+mar_display_nhwindow(wind)
+winid wind;
 {
     DIAINFO *dlg_info;
     OBJECT *z_ob;
@@ -2401,13 +2435,15 @@ mar_display_nhwindow(winid wind)
 /************************* create_window *******************************/
 
 int
-mar_hol_win_type(winid window)
+mar_hol_win_type(window)
+winid window;
 {
     return (Gem_nhwindow[window].gw_type);
 }
 
 winid
-mar_create_window(int type)
+mar_create_window(type)
+int type;
 {
     winid newid;
     static char name[] = "Gem";
@@ -2468,7 +2504,8 @@ mar_create_window(int type)
 }
 
 void
-mar_change_menu_2_text(winid win)
+mar_change_menu_2_text(win)
+winid win;
 {
     Gem_nhwindow[win].gw_type = NHW_TEXT;
 }
@@ -2497,7 +2534,8 @@ mar_clear_map()
 /************************* destroy_window *******************************/
 
 void
-mar_destroy_nhwindow(winid window)
+mar_destroy_nhwindow(window)
+winid window;
 {
     int i;
 
@@ -2601,7 +2639,9 @@ mar_update_value()
 }
 
 int
-Main_Init(XEVENT *xev, int availiable)
+Main_Init(xev, availiable)
+XEVENT *xev;
+int availiable;
 {
     xev->ev_mb1mask = xev->ev_mb1state = 1;
     xev->ev_mb1clicks = xev->ev_mb2clicks = xev->ev_mb2mask =
@@ -2615,7 +2655,8 @@ Main_Init(XEVENT *xev, int availiable)
  */
 /*ARGSUSED*/
 int
-mar_nh_poskey(int *x, int *y, int *mod)
+mar_nh_poskey(x, y, mod)
+int *x, *y, *mod;
 {
     static XEVENT xev;
     int retval, ev;
@@ -2777,7 +2818,8 @@ mar_nh_poskey(int *x, int *y, int *mod)
 }
 
 int
-Gem_nh_poskey(int *x, int *y, int *mod)
+Gem_nh_poskey(x, y, mod)
+int *x, *y, *mod;
 {
     mar_update_value();
     return (mar_nh_poskey(x, y, mod));
@@ -2806,7 +2848,8 @@ Gem_doprev_message()
 int mar_set_rogue(int);
 
 int
-mar_set_tile_mode(int tiles)
+mar_set_tile_mode(tiles)
+int tiles;
 {
     static int tile_mode = TRUE;
     static GRECT prev;
@@ -2839,7 +2882,8 @@ mar_set_tile_mode(int tiles)
 }
 
 int
-mar_set_rogue(int what)
+mar_set_rogue(what)
+int what;
 {
     static int rogue = FALSE, prev_mode = TRUE;
 
@@ -2857,7 +2901,9 @@ mar_set_rogue(int what)
 }
 
 void
-mar_add_pet_sign(winid window, int x, int y)
+mar_add_pet_sign(window, x, y)
+winid window;
+int x, y;
 {
     if (window != WIN_ERR && window == WIN_MAP) {
         static int pla[8] = { 0, 0, 7, 7, 0, 0, 0, 0 },
@@ -2872,7 +2918,9 @@ mar_add_pet_sign(winid window, int x, int y)
 }
 
 void
-mar_print_glyph(winid window, int x, int y, int gl, int bkgl)
+mar_print_glyph(window, x, y, gl, bkgl)
+winid window;
+int x, y, gl, bkgl;
 {
     if (window != WIN_ERR && window == WIN_MAP) {
         static int pla[8];
@@ -2892,7 +2940,11 @@ mar_print_glyph(winid window, int x, int y, int gl, int bkgl)
 }
 
 void
-mar_print_char(winid window, int x, int y, char ch, int col)
+mar_print_char(window, x, y, ch, col)
+winid window;
+int x, y;
+char ch;
+int col;
 {
     if (window != WIN_ERR && window == WIN_MAP) {
         static int gem_color[16] = { 9, 2,  11, 10, 4, 7,  8,  15,
@@ -2918,7 +2970,9 @@ mar_print_char(winid window, int x, int y, char ch, int col)
 /************************* getlin *******************************/
 
 void
-Gem_getlin(const char *ques, char *input)
+Gem_getlin(ques, input)
+const char *ques;
+char *input;
 {
     OBJECT *z_ob = zz_oblist[LINEGET];
     int d_exit, length;
@@ -2966,7 +3020,8 @@ Gem_getlin(const char *ques, char *input)
 #define Dia_Init K_Init
 
 int
-Dia_Handler(XEVENT *xev)
+Dia_Handler(xev)
+XEVENT *xev;
 {
     int ev = xev->ev_mwich;
     char ch = (char) (xev->ev_mkreturn & 0x00FF);
@@ -3026,7 +3081,8 @@ mar_ask_direction()
 #define any_init M_Init
 
 static int
-any_handler(XEVENT *xev)
+any_handler(xev)
+XEVENT *xev;
 {
     int ev = xev->ev_mwich;
 
@@ -3060,7 +3116,8 @@ send_yn_esc(char ch)
 #define single_init K_Init
 
 static int
-single_handler(XEVENT *xev)
+single_handler(xev)
+XEVENT *xev;
 {
     int ev = xev->ev_mwich;
 
@@ -3089,7 +3146,9 @@ single_handler(XEVENT *xev)
 }
 
 char
-Gem_yn_function(const char *query, const char *resp, char def)
+Gem_yn_function(query, resp, def)
+const char *query, *resp;
+char def;
 {
     OBJECT *z_ob = zz_oblist[YNCHOICE];
     int d_exit, i, len;
@@ -3199,7 +3258,8 @@ Gem_yn_function(const char *query, const char *resp, char def)
  * This is an exact duplicate of copy_of() in X11/winmenu.c.
  */
 static char *
-mar_copy_of(const char *s)
+mar_copy_of(s)
+const char *s;
 {
     if (!s)
         s = nullstr;
@@ -3209,14 +3269,16 @@ mar_copy_of(const char *s)
 const char *strRP = "raw_print", *strRPB = "raw_print_bold";
 
 void
-mar_raw_print(const char *str)
+mar_raw_print(str)
+const char *str;
 {
     xalert(1, FAIL, X_ICN_INFO, NULL, APPL_MODAL, BUTTONS_CENTERED, TRUE,
            strRP, str, NULL);
 }
 
 void
-mar_raw_print_bold(const char *str)
+mar_raw_print_bold(str)
+const char *str;
 {
     char buf[BUFSZ];
 

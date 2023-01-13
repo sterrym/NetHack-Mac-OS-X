@@ -24,7 +24,9 @@ int width = 0, height = 0;
 int initflag;
 FILE *fp;
 int
-main(int argc, char *argv[])
+main(argc, argv)
+int argc;
+char *argv[];
 {
     int i;
     int row, col, planeno;

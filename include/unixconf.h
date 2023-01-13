@@ -1,5 +1,6 @@
-/* NetHack 3.6	unixconf.h	$NHDT-Date: 1447755973 2015/11/17 10:26:13 $  $NHDT-Branch: master $:$NHDT-Revision: 1.24 $ */
+/* NetHack 3.6	unixconf.h	$NHDT-Date: 1555361298 2019/04/15 20:48:18 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.42 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Pasi Kallinen, 2018. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #ifdef UNIX
@@ -36,7 +37,9 @@
 #define NETWORK        /* if running on a networked system */
                        /* e.g. Suns sharing a playground through NFS */
 /* #define SUNOS4 */   /* SunOS 4.x */
-/* #define LINUX */    /* Another Unix clone */
+#ifdef __linux__
+#define LINUX    /* Another Unix clone */
+#endif
 /* #define CYGWIN32 */ /* Unix on Win32 -- use with case sensitive defines */
 /* #define GENIX */    /* Yet Another Unix Clone */
 /* #define HISX */     /* Bull Unix for XPS Machines */
@@ -54,7 +57,9 @@
                         * the Makefile */
 #define TEXTCOLOR      /* Use System V r3.2 terminfo color support
                         * and/or ANSI color support on termcap systems
-                        * and/or X11 color */
+                        * and/or X11 color.  Note:  if you get compiler
+                        * warnings about 'has_colors()' being implicitly
+                        * declared, uncomment NEED_HAS_COLORS_DECL below. */
 #define POSIX_JOB_CONTROL /* use System V / Solaris 2.x / POSIX job control
                            * (e.g., VSUSP) */
 #define POSIX_TYPES /* use POSIX types for system calls and termios */
@@ -94,13 +99,8 @@
  *              Ralf Brown, 7/26/89 (from v2.3 hack of 10/10/88)
  */
 
-#if TARGET_OS_MAC
-#define NO_FILE_LINKS /* if no hard links */
-#define LOCKDIR "." /* where to put locks */
-#else
 /* #define NO_FILE_LINKS */                       /* if no hard links */
 /* #define LOCKDIR "/usr/games/lib/nethackdir" */ /* where to put locks */
-#endif /* TARGET_OS_MAC */
 
 /*
  * If you want the static parts of your playground on a read-only file
@@ -135,6 +135,11 @@
  */
 /* #define TIMED_DELAY */ /* usleep() */
 #endif
+#if defined(MACOSX) && !defined(TIMED_DELAY)
+#define TIMED_DELAY
+#endif
+
+/* #define AVOID_WIN_IOCTL */ /* ensure USE_WIN_IOCTL remains undefined */
 
 /*
  * If you define MAIL, then the player will be notified of new mail
@@ -193,8 +198,29 @@
 #endif
 #endif
 
+/* If SIMPLE_MAIL is defined, the mail spool file format is
+   "sender:message", one mail per line, and mails are
+   read within game, from demon-delivered mail scrolls.
+   The mail spool file will be deleted once the player
+   has read the message. */
+/* #define SIMPLE_MAIL */
+
+#ifndef MAILCKFREQ
+/* How often mail spool file is checked for new messages, in turns */
 #define MAILCKFREQ 50
+#endif
+
 #endif /* MAIL */
+
+/* If SERVER_ADMIN_MSG is defined and the file exists, players get
+   a message from the user defined in the file.  The file format
+   is "sender:message" all in one line. */
+/* #define SERVER_ADMIN_MSG "adminmsg" */
+#ifndef SERVER_ADMIN_MSG_CKFREQ
+/* How often admin message file is checked for new messages, in turns */
+#define SERVER_ADMIN_MSG_CKFREQ 25
+#endif
+
 
 /*
  * Some terminals or terminal emulators send two character sequence "ESC c"
@@ -212,7 +238,9 @@
 /* #define COMPRESS_OPTIONS "-q" */
 #endif
 
+#ifndef FCMASK
 #define FCMASK 0660 /* file creation mask */
+#endif
 
 /* fcntl(2) is a POSIX-portable call for manipulating file descriptors.
  * Comment out the USE_FCNTL if for some reason you have a strange
@@ -302,7 +330,7 @@
 #endif
 
 #if defined(BSD) || defined(ULTRIX)
-#if !defined(DGUX) && !defined(SUNOS4) && !defined(__APPLE__)
+#if !defined(DGUX) && !defined(SUNOS4)
 #define memcpy(d, s, n) bcopy(s, d, n)
 #define memcmp(s1, s2, n) bcmp(s2, s1, n)
 #endif
@@ -319,11 +347,14 @@
 #endif
 
 /* Use the high quality random number routines. */
-#if defined(BSD) || defined(LINUX) || defined(ULTRIX) || defined(CYGWIN32) \
-    || defined(RANDOM) || defined(__APPLE__)
-#define Rand() random()
-#else
-#define Rand() lrand48()
+/* the high quality random number routines */
+#ifndef USE_ISAAC64
+# if defined(BSD) || defined(LINUX) || defined(ULTRIX) || defined(CYGWIN32) \
+    || defined(RANDOM) || defined(MACOSX)
+#  define Rand() random()
+# else
+#  define Rand() lrand48()
+# endif
 #endif
 
 #ifdef TIMED_DELAY
@@ -334,6 +365,16 @@
 #define msleep(k) napms(k)
 #endif
 #endif
+
+/* Relevant for some systems which enable TEXTCOLOR:  some older versions
+   of curses (the run-time library optionally used by nethack's tty
+   interface in addition to its curses interface) supply 'has_colors()'
+   but corresponding <curses.h> doesn't declare it.  has_colors() is used
+   in unixtty.c by init_sco_cons() and init_linux_cons().  If the compiler
+   complains about has_colors() not being declared, try uncommenting
+   NEED_HAS_COLORS_DECL.  If the linker complains about has_colors not
+   being found, switch to ncurses() or update to newer version of curses. */
+/* #define NEED_HAS_COLORS_DECL */
 
 #ifdef hc /* older versions of the MetaWare High-C compiler define this */
 #ifdef __HC__
@@ -365,6 +406,24 @@
 #endif /* BSD || SVR4 */
 #endif /* LINUX */
 #endif /* GNOME_GRAPHICS */
+
+#ifdef MACOSX
+# define RUNTIME_PASTEBUF_SUPPORT
+#endif
+
+/*
+ * /dev/random is blocking on Linux, so there we default to /dev/urandom which
+ * should still be good enough.
+ * BSD systems usually have /dev/random that is supposed to be used.
+ * OSX is based on NetBSD kernel and has both /dev/random and /dev/urandom.
+ */
+#ifdef LINUX
+# define DEV_RANDOM "/dev/urandom"
+#else
+# if defined(BSD) || defined(MACOSX)
+#  define DEV_RANDOM "/dev/random"
+# endif
+#endif
 
 #endif /* UNIXCONF_H */
 #endif /* UNIX */

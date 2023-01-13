@@ -1,34 +1,33 @@
-/* NetHack 3.6	alloc.c	$NHDT-Date: 1446975460 2015/11/08 09:37:40 $  $NHDT-Branch: master $:$NHDT-Revision: 1.14 $ */
+/* NetHack 3.6	alloc.c	$NHDT-Date: 1454376505 2016/02/02 01:28:25 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.16 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2012. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* to get the malloc() prototype from system.h */
 #define ALLOC_C /* comment line for pre-compiled headers */
 /* since this file is also used in auxiliary programs, don't include all the
- * function declarations for all of nethack
- */
+   function declarations for all of nethack */
 #define EXTERN_H /* comment line for pre-compiled headers */
 #include "config.h"
 
-char *fmt_ptr(const genericptr);
+char *FDECL(fmt_ptr, (const genericptr));
 
 #ifdef MONITOR_HEAP
 #undef alloc
 #undef free
-extern void free(genericptr_t);
-static void heapmon_init();
+extern void FDECL(free, (genericptr_t));
+static void NDECL(heapmon_init);
 
 static FILE *heaplog = 0;
 static boolean tried_heaplog = FALSE;
 #endif
 
-long *alloc(unsigned int);
-extern void
-panic(const char *, ...)
-PRINTF_F(1, 2);
+long *FDECL(alloc, (unsigned int));
+extern void VDECL(panic, (const char *, ...)) PRINTF_F(1, 2);
 
 long *
-alloc(register unsigned int lth)
+alloc(lth)
+register unsigned int lth;
 {
 #ifdef LINT
     /*
@@ -77,7 +76,8 @@ static int ptrbufidx = 0;
 
 /* format a pointer for display purposes; returns a static buffer */
 char *
-fmt_ptr(const genericptr ptr)
+fmt_ptr(ptr)
+const genericptr ptr;
 {
     char *buf;
 
@@ -104,7 +104,10 @@ heapmon_init()
 }
 
 long *
-nhalloc(unsigned int lth, const char *file, int line)
+nhalloc(lth, file, line)
+unsigned int lth;
+const char *file;
+int line;
 {
     long *ptr = alloc(lth);
 
@@ -121,7 +124,10 @@ nhalloc(unsigned int lth, const char *file, int line)
 }
 
 void
-nhfree(genericptr_t ptr, const char *file, int line)
+nhfree(ptr, file, line)
+genericptr_t ptr;
+const char *file;
+int line;
 {
     if (!tried_heaplog)
         heapmon_init();
@@ -135,7 +141,10 @@ nhfree(genericptr_t ptr, const char *file, int line)
 /* strdup() which uses our alloc() rather than libc's malloc(),
    with caller tracking */
 char *
-nhdupstr(const char *string, const char *file, int line)
+nhdupstr(string, file, line)
+const char *string;
+const char *file;
+int line;
 {
     return strcpy((char *) nhalloc(strlen(string) + 1, file, line), string);
 }
@@ -147,7 +156,8 @@ nhdupstr(const char *string, const char *file, int line)
    not used when MONITOR_HEAP is enabled, but included unconditionally
    in case utility programs get built using a different setting for that */
 char *
-dupstr(const char *string)
+dupstr(string)
+const char *string;
 {
     return strcpy((char *) alloc(strlen(string) + 1), string);
 }

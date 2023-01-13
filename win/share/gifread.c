@@ -20,7 +20,7 @@
 #include "tile.h"
 
 #ifndef MONITOR_HEAP
-extern long *alloc(unsigned int);
+extern long *FDECL(alloc, (unsigned int));
 #endif
 
 #define PPM_ASSIGN(p, red, grn, blu) \
@@ -65,22 +65,24 @@ static int tiles_across, tiles_down, curr_tiles_across, curr_tiles_down;
 static pixel **image;
 static unsigned char input_code_size;
 
-static int GetDataBlock(FILE * fd, unsigned char *buf);
-static void DoExtension(FILE * fd, int label);
-static boolean ReadColorMap(FILE * fd, int number);
-static void read_header(FILE * fd);
-static int GetCode(FILE * fd, int code_size, int flag);
-static int LWZReadByte(FILE * fd, int flag, int input_code_size);
-static void ReadInterleavedImage(FILE * fd, int len, int height);
-static void ReadTileStrip(FILE * fd, int len);
+static int FDECL(GetDataBlock, (FILE * fd, unsigned char *buf));
+static void FDECL(DoExtension, (FILE * fd, int label));
+static boolean FDECL(ReadColorMap, (FILE * fd, int number));
+static void FDECL(read_header, (FILE * fd));
+static int FDECL(GetCode, (FILE * fd, int code_size, int flag));
+static int FDECL(LWZReadByte, (FILE * fd, int flag, int input_code_size));
+static void FDECL(ReadInterleavedImage, (FILE * fd, int len, int height));
+static void FDECL(ReadTileStrip, (FILE * fd, int len));
 
 /* These should be in gif.h, but there isn't one. */
-boolean fopen_gif_file(const char *, const char *);
-boolean read_gif_tile(pixel(*) [TILE_X]);
-int fclose_gif_file(void);
+boolean FDECL(fopen_gif_file, (const char *, const char *));
+boolean FDECL(read_gif_tile, (pixel(*) [TILE_X]));
+int NDECL(fclose_gif_file);
 
 static int
-GetDataBlock(FILE *fd, unsigned char *buf)
+GetDataBlock(fd, buf)
+FILE *fd;
+unsigned char *buf;
 {
     unsigned char count;
 
@@ -100,7 +102,9 @@ GetDataBlock(FILE *fd, unsigned char *buf)
 }
 
 static void
-DoExtension(FILE *fd, int label)
+DoExtension(fd, label)
+FILE *fd;
+int label;
 {
     static char buf[256];
     char *str;
@@ -165,7 +169,9 @@ DoExtension(FILE *fd, int label)
 }
 
 static boolean
-ReadColorMap(FILE *fd, int number)
+ReadColorMap(fd, number)
+FILE *fd;
+int number;
 {
     int i;
     unsigned char rgb[3];
@@ -188,7 +194,8 @@ ReadColorMap(FILE *fd, int number)
  * file, so if that image has a local colormap, overwrite the global one.
  */
 static void
-read_header(FILE *fd)
+read_header(fd)
+FILE *fd;
 {
     unsigned char buf[16];
     unsigned char c;
@@ -287,7 +294,10 @@ read_header(FILE *fd)
 }
 
 static int
-GetCode(FILE *fd, int code_size, int flag)
+GetCode(fd, code_size, flag)
+FILE *fd;
+int code_size;
+int flag;
 {
     static unsigned char buf[280];
     static int curbit, lastbit, done, last_byte;
@@ -328,7 +338,10 @@ GetCode(FILE *fd, int code_size, int flag)
 }
 
 static int
-LWZReadByte(FILE *fd, int flag, int input_code_size)
+LWZReadByte(fd, flag, input_code_size)
+FILE *fd;
+int flag;
+int input_code_size;
 {
     static int fresh = FALSE;
     int code, incode;
@@ -441,7 +454,9 @@ LWZReadByte(FILE *fd, int flag, int input_code_size)
 }
 
 static void
-ReadInterleavedImage(FILE *fd, int len, int height)
+ReadInterleavedImage(fd, len, height)
+FILE *fd;
+int len, height;
 {
     int v;
     int xpos = 0, ypos = 0, pass = 0;
@@ -493,7 +508,9 @@ fini:
 }
 
 static void
-ReadTileStrip(FILE *fd, int len)
+ReadTileStrip(fd, len)
+FILE *fd;
+int len;
 {
     int v;
     int xpos = 0, ypos = 0;
@@ -513,7 +530,9 @@ ReadTileStrip(FILE *fd, int len)
 }
 
 boolean
-fopen_gif_file(const char *filename, const char *type)
+fopen_gif_file(filename, type)
+const char *filename;
+const char *type;
 {
     int i;
 
@@ -580,7 +599,8 @@ fopen_gif_file(const char *filename, const char *type)
 
 /* Read a tile.  Returns FALSE when there are no more tiles */
 boolean
-read_gif_tile(pixel (*pixels)[TILE_X])
+read_gif_tile(pixels)
+pixel (*pixels)[TILE_X];
 {
     int i, j;
 
@@ -650,7 +670,9 @@ static char *std_args[] = { "tilemap", /* dummy argv[0] */
                             "objects.txt",  "other.gif",    "other.txt" };
 
 int
-main(int argc, char *argv[])
+main(argc, argv)
+int argc;
+char *argv[];
 {
     pixel pixels[TILE_Y][TILE_X];
 

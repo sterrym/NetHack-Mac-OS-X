@@ -1,11 +1,13 @@
-/* NetHack 3.6	were.c	$NHDT-Date: 1432512763 2015/05/25 00:12:43 $  $NHDT-Branch: master $:$NHDT-Revision: 1.18 $ */
+/* NetHack 3.6	were.c	$NHDT-Date: 1550524568 2019/02/18 21:16:08 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.23 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2011. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
 void
-were_change(register struct monst *mon)
+were_change(mon)
+register struct monst *mon;
 {
     if (!is_were(mon->data))
         return;
@@ -36,24 +38,27 @@ were_change(register struct monst *mon)
     } else if (!rn2(30) || Protection_from_shape_changers) {
         new_were(mon); /* change back into human form */
     }
+    /* update innate intrinsics (mainly Drain_resistance) */
+    set_uasmon(); /* new_were() doesn't do this */
 }
 
 int
-counter_were(int pm)
+counter_were(pm)
+int pm;
 {
     switch (pm) {
     case PM_WEREWOLF:
-        return (PM_HUMAN_WEREWOLF);
+        return PM_HUMAN_WEREWOLF;
     case PM_HUMAN_WEREWOLF:
-        return (PM_WEREWOLF);
+        return PM_WEREWOLF;
     case PM_WEREJACKAL:
-        return (PM_HUMAN_WEREJACKAL);
+        return PM_HUMAN_WEREJACKAL;
     case PM_HUMAN_WEREJACKAL:
-        return (PM_WEREJACKAL);
+        return PM_WEREJACKAL;
     case PM_WERERAT:
-        return (PM_HUMAN_WERERAT);
+        return PM_HUMAN_WERERAT;
     case PM_HUMAN_WERERAT:
-        return (PM_WERERAT);
+        return PM_WERERAT;
     default:
         return NON_PM;
     }
@@ -61,7 +66,8 @@ counter_were(int pm)
 
 /* convert monsters similar to werecritters into appropriate werebeast */
 int
-were_beastie(int pm)
+were_beastie(pm)
+int pm;
 {
     switch (pm) {
     case PM_WERERAT:
@@ -86,7 +92,8 @@ were_beastie(int pm)
 }
 
 void
-new_were(register struct monst *mon)
+new_were(mon)
+register struct monst *mon;
 {
     register int pm;
 
@@ -100,7 +107,7 @@ new_were(register struct monst *mon)
         pline("%s changes into a %s.", Monnam(mon),
               is_human(&mons[pm]) ? "human" : mons[pm].mname + 4);
 
-    set_mon_data(mon, &mons[pm], 0);
+    set_mon_data(mon, &mons[pm]);
     if (mon->msleeping || !mon->mcanmove) {
         /* transformation wakens and/or revitalizes */
         mon->msleeping = 0;
@@ -114,13 +121,16 @@ new_were(register struct monst *mon)
     possibly_unwield(mon, FALSE);
 }
 
-int were_summon(register struct permonst *ptr,
-                register boolean yours,
-                int *visible,/* number of visible helpers created */
-                char *genbuf) /* were-creature (even you) summons a horde */
+/* were-creature (even you) summons a horde */
+int
+were_summon(ptr, yours, visible, genbuf)
+struct permonst *ptr;
+boolean yours;
+int *visible; /* number of visible helpers created */
+char *genbuf;
 {
-    register int i, typ, pm = monsndx(ptr);
-    register struct monst *mtmp;
+    int i, typ, pm = monsndx(ptr);
+    struct monst *mtmp;
     int total = 0;
 
     *visible = 0;
@@ -130,20 +140,20 @@ int were_summon(register struct permonst *ptr,
         switch (pm) {
         case PM_WERERAT:
         case PM_HUMAN_WERERAT:
-            typ =
-                rn2(3) ? PM_SEWER_RAT : rn2(3) ? PM_GIANT_RAT : PM_RABID_RAT;
+            typ = rn2(3) ? PM_SEWER_RAT
+                         : rn2(3) ? PM_GIANT_RAT : PM_RABID_RAT;
             if (genbuf)
                 Strcpy(genbuf, "rat");
             break;
         case PM_WEREJACKAL:
         case PM_HUMAN_WEREJACKAL:
-            typ = PM_JACKAL;
+            typ = rn2(7) ? PM_JACKAL : rn2(3) ? PM_COYOTE : PM_FOX;
             if (genbuf)
                 Strcpy(genbuf, "jackal");
             break;
         case PM_WEREWOLF:
         case PM_HUMAN_WEREWOLF:
-            typ = rn2(5) ? PM_WOLF : PM_WINTER_WOLF;
+            typ = rn2(5) ? PM_WOLF : rn2(2) ? PM_WARG : PM_WINTER_WOLF;
             if (genbuf)
                 Strcpy(genbuf, "wolf");
             break;
@@ -168,30 +178,44 @@ you_were()
     char qbuf[QBUFSZ];
     boolean controllable_poly = Polymorph_control && !(Stunned || Unaware);
 
-    if (Unchanging || (u.umonnum == u.ulycn))
+    if (Unchanging || u.umonnum == u.ulycn)
         return;
     if (controllable_poly) {
         /* `+4' => skip "were" prefix to get name of beast */
         Sprintf(qbuf, "Do you want to change into %s?",
                 an(mons[u.ulycn].mname + 4));
-        if (yn(qbuf) == 'n')
+        if (!paranoid_query(ParanoidWerechange, qbuf))
             return;
     }
     (void) polymon(u.ulycn);
 }
 
 void
-you_unwere(boolean purify)
+you_unwere(purify)
+boolean purify;
 {
     boolean controllable_poly = Polymorph_control && !(Stunned || Unaware);
 
     if (purify) {
         You_feel("purified.");
-        u.ulycn = NON_PM; /* cure lycanthropy */
+        set_ulycn(NON_PM); /* cure lycanthropy */
     }
     if (!Unchanging && is_were(youmonst.data)
-        && (!controllable_poly || yn("Remain in beast form?") == 'n'))
+        && (!controllable_poly
+            || !paranoid_query(ParanoidWerechange, "Remain in beast form?")))
         rehumanize();
+    else if (is_were(youmonst.data) && !u.mtimedone)
+        u.mtimedone = rn1(200, 200); /* 40% of initial were change */
+}
+
+/* lycanthropy is being caught or cured, but no shape change is involved */
+void
+set_ulycn(which)
+int which;
+{
+    u.ulycn = which;
+    /* add or remove lycanthrope's innate intrinsics (Drain_resistance) */
+    set_uasmon();
 }
 
 /*were.c*/

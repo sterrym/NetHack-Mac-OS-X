@@ -1,5 +1,6 @@
-/* NetHack 3.6	vmsunix.c	$NHDT-Date: 1432512790 2015/05/25 00:13:10 $  $NHDT-Branch: master $:$NHDT-Revision: 1.14 $ */
+/* NetHack 3.6	vmsunix.c	$NHDT-Date: 1449801743 2015/12/11 02:42:23 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.15 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2011. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* This file implements things from unixunix.c, plus related stuff */
@@ -24,36 +25,37 @@
 
 extern int debuggable; /* defined in vmsmisc.c */
 
-extern void lib$signal(unsigned, ...);
+extern void VDECL(lib$signal, (unsigned, ...));
 extern unsigned long sys$setprv();
 extern unsigned long lib$getdvi(), lib$getjpi(), lib$spawn(), lib$attach();
 extern unsigned long smg$init_term_table_by_type(), smg$del_term_table();
-#define vms_ok(sts) ((sts) &1) /* odd => success */
+#define vms_ok(sts) ((sts) & 1) /* odd => success */
 
 /* this could be static; it's only used within this file;
    it won't be used at all if C_LIB$INTIALIZE gets commented out below,
    so make it global so that compiler won't complain that it's not used */
-int vmsexeini(const void *, const void *, const unsigned char *);
+int FDECL(vmsexeini, (const void *, const void *, const unsigned char *));
 
-static int veryold(int);
-static char *verify_term(void);
+static int FDECL(veryold, (int));
+static char *NDECL(verify_term);
 #if defined(SHELL) || defined(SUSPEND)
-static void hack_escape(boolean, const char *);
-static void hack_resume(boolean);
+static void FDECL(hack_escape, (BOOLEAN_P, const char *));
+static void FDECL(hack_resume, (BOOLEAN_P));
 #endif
 
 static int
-veryold(int fd)
+veryold(fd)
+int fd;
 {
     register int i;
     time_t date;
     struct stat buf;
 
     if (fstat(fd, &buf))
-        return (0); /* cannot get status */
+        return 0; /* cannot get status */
 #ifndef INSURANCE
     if (buf.st_size != sizeof(int))
-        return (0); /* not an xlock file */
+        return 0; /* not an xlock file */
 #endif
     (void) time(&date);
     if (date - buf.st_mtime < 3L * 24L * 60L * 60L) { /* recent */
@@ -80,8 +82,8 @@ veryold(int fd)
     }
     set_levelfile_name(lock, 0);
     if (delete (lock))
-        return (0); /* cannot remove it */
-    return (1);     /* success! */
+        return 0; /* cannot remove it */
+    return 1;     /* success! */
 }
 
 void
@@ -152,7 +154,8 @@ gotlock:
     }
 }
 
-void regularize(register char *s) /* normalize file name */
+void regularize(s) /* normalize file name */
+register char *s;
 {
     register char *lp;
 
@@ -165,7 +168,7 @@ void regularize(register char *s) /* normalize file name */
 int
 vms_getuid()
 {
-    return (getgid() << 16) | getuid();
+    return ((getgid() << 16) | getuid());
 }
 
 #ifndef FAB$C_STMLF
@@ -173,7 +176,8 @@ vms_getuid()
 #endif
 /* check whether the open file specified by `fd' is in stream-lf format */
 boolean
-file_is_stmlf(int fd)
+file_is_stmlf(fd)
+int fd;
 {
     int rfm;
     struct stat buf;
@@ -186,7 +190,7 @@ file_is_stmlf(int fd)
 #else
     rfm = buf.st_fab_rfm;
 #endif
-    return rfm == FAB$C_STMLF;
+    return (boolean) (rfm == FAB$C_STMLF);
 }
 
 /*------*/
@@ -201,7 +205,10 @@ file_is_stmlf(int fd)
 
 /* vms_define() - assign a value to a logical name */
 int
-vms_define(const char *name, const char *value, int flag)
+vms_define(name, value, flag)
+const char *name;
+const char *value;
+int flag;
 {
     struct dsc {
         unsigned short len, mbz;
@@ -244,7 +251,8 @@ vms_define(const char *name, const char *value, int flag)
 
 /* vms_putenv() - create or modify an environment value */
 int
-vms_putenv(const char *string)
+vms_putenv(string)
+const char *string;
 {
     char name[ENVSIZ + 1], value[ENVSIZ + 1], *p; /* [255+1] */
 
@@ -296,7 +304,7 @@ verify_term()
             /* strip trailing blanks */
             while (p > smgdevtyp && *--p == ' ')
                 *p = '\0';
-            /* (void)smg$del_term_table(); */
+            /* (void) smg$del_term_table(); */
             term = smgdevtyp;
         }
     }
@@ -367,7 +375,9 @@ privon()
 
 #if defined(SHELL) || defined(SUSPEND)
 static void
-hack_escape(boolean screen_manip, const char *msg_str)
+hack_escape(screen_manip, msg_str)
+boolean screen_manip;
+const char *msg_str;
 {
     if (screen_manip)
         suspend_nhwindows(msg_str);  /* clear screen, reset terminal, &c */
@@ -376,7 +386,8 @@ hack_escape(boolean screen_manip, const char *msg_str)
 }
 
 static void
-hack_resume(boolean screen_manip)
+hack_resume(screen_manip)
+boolean screen_manip;
 {
     (void) signal(SIGINT, (SIG_RET_TYPE) done1);
     if (wizard)
@@ -388,9 +399,9 @@ hack_resume(boolean screen_manip)
 
 #ifdef SHELL
 unsigned long dosh_pid = 0, /* this should cover any interactive escape */
-    mail_pid = 0;           /* this only covers the last mail or phone; */
-/*(mail & phone commands aren't expected to leave any process hanging
- * around)*/
+              mail_pid = 0; /* this only covers the last mail or phone;
+                               (mail & phone commands aren't expected to
+                               leave any process hanging around) */
 
 int
 dosh()
@@ -398,22 +409,22 @@ dosh()
     return vms_doshell("", TRUE); /* call for interactive child process */
 }
 
-/* vms_doshell -- called by dosh() and readmail() */
-
-/* If execstring is not a null string, then it will be executed in a spawned
+/* vms_doshell -- called by dosh() and readmail()
+ *
+ * If execstring is not a null string, then it will be executed in a spawned
+ * subprocess, which will then return.  It is for handling mail or phone
+ * interactive commands, which are only available if both MAIL and SHELL are
+ * #defined, but we don't bother making the support code conditionalized on
+ * MAIL here, just on SHELL being enabled.
+ *
+ * Normally, all output from this interaction will be 'piped' to the user's
+ * screen (SYS$OUTPUT).  However, if 'screenoutput' is set to FALSE, output
+ * will be piped into oblivion.  Used for silent phone call rejection.
  */
-/* subprocess, which will then return.  It is for handling mail or phone */
-/* interactive commands, which are only available if both MAIL and SHELL are
- */
-/* #defined, but we don't bother making the support code conditionalized on */
-/* MAIL here, just on SHELL being enabled. */
-
-/* Normally, all output from this interaction will be 'piped' to the user's */
-/* screen (SYS$OUTPUT).  However, if 'screenoutput' is set to FALSE, output */
-/* will be piped into oblivion.  Used for silent phone call rejection. */
-
 int
-vms_doshell(const char *execstring, boolean screenoutput)
+vms_doshell(execstring, screenoutput)
+const char *execstring;
+boolean screenoutput;
 {
     unsigned long status, new_pid, spawnflags = 0;
     struct dsc$descriptor_s comstring, *command, *inoutfile = 0;
@@ -437,9 +448,8 @@ vms_doshell(const char *execstring, boolean screenoutput)
     }
 
     hack_escape(screenoutput,
-                command ? (const char *) 0 : "  \"Escaping\" into a "
-                                             "subprocess; LOGOUT to "
-                                             "reconnect and resume play. ");
+                command ? (const char *) 0
+ : "  \"Escaping\" into a subprocess; LOGOUT to reconnect and resume play. ");
 
     if (command || !dosh_pid || !vms_ok(status = lib$attach(&dosh_pid))) {
 #ifdef CHDIR
@@ -471,7 +481,7 @@ vms_doshell(const char *execstring, boolean screenoutput)
 
 #ifdef SUSPEND
 /* dosuspend() -- if we're a subprocess, attach to our parent;
- *		if not, there's nothing we can do.
+ *                if not, there's nothing we can do.
  */
 int
 dosuspend()
@@ -482,15 +492,15 @@ dosuspend()
     if (owner_pid == -1) /* need to check for parent */
         owner_pid = getppid();
     if (owner_pid == 0) {
-        pline("  No parent process.  Use '!' to Spawn, 'S' to Save,  or 'Q' "
-              "to Quit. ");
+        pline(
+ "  No parent process.  Use '!' to Spawn, 'S' to Save, or '#quit' to Quit. ");
         mark_synch();
         return 0;
     }
 
     /* restore normal tty environment & clear screen */
-    hack_escape(1, " Attaching to parent process; use the ATTACH command to "
-                   "resume play. ");
+    hack_escape(1,
+     " Attaching to parent process; use the ATTACH command to resume play. ");
 
     status = lib$attach(&owner_pid); /* connect to parent */
 
@@ -508,10 +518,13 @@ dosuspend()
 /* this would fit better in vmsfiles.c except that that gets linked
    with the utility programs and we don't want this code there */
 
-static void savefile(const char *, int, int *, char ***);
+static void FDECL(savefile, (const char *, int, int *, char ***));
 
 static void
-savefile(const char *name, int indx, int *asize, char ***array)
+savefile(name, indx, asize, array)
+const char *name;
+int indx, *asize;
+char ***array;
 {
     char **newarray;
     int i, oldsize;
@@ -520,7 +533,7 @@ savefile(const char *name, int indx, int *asize, char ***array)
     while (indx >= *asize - 1) {
         oldsize = *asize;
         *asize += 5;
-        newarray = (char **) alloc(*asize * sizeof(char *));
+        newarray = (char **) alloc(*asize * sizeof (char *));
         /* poor man's realloc() */
         for (i = 0; i < *asize; ++i)
             newarray[i] = (i < oldsize) ? (*array)[i] : 0;
@@ -528,7 +541,7 @@ savefile(const char *name, int indx, int *asize, char ***array)
             free((genericptr_t) *array);
         *array = newarray;
     }
-    (*array)[indx] = strcpy((char *) alloc(strlen(name) + 1), name);
+    (*array)[indx] = dupstr(name);
 }
 
 struct dsc {
@@ -536,14 +549,14 @@ struct dsc {
     char *adr;
 };                             /* descriptor */
 typedef unsigned long vmscond; /* vms condition value */
-vmscond lib$find_file
-              (const struct dsc *, struct dsc *, genericptr *);
-vmscond lib$find_file_end(void **);
+vmscond FDECL(lib$find_file, (const struct dsc *, struct dsc *, genericptr *));
+vmscond FDECL(lib$find_file_end, (void **));
 
 /* collect a list of character names from all save files for this player */
 int
-vms_get_saved_games(const char *savetemplate, /* wildcarded save file name in native VMS format */
-                    char ***outarray)
+vms_get_saved_games(savetemplate, outarray)
+const char *savetemplate; /* wildcarded save file name in native VMS format */
+char ***outarray;
 {
     struct dsc in, out;
     unsigned short l;
@@ -581,22 +594,19 @@ vms_get_saved_games(const char *savetemplate, /* wildcarded save file name in na
 /* nethack has detected an internal error; try to give a trace of call stack
  */
 void
-vms_traceback(int how) /* 1: exit after traceback; 2: stay in debugger */
+vms_traceback(how)
+int how; /* 1: exit after traceback; 2: stay in debugger */
 {
     /* assumes that a static initializer applies to the first union
        field and that no padding will be placed between len and str */
     union dbgcmd {
         struct ascic {
             unsigned char len; /* 8-bit length prefix */
-            char
-                str[79]; /* could be up to 255, but we don't need that much */
+            char str[79]; /* could be up to 255, but we don't need so much */
         } cmd_fields;
         char cmd[1 + 79];
     };
-#define DBGCMD(arg)                                  \
-    {                                                \
-        (unsigned char)(sizeof arg - sizeof ""), arg \
-    }
+#define DBGCMD(arg) { (unsigned char) (sizeof arg - sizeof ""), arg }
     static union dbgcmd dbg[3] = {
         /* prologue for less verbose feedback (when combined with
            $ define/User_mode dbg$output _NL: ) */
@@ -656,16 +666,16 @@ vms_traceback(int how) /* 1: exit after traceback; 2: stay in debugger */
  * It all takes place before nethack even starts, and sets up
  * `debuggable' to control possible use of lib$signal(SS$_DEBUG).
  */
-typedef unsigned (*condition_handler)(unsigned *, unsigned *);
-extern condition_handler lib$establish(condition_handler);
-extern unsigned lib$sig_to_ret(unsigned *, unsigned *);
+typedef unsigned FDECL((*condition_handler), (unsigned *, unsigned *));
+extern condition_handler FDECL(lib$establish, (condition_handler));
+extern unsigned FDECL(lib$sig_to_ret, (unsigned *, unsigned *));
 
 /* SYS$IMGSTA() is not documented:  if called at image startup, it controls
    access to the debugger; fortunately, the linker knows now to find it
    without needing to link against sys.stb (VAX) or use LINK/System (Alpha).
    We won't be calling it, but we indirectly check whether it has already
    been called by checking if nethack.exe has it as a transfer address. */
-extern unsigned sys$imgsta();
+extern unsigned FDECL(sys$imgsta, ());
 
 /*
  * These structures are in header files contained in sys$lib_c.tlb,
@@ -692,47 +702,49 @@ struct eiha { /* extended image header activation block, $EIHADEF */
 };
 
 /*
- *	We're going to use lib$initialize, not because we need or
- *	want to be called before main(), but because one of the
- *	arguments passed to a lib$initialize callback is a pointer
- *	to the image header (somewhat complex data structure which
- *	includes the memory location(s) of where to start executing)
- *	of the program being initialized.  It comes in two flavors,
- *	one used by VAX and the other by Alpha and IA64.
+ *      We're going to use lib$initialize, not because we need or
+ *      want to be called before main(), but because one of the
+ *      arguments passed to a lib$initialize callback is a pointer
+ *      to the image header (somewhat complex data structure which
+ *      includes the memory location(s) of where to start executing)
+ *      of the program being initialized.  It comes in two flavors,
+ *      one used by VAX and the other by Alpha and IA64.
  *
- *	An image can have up to three transfer addresses; one of them
- *	decides whether to run under debugger control (RUN/Debug, or
- *	LINK/Debug + plain RUN), another handles lib$initialize calls
- *	if that's used, and the last is to start the program itself
- *	(a jacket built around main() for code compiled with DEC C).
- *	They aren't always all present; some might be zero/null.
- *	A shareable image (pre-linked library) usually won't have any,
- *	but can have a separate initializer (not of interest here).
+ *      An image can have up to three transfer addresses; one of them
+ *      decides whether to run under debugger control (RUN/Debug, or
+ *      LINK/Debug + plain RUN), another handles lib$initialize calls
+ *      if that's used, and the last is to start the program itself
+ *      (a jacket built around main() for code compiled with DEC C).
+ *      They aren't always all present; some might be zero/null.
+ *      A shareable image (pre-linked library) usually won't have any,
+ *      but can have a separate initializer (not of interest here).
  *
- *	The transfer targets don't have fixed slots but do occur in a
- *	particular order:
- *	              link      link     lib$initialize lib$initialize
- *	    sharable  /noTrace  /Trace    + /noTrace     + /Traceback
- *	1:  (none)    main      debugger  init-handler   debugger
- *	2:                      main      main           init-handler
- *	3:                                               main
+ *      The transfer targets don't have fixed slots but do occur in a
+ *      particular order:
+ *                    link      link     lib$initialize lib$initialize
+ *          sharable  /noTrace  /Trace    + /noTrace     + /Traceback
+ *      1:  (none)    main      debugger  init-handler   debugger
+ *      2:                      main      main           init-handler
+ *      3:                                               main
  *
- *	We check whether the first transfer address is SYS$IMGSTA().
- *	If it is, the debugger should be available to catch SS$_DEBUG
- *	exception even when we don't start up under debugger control.
- *	One extra complication:  if we *do* start up under debugger
- *	control, the first address in the in-memory copy of the image
- *	header will be changed from sys$imgsta() to a value in system
- *	space.  [I don't know how to reference that one symbolically,
- *	so I'm going to treat any address in system space as meaning
- *	that the debugger is available.  pr]
+ *      We check whether the first transfer address is SYS$IMGSTA().
+ *      If it is, the debugger should be available to catch SS$_DEBUG
+ *      exception even when we don't start up under debugger control.
+ *      One extra complication:  if we *do* start up under debugger
+ *      control, the first address in the in-memory copy of the image
+ *      header will be changed from sys$imgsta() to a value in system
+ *      space.  [I don't know how to reference that one symbolically,
+ *      so I'm going to treat any address in system space as meaning
+ *      that the debugger is available.  pr]
  */
 
 /* called via lib$initialize during image activation:  before main() and
    with magic arguments; C run-time library won't be initialized yet */
 /*ARGSUSED*/
 int
-vmsexeini(const void *inirtn_unused, const void *clirtn_unused, const unsigned char *imghdr)
+vmsexeini(inirtn_unused, clirtn_unused, imghdr)
+const void *inirtn_unused, *clirtn_unused;
+const unsigned char *imghdr;
 {
     const struct ihd *vax_hdr;
     const struct eihd *axp_hdr;
@@ -741,14 +753,15 @@ vmsexeini(const void *inirtn_unused, const void *clirtn_unused, const unsigned c
     unsigned long trnadr1;
 
     (void) lib$establish(lib$sig_to_ret); /* set up condition handler */
-                                          /*
-                                           * Check the first of three transfer addresses to see whether
-                                           * it is SYS$IMGSTA().  Note that they come from a file,
-                                           * where they reside as longword or quadword integers rather
-                                           * than function pointers.  (Basically just a C type issue;
-                                           * casting back and forth between integer and pointer doesn't
-                                           * change any bits for the architectures VMS runs on.)
-                                           */
+
+    /*
+     * Check the first of three transfer addresses to see whether
+     * it is SYS$IMGSTA().  Note that they come from a file,
+     * where they reside as longword or quadword integers rather
+     * than function pointers.  (Basically just a C type issue;
+     * casting back and forth between integer and pointer doesn't
+     * change any bits for the architectures VMS runs on.)
+     */
     debuggable = 0;
     /* start with a guess rather than bothering to figure out architecture */
     vax_hdr = (struct ihd *) imghdr;
@@ -829,10 +842,11 @@ const unsigned long lib$initialize[] = { (unsigned long) (void *) vmsexeini };
 #ifdef __DECC
 #pragma extern_model restore /* pop previous mode */
 #endif
-/*	We also need to link against a linker options file containing:
+/*      We also need to link against a linker options file containing:
 sys$library:starlet.olb/Include=(lib$initialize)
 psect_attr=lib$initialize, Con,Usr,noPic,Rel,Gbl,noShr,noExe,Rd,noWrt,Long
  */
 #endif /* C_LIB$INITIALIZE */
 /* End of debugger hackery. */
+
 /*vmsunix.c*/

@@ -24,7 +24,8 @@
 #include <dlfcn.h>
 
 static int
-real_getresuid(uid_t *ruid, uid_t *euid, uid_t *suid)
+real_getresuid(ruid, euid, suid)
+uid_t *ruid, *euid, *suid;
 {
     int (*f)(uid_t *, uid_t *, uid_t *); /* getresuid signature */
 
@@ -32,11 +33,12 @@ real_getresuid(uid_t *ruid, uid_t *euid, uid_t *suid)
     if (!f)
         return -1;
 
-    return f(ruid, euid, suid);
+    return (*f)(ruid, euid, suid);
 }
 
 static int
-real_getresgid(gid_t *rgid, gid_t *egid, gid_t *sgid)
+real_getresgid(rgid, egid, sgid)
+gid_t *rgid, *egid, *sgid;
 {
     int (*f)(gid_t *, gid_t *, gid_t *); /* getresgid signature */
 
@@ -44,7 +46,7 @@ real_getresgid(gid_t *rgid, gid_t *egid, gid_t *sgid)
     if (!f)
         return -1;
 
-    return f(rgid, egid, sgid);
+    return (*f)(rgid, egid, sgid);
 }
 
 #else
@@ -53,7 +55,8 @@ real_getresgid(gid_t *rgid, gid_t *egid, gid_t *sgid)
 #ifdef SYS_getresuid
 
 static int
-real_getresuid(uid_t *ruid, uid_t *euid, uid_t *suid)
+real_getresuid(ruid, euid, suid)
+uid_t *ruid, *euid, *suid;
 {
     return syscall(SYS_getresuid, ruid, euid, suid);
 }
@@ -65,11 +68,13 @@ real_getresuid(uid_t *ruid, uid_t *euid, uid_t *suid)
 #endif /* SVR4 */
 
 static int
-real_getresuid(uid_t *ruid, uid_t *euid, uid_t *suid)
+real_getresuid(ruid, euid, suid)
+uid_t *ruid, *euid, *suid;
 {
     int retval;
     int pfd[2];
     struct stat st;
+
     if (pipe(pfd))
         return -1;
     retval = fstat(pfd[0], &st);
@@ -88,7 +93,8 @@ real_getresuid(uid_t *ruid, uid_t *euid, uid_t *suid)
 #ifdef SYS_getresgid
 
 static int
-real_getresgid(gid_t *rgid, gid_t *egid, gid_t *sgid)
+real_getresgid(rgid, egid, sgid)
+gid_t *rgid, *egid, *sgid;
 {
     return syscall(SYS_getresgid, rgid, egid, sgid);
 }
@@ -96,11 +102,13 @@ real_getresgid(gid_t *rgid, gid_t *egid, gid_t *sgid)
 #else /* SYS_getresgid */
 
 static int
-real_getresgid(gid_t *rgid, gid_t *egid, gid_t *sgid)
+real_getresgid(rgid, egid, sgid)
+gid_t *rgid, *egid, *sgid;
 {
     int retval;
     int pfd[2];
     struct stat st;
+
     if (pipe(pfd))
         return -1;
     retval = fstat(pfd[0], &st);
@@ -125,7 +133,8 @@ static unsigned int hiding_privileges = 0;
  */
 
 int
-hide_privileges(boolean flag)
+hide_privileges(flag)
+boolean flag;
 {
     if (flag)
         hiding_privileges++;
@@ -135,9 +144,11 @@ hide_privileges(boolean flag)
 }
 
 int
-nh_getresuid(uid_t *ruid, uid_t *euid, uid_t *suid)
+nh_getresuid(ruid, euid, suid)
+uid_t *ruid, *euid, *suid;
 {
     int retval = real_getresuid(ruid, euid, suid);
+
     if (!retval && hiding_privileges)
         *euid = *suid = *ruid;
     return retval;
@@ -147,6 +158,7 @@ uid_t
 nh_getuid()
 {
     uid_t ruid, euid, suid;
+
     (void) real_getresuid(&ruid, &euid, &suid);
     return ruid;
 }
@@ -155,6 +167,7 @@ uid_t
 nh_geteuid()
 {
     uid_t ruid, euid, suid;
+
     (void) real_getresuid(&ruid, &euid, &suid);
     if (hiding_privileges)
         euid = ruid;
@@ -162,9 +175,11 @@ nh_geteuid()
 }
 
 int
-nh_getresgid(gid_t *rgid, gid_t *egid, gid_t *sgid)
+nh_getresgid(rgid, egid, sgid)
+gid_t *rgid, *egid, *sgid;
 {
     int retval = real_getresgid(rgid, egid, sgid);
+
     if (!retval && hiding_privileges)
         *egid = *sgid = *rgid;
     return retval;
@@ -174,6 +189,7 @@ gid_t
 nh_getgid()
 {
     gid_t rgid, egid, sgid;
+
     (void) real_getresgid(&rgid, &egid, &sgid);
     return rgid;
 }
@@ -182,6 +198,7 @@ gid_t
 nh_getegid()
 {
     gid_t rgid, egid, sgid;
+
     (void) real_getresgid(&rgid, &egid, &sgid);
     if (hiding_privileges)
         egid = rgid;
@@ -192,7 +209,8 @@ nh_getegid()
 
 #ifdef GNOME_GRAPHICS
 int
-hide_privileges(boolean flag)
+hide_privileges(flag)
+boolean flag;
 {
     return 0;
 }

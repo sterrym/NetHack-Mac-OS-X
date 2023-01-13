@@ -90,10 +90,11 @@ static XtResource resources[] = {
 
 /* ARGSUSED */
 static void
-no_op(Widget w,             /* unused */
-      XEvent *event,        /* unused */
-      String *params,       /* unused */
-      Cardinal *num_params) /* unused */
+no_op(w, event, params, num_params)
+Widget w;             /* unused */
+XEvent *event;        /* unused */
+String *params;       /* unused */
+Cardinal *num_params; /* unused */
 {
     nhUse(w);
     nhUse(event);
@@ -112,21 +113,23 @@ static char translations[] = "<BtnDown>:     input() \
 
 /* ARGSUSED */
 static void
-Redisplay(Widget w,
-          XEvent *event,
-          Region region) /* unused */
+Redisplay(w, event, region)
+Widget w;
+XEvent *event;
+Region region; /* unused */
 {
     nhUse(region);
 
     /* This isn't correct - we need to call the callback with region. */
-    XtCallCallbacks(w, XtNexposeCallback, (caddr_t) event);
+    XtCallCallbacks(w, XtNexposeCallback, (XtPointer)event);
 }
 
 /* ARGSUSED */
 static void
-Resize(Widget w)
+Resize(w)
+Widget w;
 {
-    XtCallCallbacks(w, XtNresizeCallback, (caddr_t) 0);
+    XtCallCallbacks(w, XtNresizeCallback, (XtPointer) 0);
 }
 
 WindowClassRec windowClassRec = {
@@ -170,13 +173,15 @@ WindowClassRec windowClassRec = {
 WidgetClass windowWidgetClass = (WidgetClass) &windowClassRec;
 
 Font
-WindowFont(Widget w)
+WindowFont(w)
+Widget w;
 {
     return ((WindowWidget) w)->window.font->fid;
 }
 
 XFontStruct *
-WindowFontStruct(Widget w)
+WindowFontStruct(w)
+Widget w;
 {
     return ((WindowWidget) w)->window.font;
 }

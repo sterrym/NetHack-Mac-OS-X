@@ -11,7 +11,7 @@
 
 extern char orgdir[PATHLEN]; /* also used in pcsys.c, amidos.c */
 
-extern void nethack_exit(int);
+extern void FDECL(nethack_exit, (int));
 static TCHAR *_get_cmd_arg(TCHAR *pCmdLine);
 
 // Global Variables:
@@ -24,7 +24,7 @@ static void win_hack_init(int, char **);
 static void __cdecl mswin_moveloop(void *);
 static BOOL setMapTiles(const char *fname);
 
-extern boolean pcmain(int, char **);
+extern boolean FDECL(pcmain, (int, char **));
 
 #define MAX_CMDLINE_PARAM 255
 
@@ -237,19 +237,20 @@ gotlock:
 }
 
 /* misc functions */
-void error(const char *s, ...)
+void error
+VA_DECL(const char *, s)
 {
-    va_list the_args;
     TCHAR wbuf[1024];
     char buf[1024];
     DWORD last_error = GetLastError();
 
-    va_start(the_args, s);
+    VA_START(s);
+    VA_INIT(s, const char *);
     /* error() may get called before tty is initialized */
     if (iflags.window_inited)
         end_screen();
 
-    vsprintf(buf, s, the_args);
+    vsprintf(buf, s, VA_ARGS);
     NH_A2W(buf, wbuf, sizeof(wbuf) / sizeof(wbuf[0]));
     if (last_error > 0) {
         LPVOID lpMsgBuf;
@@ -269,7 +270,7 @@ void error(const char *s, ...)
         }
     }
     MessageBox(NULL, wbuf, TEXT("Error"), MB_OK | MB_ICONERROR);
-    va_end(the_args);
+    VA_END();
     exit(EXIT_FAILURE);
 }
 
@@ -322,7 +323,8 @@ _get_cmd_arg(TCHAR *pCmdLine)
  * Strip out troublesome file system characters.
  */
 
-void nt_regularize(register char *s) /* normalize file name */
+void nt_regularize(s) /* normalize file name */
+register char *s;
 {
     register unsigned char *lp;
 
@@ -342,7 +344,8 @@ win32_abort()
 }
 
 void
-append_port_id(char *buf)
+append_port_id(buf)
+char *buf;
 {
     char *portstr = PORT_CE_PLATFORM " " PORT_CE_CPU;
     Sprintf(eos(buf), " %s", portstr);

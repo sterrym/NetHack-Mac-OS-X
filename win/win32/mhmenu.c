@@ -2,6 +2,7 @@
 /* Copyright (c) Alex Kompel, 2002                                */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include "win10.h"
 #include "winMS.h"
 #include <assert.h>
 #include "resource.h"
@@ -22,14 +23,17 @@
 #define DEFAULT_COLOR_BG_MENU COLOR_WINDOW
 #define DEFAULT_COLOR_FG_MENU COLOR_WINDOWTEXT
 
+#define CHECK_WIDTH 16
+#define CHECK_HEIGHT 16
+
 typedef struct mswin_menu_item {
     int glyph;
     ANY_P identifier;
-    char accelerator;
-    char group_accel;
+    CHAR_P accelerator;
+    CHAR_P group_accel;
     int attr;
     char str[NHMENU_STR_SIZE];
-    boolean presel;
+    BOOLEAN_P presel;
     int count;
     BOOL has_focus;
 } NHMenuItem, *PNHMenuItem;
@@ -61,6 +65,7 @@ typedef struct mswin_nethack_menu_window {
     HBITMAP bmpChecked;
     HBITMAP bmpCheckedCount;
     HBITMAP bmpNotChecked;
+    HDC bmpDC;
 
     BOOL is_active;
 } NHMenuWindow, *PNHMenuWindow;
@@ -119,15 +124,7 @@ mswin_init_menu_window(int type)
     /* Set window caption */
     SetWindowText(ret, "Menu/Text");
 
-    if (!GetNHApp()->bWindowsLocked) {
-        DWORD style;
-        style = GetWindowLong(ret, GWL_STYLE);
-        style |= WS_CAPTION;
-        SetWindowLong(ret, GWL_STYLE, style);
-        SetWindowPos(ret, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE
-                                                | SWP_NOZORDER
-                                                | SWP_FRAMECHANGED);
-    }
+    mswin_apply_window_style(ret);
 
     SetMenuType(ret, type);
     return ret;
@@ -155,7 +152,7 @@ mswin_menu_window_select_menu(HWND hWnd, int how, MENU_ITEM_P **_selected,
         activate = TRUE;
     }
 
-    data->is_active = activate;
+    data->is_active = activate && !GetNHApp()->regNetHackMode;
 
     /* set menu type */
     SetMenuListType(hWnd, how);
@@ -168,16 +165,17 @@ mswin_menu_window_select_menu(HWND hWnd, int how, MENU_ITEM_P **_selected,
         ap = data->menu.gacc;
         for (i = 0; i < data->menu.size; i++) {
             if (data->menu.items[i].accelerator != 0) {
-                next_char = (char) (data->menu.items[i].accelerator + 1);
+                if (isalpha(data->menu.items[i].accelerator)) {
+                    next_char = (char)(data->menu.items[i].accelerator + 1);
+                }
             } else if (NHMENU_IS_SELECTABLE(data->menu.items[i])) {
-                if ((next_char >= 'a' && next_char <= 'z')
-                    || (next_char >= 'A' && next_char <= 'Z')) {
+                if (isalpha(next_char)) {
                     data->menu.items[i].accelerator = next_char;
                 } else {
                     if (next_char > 'z')
                         next_char = 'A';
                     else if (next_char > 'Z')
-                        break;
+                        next_char = 'a';
 
                     data->menu.items[i].accelerator = next_char;
                 }
@@ -254,21 +252,34 @@ mswin_menu_window_select_menu(HWND hWnd, int how, MENU_ITEM_P **_selected,
         data->is_active = FALSE;
         LayoutMenu(hWnd); // hide dialog buttons
         mswin_popup_destroy(hWnd);
+
+        /* If we just used the permanent inventory window to pick something,
+         * set the menu back to its display inventory state.
+         */
+        if (iflags.perm_invent && mswin_winid_from_handle(hWnd) == WIN_INVEN
+            && how != PICK_NONE) {
+            data->menu.prompt[0] = '\0';
+            SetMenuListType(hWnd, PICK_NONE);
+            for (i = 0; i < data->menu.size; i++)
+                data->menu.items[i].count = 0;
+            LayoutMenu(hWnd);
+        }
     }
+
     return ret_val;
 }
 /*-----------------------------------------------------------------------------*/
 INT_PTR CALLBACK
 MenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PNHMenuWindow data;
-    HWND control;
-    HDC hdc;
+    PNHMenuWindow data = (PNHMenuWindow) GetWindowLongPtr(hWnd, GWLP_USERDATA);
+    HWND control = GetDlgItem(hWnd, IDC_MENU_TEXT);
     TCHAR title[MAX_LOADSTRING];
 
-    data = (PNHMenuWindow) GetWindowLongPtr(hWnd, GWLP_USERDATA);
     switch (message) {
-    case WM_INITDIALOG:
+    case WM_INITDIALOG: {
+
+        HDC hdc = GetDC(control);
         data = (PNHMenuWindow) malloc(sizeof(NHMenuWindow));
         ZeroMemory(data, sizeof(NHMenuWindow));
         data->type = MENU_TYPE_TEXT;
@@ -281,14 +292,14 @@ MenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             LoadBitmap(GetNHApp()->hApp, MAKEINTRESOURCE(IDB_MENU_SEL_COUNT));
         data->bmpNotChecked =
             LoadBitmap(GetNHApp()->hApp, MAKEINTRESOURCE(IDB_MENU_UNSEL));
+        data->bmpDC = CreateCompatibleDC(hdc);
         data->is_active = FALSE;
         SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR) data);
 
         /* set font for the text cotrol */
-        control = GetDlgItem(hWnd, IDC_MENU_TEXT);
-        hdc = GetDC(control);
+        cached_font * font = mswin_get_font(NHW_MENU, ATR_NONE, hdc, FALSE);
         SendMessage(control, WM_SETFONT,
-                    (WPARAM) mswin_get_font(NHW_MENU, ATR_NONE, hdc, FALSE),
+                    (WPARAM) font->hFont,
                     (LPARAM) 0);
         ReleaseDC(control, hdc);
 
@@ -304,6 +315,7 @@ MenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         /* set focus to text control for now */
         SetFocus(control);
+    }
         return FALSE;
 
     case WM_MSNH_COMMAND:
@@ -316,7 +328,7 @@ MenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         GetWindowRect(hWnd, &rt);
         ScreenToClient(GetNHApp()->hMainWnd, (LPPOINT) &rt);
         ScreenToClient(GetNHApp()->hMainWnd, ((LPPOINT) &rt) + 1);
-        if (flags.perm_invent && mswin_winid_from_handle(hWnd) == WIN_INVEN)
+        if (iflags.perm_invent && mswin_winid_from_handle(hWnd) == WIN_INVEN)
             mswin_update_window_placement(NHW_INVEN, &rt);
         else
             mswin_update_window_placement(NHW_MENU, &rt);
@@ -328,7 +340,7 @@ MenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         GetWindowRect(hWnd, &rt);
         ScreenToClient(GetNHApp()->hMainWnd, (LPPOINT) &rt);
         ScreenToClient(GetNHApp()->hMainWnd, ((LPPOINT) &rt) + 1);
-        if (flags.perm_invent && mswin_winid_from_handle(hWnd) == WIN_INVEN)
+        if (iflags.perm_invent && mswin_winid_from_handle(hWnd) == WIN_INVEN)
             mswin_update_window_placement(NHW_INVEN, &rt);
         else
             mswin_update_window_placement(NHW_MENU, &rt);
@@ -485,10 +497,16 @@ MenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                                  : SYSCLR_TO_BRUSH(DEFAULT_COLOR_BG_TEXT));
         }
     }
-        return FALSE;
+    return FALSE;
+
+    case WM_CTLCOLORDLG:
+        return (INT_PTR)(text_bg_brush
+                            ? text_bg_brush
+                            : SYSCLR_TO_BRUSH(DEFAULT_COLOR_BG_TEXT));
 
     case WM_DESTROY:
         if (data) {
+            DeleteDC(data->bmpDC);
             DeleteObject(data->bmpChecked);
             DeleteObject(data->bmpCheckedCount);
             DeleteObject(data->bmpNotChecked);
@@ -547,10 +565,10 @@ onMSNHCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
         /* calculate dimensions of the added line of text */
         hdc = GetDC(text_view);
-        saveFont =
-            SelectObject(hdc, mswin_get_font(NHW_MENU, ATR_NONE, hdc, FALSE));
+        cached_font * font = mswin_get_font(NHW_MENU, ATR_NONE, hdc, FALSE);
+        saveFont = SelectObject(hdc, font->hFont);
         SetRect(&text_rt, 0, 0, 0, 0);
-        DrawText(hdc, msg_data->text, strlen(msg_data->text), &text_rt,
+        DrawTextA(hdc, msg_data->text, strlen(msg_data->text), &text_rt,
                  DT_CALCRECT | DT_TOP | DT_LEFT | DT_NOPREFIX
                      | DT_SINGLELINE);
         data->text.text_box_size.cx =
@@ -589,8 +607,6 @@ onMSNHCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
         if (data->type != MENU_TYPE_MENU)
             break;
-        if (strlen(msg_data->str) == 0)
-            break;
 
         if (data->menu.size == data->menu.allocated) {
             data->menu.allocated += 10;
@@ -608,12 +624,14 @@ onMSNHCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
         data->menu.items[new_item].attr = msg_data->attr;
         strncpy(data->menu.items[new_item].str, msg_data->str,
                 NHMENU_STR_SIZE);
+	/* prevent & being interpreted as a mnemonic start */
+        strNsubst(data->menu.items[new_item].str, "&", "&&", 0);
         data->menu.items[new_item].presel = msg_data->presel;
 
         /* calculate tabstop size */
         hDC = GetDC(hWnd);
-        saveFont = SelectObject(
-            hDC, mswin_get_font(NHW_MENU, msg_data->attr, hDC, FALSE));
+        cached_font * font = mswin_get_font(NHW_MENU, msg_data->attr, hDC, FALSE);
+        saveFont = SelectObject(hDC, font->hFont);
         GetTextMetrics(hDC, &tm);
         p1 = data->menu.items[new_item].str;
         p = strchr(data->menu.items[new_item].str, '\t');
@@ -669,6 +687,12 @@ onMSNHCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
             ZeroMemory(data->menu.prompt, sizeof(data->menu.prompt));
         }
     } break;
+
+	case MSNH_MSG_RANDOM_INPUT: {
+        PostMessage(GetMenuControl(hWnd),
+            WM_MSNH_COMMAND, MSNH_MSG_RANDOM_INPUT, 0);
+	} break;
+
     }
 }
 /*-----------------------------------------------------------------------------*/
@@ -801,17 +825,17 @@ SetMenuListType(HWND hWnd, int how)
 
     switch (how) {
     case PICK_NONE:
-        dwStyles = WS_VISIBLE | WS_TABSTOP | WS_BORDER | WS_CHILD | WS_VSCROLL
+        dwStyles = WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_VSCROLL
                    | WS_HSCROLL | LVS_REPORT | LVS_OWNERDRAWFIXED
                    | LVS_SINGLESEL;
         break;
     case PICK_ONE:
-        dwStyles = WS_VISIBLE | WS_TABSTOP | WS_BORDER | WS_CHILD | WS_VSCROLL
+        dwStyles = WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_VSCROLL
                    | WS_HSCROLL | LVS_REPORT | LVS_OWNERDRAWFIXED
                    | LVS_SINGLESEL;
         break;
     case PICK_ANY:
-        dwStyles = WS_VISIBLE | WS_TABSTOP | WS_BORDER | WS_CHILD | WS_VSCROLL
+        dwStyles = WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_VSCROLL
                    | WS_HSCROLL | LVS_REPORT | LVS_OWNERDRAWFIXED
                    | LVS_SINGLESEL;
         break;
@@ -851,9 +875,11 @@ SetMenuListType(HWND hWnd, int how)
     SendMessage(control, WM_SETFONT, (WPARAM) fnt, (LPARAM) 0);
 
     /* add column to the list view */
+    MonitorInfo monitorInfo;
+    win10_monitor_info(hWnd, &monitorInfo);
     ZeroMemory(&lvcol, sizeof(lvcol));
     lvcol.mask = LVCF_WIDTH | LVCF_TEXT;
-    lvcol.cx = GetSystemMetrics(SM_CXFULLSCREEN);
+    lvcol.cx = monitorInfo.width;
     lvcol.pszText = NH_A2W(data->menu.prompt, wbuf, BUFSZ);
     ListView_InsertColumn(control, 0, &lvcol);
 
@@ -887,6 +913,11 @@ GetMenuControl(HWND hWnd)
 
     data = (PNHMenuWindow) GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
+	/* We may continue getting window messages after a window's WM_DESTROY is
+	   called.  We need to handle the case that USERDATA has been freed. */
+	if (data == NULL)
+		return NULL;
+
     if (data->type == MENU_TYPE_TEXT) {
         return GetDlgItem(hWnd, IDC_MENU_TEXT);
     } else {
@@ -912,8 +943,8 @@ onMeasureItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
     GetClientRect(GetMenuControl(hWnd), &list_rect);
 
     hdc = GetDC(GetMenuControl(hWnd));
-    saveFont =
-        SelectObject(hdc, mswin_get_font(NHW_MENU, ATR_INVERSE, hdc, FALSE));
+    cached_font * font = mswin_get_font(NHW_MENU, ATR_INVERSE, hdc, FALSE);
+    saveFont = SelectObject(hdc, font->hFont);
     GetTextMetrics(hdc, &tm);
 
     /* Set the height of the list box items to max height of the individual
@@ -959,6 +990,9 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
     int color = NO_COLOR, attr;
     boolean menucolr = FALSE;
+    double monitorScale = win10_monitor_scale(hWnd);
+    int tileXScaled = (int) (TILE_X * monitorScale);
+    int tileYScaled = (int) (TILE_Y * monitorScale);
 
     UNREFERENCED_PARAMETER(wParam);
 
@@ -973,8 +1007,8 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
     item = &data->menu.items[lpdis->itemID];
 
     tileDC = CreateCompatibleDC(lpdis->hDC);
-    saveFont = SelectObject(
-        lpdis->hDC, mswin_get_font(NHW_MENU, item->attr, lpdis->hDC, FALSE));
+    cached_font * font = mswin_get_font(NHW_MENU, item->attr, lpdis->hDC, FALSE);
+    saveFont = SelectObject(lpdis->hDC, font->hFont);
     NewBg = menu_bg_brush ? menu_bg_color
                           : (COLORREF) GetSysColor(DEFAULT_COLOR_BG_MENU);
     OldBg = SetBkColor(lpdis->hDC, NewBg);
@@ -993,30 +1027,29 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
     if (NHMENU_IS_SELECTABLE(*item)) {
         char buf[2];
         if (data->how != PICK_NONE) {
-            HGDIOBJ saveBrush;
-            HBRUSH hbrCheckMark;
+            HBITMAP bmpCheck;
+            HBITMAP bmpSaved;
 
             switch (item->count) {
             case -1:
-                hbrCheckMark = CreatePatternBrush(data->bmpChecked);
+                bmpCheck = data->bmpChecked;
                 break;
             case 0:
-                hbrCheckMark = CreatePatternBrush(data->bmpNotChecked);
+                bmpCheck = data->bmpNotChecked;
                 break;
             default:
-                hbrCheckMark = CreatePatternBrush(data->bmpCheckedCount);
+                bmpCheck = data->bmpCheckedCount;
                 break;
             }
 
-            y = (lpdis->rcItem.bottom + lpdis->rcItem.top - TILE_Y) / 2;
-            SetBrushOrgEx(lpdis->hDC, x, y, NULL);
-            saveBrush = SelectObject(lpdis->hDC, hbrCheckMark);
-            PatBlt(lpdis->hDC, x, y, TILE_X, TILE_Y, PATCOPY);
-            SelectObject(lpdis->hDC, saveBrush);
-            DeleteObject(hbrCheckMark);
+            y = (lpdis->rcItem.bottom + lpdis->rcItem.top - tileYScaled) / 2;
+            bmpSaved = SelectBitmap(data->bmpDC, bmpCheck);
+            StretchBlt(lpdis->hDC, x, y, tileXScaled, tileYScaled, 
+                data->bmpDC, 0, 0,  CHECK_WIDTH, CHECK_HEIGHT, SRCCOPY);
+            SelectObject(data->bmpDC, bmpSaved);
         }
 
-        x += TILE_X + spacing;
+        x += tileXScaled + spacing;
 
         if (item->accelerator != 0) {
             buf[0] = item->accelerator;
@@ -1024,7 +1057,8 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
             if (iflags.use_menu_color
                 && (menucolr = get_menu_coloring(item->str, &color, &attr))) {
-                /* TODO: use attr too */
+                cached_font * menu_font = mswin_get_font(NHW_MENU, attr, lpdis->hDC, FALSE);
+                SelectObject(lpdis->hDC, menu_font->hFont);
                 if (color != NO_COLOR)
                     SetTextColor(lpdis->hDC, nhcolor_to_RGB(color));
             }
@@ -1036,13 +1070,14 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
         }
         x += tm.tmAveCharWidth + tm.tmOverhang + spacing;
     } else {
-        x += TILE_X + tm.tmAveCharWidth + tm.tmOverhang + 2 * spacing;
+        x += tileXScaled + tm.tmAveCharWidth + tm.tmOverhang + 2 * spacing;
     }
 
     /* print glyph if present */
     if (NHMENU_HAS_GLYPH(*item)) {
         if (!IS_MAP_ASCII(iflags.wc_map_mode)) {
             HGDIOBJ saveBmp;
+            double monitorScale = win10_monitor_scale(hWnd);
 
             saveBmp = SelectObject(tileDC, GetNHApp()->bmpMapTiles);
             ntile = glyph2tile[item->glyph];
@@ -1051,21 +1086,21 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
             t_y =
                 (ntile / GetNHApp()->mapTilesPerLine) * GetNHApp()->mapTile_Y;
 
-            y = (lpdis->rcItem.bottom + lpdis->rcItem.top
-                 - GetNHApp()->mapTile_Y) / 2;
+            y = (lpdis->rcItem.bottom + lpdis->rcItem.top - tileYScaled) / 2;
 
             if (GetNHApp()->bmpMapTiles == GetNHApp()->bmpTiles) {
                 /* using original nethack tiles - apply image transparently */
-                (*GetNHApp()->lpfnTransparentBlt)(lpdis->hDC, x, y, TILE_X, TILE_Y,
+                (*GetNHApp()->lpfnTransparentBlt)(lpdis->hDC, x, y, 
+                                          tileXScaled, tileYScaled,
                                           tileDC, t_x, t_y, TILE_X, TILE_Y,
                                           TILE_BK_COLOR);
             } else {
                 /* using custom tiles - simple blt */
-                BitBlt(lpdis->hDC, x, y, GetNHApp()->mapTile_X,
-                       GetNHApp()->mapTile_Y, tileDC, t_x, t_y, SRCCOPY);
+                StretchBlt(lpdis->hDC, x, y, tileXScaled, tileYScaled, 
+                    tileDC, t_x, t_y, GetNHApp()->mapTile_X, GetNHApp()->mapTile_Y, SRCCOPY);
             }
             SelectObject(tileDC, saveBmp);
-            x += GetNHApp()->mapTile_X;
+            x += tileXScaled;
         } else {
             const char *sel_ind;
             switch (item->count) {
@@ -1089,7 +1124,7 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
         }
     } else {
         /* no glyph - need to adjust so help window won't look to cramped */
-        x += TILE_X;
+        x += tileXScaled;
     }
 
     x += spacing;
@@ -1137,8 +1172,10 @@ onDrawItem(HWND hWnd, WPARAM wParam, LPARAM lParam)
                           data->menu.items[lpdis->itemID].count);
             }
 
-            SelectObject(lpdis->hDC, mswin_get_font(NHW_MENU, ATR_BLINK,
-                                                    lpdis->hDC, FALSE));
+            /* TOOD: add blinking for blink text */
+
+            cached_font * blink_font = mswin_get_font(NHW_MENU, ATR_BLINK, lpdis->hDC, FALSE);
+            SelectObject(lpdis->hDC, blink_font->hFont);
 
             /* calculate text rectangle */
             SetRect(&drawRect, client_rt.left, lpdis->rcItem.top,
@@ -1190,6 +1227,21 @@ onListChar(HWND hWnd, HWND hwndList, WORD ch)
     boolean is_accelerator = FALSE;
 
     data = (PNHMenuWindow) GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
+    is_accelerator = FALSE;
+    for (i = 0; i < data->menu.size; i++) {
+        if (data->menu.items[i].accelerator == ch) {
+            is_accelerator = TRUE;
+            break;
+        }
+    }
+
+    /* Don't use switch if input matched an accelerator.  Sometimes
+     * accelerators can conflict with menu actions.  For example, when
+     * engraving the extra choice of using fingers matches MENU_UNSELECT_ALL.
+     */
+    if (is_accelerator)
+        goto accelerator;
 
     switch (ch) {
     case MENU_FIRST_PAGE:
@@ -1385,6 +1437,7 @@ onListChar(HWND hWnd, HWND hwndList, WORD ch)
         }
     } break;
 
+    accelerator:
     default:
         if (strchr(data->menu.gacc, ch)
             && !(ch == '0' && data->menu.counting)) {
@@ -1414,7 +1467,7 @@ onListChar(HWND hWnd, HWND hwndList, WORD ch)
             }
         }
 
-        if (isdigit(ch)) {
+        if (isdigit((uchar) ch)) {
             int count;
             i = ListView_GetNextItem(hwndList, -1, LVNI_FOCUSED);
             if (i >= 0) {
@@ -1433,18 +1486,14 @@ onListChar(HWND hWnd, HWND hwndList, WORD ch)
             return -2;
         }
 
-        is_accelerator = FALSE;
-        for (i = 0; i < data->menu.size; i++) {
-            if (data->menu.items[i].accelerator == ch) {
-                is_accelerator = TRUE;
-                break;
-            }
-        }
-
         if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
             || is_accelerator) {
             if (data->how == PICK_ANY || data->how == PICK_ONE) {
-                for (i = 0; i < data->menu.size; i++) {
+                topIndex = ListView_GetTopIndex(hwndList);
+                if( topIndex < 0 || topIndex > data->menu.size ) break; // impossible?
+                int iter = topIndex;
+                do {
+                    i = iter % data->menu.size;
                     if (data->menu.items[i].accelerator == ch) {
                         if (data->how == PICK_ANY) {
                             SelectMenuItem(
@@ -1462,7 +1511,7 @@ onListChar(HWND hWnd, HWND hwndList, WORD ch)
                             return -2;
                         }
                     }
-                }
+                } while( (++iter % data->menu.size) != topIndex ); 
             }
         }
         break;
@@ -1546,6 +1595,7 @@ reset_menu_count(HWND hwndList, PNHMenuWindow data)
 LRESULT CALLBACK
 NHMenuListWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    HWND hWndParent = GetParent(hWnd);
     BOOL bUpdateFocusItem;
 
     /* we will redraw focused item whenever horizontal scrolling occurs
@@ -1577,6 +1627,20 @@ NHMenuListWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SetFocus(GetNHApp()->hMainWnd);
         }
         return FALSE;
+
+    case WM_MSNH_COMMAND:
+        if (wParam == MSNH_MSG_RANDOM_INPUT) {
+            char c = randomkey();
+            if (c == '\n')
+                PostMessage(hWndParent, WM_COMMAND, MAKELONG(IDOK, 0), 0);
+            else if (c == '\033')
+                PostMessage(hWndParent, WM_COMMAND, MAKELONG(IDCANCEL, 0), 0);
+            else
+                PostMessage(hWnd, WM_CHAR, c, 0);
+            return 0;
+        }
+        break;
+
     }
 
     /* update focused item */
@@ -1604,6 +1668,7 @@ NHMenuListWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK
 NHMenuTextWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    HWND hWndParent = GetParent(hWnd);
     HDC hDC;
     RECT rc;
 
@@ -1631,8 +1696,7 @@ NHMenuTextWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 && (si.nPos + (int) si.nPage) <= (si.nMax - si.nMin))
                 SendMessage(hWnd, EM_SCROLL, SB_PAGEDOWN, 0);
             else
-                PostMessage(GetParent(hWnd), WM_COMMAND, MAKELONG(IDOK, 0),
-                            0);
+                PostMessage(hWndParent, WM_COMMAND, MAKELONG(IDOK, 0), 0);
             return 0;
         }
         case VK_NEXT:
@@ -1671,6 +1735,20 @@ NHMenuTextWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_SETFOCUS:
         HideCaret(hWnd);
         return 0;
+
+    case WM_MSNH_COMMAND:
+        if (wParam == MSNH_MSG_RANDOM_INPUT) {
+            char c = randomkey();
+            if (c == '\n')
+                PostMessage(hWndParent, WM_COMMAND, MAKELONG(IDOK, 0), 0);
+            else if (c == '\033')
+                PostMessage(hWndParent, WM_COMMAND, MAKELONG(IDCANCEL, 0), 0);
+            else
+                PostMessage(hWnd, WM_CHAR, c, 0);
+            return 0;
+        }
+        break;
+
     }
 
     if (editControlWndProc)

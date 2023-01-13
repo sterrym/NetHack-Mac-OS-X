@@ -1,4 +1,4 @@
-/* NetHack 3.6	wc_trace.c	$NHDT-Date: 1433806611 2015/06/08 23:36:51 $  $NHDT-Branch: master $:$NHDT-Revision: 1.7 $ */
+/* NetHack 3.6	wc_trace.c	$NHDT-Date: 1501464799 2017/07/31 01:33:19 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.8 $ */
 /* Copyright (c) Kenneth Lorber, 2012				  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -10,7 +10,7 @@
 #include <errno.h>
 
 FILE *wc_tracelogf; /* Should be static, but it's just too useful to have
-             * access to this logfile from arbitrary other files. */
+                     * access to this logfile from arbitrary other files. */
 static unsigned int indent_level; /* Some winfuncs call other winfuncs, so
                                    * we need to support nesting. */
 
@@ -48,22 +48,25 @@ void *me;
 void *nextprocs;
 void *nextdata;
 {
+    struct trace_data *tdp = 0;
+
     switch (cmd) {
-    case WINCHAIN_ALLOC: {
-        struct trace_data *tdp = calloc(1, sizeof(struct trace_data));
+    case WINCHAIN_ALLOC:
+        tdp = (struct trace_data *) alloc(sizeof *tdp);
+        tdp->nprocs = 0;
+        tdp->ndata = 0;
         tdp->linknum = n;
-        return tdp;
-    }
-    case WINCHAIN_INIT: {
-        struct trace_data *tdp = me;
+        break;
+    case WINCHAIN_INIT:
+        tdp = me;
         tdp->nprocs = nextprocs;
         tdp->ndata = nextdata;
-        return tdp;
-    }
+        break;
     default:
-        raw_printf("trace_procs_chain: bad cmd\n");
-        exit(EXIT_FAILURE);
+        panic("trace_procs_chain: bad cmd\n");
+        /*NOTREACHED*/
     }
+    return tdp;
 }
 
 void
@@ -71,20 +74,22 @@ trace_procs_init(dir)
 int dir;
 {
     char fname[200];
+    long pid;
 
     /* processors shouldn't need this test, but just in case */
     if (dir != WININIT)
         return;
 
-    sprintf(fname, "%s/tlog.%d", HACKDIR, getpid());
+    pid = (long) getpid();
+    Sprintf(fname, "%s/tlog.%ld", HACKDIR, pid);
     wc_tracelogf = fopen(fname, "w");
-    if (wc_tracelogf == NULL) {
+    if (!wc_tracelogf) {
         fprintf(stderr, "Can't open trace log file %s: %s\n", fname,
                 strerror(errno));
-        exit(EXIT_FAILURE);
+        nh_terminate(EXIT_FAILURE);
     }
-    setvbuf(wc_tracelogf, (char *) NULL, _IONBF, 0);
-    fprintf(wc_tracelogf, "Trace log started for pid %d\n", getpid());
+    setvbuf(wc_tracelogf, (char *) 0, _IONBF, 0);
+    fprintf(wc_tracelogf, "Trace log started for pid %ld\n", pid);
 
     indent_level = 0;
 }
@@ -244,7 +249,7 @@ void
 trace_display_nhwindow(vp, window, blocking)
 void *vp;
 winid window;
-boolean blocking;
+BOOLEAN_P blocking;
 {
     struct trace_data *tdp = vp;
 
@@ -560,7 +565,7 @@ char *posbar;
         fprintf(wc_tracelogf, "%supdate_positionbar('%s'(%d))\n", INDENT,
                 posbar, (int) strlen(posbar));
     } else {
-        fprintf(wc_tracelogf, "%supdate_positionbar(NULL)\n");
+        fprintf(wc_tracelogf, "%supdate_positionbar(NULL)\n", INDENT);
     }
     PRE;
     (*tdp->nprocs->win_update_positionbar)(tdp->ndata, posbar);
@@ -769,7 +774,7 @@ char *bufp;
     }
 
     if (bufp) {
-        fprintf(wc_tracelogf, "%p)\n", bufp);
+        fprintf(wc_tracelogf, "%s)\n", fmt_ptr((genericptr_t) bufp));
     } else {
         fprintf(wc_tracelogf, "NULL)\n");
     }
@@ -785,7 +790,7 @@ void *vp;
 {
     struct trace_data *tdp = vp;
     int rv;
-    int ecl_size;
+    int ecl_size = 0;
 
     /* this is ugly, but the size isn't exposed */
     const struct ext_func_tab *efp;
@@ -901,7 +906,7 @@ void *vp;
     struct trace_data *tdp = vp;
     char *rv;
 
-    fprintf(wc_tracelogf, "%sget_color_string()\n");
+    fprintf(wc_tracelogf, "%sget_color_string()\n", INDENT);
 
     PRE;
     rv = (*tdp->nprocs->win_get_color_string)(tdp->ndata);
@@ -911,7 +916,7 @@ void *vp;
         fprintf(wc_tracelogf, "%s=> '%s'(%d)\n", INDENT, rv,
                 (int) strlen(rv));
     } else {
-        fprintf(wc_tracelogf, "%s=> NULL\n");
+        fprintf(wc_tracelogf, "%s=> NULL\n", INDENT);
     }
 
     return rv;
@@ -1027,7 +1032,6 @@ boolean is_restoring;
     POST;
 }
 
-#ifdef STATUS_VIA_WINDOWPORT
 void
 trace_status_init(vp)
 void *vp;
@@ -1084,10 +1088,11 @@ boolean enable;
 }
 
 void
-trace_status_update(vp, idx, ptr, chg, percent)
+trace_status_update(vp, idx, ptr, chg, percent, color, colormasks)
 void *vp;
-int idx, chg, percent;
+int idx, chg, percent, color;
 genericptr_t ptr;
+unsigned long *colormasks;
 {
     struct trace_data *tdp = vp;
 
@@ -1095,32 +1100,10 @@ genericptr_t ptr;
             ptr, chg, percent);
 
     PRE;
-    (*tdp->nprocs->win_status_update)(tdp->ndata, idx, ptr, chg, percent);
+    (*tdp->nprocs->win_status_update)(tdp->ndata, idx, ptr, chg, percent,
+                                      color, colormasks);
     POST;
 }
-
-#ifdef STATUS_HILITES
-void
-trace_status_threshold(vp, fldidx, thresholdtype, threshold, behavior, under,
-                       over)
-void *vp;
-int fldidx, thresholdtype;
-int behavior, under, over;
-anything threshold;
-{
-    struct trace_data *tdp = vp;
-
-    /* XXX how do we print an anything?  We don't. */
-    fprintf(wc_tracelogf, "%sstatus_threshold(%d, %d, -, %d, %d, %d)\n",
-            INDENT, fldidx, thresholdtype, behavior, under, over);
-
-    PRE;
-    (*tdp->nprocs->win_status_threshold)(tdp->ndata, fldidx, thresholdtype,
-                                         threshold, behavior, under, over);
-    POST;
-}
-#endif
-#endif
 
 boolean
 trace_can_suspend(vp)
@@ -1179,12 +1162,7 @@ struct chain_procs trace_procs = {
 
     trace_outrip, trace_preference_update, trace_getmsghistory,
     trace_putmsghistory,
-#ifdef STATUS_VIA_WINDOWPORT
     trace_status_init, trace_status_finish, trace_status_enablefield,
     trace_status_update,
-#ifdef STATUS_HILITES
-    trace_status_threshold,
-#endif
-#endif
     trace_can_suspend,
 };

@@ -32,20 +32,20 @@
 
 #define MAX_ERRORS 25
 
-extern int yyparse(void);
+extern int NDECL(yyparse);
 extern int nh_line_number;
 const char *fname = "(stdin)";
 int fatal_error = 0;
 
-int main(int, char **);
-void yyerror(const char *);
-void yywarning(const char *);
-int yywrap(void);
-void init_yyin(FILE *);
-void init_yyout(FILE *);
+int FDECL(main, (int, char **));
+void FDECL(yyerror, (const char *));
+void FDECL(yywarning, (const char *));
+int NDECL(yywrap);
+void FDECL(init_yyin, (FILE *));
+void FDECL(init_yyout, (FILE *));
 
 #ifdef AZTEC_36
-FILE *freopen(char *, char *, FILE *);
+FILE *FDECL(freopen, (char *, char *, FILE *));
 #endif
 #define Fprintf (void) fprintf
 
@@ -53,7 +53,9 @@ FILE *freopen(char *, char *, FILE *);
 extern unsigned _stklen = STKSIZ;
 #endif
 int
-main(int argc, char **argv)
+main(argc, argv)
+int argc;
+char **argv;
 {
     char infile[64], outfile[64], basename[64];
     FILE *fin, *fout;
@@ -156,7 +158,8 @@ main(int argc, char **argv)
  */
 
 void
-yyerror(const char *s)
+yyerror(s)
+const char *s;
 {
     (void) fprintf(stderr, "%s : line %d : %s\n", fname, nh_line_number, s);
     if (++fatal_error > MAX_ERRORS) {
@@ -170,7 +173,8 @@ yyerror(const char *s)
  */
 
 void
-yywarning(const char *s)
+yywarning(s)
+const char *s;
 {
     (void) fprintf(stderr, "%s : line %d : WARNING : %s\n", fname,
                    nh_line_number, s);

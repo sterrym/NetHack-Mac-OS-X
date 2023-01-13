@@ -1,21 +1,22 @@
-/* NetHack 3.6	fountain.c	$NHDT-Date: 1444937416 2015/10/15 19:30:16 $  $NHDT-Branch: master $:$NHDT-Revision: 1.55 $ */
-/*	Copyright Scott R. Turner, srt@ucla, 10/27/86 */
+/* NetHack 3.6	fountain.c	$NHDT-Date: 1544442711 2018/12/10 11:51:51 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.60 $ */
+/*      Copyright Scott R. Turner, srt@ucla, 10/27/86 */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* Code for drinking from fountains. */
 
 #include "hack.h"
 
-STATIC_DCL void dowatersnakes(void);
-STATIC_DCL void dowaterdemon(void);
-STATIC_DCL void dowaternymph(void);
-STATIC_PTR void gush(int, int, genericptr_t);
-STATIC_DCL void dofindgem(void);
+STATIC_DCL void NDECL(dowatersnakes);
+STATIC_DCL void NDECL(dowaterdemon);
+STATIC_DCL void NDECL(dowaternymph);
+STATIC_PTR void FDECL(gush, (int, int, genericptr_t));
+STATIC_DCL void NDECL(dofindgem);
 
 /* used when trying to dip in or drink from fountain or sink or pool while
    levitating above it, or when trying to move downwards in that state */
 void
-floating_above(const char *what)
+floating_above(what)
+const char *what;
 {
     const char *umsg = "are floating high above the %s.";
 
@@ -102,7 +103,8 @@ dowaternymph()
 
 /* Gushing forth along LOS from (u.ux, u.uy) */
 void
-dogushforth(int drinking)
+dogushforth(drinking)
+int drinking;
 {
     int madepool = 0;
 
@@ -116,7 +118,9 @@ dogushforth(int drinking)
 }
 
 STATIC_PTR void
-gush(int x, int y, genericptr_t poolcnt)
+gush(x, y, poolcnt)
+int x, y;
+genericptr_t poolcnt;
 {
     register struct monst *mtmp;
     register struct trap *ttmp;
@@ -133,7 +137,7 @@ gush(int x, int y, genericptr_t poolcnt)
         pline("Water gushes forth from the overflowing fountain!");
 
     /* Put a pool at x, y */
-    levl[x][y].typ = POOL;
+    levl[x][y].typ = POOL, levl[x][y].flags = 0;
     /* No kelp! */
     del_engr_at(x, y);
     water_damage_chain(level.objects[x][y], TRUE);
@@ -160,7 +164,9 @@ dofindgem()
 }
 
 void
-dryup(xchar x, xchar y, boolean isyou)
+dryup(x, y, isyou)
+xchar x, y;
+boolean isyou;
 {
     if (IS_FOUNTAIN(levl[x][y].typ)
         && (!rn2(3) || FOUNTAIN_IS_WARNED(x, y))) {
@@ -174,8 +180,18 @@ dryup(xchar x, xchar y, boolean isyou)
                     continue;
                 if (is_watch(mtmp->data) && couldsee(mtmp->mx, mtmp->my)
                     && mtmp->mpeaceful) {
-                    pline("%s yells:", Amonnam(mtmp));
-                    verbalize("Hey, stop using that fountain!");
+                    if (!Deaf) {
+                        pline("%s yells:", Amonnam(mtmp));
+                        verbalize("Hey, stop using that fountain!");
+                    } else {
+                        pline("%s earnestly %s %s %s!",
+                              Amonnam(mtmp),
+                              nolimbs(mtmp->data) ? "shakes" : "waves",
+                              mhis(mtmp),
+                              nolimbs(mtmp->data)
+                                      ? mbodypart(mtmp, HEAD)
+                                      : makeplural(mbodypart(mtmp, ARM)));
+                    }
                     break;
                 }
             }
@@ -189,8 +205,7 @@ dryup(xchar x, xchar y, boolean isyou)
                 return;
         }
         /* replace the fountain with ordinary floor */
-        levl[x][y].typ = ROOM;
-        levl[x][y].looted = 0;
+        levl[x][y].typ = ROOM, levl[x][y].flags = 0;
         levl[x][y].blessedftn = 0;
         if (cansee(x, y))
             pline_The("fountain dries up!");
@@ -314,6 +329,7 @@ drinkfountain()
                 dofindgem();
                 break;
             }
+            /*FALLTHRU*/
         case 28: /* Water Nymph */
             dowaternymph();
             break;
@@ -321,7 +337,8 @@ drinkfountain()
         {
             register struct monst *mtmp;
 
-            pline("This water gives you bad breath!");
+            pline("This %s gives you bad breath!",
+                  hliquid("water"));
             for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {
                 if (DEADMONSTER(mtmp))
                     continue;
@@ -333,7 +350,8 @@ drinkfountain()
             dogushforth(TRUE);
             break;
         default:
-            pline("This tepid water is tasteless.");
+            pline("This tepid %s is tasteless.",
+                  hliquid("water"));
             break;
         }
     }
@@ -341,7 +359,8 @@ drinkfountain()
 }
 
 void
-dipfountain(register struct obj *obj)
+dipfountain(obj)
+register struct obj *obj;
 {
     if (Levitation) {
         floating_above("fountain");
@@ -355,8 +374,8 @@ dipfountain(register struct obj *obj)
         && !exist_artifact(LONG_SWORD, artiname(ART_EXCALIBUR))) {
         if (u.ualign.type != A_LAWFUL) {
             /* Ha!  Trying to cheat her. */
-            pline(
-             "A freezing mist rises from the water and envelopes the sword.");
+            pline("A freezing mist rises from the %s and envelopes the sword.",
+                  hliquid("water"));
             pline_The("fountain disappears!");
             curse(obj);
             if (obj->spe > -6 && !rn2(3))
@@ -377,8 +396,7 @@ dipfountain(register struct obj *obj)
             exercise(A_WIS, TRUE);
         }
         update_inventory();
-        levl[u.ux][u.uy].typ = ROOM;
-        levl[u.ux][u.uy].looted = 0;
+        levl[u.ux][u.uy].typ = ROOM, levl[u.ux][u.uy].flags = 0;
         newsym(u.ux, u.uy);
         level.flags.nfountains--;
         if (in_town(u.ux, u.uy))
@@ -406,7 +424,7 @@ dipfountain(register struct obj *obj)
     case 20: /* Uncurse the item */
         if (obj->cursed) {
             if (!Blind)
-                pline_The("water glows for a moment.");
+                pline_The("%s glows for a moment.", hliquid("water"));
             uncurse(obj);
         } else {
             pline("A feeling of loss comes over you.");
@@ -426,6 +444,7 @@ dipfountain(register struct obj *obj)
             dofindgem();
             break;
         }
+        /*FALLTHRU*/
     case 25: /* Water gushes forth */
         dogushforth(FALSE);
         break;
@@ -464,7 +483,7 @@ dipfountain(register struct obj *obj)
     case 29: /* You see coins */
         /* We make fountains have more coins the closer you are to the
          * surface.  After all, there will have been more people going
-         * by.	Just like a shopping mall!  Chris Woodbury  */
+         * by.  Just like a shopping mall!  Chris Woodbury  */
 
         if (FOUNTAIN_IS_LOOTED(u.ux, u.uy))
             break;
@@ -473,7 +492,8 @@ dipfountain(register struct obj *obj)
                                    + 1) * 2) + 5),
                       u.ux, u.uy);
         if (!Blind)
-            pline("Far below you, you see coins glistening in the water.");
+            pline("Far below you, you see coins glistening in the %s.",
+                  hliquid("water"));
         exercise(A_WIS, TRUE);
         newsym(u.ux, u.uy);
         break;
@@ -483,13 +503,15 @@ dipfountain(register struct obj *obj)
 }
 
 void
-breaksink(int x, int y)
+breaksink(x, y)
+int x, y;
 {
     if (cansee(x, y) || (x == u.ux && y == u.uy))
         pline_The("pipes break!  Water spurts out!");
     level.flags.nsinks--;
-    levl[x][y].doormask = 0;
-    levl[x][y].typ = FOUNTAIN;
+    levl[x][y].typ = FOUNTAIN, levl[x][y].looted = 0;
+    levl[x][y].blessedftn = 0;
+    SET_FOUNTAIN_LOOTED(x, y);
     level.flags.nfountains++;
     newsym(x, y);
 }
@@ -506,13 +528,13 @@ drinksink()
     }
     switch (rn2(20)) {
     case 0:
-        You("take a sip of very cold water.");
+        You("take a sip of very cold %s.", hliquid("water"));
         break;
     case 1:
-        You("take a sip of very warm water.");
+        You("take a sip of very warm %s.", hliquid("water"));
         break;
     case 2:
-        You("take a sip of scalding hot water.");
+        You("take a sip of scalding hot %s.", hliquid("water"));
         if (Fire_resistance)
             pline("It seems quite tasty.");
         else
@@ -555,19 +577,19 @@ drinksink()
             exercise(A_WIS, TRUE);
             newsym(u.ux, u.uy);
         } else
-            pline("Some dirty water backs up in the drain.");
+            pline("Some dirty %s backs up in the drain.", hliquid("water"));
         break;
     case 6:
         breaksink(u.ux, u.uy);
         break;
     case 7:
-        pline_The("water moves as though of its own will!");
+        pline_The("%s moves as though of its own will!", hliquid("water"));
         if ((mvitals[PM_WATER_ELEMENTAL].mvflags & G_GONE)
             || !makemon(&mons[PM_WATER_ELEMENTAL], u.ux, u.uy, NO_MM_FLAGS))
             pline("But it quiets down.");
         break;
     case 8:
-        pline("Yuk, this water tastes awful.");
+        pline("Yuk, this %s tastes awful.", hliquid("water"));
         more_experienced(1, 0);
         newexplevel();
         break;
@@ -577,7 +599,7 @@ drinksink()
         vomit();
         break;
     case 10:
-        pline("This water contains toxic wastes!");
+        pline("This %s contains toxic wastes!", hliquid("water"));
         if (!Unchanging) {
             You("undergo a freakish metamorphosis!");
             polyself(0);
@@ -595,9 +617,11 @@ drinksink()
             pline("From the murky drain, a hand reaches up... --oops--");
             break;
         }
+        /*FALLTHRU*/
     default:
-        You("take a sip of %s water.",
-            rn2(3) ? (rn2(2) ? "cold" : "warm") : "hot");
+        You("take a sip of %s %s.",
+            rn2(3) ? (rn2(2) ? "cold" : "warm") : "hot",
+            hliquid("water"));
     }
 }
 

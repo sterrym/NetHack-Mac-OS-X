@@ -1,5 +1,5 @@
 %{
-/* NetHack 3.6  lev_comp.l	$NHDT-Date: 1449385191 2015/12/06 06:59:51 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.22 $ */
+/* NetHack 3.6  lev_comp.l	$NHDT-Date: 1543371690 2018/11/28 02:21:30 $  $NHDT-Branch: NetHack-3.6.2-beta01 $:$NHDT-Revision: 1.25 $ */
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -13,11 +13,11 @@
  * yyunput is properly declared in flex.skel.
  */
 #if !defined(FLEX_SCANNER) && !defined(FLEXHACK_SCANNER)
-int yyback(int *,int);
-int yylook(void);
-int yyinput(void);
-int yywrap(void);
-int yylex(void);
+int FDECL(yyback, (int *,int));
+int NDECL(yylook);
+int NDECL(yyinput);
+int NDECL(yywrap);
+int NDECL(yylex);
 	/* Traditional lexes let yyunput() and yyoutput() default to int;
 	 * newer ones may declare them as void since they don't return
 	 * values.  For even more fun, the lex supplied as part of the
@@ -47,42 +47,43 @@ int yylex(void);
 #  undef VOIDYYPUT
 # endif
 # ifdef VOIDYYPUT
-void yyunput(int);
-void yyoutput(int);
+void FDECL(yyunput, (int));
+void FDECL(yyoutput, (int));
 # else
-int yyunput(int);
-int yyoutput(int);
+int FDECL(yyunput, (int));
+int FDECL(yyoutput, (int));
 # endif
 
 #else	/* !FLEX_SCANNER && !FLEXHACK_SCANNER */
 /* most recent flex allows suppressing yyunput() altogether when not needed */
 #define YY_NO_UNPUT
+#define YY_NO_INPUT
 #endif
 
 #if defined(FLEX_SCANNER) || defined(FLEXHACK_SCANNER)
 /* older flex wants this */
-#define YY_MALLOC_DECL  genericptr_t malloc(size_t); \
-                        genericptr_t realloc(genericptr_t, size_t);
+#define YY_MALLOC_DECL  genericptr_t FDECL(malloc, (size_t)); \
+                        genericptr_t FDECL(realloc, (genericptr_t, size_t));
 /* newer flex assumes <stdlib.h> so needs this in case it's been suppressed */
 YY_MALLOC_DECL
 #endif
 
-void init_yyin(FILE *);
-void init_yyout(FILE *);
+void FDECL(init_yyin, (FILE *));
+void FDECL(init_yyout, (FILE *));
 
-long handle_varstring_check(void);
-long corefunc_str_check(char *, long);
+long NDECL(handle_varstring_check);
+long FDECL(corefunc_str_check, (char *, long));
 
-extern void lc_error(const char *, ...);
-extern struct lc_vardefs *vardef_defined(struct lc_vardefs *,char *, int);
+extern void VDECL(lc_error, (const char *, ...));
+extern struct lc_vardefs *FDECL(vardef_defined,(struct lc_vardefs *,char *, int));
 
-extern struct lc_vardefs *variable_definitions;
+extern struct lc_vardefs *vardefs;
 
-extern long method_defined(char *, long, long *);
+extern long FDECL(method_defined, (char *, long, long *));
 
-void savetoken(char *);
-void newline(void);
-void advancepos(char *);
+void FDECL(savetoken, (char *));
+void NDECL(newline);
+void FDECL(advancepos, (char *));
 
 /*
  * This doesn't always get put in lev_comp.h
@@ -102,9 +103,9 @@ FILE *orig_yyin = NULL;
 #define ST_RETF(y, x) do { savetoken(yytext); y; return x; } while (0);
 
 %}
-%e 2000
-%p 5000
-%n 700
+%e 2500
+%p 10000
+%n 1500
 %s MAPC
 %%
 <MAPC>ENDMAP	{
@@ -347,7 +348,8 @@ inaccessibles   { savetoken(yytext); yylval.i=CHECK_INACCESSIBLES; return FLAG_T
 %%
 #ifdef	AMIGA
 long *
-alloc(unsigned n)
+alloc(n)
+    unsigned n;
 {
     return (long *) malloc(n);
 }
@@ -355,7 +357,8 @@ alloc(unsigned n)
 
 /* routine to switch to another input file; needed for flex */
 void
-init_yyin( FILE *input_f )
+init_yyin( input_f )
+FILE *input_f;
 {
 #if defined(FLEX_SCANNER) || defined(FLEXHACK_SCANNER)
     if (yyin)
@@ -369,7 +372,8 @@ init_yyin( FILE *input_f )
 }
 /* analogous routine (for completeness) */
 void
-init_yyout( FILE *output_f )
+init_yyout( output_f )
+FILE *output_f;
 {
     yyout = output_f;
 }
@@ -380,7 +384,7 @@ handle_varstring_check()
     struct lc_vardefs *vd;
 
     yylval.map = dupstr(yytext);
-    if ((vd = vardef_defined(variable_definitions, yytext, 1)) != 0) {
+    if ((vd = vardef_defined(vardefs, yytext, 1)) != 0) {
         long l = vd->var_type;
         int a = ((l & SPOVAR_ARRAY) == SPOVAR_ARRAY);
 
@@ -416,14 +420,16 @@ newline()
 }
 
 void
-savetoken(char *s)
+savetoken(s)
+char *s;
 {
     Sprintf(curr_token, "%s", s);
     advancepos(s);
 }
 
 void
-advancepos(char *s)
+advancepos(s)
+char *s;
 {
     token_start_pos += strlen(s);
 }

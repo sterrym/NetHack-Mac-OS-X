@@ -1,5 +1,6 @@
 /* NetHack 3.6	track.c	$NHDT-Date: 1432512769 2015/05/25 00:12:49 $  $NHDT-Branch: master $:$NHDT-Revision: 1.9 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Kenneth Lorber, Kensington, Maryland, 2015. */
 /* NetHack may be freely redistributed.  See license for details. */
 /* track.c - version 1.0.2 */
 
@@ -30,7 +31,8 @@ settrack()
 }
 
 coord *
-gettrack(register int x, register int y)
+gettrack(x, y)
+register int x, y;
 {
     register int cnt, ndist;
     register coord *tc;

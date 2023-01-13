@@ -1,8 +1,9 @@
-/* NetHack 3.6	pcsys.c	$NHDT-Date: 1432512787 2015/05/25 00:13:07 $  $NHDT-Branch: master $:$NHDT-Revision: 1.28 $ */
+/* NetHack 3.6	pcsys.c	$NHDT-Date: 1524689500 2018/04/25 20:51:40 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.31 $ */
+/*      Copyright (c) 2012 by Michael Allison              */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
- *  System related functions for MSDOS, OS/2, TOS, and Windows NT
+ *  System related functions for MSDOS, OS/2, TOS
  */
 
 #define NEED_VARARGS
@@ -27,12 +28,12 @@
 #define filesize filesize_nh
 #endif
 
-#if defined(MICRO) || defined(WIN32) || defined(OS2)
-void nethack_exit(int);
+#if defined(MICRO) || defined(OS2)
+void FDECL(nethack_exit, (int));
 #else
 #define nethack_exit exit
 #endif
-STATIC_DCL void msexit(void);
+STATIC_DCL void NDECL(msexit);
 
 #ifdef MOVERLAY
 extern void __far __cdecl _movepause(void);
@@ -44,17 +45,13 @@ extern unsigned short __far __cdecl _movefpaused;
 #endif                       /* MOVERLAY */
 
 #ifdef MFLOPPY
-STATIC_DCL boolean record_exists(void);
+STATIC_DCL boolean NDECL(record_exists);
 #ifndef TOS
-STATIC_DCL boolean comspec_exists(void);
+STATIC_DCL boolean NDECL(comspec_exists);
 #endif
 #endif
 
-#ifdef WIN32
-extern int GUILaunched; /* from nttty.c */
-#endif
-
-#if defined(MICRO) || defined(WIN32)
+#if defined(MICRO)
 
 void
 flushout()
@@ -139,7 +136,8 @@ dosh()
 #ifdef MFLOPPY
 
 void
-eraseall(const char *path, const char *files)
+eraseall(path, files)
+const char *path, *files;
 {
     char buf[PATHLEN];
     char *foundfile;
@@ -158,7 +156,8 @@ eraseall(const char *path, const char *files)
  * Rewritten for version 3.3 to be faster
  */
 void
-copybones(int mode)
+copybones(mode)
+int mode;
 {
     char from[PATHLEN], to[PATHLEN], last[13];
     char *frompath, *topath;
@@ -269,7 +268,8 @@ playwoRAMdisk()
 }
 
 int
-saveDiskPrompt(int start)
+saveDiskPrompt(start)
+int start;
 {
     char buf[BUFSIZ], *bp;
     char qbuf[QBUFSZ];
@@ -296,7 +296,7 @@ saveDiskPrompt(int start)
          * whitespace, do not change the value of SAVEF.
          */
         for (bp = buf; *bp; bp++)
-            if (!isspace(*bp)) {
+            if (!isspace((uchar) *bp)) {
                 strncpy(SAVEF, bp, PATHLEN);
                 break;
             }
@@ -372,7 +372,8 @@ gameDiskPrompt()
  * be room for the \
  */
 void
-append_slash(char *name)
+append_slash(name)
+char *name;
 {
     char *ptr;
 
@@ -386,18 +387,10 @@ append_slash(char *name)
     return;
 }
 
-#ifdef WIN32
-boolean getreturn_enabled;
-int redirect_stdout;
-#endif
-
 void
-getreturn(const char *str)
+getreturn(str)
+const char *str;
 {
-#ifdef WIN32
-    if (!getreturn_enabled)
-        return;
-#endif
 #ifdef TOS
     msmsg("Hit <Return> %s.", str);
 #else
@@ -408,21 +401,20 @@ getreturn(const char *str)
     return;
 }
 
-#ifndef WIN32
-void msmsg(const char *fmt, ...)
+void msmsg
+VA_DECL(const char *, fmt)
 {
-    va_list the_args;
-    va_start(the_args, fmt);
+    VA_START(fmt);
+    VA_INIT(fmt, const char *);
 #if defined(MSDOS) && defined(NO_TERMS)
     if (iflags.grmode)
         gr_finish();
 #endif
-    Vprintf(fmt, the_args);
+    Vprintf(fmt, VA_ARGS);
     flushout();
-    va_end(the_args);
+    VA_END();
     return;
 }
-#endif
 
 /*
  * Follow the PATH, trying to fopen the file.
@@ -438,7 +430,8 @@ void msmsg(const char *fmt, ...)
 #endif
 
 FILE *
-fopenp(const char *name, const char *mode)
+fopenp(name, mode)
+const char *name, *mode;
 {
     char buf[BUFSIZ], *bp, *pp, lastch = 0;
     FILE *fp;
@@ -484,9 +477,10 @@ fopenp(const char *name, const char *mode)
     return (FILE *) 0;
 }
 
-#if defined(MICRO) || defined(WIN32) || defined(OS2)
+#if defined(MICRO) || defined(OS2)
 void
-nethack_exit(int code)
+nethack_exit(code)
+int code;
 {
     msexit();
     exit(code);
@@ -507,9 +501,7 @@ msexit()
 
     flushout();
 #ifndef TOS
-#ifndef WIN32
     enable_ctrlP(); /* in case this wasn't done */
-#endif
 #endif
 #ifdef MFLOPPY
     if (ramdisk)
@@ -527,17 +519,7 @@ msexit()
         restore_colors();
 #endif
 #endif
-#ifdef WIN32
-    /* Only if we started from the GUI, not the command prompt,
-     * we need to get one last return, so the score board does
-     * not vanish instantly after being created.
-     * GUILaunched is defined and set in nttty.c.
-     */
-    synch_cursor();
-    if (GUILaunched)
-        getreturn("to end");
-    synch_cursor();
-#endif
+    wait_synch();
     return;
 }
-#endif /* MICRO || WIN32 || OS2 */
+#endif /* MICRO || OS2 */

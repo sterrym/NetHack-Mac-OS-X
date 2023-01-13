@@ -1,5 +1,6 @@
 /* NetHack 3.6	panic.c	$NHDT-Date: 1448210012 2015/11/22 16:33:32 $  $NHDT-Branch: master $:$NHDT-Revision: 1.10 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2015. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
@@ -14,17 +15,18 @@
 #define abort() exit()
 #endif
 #ifdef VMS
-extern void vms_abort(void);
+extern void NDECL(vms_abort);
 #endif
 
 /*VARARGS1*/
 boolean panicking;
-void panic(char *, ...);
+void VDECL(panic, (const char *, ...));
 
-void panic(char *str, ...)
+void panic
+VA_DECL(const char *, str)
 {
-    va_list the_args;
-    va_start(the_args, str);
+    VA_START(str);
+    VA_INIT(str, char *);
     if (panicking++)
 #ifdef SYSV
         (void)
@@ -32,7 +34,7 @@ void panic(char *str, ...)
             abort(); /* avoid loops - this should never happen*/
 
     (void) fputs(" ERROR:  ", stderr);
-    Vfprintf(stderr, str, the_args);
+    Vfprintf(stderr, str, VA_ARGS);
     (void) fflush(stderr);
 #if defined(UNIX) || defined(VMS)
 #ifdef SYSV
@@ -40,7 +42,7 @@ void panic(char *str, ...)
 #endif
         abort(); /* generate core dump */
 #endif
-    va_end(the_args);
+    VA_END();
     exit(EXIT_FAILURE); /* redundant */
 }
 
@@ -51,7 +53,8 @@ void panic(char *str, ...)
  * systems, but they should either use yacc or get a real alloca routine.
  */
 long *
-alloca(unsigned cnt)
+alloca(cnt)
+unsigned cnt;
 {
     return cnt ? alloc(cnt) : (long *) 0;
 }

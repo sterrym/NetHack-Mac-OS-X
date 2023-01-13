@@ -1,5 +1,6 @@
-/* NetHack 3.6	u_init.c	$NHDT-Date: 1446861772 2015/11/07 02:02:52 $  $NHDT-Branch: master $:$NHDT-Revision: 1.35 $ */
+/* NetHack 3.6	u_init.c	$NHDT-Date: 1575245094 2019/12/02 00:04:54 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.60 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Robert Patrick Rankin, 2017. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
@@ -12,10 +13,10 @@ struct trobj {
     Bitfield(trbless, 2);
 };
 
-STATIC_DCL void ini_inv(struct trobj *);
-STATIC_DCL void knows_object(int);
-STATIC_DCL void knows_class(char);
-STATIC_DCL boolean restricted_spell_discipline(int);
+STATIC_DCL void FDECL(ini_inv, (struct trobj *));
+STATIC_DCL void FDECL(knows_object, (int));
+STATIC_DCL void FDECL(knows_class, (CHAR_P));
+STATIC_DCL boolean FDECL(restricted_spell_discipline, (int));
 
 #define UNDEF_TYP 0
 #define UNDEF_SPE '\177'
@@ -124,7 +125,7 @@ static struct trobj Rogue[] = {
     { DAGGER, 0, WEAPON_CLASS, 10, 0 }, /* quan is variable */
     { LEATHER_ARMOR, 1, ARMOR_CLASS, 1, UNDEF_BLESS },
     { POT_SICKNESS, 0, POTION_CLASS, 1, 0 },
-    { LOCK_PICK, 9, TOOL_CLASS, 1, 0 },
+    { LOCK_PICK, 0, TOOL_CLASS, 1, 0 },
     { SACK, 0, TOOL_CLASS, 1, 0 },
     { 0, 0, 0, 0, 0 }
 };
@@ -218,11 +219,14 @@ static struct inv_sub {
     { PM_ORC, SMALL_SHIELD, ORCISH_SHIELD },
     { PM_ORC, RING_MAIL, ORCISH_RING_MAIL },
     { PM_ORC, CHAIN_MAIL, ORCISH_CHAIN_MAIL },
+    { PM_ORC, CRAM_RATION, TRIPE_RATION },
+    { PM_ORC, LEMBAS_WAFER, TRIPE_RATION },
     { PM_DWARF, SPEAR, DWARVISH_SPEAR },
     { PM_DWARF, SHORT_SWORD, DWARVISH_SHORT_SWORD },
     { PM_DWARF, HELMET, DWARVISH_IRON_HELM },
     /* { PM_DWARF, SMALL_SHIELD, DWARVISH_ROUNDSHIELD }, */
     /* { PM_DWARF, PICK_AXE, DWARVISH_MATTOCK }, */
+    { PM_DWARF, LEMBAS_WAFER, CRAM_RATION },
     { PM_GNOME, BOW, CROSSBOW },
     { PM_GNOME, ARROW, CROSSBOW_BOLT },
     { NON_PM, STRANGE_OBJECT, STRANGE_OBJECT }
@@ -270,7 +274,8 @@ static const struct def_skill Skill_B[] = {
     { P_SPEAR, P_SKILLED },
     { P_TRIDENT, P_SKILLED },
     { P_BOW, P_BASIC },
-    { P_ATTACK_SPELL, P_SKILLED },
+    { P_ATTACK_SPELL, P_BASIC },
+    { P_ESCAPE_SPELL, P_BASIC }, /* special spell is haste self */
     { P_RIDING, P_BASIC },
     { P_TWO_WEAPON_COMBAT, P_BASIC },
     { P_BARE_HANDED_COMBAT, P_MASTER },
@@ -458,7 +463,8 @@ static const struct def_skill Skill_S[] = {
     { P_LANCE, P_SKILLED },
     { P_BOW, P_EXPERT },
     { P_SHURIKEN, P_EXPERT },
-    { P_ATTACK_SPELL, P_SKILLED },
+    { P_ATTACK_SPELL, P_BASIC },
+    { P_DIVINATION_SPELL, P_BASIC }, /* special spell is clairvoyance */
     { P_CLERIC_SPELL, P_SKILLED },
     { P_RIDING, P_SKILLED },
     { P_TWO_WEAPON_COMBAT, P_EXPERT },
@@ -552,7 +558,8 @@ static const struct def_skill Skill_W[] = {
 };
 
 STATIC_OVL void
-knows_object(register int obj)
+knows_object(obj)
+register int obj;
 {
     discover_object(obj, TRUE, FALSE);
     objects[obj].oc_pre_discovered = 1; /* not a "discovery" */
@@ -562,7 +569,8 @@ knows_object(register int obj)
  * like all gems except the loadstone and luckstone.
  */
 STATIC_OVL void
-knows_class(register char sym)
+knows_class(sym)
+register char sym;
 {
     register int ct;
     for (ct = 1; ct < NUM_OBJECTS; ct++)
@@ -697,31 +705,25 @@ u_init()
         ini_inv(Knight);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
-        /* give knights chess-like mobility
-         * -- idea from wooledge@skybridge.scl.cwru.edu */
+        /* give knights chess-like mobility--idea from wooledge@..cwru.edu */
         HJumping |= FROMOUTSIDE;
         skill_init(Skill_K);
         break;
-    case PM_MONK:
-        switch (rn2(90) / 30) {
-        case 0:
-            Monk[M_BOOK].trotyp = SPE_HEALING;
-            break;
-        case 1:
-            Monk[M_BOOK].trotyp = SPE_PROTECTION;
-            break;
-        case 2:
-            Monk[M_BOOK].trotyp = SPE_SLEEP;
-            break;
-        }
+    case PM_MONK: {
+        static short M_spell[] = { SPE_HEALING, SPE_PROTECTION, SPE_SLEEP };
+
+        Monk[M_BOOK].trotyp = M_spell[rn2(90) / 30]; /* [0..2] */
         ini_inv(Monk);
         if (!rn2(5))
             ini_inv(Magicmarker);
         else if (!rn2(10))
             ini_inv(Lamp);
         knows_class(ARMOR_CLASS);
+        /* sufficiently martial-arts oriented item to ignore language issue */
+        knows_object(SHURIKEN);
         skill_init(Skill_Mon);
         break;
+    }
     case PM_PRIEST:
         ini_inv(Priest);
         if (!rn2(10))
@@ -906,7 +908,8 @@ u_init()
 
 /* skills aren't initialized, so we use the role-specific skill lists */
 STATIC_OVL boolean
-restricted_spell_discipline(int otyp)
+restricted_spell_discipline(otyp)
+int otyp;
 {
     const struct def_skill *skills;
     int this_skill = spell_skilltype(otyp);
@@ -965,23 +968,15 @@ restricted_spell_discipline(int otyp)
 }
 
 STATIC_OVL void
-ini_inv(register struct trobj *trop)
+ini_inv(trop)
+register struct trobj *trop;
 {
     struct obj *obj;
     int otyp, i;
 
     while (trop->trclass) {
-        if (trop->trotyp != UNDEF_TYP) {
-            otyp = (int) trop->trotyp;
-            if (urace.malenum != PM_HUMAN) {
-                /* substitute specific items for generic ones */
-                for (i = 0; inv_subs[i].race_pm != NON_PM; ++i)
-                    if (inv_subs[i].race_pm == urace.malenum
-                        && otyp == inv_subs[i].item_otyp) {
-                        otyp = inv_subs[i].subs_otyp;
-                        break;
-                    }
-            }
+        otyp = (int) trop->trotyp;
+        if (otyp != UNDEF_TYP) {
             obj = mksobj(otyp, TRUE, FALSE);
         } else { /* UNDEF_TYP */
             static NEARDATA short nocreate = STRANGE_OBJECT;
@@ -1013,6 +1008,8 @@ ini_inv(register struct trobj *trop)
                    || otyp == RIN_AGGRAVATE_MONSTER
                    || otyp == RIN_HUNGER
                    || otyp == WAN_NOTHING
+                   /* orcs start with poison resistance */
+                   || (otyp == RIN_POISON_RESISTANCE && Race_if(PM_ORC))
                    /* Monks don't use weapons */
                    || (otyp == SCR_ENCHANT_WEAPON && Role_if(PM_MONK))
                    /* wizard patch -- they already have one */
@@ -1052,6 +1049,23 @@ ini_inv(register struct trobj *trop)
             /* Don't have 2 of the same ring or spellbook */
             if (obj->oclass == RING_CLASS || obj->oclass == SPBOOK_CLASS)
                 nocreate4 = otyp;
+        }
+
+        if (urace.malenum != PM_HUMAN) {
+            /* substitute race-specific items; this used to be in
+               the 'if (otyp != UNDEF_TYP) { }' block above, but then
+               substitutions didn't occur for randomly generated items
+               (particularly food) which have racial substitutes */
+            for (i = 0; inv_subs[i].race_pm != NON_PM; ++i)
+                if (inv_subs[i].race_pm == urace.malenum
+                    && otyp == inv_subs[i].item_otyp) {
+                    debugpline3("ini_inv: substituting %s for %s%s",
+                                OBJ_NAME(objects[inv_subs[i].subs_otyp]),
+                                (trop->trotyp == UNDEF_TYP) ? "random " : "",
+                                OBJ_NAME(objects[otyp]));
+                    otyp = obj->otyp = inv_subs[i].subs_otyp;
+                    break;
+                }
         }
 
         /* nudist gets no armor */
@@ -1098,10 +1112,13 @@ ini_inv(register struct trobj *trop)
             discover_object(POT_OIL, TRUE, FALSE);
 
         if (obj->oclass == ARMOR_CLASS) {
-            if (is_shield(obj) && !uarms) {
+            if (is_shield(obj) && !uarms && !(uwep && bimanual(uwep))) {
                 setworn(obj, W_ARMS);
-                if (uswapwep)
-                    setuswapwep((struct obj *) 0);
+                /* Prior to 3.6.2 this used to unset uswapwep if it was set, but
+                   wearing a shield doesn't prevent having an alternate
+                   weapon ready to swap with the primary; just make sure we
+                   aren't two-weaponing (academic; no one starts that way) */
+                u.twoweap = FALSE;
             } else if (is_helmet(obj) && !uarmh)
                 setworn(obj, W_ARMH);
             else if (is_gloves(obj) && !uarmg)
@@ -1121,10 +1138,11 @@ ini_inv(register struct trobj *trop)
             if (is_ammo(obj) || is_missile(obj)) {
                 if (!uquiver)
                     setuqwep(obj);
-            } else if (!uwep)
+            } else if (!uwep && (!uarms || !bimanual(obj))) {
                 setuwep(obj);
-            else if (!uswapwep)
+            } else if (!uswapwep) {
                 setuswapwep(obj);
+            }
         }
         if (obj->oclass == SPBOOK_CLASS && obj->otyp != SPE_BLANK_PAPER)
             initialspell(obj);

@@ -45,18 +45,18 @@
 #define GETKEYFLAGS 0x02    /* Get Keyboard Flags */
 /*#define KEY_DEBUG	 */ /* print values of unexpected key codes - devel*/
 
-void get_cursor(int *, int *);
+void FDECL(get_cursor, (int *, int *));
 
 /* direct bios calls are used only when iflags.BIOS is set */
 
-STATIC_DCL char DOSgetch(void);
-STATIC_DCL char BIOSgetch(void);
+STATIC_DCL char NDECL(DOSgetch);
+STATIC_DCL char NDECL(BIOSgetch);
 #ifndef __GO32__
-STATIC_DCL char *getdta(void);
+STATIC_DCL char *NDECL(getdta);
 #endif
-STATIC_DCL unsigned int dos_ioctl(int, int, unsigned);
+STATIC_DCL unsigned int FDECL(dos_ioctl, (int, int, unsigned));
 #ifdef USE_TILES
-extern boolean pckeys(unsigned char, unsigned char); /* pckeys.c */
+extern boolean FDECL(pckeys, (unsigned char, unsigned char)); /* pckeys.c */
 #endif
 
 int
@@ -353,7 +353,8 @@ switchar()
 }
 
 long
-freediskspace(char *path)
+freediskspace(path)
+char *path;
 {
     union REGS regs;
 
@@ -374,7 +375,8 @@ freediskspace(char *path)
  * Functions to get filenames using wildcards
  */
 int
-findfirst_file(char *path)
+findfirst_file(path)
+char *path;
 {
     union REGS regs;
     struct SREGS sregs;
@@ -423,7 +425,8 @@ getdta()
 }
 
 long
-filesize_nh(char *file)
+filesize_nh(file)
+char *file;
 {
     char *dta;
 
@@ -440,7 +443,8 @@ filesize_nh(char *file)
  * Chdrive() changes the default drive.
  */
 void
-chdrive(char *str)
+chdrive(str)
+char *str;
 {
 #define SELECTDISK 0x0E
     char *ptr;
@@ -500,7 +504,9 @@ enable_ctrlP()
 }
 
 STATIC_OVL unsigned int
-dos_ioctl(int handle, int mode, unsigned setvalue)
+dos_ioctl(handle, mode, setvalue)
+int handle, mode;
+unsigned setvalue;
 {
     union REGS regs;
 
@@ -511,6 +517,17 @@ dos_ioctl(int handle, int mode, unsigned setvalue)
     regs.h.dh = 0; /* Zero out dh */
     intdos(&regs, &regs);
     return (regs.x.dx);
+}
+
+unsigned long
+sys_random_seed(VOID_ARGS)
+{
+    unsigned long ourseed = 0UL;
+    time_t datetime = 0;
+
+    (void) time(&datetime);
+    ourseed = (unsigned long) datetime;
+    return ourseed;
 }
 
 #endif /* MSDOS */

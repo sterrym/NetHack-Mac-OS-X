@@ -1,5 +1,6 @@
-/* NetHack 3.6	unixtty.c	$NHDT-Date: 1432512788 2015/05/25 00:13:08 $  $NHDT-Branch: master $:$NHDT-Revision: 1.19 $ */
+/* NetHack 3.6	unixtty.c	$NHDT-Date: 1570652308 2019/10/09 20:18:28 $  $NHDT-Branch: NetHack-3.6 $:$NHDT-Revision: 1.26 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Michael Allison, 2006. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* tty.c - (Unix) version */
@@ -121,6 +122,18 @@ struct tchars inittyb2, curttyb2;
 
 #endif /* V7 */
 
+/*
+ * Old curses.h relied on implicit declaration of has_colors().
+ * Modern compilers tend to warn about implicit declarations and
+ * modern curses.h declares has_colors() explicitly.  However, the
+ * declaration it uses is not one we can simply clone (requires
+ * <stdbool.h>).  This simpler declaration suffices but can't be
+ * used unconditionally because it conflicts with the 'bool' one.
+ */
+#ifdef NEED_HAS_COLORS_DECL
+int has_colors();
+#endif
+
 #if defined(TTY_GRAPHICS) && ((!defined(SYSV) && !defined(HPUX)) \
                               || defined(UNIXPC) || defined(SVR4))
 #ifndef LINT
@@ -141,7 +154,8 @@ struct termstruct inittyb, curttyb;
 
 #ifdef POSIX_TYPES
 static int
-speednum(speed_t speed)
+speednum(speed)
+speed_t speed;
 {
     switch (speed) {
     case B0:
@@ -217,7 +231,8 @@ gettty()
 
 /* reset terminal to original state */
 void
-settty(const char *s)
+settty(s)
+const char *s;
 {
     end_screen();
     if (s)
@@ -228,6 +243,7 @@ settty(const char *s)
     iflags.cbreak = (CBRKON(inittyb.cbrkflgs & CBRKMASK)) ? ON : OFF;
     curttyb.inputflags |= STRIPHI;
     setioctls();
+    settty_needed = FALSE;
 }
 
 void
@@ -298,32 +314,28 @@ setftty()
     start_screen();
 }
 
-#ifndef COCOA_GRAPHICS
 void intron() /* enable kbd interupts if enabled when game started */
 {
 #ifdef TTY_GRAPHICS
     /* Ugly hack to keep from changing tty modes for non-tty games -dlc */
-    if (!strcmp(windowprocs.name, "tty") && intr_char != nonesuch
+    if (WINDOWPORT("tty") && intr_char != nonesuch
         && curttyb2.intr_sym != '\003') {
         curttyb2.intr_sym = '\003';
         setctty();
     }
 #endif
 }
-#endif
 
-#ifndef COCOA_GRAPHICS
 void introff() /* disable kbd interrupts if required*/
 {
 #ifdef TTY_GRAPHICS
     /* Ugly hack to keep from changing tty modes for non-tty games -dlc */
-    if (!strcmp(windowprocs.name, "tty") && curttyb2.intr_sym != nonesuch) {
+    if (WINDOWPORT("tty") && curttyb2.intr_sym != nonesuch) {
         curttyb2.intr_sym = nonesuch;
         setctty();
     }
 #endif
 }
-#endif
 
 #ifdef _M_UNIX /* SCO UNIX (3.2.4), from Andreas Arens */
 #include <sys/console.h>
@@ -337,16 +349,16 @@ int sco_flag_console = 0;
 int sco_map_valid = -1;
 unsigned char sco_chanmap_buf[BSIZE];
 
-void sco_mapon(void);
-void sco_mapoff(void);
-void check_sco_console(void);
-void init_sco_cons(void);
+void NDECL(sco_mapon);
+void NDECL(sco_mapoff);
+void NDECL(check_sco_console);
+void NDECL(init_sco_cons);
 
 void
 sco_mapon()
 {
 #ifdef TTY_GRAPHICS
-    if (!strcmp(windowprocs.name, "tty") && sco_flag_console) {
+    if (WINDOWPORT("tty") && sco_flag_console) {
         if (sco_map_valid != -1) {
             ioctl(0, LDSMAP, sco_chanmap_buf);
         }
@@ -359,7 +371,7 @@ void
 sco_mapoff()
 {
 #ifdef TTY_GRAPHICS
-    if (!strcmp(windowprocs.name, "tty") && sco_flag_console) {
+    if (WINDOWPORT("tty") && sco_flag_console) {
         sco_map_valid = ioctl(0, LDGMAP, sco_chanmap_buf);
         if (sco_map_valid != -1) {
             ioctl(0, LDNMAP, (char *) 0);
@@ -380,7 +392,7 @@ void
 init_sco_cons()
 {
 #ifdef TTY_GRAPHICS
-    if (!strcmp(windowprocs.name, "tty") && sco_flag_console) {
+    if (WINDOWPORT("tty") && sco_flag_console) {
         atexit(sco_mapon);
         sco_mapoff();
         load_symset("IBMGraphics", PRIMARY);
@@ -401,16 +413,16 @@ init_sco_cons()
 
 int linux_flag_console = 0;
 
-void linux_mapon(void);
-void linux_mapoff(void);
-void check_linux_console(void);
-void init_linux_cons(void);
+void NDECL(linux_mapon);
+void NDECL(linux_mapoff);
+void NDECL(check_linux_console);
+void NDECL(init_linux_cons);
 
 void
 linux_mapon()
 {
 #ifdef TTY_GRAPHICS
-    if (!strcmp(windowprocs.name, "tty") && linux_flag_console) {
+    if (WINDOWPORT("tty") && linux_flag_console) {
         write(1, "\033(B", 3);
     }
 #endif
@@ -420,7 +432,7 @@ void
 linux_mapoff()
 {
 #ifdef TTY_GRAPHICS
-    if (!strcmp(windowprocs.name, "tty") && linux_flag_console) {
+    if (WINDOWPORT("tty") && linux_flag_console) {
         write(1, "\033(U", 3);
     }
 #endif
@@ -440,7 +452,7 @@ void
 init_linux_cons()
 {
 #ifdef TTY_GRAPHICS
-    if (!strcmp(windowprocs.name, "tty") && linux_flag_console) {
+    if (WINDOWPORT("tty") && linux_flag_console) {
         atexit(linux_mapon);
         linux_mapoff();
 #ifdef TEXTCOLOR
@@ -452,18 +464,22 @@ init_linux_cons()
 }
 #endif /* __linux__ */
 
-#if !(defined(__begui__) || defined(COCOA_GRAPHICS))/* the Be GUI will define its own error proc */
+#ifndef __begui__ /* the Be GUI will define its own error proc */
 /* fatal error */
 /*VARARGS1*/
-void error(const char *s, ...)
+void error
+VA_DECL(const char *, s)
 {
-    va_list the_args;
-    va_start(the_args, s);
+    VA_START(s);
+    VA_INIT(s, const char *);
+
+    if (iflags.window_inited)
+        exit_nhwindows((char *) 0); /* for tty, will call settty() */
     if (settty_needed)
         settty((char *) 0);
-    Vprintf(s, the_args);
+    Vprintf(s, VA_ARGS);
     (void) putchar('\n');
-    va_end(the_args);
+    VA_END();
     exit(EXIT_FAILURE);
 }
 #endif /* !__begui__ */

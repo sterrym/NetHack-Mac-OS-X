@@ -1,4 +1,4 @@
-/* NetHack 3.6	wingem.c	$NHDT-Date: 1433806613 2015/06/08 23:36:53 $  $NHDT-Branch: master $:$NHDT-Revision: 1.25 $ */
+/* NetHack 3.6	wingem.c	$NHDT-Date: 1450453304 2015/12/18 15:41:44 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.26 $ */
 /* Copyright (c) Christian Bressler, 1999 */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -18,8 +18,8 @@
 static char nullstr[] = "", winpanicstr[] = "Bad window id %d";
 static int curr_status_line;
 
-static char *copy_of(const char *);
-static void bail(const char *)); /* __attribute__((noreturn) */
+static char *FDECL(copy_of, (const char *));
+static void FDECL(bail, (const char *)); /* __attribute__((noreturn)) */
 
 extern int mar_set_tile_mode(int);
 extern void mar_set_font(int, const char *, int);
@@ -43,7 +43,9 @@ struct window_procs Gem_procs = {
         | WC_FONT_TEXT | WC_FONT_MAP | WC_FONTSIZ_MESSAGE | WC_FONTSIZ_STATUS
         | WC_FONTSIZ_MENU | WC_FONTSIZ_TEXT | WC_FONTSIZ_MAP | WC_TILE_WIDTH
         | WC_TILE_HEIGHT | WC_TILE_FILE | WC_VARY_MSGCOUNT | WC_ASCII_MAP,
-    0L, Gem_init_nhwindows, Gem_player_selection, Gem_askname,
+    0L,
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},   /* color availability */
+    Gem_init_nhwindows, Gem_player_selection, Gem_askname,
     Gem_get_nh_event, Gem_exit_nhwindows, Gem_suspend_nhwindows,
     Gem_resume_nhwindows, Gem_create_nhwindow, Gem_clear_nhwindow,
     Gem_display_nhwindow, Gem_destroy_nhwindow, Gem_curs, Gem_putstr,
@@ -70,24 +72,22 @@ struct window_procs Gem_procs = {
     /* other defs that really should go away (they're tty specific) */
     Gem_start_screen, Gem_end_screen, Gem_outrip, Gem_preference_update,
     genl_getmsghistory, genl_putmsghistory
-#ifdef STATUS_VIA_WINDOWPORT
                             genl_status_init,
     genl_status_finish, genl_status_enablefield, genl_status_update,
-#ifdef STATUS_HILITES
-    genl_status_threshold,
-#endif
-#endif
     genl_can_suspend_no,
 };
 
 #ifdef MAC
 void *
-Gem_change_background(int dummy)
+Gem_change_background(dummy)
+int dummy;
 {
 }
 
 short *
-Gem_set_font_name(winid foo, char *bar)
+Gem_set_font_name(foo, bar)
+winid foo;
+char *bar;
 {
 }
 #endif
@@ -121,11 +121,12 @@ mar_get_msg_visible()
 }
 /* clean up and quit */
 static void
-bail(const char *mesg)
+bail(mesg)
+const char *mesg;
 {
     clearlocks();
     Gem_exit_nhwindows(mesg);
-    terminate(EXIT_SUCCESS);
+    nh_terminate(EXIT_SUCCESS);
     /*NOTREACHED*/
 }
 
@@ -142,7 +143,9 @@ bail(const char *mesg)
 /*$$$*/
 /*ARGSUSED*/
 void
-Gem_init_nhwindows(int *argcp, char **argv)
+Gem_init_nhwindows(argcp, argv)
+int *argcp;
+char **argv;
 {
     argv = argv, argcp = argcp;
     colors_changed = TRUE;
@@ -233,7 +236,7 @@ Gem_player_selection()
             if (flags.initrole < 0) {
                 mar_add_message("Incompatible role!");
                 mar_display_nhwindow(WIN_MESSAGE);
-                flags.initrole = randrole();
+                flags.initrole = randrole(FALSE);
             }
         } else {
             /* Prompt for a role */
@@ -255,7 +258,7 @@ Gem_player_selection()
             any.a_int = pick_role(flags.initrace, flags.initgend,
                                   flags.initalign, PICK_RANDOM) + 1;
             if (any.a_int == 0) /* must be non-zero */
-                any.a_int = randrole() + 1;
+                any.a_int = randrole(FALSE) + 1;
             add_menu(win, NO_GLYPH, &any, '*', 0, ATR_NONE, "Random",
                      MENU_UNSELECTED);
             any.a_int = i + 1; /* must be non-zero */
@@ -507,7 +510,8 @@ Gem_get_nh_event()
 }
 
 void
-Gem_suspend_nhwindows(const char *str)
+Gem_suspend_nhwindows(str)
+const char *str;
 {
     const char *foo;
 
@@ -533,7 +537,8 @@ extern void mar_exit_nhwindows(void);
 extern boolean run_from_desktop;
 
 void
-Gem_exit_nhwindows(const char *str)
+Gem_exit_nhwindows(str)
+const char *str;
 {
     if (str)
         Gem_raw_print(str);
@@ -544,7 +549,8 @@ Gem_exit_nhwindows(const char *str)
 }
 
 winid
-Gem_create_nhwindow(int type)
+Gem_create_nhwindow(type)
+int type;
 {
     winid newid;
 
@@ -587,7 +593,8 @@ Gem_nhbell()
 extern void mar_clear_map(void);
 
 void
-Gem_clear_nhwindow(winid window)
+Gem_clear_nhwindow(window)
+winid window;
 {
     if (window == WIN_ERR)
         panic(winpanicstr, window);
@@ -610,7 +617,9 @@ extern void mar_more(void);
 
 /*ARGSUSED*/
 void
-Gem_display_nhwindow(winid window, boolean blocking)
+Gem_display_nhwindow(window, blocking)
+winid window;
+boolean blocking;
 {
     if (window == WIN_ERR)
         panic(winpanicstr, window);
@@ -635,7 +644,8 @@ Gem_display_nhwindow(winid window, boolean blocking)
 }
 
 void
-Gem_destroy_nhwindow(winid window)
+Gem_destroy_nhwindow(window)
+winid window;
 {
     if (window == WIN_ERR) /* MAR -- test existence */
         panic(winpanicstr, window);
@@ -646,7 +656,9 @@ Gem_destroy_nhwindow(winid window)
 extern void mar_curs(int, int); /* mar_curs is only for map */
 
 void
-Gem_curs(winid window, register int x, register int y)
+Gem_curs(window, x, y)
+winid window;
+register int x, y;
 {
     if (window == WIN_ERR) /* MAR -- test existence */
         panic(winpanicstr, window);
@@ -661,7 +673,10 @@ extern void mar_add_status_str(const char *, int);
 extern void mar_putstr_text(winid, int, const char *);
 
 void
-Gem_putstr(winid window, int attr, const char *str)
+Gem_putstr(window, attr, str)
+winid window;
+int attr;
+const char *str;
 {
     int win_type;
 
@@ -704,7 +719,9 @@ Gem_putstr(winid window, int attr, const char *str)
 }
 
 void
-Gem_display_file(const char *fname, boolean complain)
+Gem_display_file(fname, complain)
+const char *fname;
+boolean complain;
 {
     dlb *f;
     char buf[BUFSZ];
@@ -737,14 +754,15 @@ Gem_display_file(const char *fname, boolean complain)
  * later.
  */
 void
-Gem_add_menu(winid window,                  /* window to use, must be of type NHW_MENU */
-             int glyph,                     /* glyph to display with item (unused) */
-             const anything *identifier,    /* what to return if selected */
-             char ch,                       /* keyboard accelerator (0 = pick our own) */
-             char gch,                      /* group accelerator (0 = no group) */
-             int attr,                      /* attribute for string (like Gem_putstr()) */
-             const char *str,               /* menu string */
-             boolean preselected)           /* item is marked as selected */
+Gem_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
+winid window;               /* window to use, must be of type NHW_MENU */
+int glyph;                  /* glyph to display with item (unused) */
+const anything *identifier; /* what to return if selected */
+char ch;                    /* keyboard accelerator (0 = pick our own) */
+char gch;                   /* group accelerator (0 = no group) */
+int attr;                   /* attribute for string (like Gem_putstr()) */
+const char *str;            /* menu string */
+boolean preselected;        /* item is marked as selected */
 {
     Gem_menu_item *G_item;
     const char *newstr;
@@ -779,8 +797,9 @@ Gem_add_menu(winid window,                  /* window to use, must be of type NH
  * We assign the keyboard accelerators as needed.
  */
 void
-Gem_end_menu(winid window,       /* menu to use */
-             const char *prompt) /* prompt to for menu */
+Gem_end_menu(window, prompt)
+winid window;       /* menu to use */
+const char *prompt; /* prompt to for menu */
 {
     if (window == WIN_ERR || mar_hol_win_type(window) != NHW_MENU)
         panic(winpanicstr, window);
@@ -795,7 +814,10 @@ Gem_end_menu(winid window,       /* menu to use */
 }
 
 int
-Gem_select_menu(winid window, int how, menu_item **menu_list)
+Gem_select_menu(window, how, menu_list)
+winid window;
+int how;
+menu_item **menu_list;
 {
     Gem_menu_item *Gmit;
     menu_item *mi;
@@ -850,7 +872,8 @@ Gem_wait_synch()
 #ifdef CLIPPING
 extern void mar_cliparound(void);
 void
-Gem_cliparound(int x, int y)
+Gem_cliparound(x, y)
+int x, y;
 {
     mar_curs(x - 1, y);
     mar_cliparound();
@@ -873,7 +896,10 @@ extern int mar_set_rogue(int);
 extern void mar_add_pet_sign(winid, int, int);
 
 void
-Gem_print_glyph(winid window, xchar x, xchar y, int glyph, int bkglyph)
+Gem_print_glyph(window, x, y, glyph, bkglyph)
+winid window;
+xchar x, y;
+int glyph, bkglyph;
 {
     /* Move the cursor. */
     Gem_curs(window, x, y);
@@ -896,14 +922,17 @@ Gem_print_glyph(winid window, xchar x, xchar y, int glyph, int bkglyph)
 void mar_print_char(winid, xchar, xchar, char, int);
 
 void
-mar_print_gl_char(winid window, xchar x, xchar y, int glyph)
+mar_print_gl_char(window, x, y, glyph)
+winid window;
+xchar x, y;
+int glyph;
 {
     int ch;
     int color;
     unsigned special;
 
     /* map glyph to character and color */
-    (void) mapglyph(glyph, &ch, &color, &special, x, y);
+    (void) mapglyph(glyph, &ch, &color, &special, x, y, 0);
 
 #ifdef TEXTCOLOR
     /* Turn off color if rogue level. */
@@ -918,7 +947,8 @@ extern void mar_raw_print(const char *);
 extern void mar_raw_print_bold(const char *);
 
 void
-Gem_raw_print(const char *str)
+Gem_raw_print(str)
+const char *str;
 {
     if (str && *str) {
         if (iflags.window_inited)
@@ -929,7 +959,8 @@ Gem_raw_print(const char *str)
 }
 
 void
-Gem_raw_print_bold(const char *str)
+Gem_raw_print_bold(str)
+const char *str;
 {
     if (str && *str) {
         if (iflags.window_inited)
@@ -995,7 +1026,8 @@ Gem_get_ext_cmd()
 }
 
 void
-Gem_number_pad(int state)
+Gem_number_pad(state)
+int state;
 {
     state = state;
 }
@@ -1007,7 +1039,8 @@ win_Gem_init()
 
 #ifdef POSITIONBAR
 void
-Gem_update_positionbar(char *posbar)
+Gem_update_positionbar(posbar)
+char *posbar;
 {
 }
 #endif
@@ -1017,7 +1050,10 @@ void mar_set_text_to_rip(winid);
 char **rip_line = 0;
 
 void
-Gem_outrip(winid w, int how, time_t when)
+Gem_outrip(w, how, when)
+winid w;
+int how;
+time_t when;
 {
 /* Code from X11 windowport */
 #define STONE_LINE_LEN 15 /* # chars that fit on one line */
@@ -1044,7 +1080,7 @@ Gem_outrip(winid w, int how, time_t when)
     /* Put $ on stone */
     Sprintf(rip_line[GOLD_LINE], "%ld Au", done_money);
     /* Put together death description */
-    formatkiller(buf, sizeof buf, how);
+    formatkiller(buf, sizeof buf, how, FALSE);
 
     /* Put death type on stone */
     for (line = DEATH_LINE, dpx = buf; line < YEAR_LINE; line++) {
@@ -1075,7 +1111,10 @@ Gem_outrip(winid w, int how, time_t when)
         putstr(w, 0, "");
 }
 void
-mar_get_font(int type, char **p_fname, int *psize)
+mar_get_font(type, p_fname, psize)
+int type;
+char **p_fname;
+int *psize;
 {
     switch (type) {
     case NHW_MESSAGE:
@@ -1103,7 +1142,8 @@ mar_get_font(int type, char **p_fname, int *psize)
     }
 }
 void
-Gem_preference_update(const char *pref)
+Gem_preference_update(pref)
+const char *pref;
 {
     if (stricmp(pref, "font_message") == 0
         || stricmp(pref, "font_size_message") == 0) {
@@ -1181,7 +1221,8 @@ Gem_preference_update(const char *pref)
  * This is an exact duplicate of copy_of() in X11/winmenu.c.
  */
 static char *
-copy_of(const char *s)
+copy_of(s)
+const char *s;
 {
     if (!s)
         s = nullstr;

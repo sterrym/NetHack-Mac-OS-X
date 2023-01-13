@@ -55,7 +55,7 @@ void ClearCol(struct Window *w);
 void
 EditColor()
 {
-    extern const char *configfile;
+    extern char configfile[];
     int i, done = 0, okay = 0;
     long code, qual, class;
     register struct Gadget *gd, *dgad;
@@ -532,7 +532,8 @@ EditClipping(void)
 }
 
 char *
-dirname(char *str)
+dirname(str)
+char *str;
 {
     char *t, c;
     static char dir[300];
@@ -552,7 +553,8 @@ dirname(char *str)
 }
 
 char *
-basename(char *str)
+basename(str)
+char *str;
 {
     char *t;
 
@@ -566,7 +568,7 @@ basename(char *str)
     return (t);
 }
 
-filecopy(char *from, char *to)
+filecopy(from, to) char *from, *to;
 {
     char *buf;
     int i = 0;
@@ -641,7 +643,10 @@ ClearCol(struct Window *w)
 }
 
 void
-DrawCol(struct Window *w, int idx, UWORD *colors)
+DrawCol(w, idx, colors)
+struct Window *w;
+int idx;
+UWORD *colors;
 {
     int bxorx, bxory, bxxlen, bxylen;
     int i, incx, incy, r, g, b;
@@ -723,7 +728,10 @@ DrawCol(struct Window *w, int idx, UWORD *colors)
 }
 
 void
-DispCol(struct Window *w, int idx, UWORD *colors)
+DispCol(w, idx, colors)
+struct Window *w;
+int idx;
+UWORD *colors;
 {
     char buf[50];
     char *colname, *defval;
@@ -802,14 +810,19 @@ amii_setpens(int count)
 /* Generate a requester for a string value. */
 
 void
-amii_getlin(const char *prompt, char *bufp)
+amii_getlin(prompt, bufp)
+const char *prompt;
+char *bufp;
 {
     getlind(prompt, bufp, 0);
 }
 
 /* and with default */
 void
-getlind(const char *prompt, char *bufp, const char *dflt)
+getlind(prompt, bufp, dflt)
+const char *prompt;
+char *bufp;
+const char *dflt;
 {
 #ifndef TOPL_GETLINE
     register struct Window *cwin;
@@ -979,7 +992,9 @@ getlind(const char *prompt, char *bufp, const char *dflt)
 }
 
 void
-amii_change_color(int pen, int val, long val)
+amii_change_color(pen, val, rev)
+int pen, rev;
+long val;
 {
     if (rev)
         sysflags.amii_curmap[pen] = ~val;

@@ -1,5 +1,6 @@
 /* NetHack 3.6	pctty.c	$NHDT-Date: 1432512787 2015/05/25 00:13:07 $  $NHDT-Branch: master $:$NHDT-Revision: 1.11 $ */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/*-Copyright (c) Michael Allison, 2005. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /* tty.c - (PC) version */
@@ -32,7 +33,8 @@ gettty()
 
 /* reset terminal to original state */
 void
-settty(const char *s)
+settty(s)
+const char *s;
 {
 #if defined(MSDOS) && defined(NO_TERMS)
     gr_finish();
@@ -54,7 +56,8 @@ setftty()
 
 #if defined(TIMED_DELAY) && defined(_MSC_VER)
 void
-msleep(unsigned mseconds)
+msleep(mseconds)
+unsigned mseconds;
 {
     /* now uses clock() which is ANSI C */
     clock_t goal;
@@ -69,17 +72,18 @@ msleep(unsigned mseconds)
 /* fatal error */
 /*VARARGS1*/
 
-void error(const char *s, ...)
+void error
+VA_DECL(const char *, s)
 {
-    va_list the_args;
-    va_start(the_args, s);
+    VA_START(s);
+    VA_INIT(s, const char *);
     /* error() may get called before tty is initialized */
     if (iflags.window_inited)
         end_screen();
     putchar('\n');
-    Vprintf(s, the_args);
+    Vprintf(s, VA_ARGS);
     putchar('\n');
-    va_end(the_args);
+    VA_END();
     exit(EXIT_FAILURE);
 }
 

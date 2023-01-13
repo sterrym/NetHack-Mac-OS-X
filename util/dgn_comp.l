@@ -1,5 +1,5 @@
 %{
-/* NetHack 3.6  dgn_comp.l	$NHDT-Date: 1449385184 2015/12/06 06:59:44 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.12 $ */
+/* NetHack 3.6  dgn_comp.l	$NHDT-Date: 1455415007 2016/02/14 01:56:47 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.13 $ */
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /*	Copyright (c) 1990 by M. Stephenson	     */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -15,11 +15,11 @@
  * yyunput is properly declared in flex.skel.
  */
 #if !defined(FLEX_SCANNER) && !defined(FLEXHACK_SCANNER)
-int yyback(int *,int);
-int yylook(void);
-int yyinput(void);
-int yywrap(void);
-int yylex(void);
+int FDECL(yyback, (int *,int));
+int NDECL(yylook);
+int NDECL(yyinput);
+int NDECL(yywrap);
+int NDECL(yylex);
 	/* Traditional lexes let yyunput() and yyoutput() default to int;
 	 * newer ones may declare them as void since they don't return
 	 * values.  For even more fun, the lex supplied as part of the
@@ -49,28 +49,29 @@ int yylex(void);
 #  undef VOIDYYPUT
 # endif
 # ifdef VOIDYYPUT
-void yyunput(int);
-void yyoutput(int);
+void FDECL(yyunput, (int));
+void FDECL(yyoutput, (int));
 # else
-int yyunput(int);
-int yyoutput(int);
+int FDECL(yyunput, (int));
+int FDECL(yyoutput, (int));
 # endif
 
 #else	/* !FLEX_SCANNER && !FLEXHACK_SCANNER */
 /* most recent flex allows suppressing yyunput() altogether when not needed */
 #define YY_NO_UNPUT
+#define YY_NO_INPUT
 #endif
 
 #if defined(FLEX_SCANNER) || defined(FLEXHACK_SCANNER)
 /* older flex wants this */
-#define YY_MALLOC_DECL  genericptr_t malloc(size_t); \
-                        genericptr_t realloc(genericptr_t, size_t);
+#define YY_MALLOC_DECL  genericptr_t FDECL(malloc, (size_t)); \
+                        genericptr_t FDECL(realloc, (genericptr_t, size_t));
 /* newer flex assumes <stdlib.h> so needs this in case it's been suppressed */
 YY_MALLOC_DECL
 #endif
 
-void init_yyin(FILE *);
-void init_yyout(FILE *);
+void FDECL(init_yyin, (FILE *));
+void FDECL(init_yyout, (FILE *));
 
 /* this doesn't always get put in dgn_comp.h
  * (esp. when using older versions of bison)
@@ -121,7 +122,8 @@ RNDCHLEVEL	return(RNDCHLEVEL);
 
 /* routine to switch to another input file; needed for flex */
 void
-init_yyin( FILE *input_f )
+init_yyin( input_f )
+FILE *input_f;
 {
 #if defined(FLEX_SCANNER) || defined(FLEXHACK_SCANNER)
     if (yyin)
@@ -133,7 +135,8 @@ init_yyin( FILE *input_f )
 
 /* analogous routine (for completeness) */
 void
-init_yyout( FILE *output_f )
+init_yyout( output_f )
+FILE *output_f;
 {
     yyout = output_f;
 }

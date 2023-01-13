@@ -1,4 +1,4 @@
-/* NetHack 3.6	gnbind.c	$NHDT-Date: 1433806614 2015/06/08 23:36:54 $  $NHDT-Branch: master $:$NHDT-Revision: 1.32 $ */
+/* NetHack 3.6	gnbind.c	$NHDT-Date: 1450453305 2015/12/18 15:41:45 $  $NHDT-Branch: NetHack-3.6.0 $:$NHDT-Revision: 1.33 $ */
 /* Copyright (C) 1998 by Erik Andersen <andersee@debian.org> */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,12 +19,11 @@ winid WIN_WORN = WIN_ERR;
 extern void tty_raw_print(const char *);
 extern void tty_raw_print_bold(const char *);
 
-/* this is only needed until gnome_status_* routines are written */
-extern NEARDATA winid WIN_STATUS;
-
 /* Interface definition, for windows.c */
 struct window_procs Gnome_procs = {
-    "Gnome", WC_COLOR | WC_HILITE_PET | WC_INVERSE, 0L, gnome_init_nhwindows,
+    "Gnome", WC_COLOR | WC_HILITE_PET | WC_INVERSE, 0L,
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},   /* color availability */
+    gnome_init_nhwindows,
     gnome_player_selection, gnome_askname, gnome_get_nh_event,
     gnome_exit_nhwindows, gnome_suspend_nhwindows, gnome_resume_nhwindows,
     gnome_create_nhwindow, gnome_clear_nhwindow, gnome_display_nhwindow,
@@ -48,13 +47,8 @@ struct window_procs Gnome_procs = {
     /* other defs that really should go away (they're tty specific) */
     gnome_start_screen, gnome_end_screen, gnome_outrip,
     genl_preference_update, genl_getmsghistory, genl_putmsghistory,
-#ifdef STATUS_VIA_WINDOWPORT
     genl_status_init, genl_status_finish, genl_status_enablefield,
     genl_status_update,
-#ifdef STATUS_HILITES
-    genl_status_threshold,
-#endif
-#endif
     genl_can_suspend_yes,
 };
 
@@ -164,7 +158,7 @@ gnome_player_selection()
         sel = pick_role(flags.initrace, flags.initgend, flags.initalign,
                         PICK_RANDOM);
         if (sel < 0)
-            sel = randrole();
+            sel = randrole(FALSE);
     }
 
     flags.initrole = sel;
@@ -505,7 +499,7 @@ gnome_clear_nhwindow(winid wid)
                    --more--, if necessary, in the tty window-port.
 */
 void
-gnome_display_nhwindow(winid wid, boolean block)
+gnome_display_nhwindow(winid wid, BOOLEAN_P block)
 {
     if (gnome_windowlist[wid].win != NULL) {
         gtk_signal_emit(GTK_OBJECT(gnome_windowlist[wid].win),
@@ -583,7 +577,7 @@ gnome_putstr(winid wid, int attr, const char *text)
                    iff complain is TRUE.
 */
 void
-gnome_display_file(const char *filename, boolean must_exist)
+gnome_display_file(const char *filename, BOOLEAN_P must_exist)
 {
     /* Strange -- for some reason it makes us create a new text window
      * instead of reusing any existing ones -- perhaps we can work out
@@ -707,7 +701,7 @@ identifier
                    outside of the standard accelerator (see above) or a
                    number.  If 0, the item is unaffected by any group
                    accelerator.  If this accelerator conflicts with
-                   the menu command (or their user defined alises), it loses.
+                   the menu command (or their user defined aliases), it loses.
                    The menu commands and aliases take care not to interfere
                    with the default object class symbols.
                 -- If you want this choice to be preselected when the
@@ -715,8 +709,8 @@ identifier
 */
 void
 gnome_add_menu(winid wid, int glyph, const ANY_P *identifier,
-               char accelerator, char group_accel, int attr,
-               const char *str, boolean presel)
+               CHAR_P accelerator, CHAR_P group_accel, int attr,
+               const char *str, BOOLEAN_P presel)
 {
     GHackMenuItem item;
     item.glyph = glyph;
@@ -856,7 +850,7 @@ print_glyph(window, x, y, glyph, bkglyph)
                    a 1-1 map between glyphs and distinct things on the map).
 */
 void
-gnome_print_glyph(winid wid, xchar x, xchar y, int glyph, int bkglyph)
+gnome_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph)
 {
     if (wid != -1 && gnome_windowlist[wid].win != NULL) {
         GdkImlibImage *im;
@@ -1026,7 +1020,7 @@ char yn_function(const char *ques, const char *choices, char default)
                    ports might use a popup.
 */
 char
-gnome_yn_function(const char *question, const char *choices, char def)
+gnome_yn_function(const char *question, const char *choices, CHAR_P def)
 {
     int ch;
     int result = -1;
@@ -1182,7 +1176,7 @@ gnome_outrip(winid wid, int how, time_t when)
     Strcat(ripString, buf);
 
     /* Put together death description */
-    formatkiller(buf, sizeof buf, how);
+    formatkiller(buf, sizeof buf, how, FALSE);
 
     /* Put death type on stone */
     Strcat(ripString, buf);

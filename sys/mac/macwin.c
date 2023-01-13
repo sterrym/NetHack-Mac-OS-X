@@ -79,22 +79,22 @@ static pascal OSStatus GlobalEvent(EventHandlerCallRef, EventRef, void *);
 
 #else
 
-static void GeneralKey(EventRecord *, WindowPtr);
-static void macKeyMenu(EventRecord *, WindowPtr);
-static void macKeyText(EventRecord *, WindowPtr);
+static void FDECL(GeneralKey, (EventRecord *, WindowPtr));
+static void FDECL(macKeyMenu, (EventRecord *, WindowPtr));
+static void FDECL(macKeyText, (EventRecord *, WindowPtr));
 
-static void macClickMessage(EventRecord *, WindowPtr);
-static void macClickTerm(EventRecord *, WindowPtr);
-static void macClickMenu(EventRecord *, WindowPtr);
-static void macClickText(EventRecord *, WindowPtr);
+static void FDECL(macClickMessage, (EventRecord *, WindowPtr));
+static void FDECL(macClickTerm, (EventRecord *, WindowPtr));
+static void FDECL(macClickMenu, (EventRecord *, WindowPtr));
+static void FDECL(macClickText, (EventRecord *, WindowPtr));
 
-static short macDoNull(EventRecord *, WindowPtr);
-static short macUpdateMessage(EventRecord *, WindowPtr);
-static short macUpdateMenu(EventRecord *, WindowPtr);
-static short GeneralUpdate(EventRecord *, WindowPtr);
+static short FDECL(macDoNull, (EventRecord *, WindowPtr));
+static short FDECL(macUpdateMessage, (EventRecord *, WindowPtr));
+static short FDECL(macUpdateMenu, (EventRecord *, WindowPtr));
+static short FDECL(GeneralUpdate, (EventRecord *, WindowPtr));
 
-static void macCursorTerm(EventRecord *, WindowPtr, RgnHandle);
-static void GeneralCursor(EventRecord *, WindowPtr, RgnHandle);
+static void FDECL(macCursorTerm, (EventRecord *, WindowPtr, RgnHandle));
+static void FDECL(GeneralCursor, (EventRecord *, WindowPtr, RgnHandle));
 #endif
 
 static void TextUpdate(NhWindow *wind);
@@ -215,12 +215,12 @@ Boolean small_screen = 0;
 #endif
 #define NHW_BASE 0
 
-static int filter_scroll_key(const int, NhWindow *);
+static int FDECL(filter_scroll_key, (const int, NhWindow *));
 
 #if 1 //!TARGET_API_MAC_CARBON
-static void DoScrollBar(Point, short, ControlHandle, NhWindow *);
+static void FDECL(DoScrollBar, (Point, short, ControlHandle, NhWindow *));
 #endif
-static pascal void MoveScrollBar(ControlHandle, short);
+static pascal void FDECL(MoveScrollBar, (ControlHandle, short));
 
 #if 1 //!TARGET_API_MAC_CARBON
 typedef void (*CbFunc)(EventRecord *, WindowPtr);
@@ -1293,7 +1293,7 @@ adjust_window_pos(NhWindow *aWin, short width, short height)
  * until presumed seen.
  */
 void
-mac_display_nhwindow(winid win, boolean f)
+mac_display_nhwindow(winid win, BOOLEAN_P f)
 {
     NhWindow *aWin = &theWindows[win];
     WindowPtr theWindow = aWin->its_window;
@@ -1936,8 +1936,8 @@ mac_start_menu(winid win)
 }
 
 void
-mac_add_menu(winid win, int glyph, const anything *any, char menuChar,
-             char groupAcc, int attr, const char *inStr, int preselected)
+mac_add_menu(winid win, int glyph, const anything *any, CHAR_P menuChar,
+             CHAR_P groupAcc, int attr, const char *inStr, int preselected)
 {
 #if defined(__SC__) || defined(__MRC__)
 #pragma unused(glyph)
@@ -2084,8 +2084,9 @@ mac_select_menu(winid win, int how, menu_item **selected_list)
 #include "dlb.h"
 
 static void
-mac_display_file(const char *name,
-                 boolean complain)
+mac_display_file(name, complain)
+const char *name; /* not ANSI prototype because of boolean parameter */
+boolean complain;
 {
     Ptr buf;
     int win;
@@ -3250,7 +3251,9 @@ struct window_procs mac_procs = {
     WC_COLOR | WC_HILITE_PET | WC_FONT_MAP | WC_FONT_MENU | WC_FONT_MESSAGE
         | WC_FONT_STATUS | WC_FONT_TEXT | WC_FONTSIZ_MAP | WC_FONTSIZ_MENU
         | WC_FONTSIZ_MESSAGE | WC_FONTSIZ_STATUS | WC_FONTSIZ_TEXT,
-    0L, mac_init_nhwindows,
+    0L,
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},   /* color availability */
+    mac_init_nhwindows,
     mac_unimplemented, /* see macmenu.c:mac_askname() for player selection */
     mac_askname, mac_get_nh_event, mac_exit_nhwindows, mac_suspend_nhwindows,
     mac_unimplemented, mac_create_nhwindow, mac_clear_nhwindow,
